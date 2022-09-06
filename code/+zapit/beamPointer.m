@@ -32,8 +32,8 @@ classdef beamPointer < handle
         % 0/0 volts on DAQ corresponds to the middle of the image
         invertX = true;
         invertY = false;
-        xOffset = 1.8; %TODO -- HARDCODED
-        yOffset = 5; %TODO -- HARDCODED
+        xOffset = 1.8; %TODO -- HARDCODED -- TODO: THIS CAN BE DITCHED LIKELY
+        yOffset = 5; %TODO -- HARDCODED -- TODO: THIS CAN BE DITCHED LIKELY
         voltsPerPixel = 2.2E-3; %TODO -- HARDCODED
         
         micsPix = 19.3 %Measured this %TODO -- HARDCODED
@@ -47,7 +47,7 @@ classdef beamPointer < handle
         coordsLibrary
         newpoint
         topUpCall
-        rampDown
+        rampDown % Not used
         chanSamples
         topCall = 1;
         freqLaser
@@ -104,6 +104,7 @@ classdef beamPointer < handle
             obj.zeroScanners
             
             % load configuration files
+            % TODO -- refactor to model/view
             areasFile = input('what is the config file to use for mapping inactivation areas?', 's');
             load(areasFile);
             temp = split(areasFile, '\');
@@ -266,8 +267,8 @@ classdef beamPointer < handle
             
             
             %% functions
-            
             function points = recordPoints(hImAx, hImFig)
+                % TODO -- remove & refactor
                 % choose a point by left-click in the figure, and report
                 % the choice by right-click (then proceed to next step)
                 
@@ -297,6 +298,7 @@ classdef beamPointer < handle
             end
             
             function [newpoint,rotMat] = coordsRotation(template, refPoints, points, hImAx)
+                % TODO -- remove & refactor
                 % get displacement vector
                 translationVector = points(1,:);
                 pntZeroed = points-points(1,:);
@@ -321,6 +323,7 @@ classdef beamPointer < handle
             end
             
             function [newpoint, opaqueArea] = checkOpaqueArea(obj, newpoint)
+                % TODO -- refactor to model/view
                 opaqueArea = input('using an additional opaque area as control? 1 or 0');
                 if opaqueArea
                     figure(obj.hFig)
@@ -345,12 +348,20 @@ classdef beamPointer < handle
         
         
         function obj = makeChanSamples(obj, freqLaser, laserAmplitude)
-            % inputs: frequency of inactivation, amplitude of voltage fed
-            % to laser
-            % output: obj.chanSamples (matrix of channel samples for each inactivation)
+            % Prepares voltages for each inactivation site
+            %
+            % beamPointer.makeChanSamples(freqLaser, laserAmplitude)
+            %
+            %
+            % Inputs
+            % freqLaser - Frequency of inactivation, amplitude of voltage fed to laser
+            % laserAmplitude -
+            %
+            %
+            % Outputs
+            % None but the chanSamples property matrix is updated.
             
-            % you can later check if everything works if you plot figure at
-            % the end
+            % you can later check if everything works if you plot figure at the end
             plotFigure = 0;
             
             obj.sampleRate = 1000;                      % samples in Hz
@@ -358,7 +369,8 @@ classdef beamPointer < handle
             numHalfCycles = 4;                          % arbitrary, no of half cycles to buffer
             obj.numSamplesPerChannel = obj.sampleRate/obj.freqLaser*(numHalfCycles/2);
             
-            %             digitalAmplitude = 0.72;                       % old version with analog obis settings and without an arduino (gives 3.8 mW power)
+            % TODO -- hardcoded stuff
+            %  digitalAmplitude = 0.72;                       % old version with analog obis settings and without an arduino (gives 3.8 mW power)
             digitalAmplitude = 1.5; % fed into Arduino
             
             % find edges of half cycles
@@ -725,18 +737,26 @@ classdef beamPointer < handle
         
         
         
-        function [xVolts, yVolts] = pixelToVolt(obj, xPos, yPos, varargin)
-            % converts pixel coordinates to volt values for scanner mirrors
+        function [xVolts, yVolts] = pixelToVolt(obj, xPos, yPos)
+            % Converts pixel position to voltage value to send to scanners
+            %
+            % function [xVolts, yVolts] = pixelToVolt(obj, xPos, yPos)
+            %
+            % Purpose
+            % Converts pixel coordinates to volt values for scanner mirrors
             % taking into account created transformation matrices (infinite
-            % number of those allowed)
-            
-            % this function is important and used every time the laser is
+            % number of those allowed).
+            %
+            % This function is important and used every time the laser is
             % pointed to a location. Called in: pointBeamToLocationInImage,
             % getAreaCoordinates and logPoints
-            
+            %
+            %
+
+            % TODO
             % varargin can contain 0 or 1 to indicate we want to take
             % Rob's offsets into account (not too important with the
-            % transformation)
+            % transformation) -- TODO get rid of the offsets?
             
             if ~isempty(obj.transform)
                 for tformMat = 1:length(obj.transform)
@@ -756,13 +776,9 @@ classdef beamPointer < handle
                 yVolts= yVolts*-1;
             end
             
-            %             if ~isempty(varargin)
-            %                 if varargin{1} == 1
+            % TODO -- Can we get away without these offsets
             xVolts = xVolts + obj.xOffset;
             yVolts = yVolts + obj.yOffset;
-            %                 end
-            %             end
-            
         end
         
         
@@ -778,7 +794,6 @@ classdef beamPointer < handle
             obj.hImLive.CData = tmp;
             drawnow
             obj.cam.flushdata
-            
         end
         
         
@@ -838,11 +853,13 @@ classdef beamPointer < handle
         
         %% power-test methods
         % to test power, call obj.testPower, rest of instructions are in the program.
-        % remember to update the bridge first before runnig the program
+        % remember to update the bridge first before runnig the program -- TODO -- what does that mean?
         
         function laserPower = testPower(obj)
             % start new task
             
+            % TODO -- refactor to model/view
+            % TODO -- what is power 1 or 2?
             trialPower = input(char("what's the power to use (1 or 2)?"));
             
             
@@ -930,7 +947,7 @@ classdef beamPointer < handle
                     % to laser
                     % output: obj.chanSamples (matrix of channel samples for each inactivation)
                     numHalfCycles = 4;                          % arbitrary, no of half cycles to buffer
-                    digitalAmplitude = 1.5; % fed into Arduino
+                    digitalAmplitude = 1.5; % fed into Arduino TODO -- remove this
                     
                     
                     % find edges of half cycles
