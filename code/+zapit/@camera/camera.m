@@ -94,6 +94,9 @@ classdef camera < handle
             else
                 obj.demoMode
             end
+            
+            % set gain to maximum
+            obj.src.Gain = 10;
 
         end % close constructor
 
