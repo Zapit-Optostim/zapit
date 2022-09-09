@@ -3,8 +3,19 @@ Zaps brains with lasers
 
 
 
+### Start beam pointer and calibrate
 
-### Example
+```
+laserObject = beamPointer;
+
+% find transformation of pixel coords into voltage for scan mirrors
+pointLog = laserObject.logPoints;
+[tform, laserObject] = laserObject.runAffineTransform(pointLog);
+```
+
+
+
+### Legacy (?) Example
 ```
 bp = beamPointer;
 OUT = bp.logPoints(7) %scales laser to location in image##
@@ -12,7 +23,7 @@ bp.cam.src.Gain =1
 load('C:\Maja\pulsepal_beta\fsm-behaviour-maja\scanner\areas1.mat')
 bp.getAreaCoordinates(template)
 bp.makeChanSamples(40, 0.36);
-bp.createNewTask3
+bp.createNewTask
 bp.cam.src.Gain = 1;
 
 %%

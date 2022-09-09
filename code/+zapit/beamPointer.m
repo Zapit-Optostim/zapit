@@ -133,17 +133,28 @@ classdef beamPointer < handle
         
         
         
-        function OUT=logPoints(obj, varargin)
-            % log the precision of beam:
-            % records how different intended (target) pixel coordinates are
-            % from where the beam actually is
-            % input (optional): how many points to record (I usually use 7 but can be
-            % more or less, at least 5)
+        function OUT=logPoints(obj, nPoints)
+            % Log precision of beam pointing: conduct an affine transform to calibrate camera and beam
+            %
+            % Purpose
+            % Moves beam sequentially across a series of locations and records the intended vs
+            % actual beam position on the camera image. This allows us to calculate an affine
+            % transform that converts a pixel location on the image to the scanner command voltages
+            % required to point the beam at that location.
+            %
+            % Inputs (optional):
+            % nPoints - how many points to record. 7 by default. If empty, a set of hard-coded
+            %          coords are scanned (TODO).
+            %
             % output: target and actual pixel coordinates
             
             % lower camera illumination for precision
             obj.cam.src.Gain = 1;
             
+            if nargin<2
+                nPoints = 9;
+            end
+
             if isempty(varargin)
                 % if no varargin given, use standard coordinates
                 % TODO -- what are these hardcoded numbers??
@@ -163,7 +174,7 @@ classdef beamPointer < handle
                 end
             else
                 % same procedure as above, but using points clicked by user
-                v = recordPoints(obj.hImAx, obj.hFig, varargin{1});
+                v = recordPoints(obj.hImAx, obj.hFig, nPoints);
             end
             
             % save recorded outcoming (intended) and incoming (calculated)
@@ -172,6 +183,7 @@ classdef beamPointer < handle
             OUT.actualPixelCoords = cat(1,v(:).actualPixelCoords);
             
             function v = recordPoints(hImAx, hImFig, numPoints)
+                % TODO - refactor
                 for nn = 1:numPoints
                     obj.hTask.writeAnalogData([0 0 0])
                     title(hImAx, string(nn));
@@ -187,14 +199,15 @@ classdef beamPointer < handle
             
             % change the illumination of the camrea image to high value
             % again
-            obj.cam.src.Gain = 25;
+            obj.cam.src.Gain = 25; %TODO: likely we should be returning this to the original value
             [tform, obj] = runAffineTransform(obj, OUT);
-            obj.hTask.writeAnalogData([0 0 0]);
+            obj.hTask.writeAnalogData([0 0 0]); % Zero beam and turn off laser
         end
         
       
         
         function [tform, obj] = runAffineTransform(obj, OUT)
+            % TODO - refactor
             % method running a transformation of x-y beam position into pixels
             % in camera
             
@@ -601,49 +614,7 @@ classdef beamPointer < handle
         end
         
         
-        
-        function createNewTask2(obj, taskName)
-            % TODO -- NOT USED FOR NOW
-            % in construction to make the task run smoother
-            
-            devName = 'Dev2';
-            
-            chanIDs = [0 1 2 3];
-            sampleRate = 5000; % in samples per second (Hz)
-            sampleMode = 'DAQmx_Val_ContSamps';
-            sampleClockSource = 'OnboardClock';
-            
-            numSamplesPerChannel = sampleRate;
-            
-            dTriggerSource = 'PFI0';
-            dTriggerEdge = 'DAQmx_Val_Rising';
-            
-            obj.hTask = dabs.ni.daqmx.Task(taskName);
-            
-            obj.hTask.createAOVoltageChan(devName, chanIDs);
-            
-            obj.hTask.cfgSampClkTiming(sampleRate, sampleMode, numSamplesPerChannel, sampleClockSource);
-            obj.hTask.cfgOutputBuffer(numSamplesPerChannel);
-            
-            obj.hTask.set('writeRegenMode', 'DAQmx_Val_DoNotAllowRegen');
-            obj.hTask.registerEveryNSamplesEvent(@obj.topUpBuffer, 2500);
-            
-            % Configure the trigger
-            %                 obj.hTask.cfgDigEdgeStartTrig(dTriggerSource, dTriggerEdge);
-            %                 obj.hTask.set('startTrigRetriggerable',1);
-            
-            function cleanUpFunction % THIS IS COPIED FROM EXAMPLE
-                if strcmp(obj.hTask.taskName, 'flashAreas')
-                    fprintf('Cleaning up DAQ task\n');
-                    obj.hTask.stop;    % Calls DAQmxStopTask
-                    delete(obj.hTask); % The destructor (dabs.ni.daqmx.Task.delete) calls DAQmxClearTask
-                else
-                    fprintf('this task is not available for cleanup\n')
-                end
-            end %close cleanUpFunction
-        end
-        
-                
+
         
         function topUpBuffer(obj)
             % NOT USED FOR NOW (TODO -- really? topCall is true by default)
@@ -753,11 +724,6 @@ classdef beamPointer < handle
             %
             %
 
-            % TODO
-            % varargin can contain 0 or 1 to indicate we want to take
-            % Rob's offsets into account (not too important with the
-            % transformation) -- TODO get rid of the offsets?
-            
             if ~isempty(obj.transform)
                 for tformMat = 1:length(obj.transform)
                     [xPos, yPos] = transformPointsInverse(obj.transform(tformMat), xPos, yPos);
@@ -795,59 +761,6 @@ classdef beamPointer < handle
             drawnow
             obj.cam.flushdata
         end
-        
-        
-        
-        function createNewTask3(obj)
-            
-            devName = 'Dev2';
-            
-            % channel 0 = x Axis
-            % channel 1 = y Axis
-            % channel 2 = analog laser
-            % channel 3 = masking light
-            %             % channel 4 = digital laser gating
-            % channel PFI0 = digital trigger
-            
-            % output channel params
-            chanIDs = [0 1 2 3];
-            sampleRate = obj.sampleRate;                        % set in makeChanSamples
-            sampleMode = 'DAQmx_Val_ContSamps';
-            sampleClockSource = 'OnboardClock';
-            numSamplesPerChannel = obj.numSamplesPerChannel;    % set in makeChanSamples
-            
-            % Execute a cleanup function (below)
-            cleanUpFunction;
-            
-            %% Create the inactivation task
-            % taskName is defined in the previous function ('flashAreas')
-            obj.hTask = dabs.ni.daqmx.Task('runTest');
-            
-            % Set output channels
-            obj.hTask.createAOVoltageChan(devName, chanIDs);
-            
-            
-            % Configure the task sample clock, the sample size and mode to be continuous and set the size of the output buffer
-            obj.hTask.cfgSampClkTiming(sampleRate, sampleMode, numSamplesPerChannel, sampleClockSource);
-            obj.hTask.cfgOutputBuffer(numSamplesPerChannel);
-            
-            % allow sample regeneration
-            obj.hTask.set('writeRegenMode', 'DAQmx_Val_AllowRegen');
-            obj.hTask.set('writeRelativeTo','DAQmx_Val_FirstSample');
-            
-            %% cleanup function copied from example
-            function cleanUpFunction
-                if exist('obj.hTask')
-                    fprintf('Cleaning up DAQ task\n');
-                    obj.hTask.stop;    % Calls DAQmxStopTask
-                    delete(obj.hTask); % The destructor (dabs.ni.daqmx.Task.delete) calls DAQmxClearTask
-                else
-                    fprintf('this task is not available for cleanup\n')
-                end
-            end
-        end
-        
-        
         
         
         
