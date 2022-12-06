@@ -7,7 +7,6 @@ classdef camera < handle
     % TODO - Currently this class does nothing very interesting, but in future it will 
     %        ensure there is a consistent interface for handling things like camera exposure.
     %
-    %
 
     properties
         vid   % Holds the camera object
@@ -21,13 +20,6 @@ classdef camera < handle
         function obj = camera(camToStart)
             if nargin<1 || isempty(camToStart)
                 camToStart=[];
-            end
-
-            if strcmpi(camToStart,'demo')
-
-                fprintf('dws.camera is starting with a dummy camera\n')
-                obj.demoMode
-                return
             end
 
             % Find which adapters are installed
@@ -103,6 +95,7 @@ classdef camera < handle
 
         function delete(obj)
             if isa(obj.vid,'videoinput')
+                fprintf('Disconnecting from camera\n')
                 stop(obj.vid)
                 delete(obj.vid)
             end
@@ -150,14 +143,6 @@ classdef camera < handle
                 nFrm=0;
             end
         end
-
-        function demoMode(obj)
-            % Set up a few hard-coded properties so that diffusersensor runs
-            % with no camera
-            obj.vid.ROIPosition=[0,0,2048,2048]; % Make up a sensor size
-        end
-
-
 
     end
 
