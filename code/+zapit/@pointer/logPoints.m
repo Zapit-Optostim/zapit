@@ -9,12 +9,14 @@ function varargout = logPoints(obj, nPoints, doPointGrid)
     %
     % Inputs (optional):
     % nPoints - how many points to record. If empty or less than three, a set of hard-coded
-    % coords are scanned.
+    % coordinates are scanned.
     %
-    % output: target and actual pixel coordinates
+    % Outputs
+    % optional - target and actual pixel coordinates in a structure
+    %
+    % 
 
-    % lower camera illumination for precision
-
+    % lower camera illumination for increased precision in detecting beam location 
     obj.cam.src.Gain = 1; % TODO - hard-coded
     obj.cam.exposure = 3000; % TODO - hard-coded
 
@@ -91,21 +93,20 @@ function varargout = logPoints(obj, nPoints, doPointGrid)
     end
 
 
-    % save recorded outcoming (intended) and incoming (calculated)
+    % save recorded output (intended) and incoming (calculated)
     % pixel coordinates to calculate the offset and transformation
     OUT.targetPixelCoords = cat(1,v(:).targetPixelCoords);
     OUT.actualPixelCoords = cat(1,v(:).actualPixelCoords);
 
 
-    % change the illumination of the camrea image to high value
-    % again
+    % change the illumination of the camera image to high value again
     obj.cam.exposure = 3000; %TODO: likely we should be returning this to the original value
 
-    disp('running affine transform')
     obj.runAffineTransform(OUT);
-    obj.hTask.writeAnalogData([0 0 0]); % Zero beam and turn off laser
+    obj.hTask.writeAnalogData([0 0 0]); % Zero beam and turn off laser. TODO -- we have nicer system for this in the new DAQ class
 
     % TODO: now demonstrate that it worked
+
 
     if nargout>0
         varargout{1} = OUT;

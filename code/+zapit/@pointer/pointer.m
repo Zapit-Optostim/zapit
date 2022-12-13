@@ -151,6 +151,7 @@ classdef pointer < handle
             obj.hTask.createAOVoltageChan(obj.devName, 0:2, [], -obj.AIrange, obj.AIrange);
         end % createUnclockedTask
         
+
         function sendSamples(obj, new_trial)
             % take coordinates of two points[x and y Coords], and exchange laser between
             % them at freqLaser for pulseDuration seconds, locking it at a given point for tOpen ms
@@ -199,7 +200,7 @@ classdef pointer < handle
             % channel 0 = x Axis
             % channel 1 = y Axis
             % channel 2 = analog laser
-            % channel 3 = masking light
+            % channel 3 = masking light %TODO -- can probably be a clocked digital line?
             %             % channel 4 = digital laser gating
             % channel PFI0 = digital trigger
             
@@ -297,33 +298,6 @@ classdef pointer < handle
         end  % testCoordsLibrary
 
 
-        function pointBeamToLocationInImage(obj,~,~)
-            % This callback function obtains the mouse position in the
-            % image and uses this to point the scanners to this location.
-            
-            
-            % Get the current mouse position (at the clicked location) and use it
-            % to place a point there and display coords to the axes title.
-            pos = obj.hImAx.CurrentPoint;
-            xPos = pos(1,1);
-            yPos = pos(1,2);
-            
-            % convert to voltage values to send to scanners
-            [xVolts, yVolts] = pixelToVolt(obj, xPos, yPos);
-            
-            obj.hLastPoint.XData = xPos;
-            obj.hLastPoint.YData = yPos;
-            
-            %SEND TO SCANNERS:
-            obj.hTask.writeAnalogData([xVolts, yVolts, 3]); % send beam to this location
-            
-            msg = sprintf('X=%0.2f (%0.1f V) Y=%0.2f (%0.1f V)',...
-                xPos, xVolts, yPos, yVolts);
-            set(get( obj.hImAx,'Title'),'String',msg)
-            
-        end % pointBeamToLocationInImage
-        
-        
         
         function [xVolts, yVolts] = pixelToVolt(obj, pixelColumn, pixelRow)
             % Converts pixel position to voltage value to send to scanners
@@ -345,7 +319,6 @@ classdef pointer < handle
 
 
             if ~isempty(obj.transform)
-                % TODO -- WHERE THE HELL IS transformPointsInverse???
                 [pixelColumn, pixelRow] = transformPointsInverse(obj.transform, pixelColumn, pixelRow);
             end
             
