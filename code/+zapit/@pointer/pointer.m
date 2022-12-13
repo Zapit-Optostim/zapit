@@ -27,15 +27,15 @@ classdef pointer < handle
 
         
         % behavioural task properties
-        coordsLibrary
-        newpoint
-        topUpCall
+        coordsLibrary % TODO - ??
+        newpoint % TODO - ??
+        topUpCall % TODO - ??
         rampDown % Not used
         chanSamples %Structure describing waveforms to send the scanners for each brain area
-        topCall = 1;
-        freqLaser
-        numSamplesPerChannel
-        sampleRate
+        topCall = 1; % TODO - ??
+        freqLaser % TODO - ??
+        numSamplesPerChannel % TODO - ??
+        sampleRate % TODO - ??
     end
 
 

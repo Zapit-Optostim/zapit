@@ -118,11 +118,15 @@ P.createNewTask %% TODO - should run this in sendSamples
 
 ### Let's run it
 For one brain area
+
 ```
-newTrial.area = 1; % first brain area on the list
+newTrial.area = 4; % first brain area on the list
 newTrial.LaserOn = 1;
 newTrial.powerOption = 1; % if 1 send 2 mW, if 2 send 4 mW (mean)
+
+P.sendSamples(newTrial)
 ```
+
 
 ```
 P.cam.src.Gain = 1;
