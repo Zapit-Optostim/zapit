@@ -89,25 +89,43 @@ Closing the figure will also disconnect from the camera, as will `delete(D)`
 ### Start beam pointer and calibrate
 
 ```
-laserObject = beamPointer;
+P = zapit.pointer;
 
 % find transformation of pixel coords into voltage for scan mirrors
-pointLog = laserObject.logPoints;
-[tform, laserObject] = laserObject.runAffineTransform(pointLog);
+P.logPoints;
+
+```
+You can now click on the image and the beam should go to that location.
+
+
+### Calibrate to mouse skull
+Now you can tell the system where is Bregma and another reference location
+```
+P.getAreaCoordinates
+```
+
+### Generate the parameters for switching the beam
+Here we are switching at 40 Hz with a laser amplitude of 0.36
+```
+P.makeChanSamples(40, 0.36);
+```
+
+### Set up NI task for the stimulation
+```
+P.createNewTask %% TODO - should run this in sendSamples
 ```
 
 
-
-### Legacy (?) Example
+### Let's run it
+For one brain area
 ```
-bp = beamPointer;
-OUT = bp.logPoints(7) %scales laser to location in image##
-bp.cam.src.Gain =1
-load('C:\Maja\pulsepal_beta\fsm-behaviour-maja\scanner\areas1.mat')
-bp.getAreaCoordinates(template)
-bp.makeChanSamples(40, 0.36);
-bp.createNewTask
-bp.cam.src.Gain = 1;
+newTrial.area = 1; % first brain area on the list
+newTrial.LaserOn = 1;
+newTrial.powerOption = 1; % if 1 send 2 mW, if 2 send 4 mW (mean)
+```
+
+```
+P.cam.src.Gain = 1;
 
 %%
 x = randi(6, 300, 1);
@@ -120,17 +138,17 @@ for ii = 1:300
     {'ii' 'x' 't' }
     [ii x(ii) t(ii) ]
     %
-    bp.sendSamples(x(ii), 1);
+    P.sendSamples(x(ii), 1);
     pause(t(ii));
-    bp.hTask.stop;
-    bp.sendSamples(x(ii), 0);
+    P.hTask.stop;
+    P.sendSamples(x(ii), 0);
     pause(t(ii));
-    bp.hTask.stop;
+    P.hTask.stop;
 end
 
 %%
 % get order of inactivated areas
-save('runningtest4', 'x', 't', 'bp');
+save('runningtest4', 'x', 't', 'P');
 
 ```
 

@@ -1,4 +1,4 @@
-function OUT = logPoints(obj, nPoints, doPointGrid)
+function varargout = logPoints(obj, nPoints, doPointGrid)
     % Log precision of beam pointing: conduct an affine transform to calibrate camera and beam
     %
     % Purpose
@@ -14,7 +14,9 @@ function OUT = logPoints(obj, nPoints, doPointGrid)
     % output: target and actual pixel coordinates
 
     % lower camera illumination for precision
-    obj.cam.src.Gain = 1;
+
+    obj.cam.src.Gain = 1; % TODO - hard-coded
+    obj.cam.exposure = 3000; % TODO - hard-coded
 
     if nargin<2
         nPoints = [];
@@ -51,6 +53,7 @@ function OUT = logPoints(obj, nPoints, doPointGrid)
         % change pixel coords into voltage %TODO -- R and C correct?
         [rVolts(:,1), rVolts(:,2)] = obj.pixelToVolt(R,C);
 
+        fprintf('Running calibration')
         for ii=1:length(R)
             % feed volts into scan mirrors, wait for precise image
             % without smudges and take position in pixels
@@ -58,7 +61,9 @@ function OUT = logPoints(obj, nPoints, doPointGrid)
             pause(0.125)
             v(ii)=obj.getLaserPosAccuracy([R(ii), C(ii)]);
             drawnow
+            fprintf('.')
         end
+        fprintf('\n')
 
     else
         % TODO -- DOES NOT WORK RIGHT NOW FOR SOME REASON
@@ -101,4 +106,8 @@ function OUT = logPoints(obj, nPoints, doPointGrid)
     obj.hTask.writeAnalogData([0 0 0]); % Zero beam and turn off laser
 
     % TODO: now demonstrate that it worked
+
+    if nargout>0
+        varargout{1} = OUT;
+    end
 end

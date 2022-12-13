@@ -37,7 +37,7 @@ classdef config < handle
             data = zapit.yaml.ReadYaml(fname);
 
             obj.powerOption = data.powerOption;
-            obj.refPoints = data.refPoints;
+            obj.refPoints = cell2mat(data.refPoints);
 
 
             % template is 2 by n (by n?) array

@@ -31,7 +31,7 @@ classdef pointer < handle
         newpoint
         topUpCall
         rampDown % Not used
-        chanSamples
+        chanSamples %Structure describing waveforms to send the scanners for each brain area
         topCall = 1;
         freqLaser
         numSamplesPerChannel
@@ -45,6 +45,9 @@ classdef pointer < handle
         hImAx
         hImLive
         hLastPoint % plot handle with location of the last clicked point
+
+        hAreaCoords % locations where the beam will be sent. see getAreaCoords
+        hRefCoords  % The two reference coords
 
         axRange
         imSize % Size of the displayed image
@@ -61,8 +64,13 @@ classdef pointer < handle
     
     
     methods
-        function obj = pointer
+        function obj = pointer(fname)
             % Constructor
+
+            if nargin < 1
+                fname = [];
+            end
+
             disp('STARTING BEAMPOINTER')
             obj.cam = zapit.camera(2); % TODO -  Hard-coded selection of camera ID
             
@@ -87,10 +95,13 @@ classdef pointer < handle
             
             obj.zeroScanners
 
-            
             % load configuration files
-            [fname,fpath] = uigetfile('*.yaml','Pick a config file');
-            pathToConfig = fullfile(fpath,fname);
+            if isempty(fname)
+                [fname,fpath] = uigetfile('*.yaml','Pick a config file');
+                pathToConfig = fullfile(fpath,fname);
+            else
+                pathToConfig = fname;
+            end
             obj.config = zapit.config(pathToConfig);
         end
         
@@ -145,6 +156,7 @@ classdef pointer < handle
             %         powerOption - if 1 send 2 mW, if 2 send 4 mW (mean)
             % output: nothing. The function just sends correct samples to
             % the pointer
+
             CoordNum = new_trial.area;
             LaserOn = new_trial.LaserOn;
             trialPower = new_trial.powerOption;
@@ -155,7 +167,7 @@ classdef pointer < handle
                 % right properties. hTask is an object that 'rests' on the NI
                 % board and gives it information to play back once command start
                 % arrives. It contains a clock and sampled voltages.
-                createNewTask(obj, taskName);
+                obj.createNewTask(taskName);
             end
             
             % update coordinate parameters/channel samples
@@ -167,15 +179,19 @@ classdef pointer < handle
             
             % write voltage samples onto the task
             obj.hTask.writeAnalogData(voltChannel);
+
             % start the execution of the new task
             obj.hTask.start;
+
+            % TODO the task is continuing to run, which is wrong. It should play out the finite
+            % samples then it stops.
         end
         
         
         function createNewTask(obj, taskName)
             
             devName = 'Dev2';
-            
+
             % channel 0 = x Axis
             % channel 1 = y Axis
             % channel 2 = analog laser
@@ -262,7 +278,20 @@ classdef pointer < handle
                 obj.hTask.writeAnalogData(obj.voltChannel);
             end
         end
-        
+
+        function testCoordsLibray(obj)
+            % move laser into each position as a check
+            for xx = 1:length(obj.newpoint)
+                for yy = 1:2
+                    fprintf('Testing coordinate %0.2f %0.2f\n', ...
+                     obj.coordsLibrary(xx, 1, yy), ...
+                     obj.coordsLibrary(xx, 2, yy))
+                    obj.hTask.writeAnalogData([obj.coordsLibrary(xx, 1, yy), obj.coordsLibrary(xx, 2, yy),2]);
+                    pause(0.25)
+                end
+            end
+        end
+
 
         function pointBeamToLocationInImage(obj,~,~)
             % This callback function obtains the mouse position in the

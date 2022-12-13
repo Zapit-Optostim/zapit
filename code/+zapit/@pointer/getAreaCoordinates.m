@@ -5,12 +5,18 @@ function opaqueArea = getAreaCoordinates(obj)
     % volts
     
     % change illumination to get a clearer image of beam position
-    obj.cam.src.Gain = 25;
-    
+    obj.cam.src.Gain = 2;
+
+    % Clear any old coords
+    delete(obj.hAreaCoords)
+    obj.hAreaCoords = [];
+
+    delete(obj.hRefCoords)
+    obj.hRefCoords = [];
+
     % record points in the screen
-    refPoints = obj.config.refPoints;                        % coordinate references on the mouse skull (bregma and 0,-2 marked with pen)
+    refPoints = obj.config.refPoints; % coordinate references on the mouse skull (bregma and 0,-2 marked with pen)
     template = obj.config.template;
-    hold(obj.hImAx, 'on');
     %             plot(obj.hImAx, refPoints(:,1), refPoints(:,2));
     realPoints = recordPoints(obj.hImAx, obj.hFig); % output columns are x and y coords
     
@@ -29,23 +35,18 @@ function opaqueArea = getAreaCoordinates(obj)
     coordsLibrary = [xVolt' yVolt'];
     coordsLibrary(:,:,2) = [xVolt2' yVolt2'];
 
-    coordsLibrary
     obj.coordsLibrary = coordsLibrary;
     obj.newpoint = newpoint;
     
     
     hold(obj.hImAx, 'on');
-    plot(obj.hImAx, newpoint(1, :, 1), newpoint(2, :, 1), 'o'); % left hemisphere coords
-    plot(obj.hImAx, newpoint(1, :, 2), newpoint(2, :, 2), 'o'); % right hemisphere coords
-    
-    % move laser into each position as a check
-    for xx = 1:length(newpoint)
-        for yy = 1:2
-            obj.hTask.writeAnalogData([obj.coordsLibrary(xx, 1, yy), obj.coordsLibrary(xx, 2, yy)]);
-            pause(1)
-        end
-    end
-    
+    obj.hAreaCoords(1) = plot(obj.hImAx, newpoint(1,:,1), newpoint(2,:,1), 'o'); % left hemisphere coords
+    obj.hAreaCoords(2) = plot(obj.hImAx, newpoint(1,:,2), newpoint(2,:,2), 'o'); % right hemisphere coords
+    hold(obj.hImAx, 'off');
+
+
+    % Move points through all locations to check visually that all is good
+    obj.testCoordsLibray;
     
     
     %% functions
@@ -65,7 +66,8 @@ function opaqueArea = getAreaCoordinates(obj)
             figure(hImFig)
             waitforbuttonpress;
         end
-        figureText = join(['bregma recorded, click ', string(refPoints(:,2)')]);
+
+        figureText = sprintf('bregma recorded, click %d %d ', refPoints(:,2));
         title(hImAx,figureText);
         figure(hImFig)
         waitforbuttonpress;
@@ -76,7 +78,11 @@ function opaqueArea = getAreaCoordinates(obj)
         end
         
         title(hImAx, 'both points recorded');
-        plot(hImAx, points(:,1), points(:,2));
+
+        hold(obj.hImAx, 'on');
+        obj.hRefCoords = plot(hImAx, points(:,1), points(:,2));
+        hold(obj.hImAx, 'off');
+
     end
     
     function [newpoint,rotMat] = coordsRotation(template, refPoints, points)
@@ -106,7 +112,7 @@ function opaqueArea = getAreaCoordinates(obj)
     
     function [newpoint, opaqueArea] = checkOpaqueArea(obj, newpoint)
         % TODO -- refactor to model/view
-        opaqueArea = input('using an additional opaque area as control? 1 or 0');
+        opaqueArea = input('using an additional opaque area as control?\n[1 or 0] ');
         if opaqueArea
             figure(obj.hFig)
             title(obj.hImAx, 'find opaque area 1')
