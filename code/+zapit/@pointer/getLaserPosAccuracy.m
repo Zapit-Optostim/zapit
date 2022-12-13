@@ -3,11 +3,19 @@ function varargout = getLaserPosAccuracy(obj, XYdata)
     %
     % function out = getLaserPosAccuracy(obj, XYdata)
     %
+    % Purpose
+    % Find the coords of the beam location and compare to the desired location. Returns 
+    % results to screen if no outputs. Otherwise returns a structure and does not print
+    % to screen.
     %
-    % Find the coords of the beam location and compare to
-    % the desired location. Returns results to screen if no
-    % outputs. Otherwise returns a structure and does not
-    % print to screen.
+    % Inputs
+    % XYdata - [optional] The target pixel coordinates. If not supplied, uses the 
+    %          hLastPoint property. TODO -- THIS SEEMS BAD BECAUSE IT'S ONLY USED IN ONE PLACE (SEE BELOW)
+    %
+    % Outputs
+    % Optional structure containing results.
+    %
+    %
     
     %% find centre of laser field after averaging a few frames
 
@@ -54,7 +62,9 @@ function varargout = getLaserPosAccuracy(obj, XYdata)
         if nargin<2
             out.targetPixelCoords = [obj.hLastPoint.XData, obj.hLastPoint.YData];
         else
-            out.targetPixelCoords = XYdata;
+            out.targetPixelCoords = XYdata; %ONLY APPEARS HERE NOT ABOVE (TODO)
+                                            %IF XYdata REALLY IS NOT NEEDED WE SHOULD REMOVE IT
+                                            % TEST IF REMOVING IT FROM logPoints MAKES A DIFFERENCE
         end
 
         % Return
