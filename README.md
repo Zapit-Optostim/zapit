@@ -5,7 +5,7 @@ Code was initially written by Maja Skretowska and Rob Campbell at the Sainsbury 
 The code runs a simple galvo-based photo-stimulator.
 A narrow collimated beam enters the scan head and is focused on the sample using a single scan lens.
 The scan lens doubles as an objective, as the sample is imaged onto a camera in order to visualise where the beam is pointing.
-
+The [Change Log](CHANGELOG.md) describes the project history and recent changes.
 
 ## Requirements
 * [Image Processing Toolbox](https://uk.mathworks.com/help/images/index.html)
