@@ -137,10 +137,8 @@ P.sendSamples(newTrial)
 ```
 
 
+### Legacy example
 ```
-P.cam.src.Gain = 1;
-
-%%
 x = randi(6, 300, 1);
 t = 0.5 + rand(1,300)*5.5;
 

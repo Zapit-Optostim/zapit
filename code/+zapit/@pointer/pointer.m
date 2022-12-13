@@ -342,7 +342,7 @@ classdef pointer < handle
                 return
             end
             
-            tmp=obj.cam.getLastFrame;
+            tmp = obj.cam.getLastFrame;
             
             obj.hImLive.CData = tmp;
             drawnow
