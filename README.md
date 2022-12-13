@@ -6,12 +6,21 @@ The code runs a simple galvo-based photo-stimulator.
 A narrow collimated beam enters the scan head and is focused on the sample using a single scan lens.
 The scan lens doubles as an objective, as the sample is imaged onto a camera in order to visualise where the beam is pointing.
 
-## Install
-The hardware has been tested with a Basler camera.
-To communicate with the camera you will need to install [Basler's instructions for the GenICam interface](https://www.baslerweb.com/en/downloads/document-downloads/using-pylon-gentl-producers-for-basler-cameras-with-matlab/).
-The although the Zapit system is tested against this, the goal is that it is able to handle other drivers and cameras also.
+
+## Requirements
+* [Image Processing Toolbox](https://uk.mathworks.com/help/images/index.html)
+* [Image Acquisition Toolbox](https://uk.mathworks.com/products/image-acquisition.html)
+* [The free version of ScanImage](https://vidriotechnologies.com/) because Zapit uses its DAQmx wrapper (but see [here](https://github.com/BaselLaserMouse/zapit/issues/14)).
+* To communicate with the camera you will need to install [Basler's instructions for the GenICam interface](https://www.baslerweb.com/en/downloads/document-downloads/using-pylon-gentl-producers-for-basler-cameras-with-matlab/).
+Although the Zapit system is tested against this, the goal is that it is able to handle other drivers and cameras also.
 If you can not get the above to work, try installing the `Image Acquisition Toolbox Support Package for OS Generic Video Interface`.
 If you run into errors when setting up with a driver other than GenICam, please file an Issue.
+
+
+## Install
+Gather the requirements then add to your path:
+* The Zapit `code` directory. You need add only this directory, not it and all sub-directories.
+* The ScanImage directory. You need add only this directory, not it and all sub-directories.
 
 
 ### First time you run
