@@ -11,7 +11,9 @@ function [settingsDir,settingsDirBackup] = settingsLocation
     % Outputs
     % settingsDir - string defining absolute path to the Zapit settings directory. 
     % settingsDirBackup - string defining absolute path to the Zapit backup settings directory.
-
+    %
+    %
+    % Rob Campbell - SWC 2022
     installDir = zapit.settings.installLocation;
     if isempty(installDir)
         settingsDir=[];

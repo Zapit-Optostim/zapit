@@ -2,7 +2,10 @@ function laserPower = testPower(obj)
     %% power-test methods
     % to test power, call obj.testPower, rest of instructions are in the program.
     % remember to update the bridge first before runnig the program -- TODO -- what does that mean?
+    %
+    % Maja Skretowska - SWC 2021
 
+    
     % start new task
     
     % TODO -- refactor to model/view

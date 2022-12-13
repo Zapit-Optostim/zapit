@@ -1,7 +1,7 @@
 function obj = makeChanSamples(obj, freqLaser, laserAmplitude)
     % Prepares voltages for each inactivation site
     %
-    % pointer.makeChanSamples(freqLaser, laserAmplitude)
+    % zapit.pointer.makeChanSamples(freqLaser, laserAmplitude)
     %
     %
     % Inputs
@@ -11,7 +11,9 @@ function obj = makeChanSamples(obj, freqLaser, laserAmplitude)
     %
     % Outputs
     % None but the chanSamples property matrix is updated.
-    
+    %
+    % Maja Skretowska - 2021
+
     % you can later check if everything works if you plot figure at the end
     plotFigure = 0;
     
@@ -81,6 +83,7 @@ function obj = makeChanSamples(obj, freqLaser, laserAmplitude)
     %% visualization of channel samples
     function showvisual()
         % TODO -- this is weird nested function that should be somewhere else.
+        % Maja Skretowska - 2021
         xAxis = [1:obj.numSamplesPerChannel];
         
         figure(22) % TODO -- improve figure ID. This can cause a bug

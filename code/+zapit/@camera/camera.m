@@ -6,6 +6,8 @@ classdef camera < handle
     % image acquisition toolbox. This is necessary to provide consistent behavior across
     % different camera drivers.
     %
+    % Rob Campbell - 2018 SWC 
+    % Rob Campbell - 2022 SWC
 
 
     properties

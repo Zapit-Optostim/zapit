@@ -1,4 +1,10 @@
 function plotLaserRange(obj, laserPower)
+    % 
+    % function zapit.pointer.plotLaserRange(obj, laserPower)
+    %
+    % Maja Skretowska - SWC 2021
+
+
     dotNum = size(laserPower, 2);
     laserPower = laserPower(:, laserPower(3,:) ~= -1);
     powerMean = mean(laserPower(3,laserPower));

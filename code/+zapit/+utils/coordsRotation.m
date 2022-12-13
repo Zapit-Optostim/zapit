@@ -7,6 +7,8 @@ function [newpoint,rotMat] = coordsRotation(template, refPoints, points)
     % Called by zapit.pointer.getAreaCoords.
     %
     % TODO -- full help text needed
+    %
+    % Maja Skretowska - SWC 2020
 
 
     % get displacement vector

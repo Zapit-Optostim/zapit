@@ -3,7 +3,10 @@ function varargout = getAreaCoordinates(obj)
     % template coordinates kept in session_settings.template, and
     % it stores them in the object's property transformed into
     % volts
-    
+    %
+    % Maja Skretowska - 2021
+
+
     % change illumination to get a clearer image of beam position
     obj.cam.src.Gain = 2;
 

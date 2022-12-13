@@ -16,6 +16,8 @@ function rotMat = rotationMatrix(theta)
     %
     % Notes
     % Called by zapit.utils.coordsRotation
+    %
+    % Maja Skretowska - SWC 2020
 
     rotMat = [cos(theta) -sin(theta); sin(theta) cos(theta)];
 

@@ -2,6 +2,8 @@ classdef config < handle
 
     % class for handling the configuration files used to
     % determine where the laser stim locations are
+    %
+    % Rob Campbell - SWC 2022
 
     properties
 

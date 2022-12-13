@@ -7,8 +7,9 @@ classdef pointer < handle
     % image via a camera.
     %
     %
-    % Rob Campbell - 2020/2021
-    % Maja Skretowska - 2021/2022
+    % Maja Skretowska - SWC 2020-2022
+    % Rob Campbell - SWC 2020...
+
 
     
     properties

@@ -1,5 +1,7 @@
 function setUpFigure(obj)
     % Set up the figure window
+    %
+    % Maja Skretowska - SWC 2021
 
     obj.hFig = figure(7824);
     obj.hFig.NumberTitle='off';

@@ -1,5 +1,7 @@
 classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
-
+    % Zapit NI DAQ class using Vidrio's wrapper for NI DAQmx
+    %
+    % Rob Campbell - SWC 2022
     properties
     end
 

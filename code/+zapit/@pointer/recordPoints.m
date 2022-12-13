@@ -2,9 +2,11 @@ function points = recordPoints(obj)
     % TODO -- remove & refactor
     % choose a point by left-click in the figure, and report
     % the choice by right-click (then proceed to next step)
-    
+    %    
     % left-click automatically sends the beam to the location
     % by the callback pointBeamToLocationInImage function
+    %
+    % Maja Skretowska - SWC 2021
     
     title(obj.hImAx, 'click bregma');
     figure(obj.hFig)                                  % call figure to make sure matlab is waiting for clicks in the right window

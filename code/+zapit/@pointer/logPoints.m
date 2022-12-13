@@ -14,7 +14,8 @@ function varargout = logPoints(obj, nPoints, doPointGrid)
     % Outputs
     % optional - target and actual pixel coordinates in a structure
     %
-    % 
+    % Maja Skretowska - SWC 2021
+    % Rob Campbell - SWC 2022
 
     % lower camera illumination for increased precision in detecting beam location 
     obj.cam.src.Gain = 1; % TODO - hard-coded

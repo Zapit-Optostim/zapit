@@ -29,6 +29,11 @@ function gitInfo=getGitInfo()
 %
 %
 %
+% Modifed 2020 by Rob Campbell, UCL, to make it more robust and allow it to be inserted into any project
+%
+% Instructions: place into your project path e.g. put into `myProj/code/+utils/getGitInfo.m`
+% then just call it at the command line: >> myProj/code/+utils/getGitInfo
+
 
 % Copyright 2011 Andrew Leifer. All rights reserved.
 %
@@ -56,11 +61,6 @@ function gitInfo=getGitInfo()
 % authors and should not be interpreted as representing official policies, either expressed
 % or implied, of the copyright holder.
 
-
-% Modifed 2020 by Rob Campbell, UCL, to make it more robust and allow it to be inserted into any project
-%
-% Instructions: place into your project path e.g. put into `myProj/code/+utils/getGitInfo.m`
-% then just call it at the command line: >> myProj/code/+utils/getGitInfo
 
 
 

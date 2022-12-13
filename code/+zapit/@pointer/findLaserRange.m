@@ -1,4 +1,8 @@
 function laserPower = findLaserRange(obj)
+    % function laserPower = zapit.pointer.findLaserRange(obj)
+    %
+    % Maja Skretowska - 2021
+
     ii = 0;
     condition = 1;
     while condition

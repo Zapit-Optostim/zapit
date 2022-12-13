@@ -15,7 +15,8 @@ function varargout = getLaserPosAccuracy(obj, XYdata)
     % Outputs
     % Optional structure containing results.
     %
-    %
+    % 
+    % Maja Skretowska - 2021
     
     %% find centre of laser field after averaging a few frames
 
