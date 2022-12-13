@@ -1,6 +1,11 @@
 function [newpoint,rotMat] = coordsRotation(template, refPoints, points)
     % calculate rotation and displacement in pixel coordinates
     %
+    % function [newpoint,rotMat] = coordsRotation(template, refPoints, points)
+    %
+    % Purpose
+    % Called by zapit.pointer.getAreaCoords.
+    %
     % TODO -- full help text needed
 
 

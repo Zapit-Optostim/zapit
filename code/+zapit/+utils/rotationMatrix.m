@@ -14,7 +14,8 @@ function rotMat = rotationMatrix(theta)
     % cos(theta), -sin(theta)
     % sin(theta), cos(theta)
     %
-    %
+    % Notes
+    % Called by zapit.utils.coordsRotation
 
     rotMat = [cos(theta) -sin(theta); sin(theta) cos(theta)];
 

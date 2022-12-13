@@ -63,7 +63,7 @@ function varargout = getAreaCoordinates(obj)
 
 
     % Move points through all locations to check visually that all is good
-    obj.testCoordsLibray;
+    obj.testCoordsLibrary;
 
     if nargout > 0
         varargout{1} = opaqueArea;

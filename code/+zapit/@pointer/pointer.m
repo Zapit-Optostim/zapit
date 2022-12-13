@@ -54,6 +54,7 @@ classdef pointer < handle
 
         % NI DAQmx
         hTask
+        devName = 'Dev2' % HARD-CODED -- TODO
         AIrange = 10 % +/- this many volts
 
         % Camera and image related
@@ -84,8 +85,7 @@ classdef pointer < handle
             obj.setUpFigure
 
             % TODO - Put connection to DAQ in a method
-            obj.hTask = dabs.ni.daqmx.Task('beamplacer'); % create a task that lives in the plot axes
-            obj.hTask.createAOVoltageChan('Dev2', 0:2, [], -obj.AIrange, obj.AIrange); % # TODO -- hardcoded!
+            obj.createUnclockedTask
             
             
             % TODO -- we should presumbably implement the following again?
@@ -103,7 +103,7 @@ classdef pointer < handle
                 pathToConfig = fname;
             end
             obj.config = zapit.config(pathToConfig);
-        end
+        end % Constructor
         
         
         
@@ -114,7 +114,7 @@ classdef pointer < handle
             delete(obj.cam)
 
             delete(obj.hTask)
-        end
+        end % Destructor
         
         
         function zeroScanners(obj)
@@ -123,7 +123,7 @@ classdef pointer < handle
 
             % TODO - running this does not update the plot
             obj.hTask.writeAnalogData([0,0,0])
-        end
+        end % zeroScanners
         
         
         function varargout = runAffineTransform(obj, OUT)
@@ -143,9 +143,13 @@ classdef pointer < handle
             if nargout>0
                 varargout{1} = tform;
             end
-            
-        end
+        end % runAffineTransform
 
+
+        function createUnclockedTask(obj)
+            obj.hTask = dabs.ni.daqmx.Task('unclocked');
+            obj.hTask.createAOVoltageChan(obj.devName, 0:2, [], -obj.AIrange, obj.AIrange);
+        end % createUnclockedTask
         
         function sendSamples(obj, new_trial)
             % take coordinates of two points[x and y Coords], and exchange laser between
@@ -185,7 +189,7 @@ classdef pointer < handle
 
             % TODO the task is continuing to run, which is wrong. It should play out the finite
             % samples then it stops.
-        end
+        end % sendSamples
         
         
         function createNewTask(obj, taskName)
@@ -268,7 +272,7 @@ classdef pointer < handle
             % stop task and send to pre-generation stage, allowing to write
             % next trial samples without conflicts
             obj.hTask.abort
-        end
+        end % stopInactivation
         
         
         function topUpBuffer(obj)
@@ -277,9 +281,9 @@ classdef pointer < handle
                 disp('Top Up')
                 obj.hTask.writeAnalogData(obj.voltChannel);
             end
-        end
+        end % topUpBuffer
 
-        function testCoordsLibray(obj)
+        function testCoordsLibrary(obj)
             % move laser into each position as a check
             for xx = 1:length(obj.newpoint)
                 for yy = 1:2
@@ -290,7 +294,7 @@ classdef pointer < handle
                     pause(0.25)
                 end
             end
-        end
+        end  % testCoordsLibrary
 
 
         function pointBeamToLocationInImage(obj,~,~)
@@ -317,7 +321,7 @@ classdef pointer < handle
                 xPos, xVolts, yPos, yVolts);
             set(get( obj.hImAx,'Title'),'String',msg)
             
-        end
+        end % pointBeamToLocationInImage
         
         
         
@@ -356,8 +360,7 @@ classdef pointer < handle
             if obj.invertY
                 yVolts= yVolts*-1;
             end
-            
-        end
+        end % pixelToVolt
         
         
         function dispFrame(obj,~,~)
@@ -371,9 +374,9 @@ classdef pointer < handle
             obj.hImLive.CData = tmp;
             drawnow
             obj.cam.flushdata
-        end
-        
+        end % dispFrame
 
 
-    end
-end
+    end % methods
+
+end % classdef
