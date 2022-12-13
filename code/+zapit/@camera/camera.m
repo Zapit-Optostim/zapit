@@ -166,18 +166,18 @@ classdef camera < handle
     %    Type = videosource
     methods
         function exposure = get.exposure(obj)
-            if strcmp(obj.src.Type,'videosource') % TODO: is this the correct thing to reference?
-                exposure = obj.src.Exposure;
-            else
+            if contains(obj.vid.Name,'gentl') % TODO: is this the correct thing to reference?
                 exposure = obj.src.ExposureTime;
+            else
+                exposure = obj.src.Exposure;
             end
         end % get.exposure
 
         function set.exposure(obj, exposure)
-            if strcmp(obj.src.Type,'videosource') % TODO: is this the correct thing to reference?
-                obj.src.Exposure = exposure;
-            else
+            if contains(obj.vid.Name,'gentl') % TODO: is this the correct thing to reference?
                 obj.src.ExposureTime = exposure;
+            else
+                obj.src.Exposure = exposure;
             end
         end % set.exposure
     end % getters and setters

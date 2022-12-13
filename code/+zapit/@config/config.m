@@ -4,6 +4,10 @@ classdef config < handle
     % determine where the laser stim locations are
 
     properties
+
+        configFileName % file name of the loaded config file
+
+        % powerOption -  if 1 send 2 mW, if 2 send 4 mW (mean)
         powerOption % TODO - likely to be changed. This isn't a value in mW right now
         refPoints % Reference points
         template % I think this where we stimulate
@@ -49,6 +53,7 @@ classdef config < handle
                 ind = ind + 1;
             end
             obj.template = template;
+            obj.configFileName = fname;
         end % loadConfig
 
 

@@ -12,36 +12,21 @@ classdef pointer < handle
 
     
     properties
-        
-        % Handles for plot elements
-        hFig
-        hImAx
-        hImLive
-        hLastPoint % plot handle with location of the last clicked point
-        
-        axRange
-        
-        % NI DAQmx
-        hTask
-        AIrange = 10 % +/- this many volts
-        
-        % Camera and image related
-        cam % camera object goes here
-        imSize
-        
+
+        % TODO -- The following properties need to be in a settings structure
         % 0/0 volts on DAQ corresponds to the middle of the image
-        invertX = true;
-        invertY = false;
-        xOffset = 1.8; %TODO -- HARDCODED -- TODO: THIS CAN BE DITCHED LIKELY
-        yOffset = 5; %TODO -- HARDCODED -- TODO: THIS CAN BE DITCHED LIKELY
-        voltsPerPixel = 2.2E-3; %TODO -- HARDCODED
-        
+        invertX = true
+        invertY = true
+        flipXY % TODO -- should add this but only once everything else is working
+        xOffset = 0 %TODO -- HARDCODED -- TODO: THIS CAN BE DITCHED LIKELY
+        yOffset = 0 %TODO -- HARDCODED -- TODO: THIS CAN BE DITCHED LIKELY
+        voltsPerPixel = 2.2E-3 %TODO -- HARDCODED
         micsPix = 19.3 %Measured this %TODO -- HARDCODED
         
+        % Properties related to where we stimulate
         transform
-        template
-        refPoints
-        powerOption
+        config % Object of class zapit.config
+
         
         % behavioural task properties
         coordsLibrary
@@ -53,7 +38,27 @@ classdef pointer < handle
         freqLaser
         numSamplesPerChannel
         sampleRate
-        filename
+    end
+
+
+    properties (Hidden)
+        % Handles for plot elements
+        hFig
+        hImAx
+        hImLive
+        hLastPoint % plot handle with location of the last clicked point
+
+        axRange
+        imSize % Size of the displayed image
+
+        % NI DAQmx
+        hTask
+        AIrange = 10 % +/- this many volts
+
+        % Camera and image related
+        cam % camera object goes here
+
+
     end
     
     
@@ -61,14 +66,16 @@ classdef pointer < handle
         function obj = pointer
             % Constructor
             disp('STARTING BEAMPOINTER')
-            obj.cam = zapit.camera(3); % Hard-coded selection of camera ID
+            obj.cam = zapit.camera(2); % TODO -  Hard-coded selection of camera ID
             
             % Connect to camera
             imSize = obj.cam.vid.ROIPosition;
             obj.imSize = imSize(3:4);
 
-            obj.cam.exposure=-2; % TODO - HARDCODED
+            obj.cam.exposure = 3000; % TODO - HARDCODED
             
+
+            % TODO - put figure creation in a method
             % Make the figure window
             obj.hFig = figure(7824);
             obj.hFig.NumberTitle='off';
@@ -92,7 +99,7 @@ classdef pointer < handle
             
             
             
-            
+            % TODO - Put connection to DAQ in a method
             obj.hTask = dabs.ni.daqmx.Task('beamplacer'); % create a task that lives in the plot axes
             obj.hTask.createAOVoltageChan('Dev2', 0:2, [], -obj.AIrange, obj.AIrange); % # TODO -- hardcoded!
             
@@ -103,17 +110,12 @@ classdef pointer < handle
             
             
             obj.zeroScanners
+
             
             % load configuration files
-            % TODO -- refactor to model/view
-            areasFile = input('what is the config file to use for mapping inactivation areas?', 's');
-            load(areasFile);
-            temp = split(areasFile, '\');
-            filename = split(temp{end}, '.');
-            obj.filename = filename(1);
-            obj.template = template;
-            obj.refPoints = refPoints;
-            obj.powerOption = powerOption;
+            [fname,fpath] = uigetfile('*.yaml','Pick a config file');
+            pathToConfig = fullfile(fpath,fname);
+            obj.config = zapit.config(pathToConfig);
         end
         
         
@@ -131,12 +133,14 @@ classdef pointer < handle
         function zeroScanners(obj)
             % Zero the scanners and also turn off the laser
             % TODO - rename method or create a different method to zero laser
+
+            % TODO - running this does not update the plot
             obj.hTask.writeAnalogData([0,0,0])
         end
         
         
         
-        function OUT=logPoints(obj, nPoints)
+        function OUT = logPoints(obj, nPoints)
             % Log precision of beam pointing: conduct an affine transform to calibrate camera and beam
             %
             % Purpose
@@ -158,17 +162,16 @@ classdef pointer < handle
                 nPoints = 9;
             end
 
-            if isempty(varargin)
+            if false
                 % if no varargin given, use standard coordinates
                 % TODO -- what are these hardcoded numbers??
-                nPoints = 9;
                 r = [800 800 800 1000 1000 1000 1200 1200 1200; ...
                     400 600 800  400  600  800  400  600  800]';
                 
                 % change pixel coords into voltage
                 [rVolts(:,1), rVolts(:,2)] = obj.pixelToVolt(r(:,1), r(:,2));
                 
-                for ii=1:nPoints
+                for ii=1:size(r,2)
                     % feed volts into scan mirrors, wait for precise image
                     % without smudges and take position in pixels
                     obj.hTask.writeAnalogData([rVolts(ii,:), 3.3]);
@@ -187,6 +190,8 @@ classdef pointer < handle
             
             function v = recordPoints(hImAx, hImFig, numPoints)
                 % TODO - refactor
+
+                fprintf('Click on %d points whilst pressing ALT\n', nPoints)
                 for nn = 1:numPoints
                     obj.hTask.writeAnalogData([0 0 0])
                     title(hImAx, string(nn));
@@ -196,6 +201,7 @@ classdef pointer < handle
                         points(nn,:) = hImAx.CurrentPoint([1 3]);
                         waitforbuttonpress;
                     end
+                    fprintf('%d points clicked\n',nn)
                     v(nn) = obj.getLaserPosAccuracy(points(nn,:));
                 end
             end
@@ -244,8 +250,8 @@ classdef pointer < handle
             obj.cam.src.Gain = 25;
             
             % record points in the screen
-            refPoints = obj.refPoints;                        % coordinate references on the mouse skull (bregma and 0,-2 marked with pen)
-            template = obj.template;
+            refPoints = obj.config.refPoints;                        % coordinate references on the mouse skull (bregma and 0,-2 marked with pen)
+            template = obj.config.template;
             hold(obj.hImAx, 'on');
             %             plot(obj.hImAx, refPoints(:,1), refPoints(:,2));
             realPoints = recordPoints(obj.hImAx, obj.hFig); % output columns are x and y coords
@@ -264,6 +270,8 @@ classdef pointer < handle
             %% save coords into object and show in the camera image
             coordsLibrary = [xVolt' yVolt'];
             coordsLibrary(:,:,2) = [xVolt2' yVolt2'];
+
+            coordsLibrary
             obj.coordsLibrary = coordsLibrary;
             obj.newpoint = newpoint;
             
@@ -629,7 +637,7 @@ classdef pointer < handle
         
         
         
-        function varargout=getLaserPosAccuracy(obj, varargin)
+        function out = getLaserPosAccuracy(obj, XYdata)
             % Find the coords of the beam location and compare to
             % the desired location. Returns results to screen if no
             % outputs. Otherwise returns a structure and does not
@@ -638,7 +646,7 @@ classdef pointer < handle
             %% find centre of laser field by averaging over three frames
             % Get images
             im1=obj.hImLive.CData;
-            pause(0.01);
+            pause(0.01); % TODO -- There is a better way of doing this!
             im2 = obj.hImLive.CData;
             pause(0.01);
             im3 = obj.hImLive.CData;
@@ -649,7 +657,7 @@ classdef pointer < handle
             BW = BWmean>(max(BWmean(:))*0.7);
             BWc = regionprops(bwareaopen(BW,50),'Centroid');
             
-            
+            out = [];
             % Bail out if we find no or multiple points
             if length(BWc) ~= 1
                 fprintf('Expected to find one point. Found %d points\n', length(BWc))
@@ -666,17 +674,16 @@ classdef pointer < handle
                     abs(obj.hLastPoint.XData-BWc.Centroid(1)) * obj.micsPix, ...
                     abs(obj.hLastPoint.YData-BWc.Centroid(2)) * obj.micsPix)
             elseif nargout>0
-                if nargin==1
+                if nargin<2
                     out.targetPixelCoords = [obj.hLastPoint.XData, obj.hLastPoint.YData];
                 else
-                    XData = varargin{1}(1);
-                    YData = varargin{1}(2);
-                    out.targetPixelCoords = [XData, YData];
+                    out.targetPixelCoords = XYdata;
                 end
+
+                % Return
                 out.actualPixelCoords = BWc.Centroid;
                 out.error = out.targetPixelCoords-out.actualPixelCoords;
                 out.absErrorMicrons = abs(out.error) * obj.micsPix;
-                varargout{1} = out;
             end
             
         end
