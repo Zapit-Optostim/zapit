@@ -2,16 +2,24 @@ classdef camera < handle
     % zapit.camera
     %
     % Purpose
-    % This class acts as an interface between the diffusersensor class and the MATLAB 
-    % image acquisition toolbox. 
-    % TODO - Currently this class does nothing very interesting, but in future it will 
-    %        ensure there is a consistent interface for handling things like camera exposure.
+    % This class acts as an interface between the zapit.pointer class and the MATLAB
+    % image acquisition toolbox. This is necessary to provide consistent behavior across
+    % different camera drivers.
     %
+
 
     properties
         vid   % Holds the camera object
         src   % Holds the camera-specific properties
     end
+
+
+    % The following properties are used for getters and setters to interface
+    % with camera properties that could change between drivers.
+    properties
+        exposure
+    end
+
 
 
 
@@ -100,33 +108,37 @@ classdef camera < handle
                 delete(obj.vid)
             end
         end % close destructor
+    end
 
+
+    % The following methods are involved in starting and stopping the video feed
+    methods
 
         function startVideo(obj)
             if isa(obj.vid,'videoinput')
                 start(obj.vid)
                 trigger(obj.vid)
             end
-        end
+        end % startVideo
 
         function stopVideo(obj)
             if isa(obj.vid,'videoinput')
                 stop(obj.vid)
                 flushdata(obj.vid)
             end
-        end
+        end % stopVideo
 
         function flushdata(obj)
             if isa(obj.vid,'videoinput')
                 flushdata(obj.vid)
             end
-        end
+        end % flushdata
 
         function lastFrame=getLastFrame(obj)
             if isa(obj.vid,'videoinput')
                 lastFrame=squeeze(peekdata(obj.vid,1));
             end
-        end
+        end % getLastFrame
 
         function vidRunning=isrunning(obj)
             if isa(obj.vid,'videoinput')
@@ -134,7 +146,7 @@ classdef camera < handle
             else
                 vidRunning = false;                
             end
-        end
+        end % isrunning
 
         function nFrm=framesAcquired(obj)
             if isa(obj.vid,'videoinput')
@@ -142,9 +154,33 @@ classdef camera < handle
             else
                 nFrm=0;
             end
-        end
+        end % framesAcquired
 
-    end
+    end % video feed methods
 
-end
+
+    % The following methods are getters and setters for camera properties
+    %
+    % With the generic MATLAB package:
+    %  SourceName = input1
+    %    Type = videosource
+    methods
+        function exposure = get.exposure(obj)
+            if strcmp(obj.src.Type,'videosource') % TODO: is this the correct thing to reference?
+                exposure = obj.src.Exposure;
+            else
+                exposure = obj.src.ExposureTime;
+            end
+        end % get.exposure
+
+        function set.exposure(obj, exposure)
+            if strcmp(obj.src.Type,'videosource') % TODO: is this the correct thing to reference?
+                obj.src.Exposure = exposure;
+            else
+                obj.src.ExposureTime = exposure;
+            end
+        end % set.exposure
+    end % getters and setters
+
+end % pointer
 
