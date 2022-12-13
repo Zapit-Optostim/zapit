@@ -5,7 +5,9 @@ function laserPower = findLaserRange(obj)
 
     ii = 0;
     condition = 1;
+
     while condition
+
         try
             ii = ii + 1;
             % press left (without waiting for right)
@@ -19,12 +21,16 @@ function laserPower = findLaserRange(obj)
                 obj.hTask.stop;
             else
                 marker_color = [1 (1-(laserPower(3,ii)/3)) 1];
-                hold on;
+                hold on
                 plot(obj.hImAx, laserPower(1,ii), laserPower(2, ii), 'o', ...
-                    'MarkerEdgeColor', marker_color, 'MarkerFaceColor', marker_color);
-            end
+                    'MarkerEdgeColor', marker_color, ...
+                    'MarkerFaceColor', marker_color);
+                hold off
+            end % if laserPower...
         catch
             return
-        end
-    end
-end
+        end % try
+
+    end % while condition
+
+end % laserPower
