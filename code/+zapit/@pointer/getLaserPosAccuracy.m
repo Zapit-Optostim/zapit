@@ -1,4 +1,9 @@
-function out = getLaserPosAccuracy(obj, XYdata)
+function varargout = getLaserPosAccuracy(obj, XYdata)
+    % Quantify accuracy of beam pointing
+    %
+    % function out = getLaserPosAccuracy(obj, XYdata)
+    %
+    %
     % Find the coords of the beam location and compare to
     % the desired location. Returns results to screen if no
     % outputs. Otherwise returns a structure and does not
@@ -30,7 +35,6 @@ function out = getLaserPosAccuracy(obj, XYdata)
     BW = BWmean>(max(BWmean(:))*0.7);
     BWc = regionprops(bwareaopen(BW,50),'Centroid');
     
-    out = [];
     % Bail out if we find no or multiple points
     if length(BWc) ~= 1
         fprintf('Expected to find one point. Found %d points\n', length(BWc))
@@ -57,6 +61,8 @@ function out = getLaserPosAccuracy(obj, XYdata)
         out.actualPixelCoords = BWc.Centroid;
         out.error = out.targetPixelCoords-out.actualPixelCoords;
         out.absErrorMicrons = abs(out.error) * obj.micsPix;
+
+        varargout{1} = out;
     end
     
 end

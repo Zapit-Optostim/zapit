@@ -1,4 +1,9 @@
 function pointBeamToLocationInImage(obj,~,~)
+    % Obtain mouse cursor position and point beam here
+    % 
+    % function pointBeamToLocationInImage(obj,~,~)
+    % 
+    % Purpose
     % This callback function obtains the mouse position in the
     % image and uses this to point the scanners to this location.
     
@@ -15,9 +20,11 @@ function pointBeamToLocationInImage(obj,~,~)
     obj.hLastPoint.XData = xPos;
     obj.hLastPoint.YData = yPos;
     
-    %SEND TO SCANNERS:
+    %SEND TO SCANNERS: (TODO: use new API)
     obj.hTask.writeAnalogData([xVolts, yVolts, 3]); % send beam to this location
-    
+
+
+    % Update figure title    
     msg = sprintf('X=%0.2f (%0.1f V) Y=%0.2f (%0.1f V)',...
         xPos, xVolts, yPos, yVolts);
     set(get( obj.hImAx,'Title'),'String',msg)
