@@ -18,8 +18,6 @@ classdef pointer < handle
         invertX = true
         invertY = true
         flipXY % TODO -- should add this but only once everything else is working
-        xOffset = 0 %TODO -- HARDCODED -- TODO: THIS CAN BE DITCHED LIKELY
-        yOffset = 0 %TODO -- HARDCODED -- TODO: THIS CAN BE DITCHED LIKELY
         voltsPerPixel = 2.2E-3 %TODO -- HARDCODED
         micsPix = 19.3 %Measured this %TODO -- HARDCODED
         
@@ -140,7 +138,7 @@ classdef pointer < handle
         
         
         
-        function OUT = logPoints(obj, nPoints)
+        function OUT = logPoints(obj, nPoints, doPointGrid)
             % Log precision of beam pointing: conduct an affine transform to calibrate camera and beam
             %
             % Purpose
@@ -150,8 +148,8 @@ classdef pointer < handle
             % required to point the beam at that location.
             %
             % Inputs (optional):
-            % nPoints - how many points to record. 7 by default. If empty, a set of hard-coded
-            %          coords are scanned (TODO).
+            % nPoints - how many points to record. If empty or less than three, a set of hard-coded
+            % coords are scanned.
             %
             % output: target and actual pixel coordinates
             
@@ -159,63 +157,95 @@ classdef pointer < handle
             obj.cam.src.Gain = 1;
             
             if nargin<2
-                nPoints = 9;
+                nPoints = [];
             end
 
-            if false
+
+            % Wipe the previous transform
+            obj.transform = [];
+
+            if isempty(nPoints) || nPoints<3
+                doPointGrid = true;
+            else
+                doPointGrid = false;
+            end
+
+            if doPointGrid
+
+                % TODO -- this works but I don't know why and I don't know
+                % why the clicky version fails.
                 % if no varargin given, use standard coordinates
                 % TODO -- what are these hardcoded numbers??
-                r = [800 800 800 1000 1000 1000 1200 1200 1200; ...
-                    400 600 800  400  600  800  400  600  800]';
+
+                % Unique row and column values to sample
+                pixel_rows = [550:200:1300]+300; % TODO -- why do we nee dto add the constant?
+                                                 % Beam is not going to the requested location
+                pixel_cols = [250:125:750];
+
+                % Calculate a set product to go to all combinations
+                [R,C] = meshgrid(pixel_rows,pixel_cols);
+
+                R = R(:);
+                C = C(:);
+
+                % change pixel coords into voltage %TODO -- R and C correct?
+                [rVolts(:,1), rVolts(:,2)] = obj.pixelToVolt(R,C);
                 
-                % change pixel coords into voltage
-                [rVolts(:,1), rVolts(:,2)] = obj.pixelToVolt(r(:,1), r(:,2));
-                
-                for ii=1:size(r,2)
+                for ii=1:length(R)
                     % feed volts into scan mirrors, wait for precise image
                     % without smudges and take position in pixels
                     obj.hTask.writeAnalogData([rVolts(ii,:), 3.3]);
-                    pause(1)
-                    v(ii)=obj.getLaserPosAccuracy([r(ii,1), r(ii,2)]);
+                    pause(0.125)
+                    v(ii)=obj.getLaserPosAccuracy([R(ii), C(ii)]);
+                    drawnow
                 end
+
             else
+                % TODO -- DOES NOT WORK RIGHT NOW FOR SOME REASON
+
                 % same procedure as above, but using points clicked by user
-                v = recordPoints(obj.hImAx, obj.hFig, nPoints);
+                fprintf('Click on %d points whilst pressing ALT\n', nPoints)
+                ind = 1;
+                while ind <= nPoints
+
+                    obj.hTask.writeAnalogData([0 0 0])
+                    title(obj.hImAx, string(ind));
+                    figure(obj.hFig)
+
+                    points = obj.hImAx.CurrentPoint([1 3]);
+                    waitforbuttonpress;
+                    pause(0.125)
+                    tmp = obj.getLaserPosAccuracy(points);
+                    if ~isempty(tmp)
+                        v(ind) = tmp;
+                        fprintf('%d points clicked\n', ind)
+                        ind = ind +1;
+                    end
+                end
+
             end
             
+
             % save recorded outcoming (intended) and incoming (calculated)
             % pixel coordinates to calculate the offset and transformation
             OUT.targetPixelCoords = cat(1,v(:).targetPixelCoords);
             OUT.actualPixelCoords = cat(1,v(:).actualPixelCoords);
-            
-            function v = recordPoints(hImAx, hImFig, numPoints)
-                % TODO - refactor
 
-                fprintf('Click on %d points whilst pressing ALT\n', nPoints)
-                for nn = 1:numPoints
-                    obj.hTask.writeAnalogData([0 0 0])
-                    title(hImAx, string(nn));
-                    figure(hImFig)
-                    waitforbuttonpress;
-                    while hImFig.SelectionType ~= "alt"
-                        points(nn,:) = hImAx.CurrentPoint([1 3]);
-                        waitforbuttonpress;
-                    end
-                    fprintf('%d points clicked\n',nn)
-                    v(nn) = obj.getLaserPosAccuracy(points(nn,:));
-                end
-            end
-            
+
             % change the illumination of the camrea image to high value
             % again
-            obj.cam.src.Gain = 25; %TODO: likely we should be returning this to the original value
-            [tform, obj] = runAffineTransform(obj, OUT);
+            obj.cam.exposure = 3000; %TODO: likely we should be returning this to the original value
+
+            disp('running affine transform')
+            obj.runAffineTransform(OUT);
             obj.hTask.writeAnalogData([0 0 0]); % Zero beam and turn off laser
+
+            % TODO: now demonstrate that it worked
         end
         
       
         
-        function [tform, obj] = runAffineTransform(obj, OUT)
+        function varargout = runAffineTransform(obj, OUT)
             % TODO - refactor
             % method running a transformation of x-y beam position into pixels
             % in camera
@@ -227,14 +257,11 @@ classdef pointer < handle
             % runs affine transformation
             tform = fitgeotrans(OUT.targetPixelCoords,OUT.actualPixelCoords,'similarity');
             
-            if ~isempty(obj.transform)
-                % check if there are existing transformations already
-                numTform = size(obj.transform)+1;
-                obj.transform(numTform) = tform;
-            else
-                obj.transform = tform;
+            obj.transform = tform;
+
+            if nargout>0
+                varargout{1} = tform;
             end
-            
             
         end
         
@@ -643,17 +670,29 @@ classdef pointer < handle
             % outputs. Otherwise returns a structure and does not
             % print to screen.
             
-            %% find centre of laser field by averaging over three frames
+            %% find centre of laser field after averaging a few frames
+
             % Get images
-            im1=obj.hImLive.CData;
-            pause(0.01); % TODO -- There is a better way of doing this!
-            im2 = obj.hImLive.CData;
-            pause(0.01);
-            im3 = obj.hImLive.CData;
-            
-            % Average and find the centre
-            BW1=im1>(max(im1(:))*0.5); BW2=im2>(max(im2(:))*0.5); BW3=im3>(max(im3(:))*0.5);
-            BWmean = (BW1+BW2+BW3)/3;
+            nFrames = 5;
+            tFrames = obj.hImLive.CData;
+            lastFrameAcquired = obj.cam.vid.FramesAcquired;
+
+            while size(tFrames,3) < nFrames
+                currentFramesAcquired = obj.cam.vid.FramesAcquired;
+                if currentFramesAcquired > lastFrameAcquired
+                    tFrames(:,:,end+1) = obj.hImLive.CData;
+                    lastFrameAcquired = currentFramesAcquired;
+                end
+            end
+
+            % Binarize
+            for ii = 1:nFrames
+                tFrame = tFrames(:,:,ii);
+                tFrames(:,:,ii) = tFrames(:,:,ii) > (max(tFrame(:))*0.5) ;
+            end
+
+            BWmean = mean(tFrames,3);
+
             BW = BWmean>(max(BWmean(:))*0.7);
             BWc = regionprops(bwareaopen(BW,50),'Centroid');
             
@@ -718,10 +757,10 @@ classdef pointer < handle
         
         
         
-        function [xVolts, yVolts] = pixelToVolt(obj, xPos, yPos)
+        function [xVolts, yVolts] = pixelToVolt(obj, pixelColumn, pixelRow)
             % Converts pixel position to voltage value to send to scanners
             %
-            % function [xVolts, yVolts] = pixelToVolt(obj, xPos, yPos)
+            % function [xVolts, yVolts] = pixelToVolt(obj, pixelColumn, pixelRow)
             %
             % Purpose
             % Converts pixel coordinates to volt values for scanner mirrors
@@ -733,28 +772,27 @@ classdef pointer < handle
             % getAreaCoordinates and logPoints
             %
             %
+            % Inputs
+            % Pixel row and column
+
 
             if ~isempty(obj.transform)
-                for tformMat = 1:length(obj.transform)
-                    [xPos, yPos] = transformPointsInverse(obj.transform(tformMat), xPos, yPos);
-                end
+                % TODO -- WHERE THE HELL IS transformPointsInverse???
+                [pixelColumn, pixelRow] = transformPointsInverse(obj.transform, pixelColumn, pixelRow);
             end
             
             
-            xVolts = (xPos - (obj.imSize(1)/2)) * obj.voltsPerPixel;
-            yVolts = (yPos - (obj.imSize(2)/2)) * obj.voltsPerPixel;
-            
+            xVolts = (pixelColumn - (obj.imSize(1)/2)) * obj.voltsPerPixel;
+            yVolts = (pixelRow    - (obj.imSize(2)/2)) * obj.voltsPerPixel;
             
             if obj.invertX
                 xVolts = xVolts*-1;
             end
+
             if obj.invertY
                 yVolts= yVolts*-1;
             end
             
-            % TODO -- Can we get away without these offsets
-            xVolts = xVolts + obj.xOffset;
-            yVolts = yVolts + obj.yOffset;
         end
         
         
