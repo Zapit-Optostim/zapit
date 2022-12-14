@@ -4,6 +4,7 @@ function settings = default_settings
     % settings = default_settings
 
     settings.NI.device_ID = 'Dev1';
+    settings.NI.sampleRate = 10000;
 
     settings.camera.connection_index = -1;
     settings.camera.default_exposure = 0;

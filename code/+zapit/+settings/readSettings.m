@@ -20,7 +20,8 @@ function [settings,settingsNonHardCoded] = readSettings
 
 
 
-    settingsFile = zapit.settings.findSettingsFile;
+    [settingsFile,backupSetingsDir] = zapit.settings.findSettingsFile;
+
     settings = zapit.yaml.ReadYaml(settingsFile);
 
     %Check if the loaded settings are the same as the default settings
@@ -114,7 +115,8 @@ function [settings,settingsNonHardCoded] = readSettings
     % a backup copy of the original file.
     if ~allValid || addedDefaultValue
        % Copy file
-       backupFname = fullfile(backupSetingsDir, [datestr(now, 'yyyy_mm_dd__HH_MM_SS_'),settingsFname]);
+       backupFname = fullfile(backupSetingsDir, ...
+            [datestr(now, 'yyyy_mm_dd__HH_MM_SS_'),zapit.settings.returnZapitSettingsFileName]);
        fprintf('Making backup of settings file at %s\n', backupFname)
        copyfile(settingsFile,backupFname)
 
