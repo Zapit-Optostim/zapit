@@ -27,9 +27,10 @@ classdef (Abstract) NI < zapit.hardware.DAQ.DAQ
 
     properties 
         % The following are default parameters for the class (see above)
-        deviceName = 'Dev1'
-        AOrange = 10
+        device_ID = 'Dev1'
         sampleRate = 10E3
+        AOrange = 10
+        AOchans = 0:4
         triggerChannel = 'PFI0'
     end %close public properties
 
@@ -41,42 +42,44 @@ classdef (Abstract) NI < zapit.hardware.DAQ.DAQ
 
     methods
         function obj = NI(varargin)
+            obj = obj@zapit.hardware.DAQ.DAQ(varargin{:});
 
-            % TODO -- READ IN SETTINGS FROM YAML. Placeholder for now
-            settings.DAQ.deviceName = 'Dev2'; %TODO
-            settings.DAQ.AOrange = 10; %TODO
-            settings.DAQ.sampleRate = 50000;
-            settings.DAQ.triggerChannel = 'PFI0'
+            % Settings are read from YAML in zapit.hardware.DAQ.DAQ
 
             % If there are valid settings in a parameter file, then we replace the hard-coded values with these
-            if isfield(settings.DAQ,'deviceName')
-                obj.deviceName = settings.DAQ.deviceName;
+            if isfield(obj.settings.NI,'device_ID')
+                obj.device_ID = obj.settings.NI.device_ID;
             end
-            if isfield(settings.DAQ,'AOrange')
-                obj.AOrange = settings.DAQ.AOrange;
+            if isfield(obj.settings.NI,'sampleRate')
+                obj.sampleRate = obj.settings.NI.sampleRate;
             end
-            if isfield(settings.DAQ,'sampleRate')
-                obj.sampleRate = settings.DAQ.sampleRate;
+            if isfield(obj.settings.NI,'AOrange')
+                obj.AOrange = obj.settings.NI.AOrange;
             end
-            if isfield(settings.DAQ,'triggerChannel')
-                obj.triggerChannel = settings.DAQ.triggerChannel;
+            if isfield(obj.settings.NI,'AOchans')
+                obj.AOchans = obj.settings.NI.AOchans;
+            end
+            if isfield(obj.settings.NI,'triggerChannel')
+                obj.triggerChannel = obj.settings.NI.triggerChannel;
             end
 
             % Now we run the parameter parser. We use as defaults the properties above
             params = inputParser;
             params.CaseSensitive = false;
             
-            params.addParameter('deviceName', obj.deviceName, @(x) ischar(x));
-            params.addParameter('AOrange', obj.AOrange, @(x) isnumeric(x));
+            params.addParameter('device_ID', obj.device_ID, @(x) ischar(x));
             params.addParameter('sampleRate', obj.sampleRate, @(x) isnumeric(x));
+            params.addParameter('AOrange', obj.AOrange, @(x) isnumeric(x));
+            params.addParameter('AOchans', obj.AOchans, @(x) isnumeric(x));
             params.addParameter('triggerChannel', obj.triggerChannel, @(x) ischar(x));
             params.parse(varargin{:});
 
             % Then replace the properties with the results of the parser. This will
             % mean that anything specified as an input arg will take precedence
-            obj.deviceName = params.Results.deviceName;
-            obj.AOrange = params.Results.AOrange;
+            obj.device_ID= params.Results.device_ID;
             obj.sampleRate = params.Results.sampleRate;
+            obj.AOrange = params.Results.AOrange;
+            obj.AOchans = params.Results.AOchans;
             obj.triggerChannel = params.Results.triggerChannel;
             %(seems circular, but works nicely)
 
@@ -84,7 +87,17 @@ classdef (Abstract) NI < zapit.hardware.DAQ.DAQ
     end
 
     methods (Abstract)
-        connectUnlocked(obj)
+        % TODO -- document
+        connectUnclocked(obj)
+        % connectUnclocked(obj)
+        %
+        % Create a task that is unclocked and can be used or sample setup.
+        % TODO -- more docs
+
+        stopAndDeleteTask(obj)
+        % stopAndDeleteTask(obj)
+        %
+        % Stop the task and then delete it, which will run DAQmxClearTask
     end
 
 

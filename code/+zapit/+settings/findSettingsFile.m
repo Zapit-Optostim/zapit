@@ -38,7 +38,7 @@ function varargout = findSettingsFile
 
 
     settingsDirs = zapit.settings.settingsLocation; % Potential loctions for the settings file
-    settingsFname = zapit.settings.returnZapitSettingFileName; % The name of the settings file
+    settingsFname = zapit.settings.returnZapitSettingsFileName; % The name of the settings file
 
 
     % Look for a the settings file

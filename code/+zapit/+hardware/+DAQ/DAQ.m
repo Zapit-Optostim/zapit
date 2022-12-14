@@ -13,14 +13,12 @@ classdef (Abstract) DAQ < handle
 
     properties 
 
-        hC  % A reference to an object that provides access to the DAQ's API.
-
-        deviceID % A string or number defining the name of the device or index for connecting to it 
-                 % e.g. the deviceID might be an NI DAQ's hardware name.
+        hC  % A reference to an object that provides access to the DAQ's API
 
     end %close public properties
 
     properties (Hidden)
+        settings % Settings read from file
         parent  %A reference of the parent object (likely zapit.pointer) to which this component is attached
     end %close hidden properties
 
@@ -33,6 +31,11 @@ classdef (Abstract) DAQ < handle
     end %close GUI-related properties
 
 
+    methods
+        function obj = DAQ()
+            obj.settings = zapit.settings.readSettings;
+        end % Constructor
+    end
 
     methods (Abstract)
         success = connect(obj)

@@ -28,9 +28,12 @@ function [settings,settingsNonHardCoded] = readSettings
     DEFAULT_SETTINGS = default_settings;
 
     if isequal(settings,DEFAULT_SETTINGS)
-        fprintf('\n\n *** The settings file at %s has never been edited\n *** Press RETURN then edit the file for your system.\n', settingsFile)
+        fprintf(['\n\n *** The settings file at %s has never been edited\n ', ...
+            '*** Press RETURN then edit the file for your system.\n'], settingsFile)
         fprintf(' *** For help editing the file see: https://github.com/BaselLaserMouse/zapit\n\n')
+
         pause
+
         edit(settingsFile)
         fprintf('\n\n *** Once you have finished editing the file, save it and press RETURN\n')
 
@@ -68,33 +71,43 @@ function [settings,settingsNonHardCoded] = readSettings
 
     allValid=true;
 
+    % TODO -- the following are not up to date
+
     if ~ischar(settings.NI.device_ID)
         fprintf('NI.device_ID should be a string. Setting it to "%s"\n', DEFAULT_SETTINGS.SYSTEM.ID)
         settings.NI.device_ID = DEFAULT_SETTINGS.SNI.device_ID;
         allValid=false;
     end
 
+    if iscell(settings.NI.AOchans)
+        settings.NI.AOchans = cell2mat(settings.NI.AOchans);
+    end
+
 
     if ~isnumeric(settings.camera.connection_index)
-        fprintf('camera.connection_index should be a number. Setting it to %d \n', DEFAULT_SETTINGS.camera.connection_index)
+        fprintf('camera.connection_index should be a number. Setting it to %d \n', ...
+            DEFAULT_SETTINGS.camera.connection_index)
         settings.camera.connection_index = DEFAULT_SETTINGS.camera.connection_index;
         allValid=false;
     elseif settings.camera.connection_index<=0
-        fprintf('Scamera.connection_index should be >0. Setting it to %d \n',DEFAULT_SETTINGS.camera.connection_index)
+        fprintf('Scamera.connection_index should be >0. Setting it to %d \n', ...
+            DEFAULT_SETTINGS.camera.connection_index)
         settings.camera.connection_index = DEFAULT_SETTINGS.camera.connection_index;
         allValid=false;
     end
 
 
     if ~isnumeric(settings.camera.default_exposure)
-        fprintf('camera.default_exposure should be a number. Setting it to %d \n', DEFAULT_SETTINGS.camera.default_exposure)
+        fprintf('camera.default_exposure should be a number. Setting it to %d \n', ...
+            DEFAULT_SETTINGS.camera.default_exposure)
         settings.camera.default_exposure = DEFAULT_SETTINGS.camera.default_exposure;
         allValid=false;
     end
 
 
     if ~isnumeric(settings.camera.beam_calib_exposure)
-        fprintf('camera.beam_calib_exposure should be a number. Setting it to %d \n', DEFAULT_SETTINGS.camera.beam_calib_exposure)
+        fprintf('camera.beam_calib_exposure should be a number. Setting it to %d \n', ...
+            DEFAULT_SETTINGS.camera.beam_calib_exposure)
         settings.camera.beam_calib_exposure = DEFAULT_SETTINGS.camera.beam_calib_exposure;
         allValid=false;
     end

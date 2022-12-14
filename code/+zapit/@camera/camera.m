@@ -110,7 +110,7 @@ classdef camera < handle
                 delete(obj.vid)
             end
         end % close destructor
-    end
+    end % methods
 
 
     % The following methods are involved in starting and stopping the video feed
