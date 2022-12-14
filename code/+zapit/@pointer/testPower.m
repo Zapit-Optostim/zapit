@@ -20,7 +20,7 @@ function laserPower = testPower(obj)
         figure(obj.hFig);
         Point2 = obj.hImAx.CurrentPoint([1 3])';
         waitforbuttonpress;
-    end
+    end % while
     
     title(obj.hImAx, 'ok, recorded');
     
@@ -47,7 +47,7 @@ function laserPower = testPower(obj)
             plot(obj.hImAx, laserPower(1,ii), laserPower(2, ii), 'o', ...
                 'MarkerEdgeColor', marker_color, 'MarkerFaceColor', marker_color);
         end
-    end
+    end % while
     
     
     saveOption = input('save?');
@@ -127,8 +127,10 @@ function laserPower = testPower(obj)
             lightChnl([edgeSamples,edgeSamples(1:end-1)+1])= 0;% allow 2 samples around halfcycle change to be 0 (in case scanners are not in the right spot
             
             
-        end
-    end
+        end % makeSamples
+    end % startTesting
+
+
     function createTestTask(obj)
         devName = 'Dev2';
         taskName = 'testPower';
@@ -181,6 +183,6 @@ function laserPower = testPower(obj)
                 fprintf('this task is not available for cleanup\n')
             end
         end
-    end
+    end % createTestTask
     
-end
+end % testPower

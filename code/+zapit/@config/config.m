@@ -13,7 +13,7 @@ classdef config < handle
         powerOption % TODO - likely to be changed. This isn't a value in mW right now
         refPoints % Reference points
         template % I think this where we stimulate
-    end
+    end % properties
 
     methods
         function obj = config(fname)

@@ -43,7 +43,7 @@ function varargout = getAreaCoordinates(obj)
             newpoint(:,end,2) =obj.hImAx.CurrentPoint([1 3])';
             waitforbuttonpress;
         end
-    end
+    end % if opaqueArea
 
 
     % translate obtained points into volts
@@ -72,5 +72,5 @@ function varargout = getAreaCoordinates(obj)
         varargout{1} = opaqueArea;
     end
 
-end
+end % getAreaCoordinates
 

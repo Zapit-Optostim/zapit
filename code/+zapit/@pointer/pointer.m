@@ -37,7 +37,7 @@ classdef pointer < handle
         freqLaser % TODO - ??
         numSamplesPerChannel % TODO - ??
         sampleRate % TODO - ??
-    end
+    end % properties
 
 
     properties (Hidden)
@@ -62,7 +62,7 @@ classdef pointer < handle
         cam % camera object goes here
 
 
-    end
+    end % hidden properties
     
     
     methods

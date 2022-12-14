@@ -91,7 +91,7 @@ function varargout = logPoints(obj, nPoints, doPointGrid)
             end
         end
 
-    end
+    end % if doPointGrid
 
 
     % save recorded output (intended) and incoming (calculated)
@@ -112,4 +112,4 @@ function varargout = logPoints(obj, nPoints, doPointGrid)
     if nargout>0
         varargout{1} = OUT;
     end
-end
+end % logPoints

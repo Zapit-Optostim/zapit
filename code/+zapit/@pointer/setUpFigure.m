@@ -27,4 +27,4 @@ function setUpFigure(obj)
     % Call the class destructor when figure is closed. This ensures all
     % the hardware tasks are stopped.
     obj.hFig.CloseRequestFcn = @obj.delete;
-end
+end % setUpFigure
