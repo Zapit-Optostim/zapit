@@ -18,8 +18,6 @@ function varargout = vidrio_unclocked(vNI)
     % Rob Campbell - SWC 2022
 
 
-
-
     if nargin<1
         vNI = zapit.hardware.DAQ.NI.vidriowrapper;
     end
@@ -39,6 +37,7 @@ function varargout = vidrio_unclocked(vNI)
     end
 
     vNI.setLaserPowerControlVoltage(0)
+
 
     %---------------------------------------------------------------------------------------------
     % Change scanner values

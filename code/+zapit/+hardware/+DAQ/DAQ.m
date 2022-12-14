@@ -55,7 +55,10 @@ classdef (Abstract) DAQ < handle
 
         setLaserPowerControlVoltage(obj,laserVoltage)
 
+        start(obj)
 
+        stop(obj)
+        % Start task
 
     end %close abstract methods
 

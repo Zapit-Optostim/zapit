@@ -29,8 +29,27 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
         end % connect
 
 
+        function start(obj)
+            % Definition of abstract class declared in zapit.hardware.DAQ
+            if isempty(obj.hC) || ~isvalid(obj.hC)
+                return
+            end
+            obj.hC.start
+        end
+
+
+        function stop(obj)
+            % Definition of abstract class declared in zapit.hardware.DAQ
+            if isempty(obj.hC) || ~isvalid(obj.hC)
+                return
+            end
+            obj.hC.stop
+        end
+
+
         function stopAndDeleteTask(obj)
-            if isempty(obj.hC)
+            % Definition of abstract class declared in zapit.hardware.DAQ.NI
+            if isempty(obj.hC) || ~isvalid(obj.hC)
                 return
             end
             obj.hC.stop;    % Calls DAQmxStopTask
@@ -58,14 +77,26 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
         end % connectUnclocked
 
 
-        function connectClocked(obj, numSamplesPerChannel)
+        function connectClocked(obj, numSamplesPerChannel, makeTriggerable, verbose)
 
-            if nargin<2
+            if nargin<2 || isempty(numSamplesPerChannel)
                 numSamplesPerChannel = 1000;   % HOW TO DO THIS? CAN WE DO LATER? TODO
             end
 
+            if nargin<3 || isempty(makeTriggerable)
+                makeTriggerable = false;
+            end
+
+            if nargin<4
+                verbose = false;
+            end
+
+
             obj.stopAndDeleteTask
 
+            if verbose
+                fprintf('Creating clocked task on %s\n', obj.device_ID)
+            end
             
             %% Create the inactivation task
             obj.hC = dabs.ni.daqmx.Task('clocked');
@@ -87,7 +118,10 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
             obj.hC.set('writeRelativeTo','DAQmx_Val_FirstSample');
             
             % Configure the trigger
-            obj.hC.cfgDigEdgeStartTrig(obj.triggerChannel, 'DAQmx_Val_Rising');
+            if makeTriggerable
+                obj.hC.cfgDigEdgeStartTrig(obj.triggerChannel, 'DAQmx_Val_Rising');
+            end
+
         end % connectClocked
 
 
