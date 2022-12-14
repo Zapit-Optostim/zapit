@@ -28,15 +28,17 @@ classdef pointer < handle
 
         
         % behavioural task properties
-        coordsLibrary % TODO - ??
+        coordsLibrary % TODO - I think this is where all computed waveforms are kept
         newpoint % TODO - ??
         topUpCall % TODO - ??
-        rampDown % Not used
+        rampDown % Not used (yet?)
         chanSamples %Structure describing waveforms to send the scanners for each brain area
         topCall = 1; % TODO - ??
         freqLaser % TODO - ??
-        numSamplesPerChannel % TODO - ??
-        sampleRate % TODO - ??
+        numSamplesPerChannel % TODO - why is this here? We need a better solution
+        sampleRate % TODO - This is now elsewhere but keep for the moment
+
+        DAQ % instance of class that controls the DAQ will be attached here
     end % properties
 
 
@@ -53,7 +55,7 @@ classdef pointer < handle
         axRange
         imSize % Size of the displayed image
 
-        % NI DAQmx
+        % NI DAQmx TODO -- these will all go as they are being integrated into a new class
         hTask
         devName = 'Dev2' % HARD-CODED -- TODO
         AIrange = 10 % +/- this many volts
@@ -85,16 +87,25 @@ classdef pointer < handle
 
             obj.setUpFigure
 
+
+            % Attach the DAQ (TODO: for now we hard-code the class as it's the only one)
+            obj.DAQ = zapit.hardware.DAQ.NI.vidriowrapper;
+            obj.DAQ.parent = obj;
+
             % TODO - Put connection to DAQ in a method
-            obj.createUnclockedTask
+            obj.DAQ.connectClocked(true)
             
             
             % TODO -- we should presumbably implement the following again?
             % When window closes we disconnect from the DAQ
             % obj.hFig.CloseRequestFcn = @obj.figClose;
             
-            
             obj.zeroScanners
+
+            % TODO -- we evenually want to be setting laser power in mW with a laser class.
+            % so we will need the laser class to talk to the DAQ. Therefore it might make
+            % sense to have a scanner class that talks to the DAQ (see above)
+            obj.DAQ.setLaserPowerControlVoltage(1) % TODO -- we will need
 
             % load configuration files
             if isempty(fname)
@@ -115,15 +126,15 @@ classdef pointer < handle
             delete(obj.cam)
 
             delete(obj.hTask)
+            delete(obj.DAQ)
         end % Destructor
         
         
         function zeroScanners(obj)
-            % Zero the scanners and also turn off the laser
-            % TODO - rename method or create a different method to zero laser
-
-            % TODO - running this does not update the plot
-            obj.hTask.writeAnalogData([0,0,0])
+            % TODO -- does it really make sense for galvo control methods to be in the DAQ class?
+            % TODO -- running this currently does not update the plot by there are properties
+            %         corresponding to these values that we can pick off from the DAQ class.
+            obj.DAQ.moveBeamXY([0,0]);
         end % zeroScanners
         
         

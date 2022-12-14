@@ -22,7 +22,8 @@ function pointBeamToLocationInImage(obj,~,~)
     obj.hLastPoint.YData = yPos;
     
     %SEND TO SCANNERS: (TODO: use new API)
-    obj.hTask.writeAnalogData([xVolts, yVolts, 3]); % send beam to this location
+
+    obj.DAQ.moveBeamXY([xVolts, yVolts]); % send beam to this location
 
 
     % Update figure title    

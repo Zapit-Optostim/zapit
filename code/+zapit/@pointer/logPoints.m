@@ -1,6 +1,8 @@
 function varargout = logPoints(obj, nPoints, doPointGrid)
     % Log precision of beam pointing: conduct an affine transform to calibrate camera and beam
     %
+    % TODO -- I think we need a better name for this method
+    %
     % Purpose
     % Moves beam sequentially across a series of locations and records the intended vs
     % actual beam position on the camera image. This allows us to calculate an affine
@@ -43,7 +45,7 @@ function varargout = logPoints(obj, nPoints, doPointGrid)
         % TODO -- what are these hardcoded numbers??
 
         % Unique row and column values to sample
-        pixel_rows = [550:200:1300]+300; % TODO -- why do we nee dto add the constant?
+        pixel_rows = [550:200:1300]+300; % TODO -- why do we need to add the constant?
                                          % Beam is not going to the requested location
         pixel_cols = [250:125:750];
 
@@ -63,7 +65,6 @@ function varargout = logPoints(obj, nPoints, doPointGrid)
             obj.hTask.writeAnalogData([rVolts(ii,:), 3.3]);
             pause(0.125)
             v(ii)=obj.getLaserPosAccuracy([R(ii), C(ii)]);
-            drawnow
             fprintf('.')
         end
         fprintf('\n')
@@ -94,8 +95,8 @@ function varargout = logPoints(obj, nPoints, doPointGrid)
     end % if doPointGrid
 
 
-    % save recorded output (intended) and incoming (calculated)
-    % pixel coordinates to calculate the offset and transformation
+    % Save the recorded output (intended) and incoming (calculated) pixel coordinates 
+    % in order to calculate the offset and transformation.
     OUT.targetPixelCoords = cat(1,v(:).targetPixelCoords);
     OUT.actualPixelCoords = cat(1,v(:).actualPixelCoords);
 

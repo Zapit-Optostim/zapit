@@ -55,8 +55,8 @@ function obj = makeChanSamples(obj, freqLaser, laserAmplitude)
     %% make up samples for laser and masking light channels
     
     %masking light is always on, laser is on only when LaserOn == 1
-    anlgOut = (-cos(linspace(0,numHalfCycles*2*pi,obj.numSamplesPerChannel)) + 1) * laserAmplitude;
-    digOut = ones(1,obj.numSamplesPerChannel)*digitalAmplitude;
+    anlgOut = (-cos(linspace(0, numHalfCycles*2*pi, obj.numSamplesPerChannel)) + 1) * laserAmplitude;
+    digOut = ones(1,obj.numSamplesPerChannel) * digitalAmplitude;
 
     % allow 2 samples around halfcycle change to be 0 (in case scanners are not in the right spot
     digOut([edgeSamples,edgeSamples(1:end-1)+1])= 0; 
