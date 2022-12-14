@@ -38,7 +38,7 @@ function varargout = findSettingsFile
 
 
     settingsDirs = zapit.settings.settingsLocation; % Potential loctions for the settings file
-    settingsFname = 'zapitSystemSettings.yml'; % The name of the settings file
+    settingsFname = zapit.settings.returnZapitSettingFileName; % The name of the settings file
 
 
     % Look for a the settings file
@@ -79,7 +79,9 @@ function varargout = findSettingsFile
                         'are not updating Zapit via Git.\n\n'])
             case 'C'
                 fprintf('%d. At "%s"\n', ii, settingsDirs(ii).settingsLocation)
-                fprintf('   Choose this if you change user accounts and are not updating Zapit via Git.\n\n')
+                fprintf('   Choose this if you change user accounts and are not updating Zapit via Git.\n')
+                fprintf(['   By default it could be that only the user account that created the settings\n ' ...
+                    '  file can then modify it. This can be changed via Windows Explorer.\n'])
             case 'zapit'
                 fprintf('%d. At "%s"\n', ii, settingsDirs(ii).settingsLocation)
                 fprintf(['   Choose this option if you like your settings files along with the code ', ...
