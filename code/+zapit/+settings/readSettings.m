@@ -1,5 +1,5 @@
 function [settings,settingsNonHardCoded] = readSettings
-    % Read Zapit settings from SETTINGS/settings.yml 
+    % Read Zapit settings YAML file into a structure
     %
     % function settings = zapit.settings.readSettings
     %
@@ -14,30 +14,21 @@ function [settings,settingsNonHardCoded] = readSettings
     %
     %
     % Rob Campbell - Basel 2017
+    % Rob Campbell - SWC 2022
 
     settings=[];
 
 
-    [settingsDir,backupSetingsDir] = zapit.settings.settingsLocation;
 
-
-    settingsFname = 'systemSettings.yml';
-    settingsFile = fullfile(settingsDir,settingsFname);
-
-    DEFAULT_SETTINGS = default_BT_Settings;
-    if ~exist(settingsFile)
-        fprintf('Can not find system settings file: making default file at %s\n', settingsFile)
-        zapit.yaml.WriteYaml(settingsFile,DEFAULT_SETTINGS);
-    end
-
-
-
+    settingsFile = zapit.settings.findSettingsFile;
     settings = zapit.yaml.ReadYaml(settingsFile);
 
     %Check if the loaded settings are the same as the default settings
+    DEFAULT_SETTINGS = default_settings;
+
     if isequal(settings,DEFAULT_SETTINGS)
         fprintf('\n\n *** The settings file at %s has never been edited\n *** Press RETURN then edit the file for your system.\n', settingsFile)
-        fprintf(' *** For help editing the file see: https://github.com/BaselLaserMouse/BakingTray/wiki/The-Settings-Files\n\n')
+        fprintf(' *** For help editing the file see: https://github.com/BaselLaserMouse/zapit\n\n')
         pause
         edit(settingsFile)
         fprintf('\n\n *** Once you have finished editing the file, save it and press RETURN\n')
@@ -62,7 +53,7 @@ function [settings,settingsNonHardCoded] = readSettings
         for jj = 1:length(f1)
             if ~isfield(settings.(f0{ii}), f1{jj})
                 addedDefaultValue = true;
-                fprintf('\n\n Adding missing default setting "%s.%s" from default_BT_Settings.m\n', ...
+                fprintf('\n\n Adding missing default setting "%s.%s" from default_Settings.m\n', ...
                     (f0{ii}), f1{jj})
                 settings.(f0{ii}).(f1{jj}) = DEFAULT_SETTINGS.(f0{ii}).(f1{jj});
             end
