@@ -38,6 +38,20 @@ function varargout = vidrio_unclocked(vNI)
         pause(0.125)
     end
 
+    vNI.setLaserPowerControlVoltage(0)
+
+    %---------------------------------------------------------------------------------------------
+    % Change scanner values
+    vals = rand(1,10) * 5;
+    input(sprintf('\nPress return to play %d random values through the scanner control lines\n', ...
+          length(vals)), 's')
+
+    for ii=1:length(vals)
+        vNI.moveBeamXY([vals(ii),-vals(ii)])
+        pause(0.125)
+    end
+
+    vNI.moveBeamXY([0,0])
 
 
     if nargout>0
