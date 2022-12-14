@@ -8,7 +8,7 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
 
 
     properties
-    end
+    end % properties
 
     methods
 
@@ -30,6 +30,9 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
 
 
         function stopAndDeleteTask(obj)
+            if isempty(obj.hC)
+                return
+            end
             obj.hC.stop;    % Calls DAQmxStopTask
             delete(obj.hC); % The destructor (dabs.ni.daqmx.Task.delete) calls DAQmxClearTask
         end % stopAndDeleteTask
@@ -39,7 +42,11 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
             if nargin<2
                 verbose = false;
             end
+
+            obj.stopAndDeleteTask
+
             obj.hC = dabs.ni.daqmx.Task('unclocked');
+
             if verbose
                 fprintf('Creating unclocked task on %s\n', obj.device_ID)
             end
@@ -51,9 +58,14 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
         end % connectUnclocked
 
 
-        function connectClocked(obj)
+        function connectClocked(obj, numSamplesPerChannel)
 
-            numSamplesPerChannel = obj.numSamplesPerChannel;    % HOW TO DO THIS? CAN WE DO LATER?
+            if nargin<2
+                numSamplesPerChannel = 1000;   % HOW TO DO THIS? CAN WE DO LATER? TODO
+            end
+
+            obj.stopAndDeleteTask
+
             
             %% Create the inactivation task
             obj.hC = dabs.ni.daqmx.Task('clocked');
@@ -76,25 +88,32 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
             
             % Configure the trigger
             obj.hC.cfgDigEdgeStartTrig(obj.triggerChannel, 'DAQmx_Val_Rising');
-        end
-            
+        end % connectClocked
+
 
         function setLaserPowerControlVoltage(obj,laserControlVoltage)
+            if ~strcmp(obj.hC.taskName, 'unclocked')
+                return
+            end
             obj.hC.writeAnalogData([obj.lastXgalvoVoltage, obj.lastYgalvoVoltage, laserControlVoltage])
 
             % update cached values
             obj.lastLaserVoltage = laserControlVoltage; 
-        end
+        end % setLaserPowerControlVoltage
 
 
         function moveBeamXY(obj,beamXY)
+            if ~strcmp(obj.hC.taskName, 'unclocked')
+                return
+            end
             beamXY = beamXY(:)'; % Ensure column vector
             obj.hC.writeAnalogData([beamXY, obj.lastLaserVoltage])
 
             % update cached values
             obj.lastXgalvoVoltage = beamXY(1);
             obj.lastYgalvoVoltage = beamXY(2);
-        end
+        end % moveBeamXY
 
-    end
-end
+    end % methods
+
+end % classdef

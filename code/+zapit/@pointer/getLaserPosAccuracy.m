@@ -52,6 +52,7 @@ function varargout = getLaserPosAccuracy(obj, XYdata)
     
     %% report to screen or return as a structure
     if nargout==0
+
         fprintf('Laser at x = %d y = %d\n', round(BWc.Centroid))
         fprintf('User point at x = %d y = %d\n', ...
             round(obj.hLastPoint.XData), round(obj.hLastPoint.YData))
@@ -59,7 +60,9 @@ function varargout = getLaserPosAccuracy(obj, XYdata)
         fprintf('Error: x = %0.2f um  y = %0.1f um\n', ...
             abs(obj.hLastPoint.XData-BWc.Centroid(1)) * obj.micsPix, ...
             abs(obj.hLastPoint.YData-BWc.Centroid(2)) * obj.micsPix)
+
     elseif nargout>0
+
         if nargin<2
             out.targetPixelCoords = [obj.hLastPoint.XData, obj.hLastPoint.YData];
         else
@@ -76,5 +79,4 @@ function varargout = getLaserPosAccuracy(obj, XYdata)
         varargout{1} = out;
     end
     
-end
-
+end % getLaserPosAccuracy
