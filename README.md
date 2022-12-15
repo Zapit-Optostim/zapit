@@ -106,13 +106,16 @@ Closing the figure will also disconnect from the camera, as will `delete(D)`
 
 ### Start beam pointer and calibrate
 
+Start the software and select a config file.
 ```
 P = zapit.pointer;
-
-% find transformation of pixel coords into voltage for scan mirrors
-P.logPoints;
-
 ```
+
+Now you need to determine the transform between pixel coordinates and the scan mirrors.
+```
+P.logPoints;
+```
+
 You can now click on the image and the beam should go to that location.
 
 
