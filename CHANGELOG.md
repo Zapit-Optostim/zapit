@@ -17,7 +17,7 @@ The project will adhere to [semantic versioning](http://semver.org) guidelines, 
 
 2022/12/15 -- v0.1.1
 Software is now refactored and likely working as intended bar the laser power. The laser
-power was orginally being set via an Arduino and there was no facility to specify a power
+power was originally being set via an Arduino and there was no facility to specify a power
 in mW. We next need to add the ability to set power in mW. The Arduino was being use to
 implement a ramp-down following stim offset. We will now implement this via the NI DAQ.
 Development now switches to the Dev branch.
