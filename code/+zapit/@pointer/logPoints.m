@@ -55,10 +55,10 @@ function varargout = logPoints(obj)
     obj.DAQ.setLaserPowerControlVoltage(2) %TODO -- will replace with call to a laser class
 
     obj.hLastPoint.Visible = 'off';
-    figure(obj.hFig) % TODO -- can parent this. I'm being lazy
+
     hold on
-    hPcurrent = plot(nan,nan, 'or','MarkerSize',14,'LineWidth',3);
-    hPall = plot(nan,nan, 'og','MarkerSize',12,'LineWidth',2);
+    hPcurrent = plot(obj.hImAx,nan,nan, 'or','MarkerSize',14,'LineWidth',3);
+    hPall = plot(obj.hImAx,nan,nan, 'og','MarkerSize',12,'LineWidth',2);
     hold off
     for ii=1:length(R)
         % feed volts into scan mirrors, wait for precise image
