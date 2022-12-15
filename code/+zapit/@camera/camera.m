@@ -20,6 +20,7 @@ classdef camera < handle
     % with camera properties that could change between drivers.
     properties
         exposure
+        ROI
     end
 
 
@@ -98,7 +99,7 @@ classdef camera < handle
             end
             
             % set gain to maximum
-            obj.src.Gain = 10;
+            obj.src.Gain = 10; % TODO - this is hardcoded based on a Basler camera
 
         end % close constructor
 
@@ -158,6 +159,19 @@ classdef camera < handle
             end
         end % framesAcquired
 
+        function resetROI(obj)
+            % reset ROI to full sensor size
+            %
+            % function resetROI(obj)
+            %
+            % Inputs
+            % none
+            %
+            % Outputs
+            % none
+            obj.ROI = [0,0,obj.vid.VideoResolution];
+        end % resetROI
+
     end % video feed methods
 
 
@@ -168,7 +182,7 @@ classdef camera < handle
     %    Type = videosource
     methods
         function exposure = get.exposure(obj)
-            if contains(obj.vid.Name,'gentl') % TODO: is this the correct thing to reference?
+            if contains(obj.vid.Name,'gentl')
                 exposure = obj.src.ExposureTime;
             else
                 exposure = obj.src.Exposure;
@@ -176,12 +190,43 @@ classdef camera < handle
         end % get.exposure
 
         function set.exposure(obj, exposure)
-            if contains(obj.vid.Name,'gentl') % TODO: is this the correct thing to reference?
+            if contains(obj.vid.Name,'gentl')
                 obj.src.ExposureTime = exposure;
             else
                 obj.src.Exposure = exposure;
             end
         end % set.exposure
+
+        function ROIpos = get.ROI(obj)
+            if contains(obj.vid.Name,'gentl')
+                ROIpos = obj.vid.ROIPosition;
+            else
+                % TODO -- unknown. This will probably just generate an error
+                ROIpos = obj.vid.ROIPosition;
+            end
+        end % get.ROI
+
+        function set.ROI(obj,ROIpos)
+            if strcmp(obj.vid.Running,'on')
+                obj.stopVideo
+                restartVid = true;
+            else
+                restartVid = false;
+            end
+
+            if contains(obj.vid.Name,'gentl')
+                obj.vid.ROIPosition = ROIpos;
+            else
+                % TODO -- unknown. This will probably just generate an error
+                obj.vid.ROIPosition = ROIpos;
+            end
+
+            if restartVid
+                obj.startVideo
+            end
+        end % set.ROI
+
+
     end % getters and setters
 
 end % pointer
