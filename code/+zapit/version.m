@@ -29,7 +29,7 @@ function varargout = version
 %% EDIT THE FOLLOWING TO INCREMENT THE VERSION
 out.version.MAJOR = 0;
 out.version.MINOR = 1;
-out.version.PATCH = 1;
+out.version.PATCH = 2;
 
 %% UPDATE THIS IF NEEDED
 out.version.preRleaseString = '-alpha'; % When heavy development phase is over this will be empty
