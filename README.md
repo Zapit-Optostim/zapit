@@ -18,7 +18,7 @@ The [Change Log](CHANGELOG.md) describes the project history and recent changes.
 ## Requirements
 * [Image Processing Toolbox](https://uk.mathworks.com/help/images/index.html)
 * [Image Acquisition Toolbox](https://uk.mathworks.com/products/image-acquisition.html)
-* [The free version of ScanImage](https://vidriotechnologies.com/) because Zapit uses its DAQmx wrapper (but see [here](https://github.com/BaselLaserMouse/zapit/issues/14)).
+* [The free version of ScanImage](https://vidriotechnologies.com/) because Zapit uses its DAQmx wrapper (but see [here](https://github.com/BaselLaserMouse/zapit/issues/14)). You need add to the path the base ScanImage directory. No need to add to path with all sub-directories.
 * To communicate with the camera you will need to install [Basler's instructions for the GenICam interface](https://www.baslerweb.com/en/downloads/document-downloads/using-pylon-gentl-producers-for-basler-cameras-with-matlab/).
 Although the Zapit system is tested against this, the goal is that it is able to handle other drivers and cameras also.
 If you can not get the above to work, try installing the `Image Acquisition Toolbox Support Package for OS Generic Video Interface`.
@@ -26,9 +26,10 @@ If you run into errors when setting up with a driver other than GenICam, please 
 
 
 ## Install
-Gather the requirements then add to your path:
-* The Zapit `code` directory. You need add only this directory, not it and all sub-directories.
-* The ScanImage directory. You need add only this directory, not it and all sub-directories.
+Gather and install the above requirements then install Zapit in one of the following ways:
+* *Via MATLAB*: Go to the **Apps** ribbon in MATLAB and click on **Get More Apps**. Search for Zapit and add it to MATLAB. You can also update Zapit via this route.
+* *Via your browser*: Navigate to the [Zapit File Exchange page](https://uk.mathworks.com/matlabcentral/fileexchange/122142-zapit). Download. Unpack in a reasonable place. Add the Zapit `code` directory to your path. You need add only this directory, not it and all sub-directories.
+* *Via Git*: Clone in your favourite Git client. Add the Zapit `code` directory to your path. You need add only this directory, not it and all sub-directories.
 
 
 ### First time you run
