@@ -242,7 +242,7 @@ classdef pointer < handle
             if ~strcmp(obj.DAQ.hC.taskName, 'clocked'); % TODO-- maybe this check should be in the
                                                         % the createNewTask. So we don't make unless
                                                         % the task names don't match?
-                obj.createNewTask(taskName);
+                obj.DAQ.connectClocked;
             end
             
             % update coordinate parameters/channel samples

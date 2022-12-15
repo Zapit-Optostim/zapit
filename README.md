@@ -141,6 +141,10 @@ newTrial.powerOption = 1; % if 1 send 2 mW, if 2 send 4 mW (mean)
 
 P.sendSamples(newTrial)
 ```
+To stop it run:
+```
+P.DAQ.stop
+```
 
 Randomly stimulate each brain area once for 0.5 seconds before moving onto the next.
 ```

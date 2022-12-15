@@ -8,7 +8,7 @@ function testCoordsLibrary(obj, verbose)
     % go to all the requested positiopns.
     %
     % Inputs
-    % verbose - [optional] prints to screen diagnostic info
+    % verbose - [optional] prints to screen diagnostic info. false by default.
     %
     % Outputs
     % none
@@ -16,6 +16,10 @@ function testCoordsLibrary(obj, verbose)
     %
     % Maja Skretowska - SWC 2021
     % Rob Campbell - SWC 2022
+
+    if nargin<2
+        verbose = false;
+    end
 
     obj.hLastPoint.Visible = 'off';
 
@@ -26,7 +30,7 @@ function testCoordsLibrary(obj, verbose)
     % want unilateral only, for instance.
     colors = lines(size(obj.newpoint(1,:,1),2));
     for ii = 1:size(obj.newpoint(1,:,1),2)
-        prop = {'MarkerSize',12,'MarkerEdgeColor', colors(ii,:), 'LineWidth',2}
+        prop = {'MarkerSize',12,'MarkerEdgeColor', colors(ii,:), 'LineWidth',2};
         % Left hemisphere
         obj.hAreaCoords(ii,1) = ...
            plot(obj.hImAx, obj.newpoint(1,ii,1), obj.newpoint(2,ii,1), 'o', prop{:});
