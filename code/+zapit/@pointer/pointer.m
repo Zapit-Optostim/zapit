@@ -53,7 +53,6 @@ classdef pointer < handle
         hRefCoords  % The two reference coords
 
         axRange
-        imSize % Size of the displayed image
 
         % NI DAQmx TODO -- these will all go as they are being integrated into a new class
         hTask
@@ -63,10 +62,14 @@ classdef pointer < handle
         % Camera and image related
         cam % camera object goes here
 
-
     end % hidden properties
+
+    % read-only properties that are associated with getters
+    properties(SetAccess=protected, GetAccess=public)
+       imSize
+    end
     
-    
+    % Constructor and destructor
     methods
         function obj = pointer(fname)
             % Constructor
@@ -76,14 +79,15 @@ classdef pointer < handle
             end
 
             disp('STARTING BEAMPOINTER')
-            obj.cam = zapit.camera(2); % TODO -  Hard-coded selection of camera ID
-            
-            % Connect to camera
-            imSize = obj.cam.vid.ROIPosition;
-            obj.imSize = imSize(3:4);
 
+            % Connect to camera
+            obj.cam = zapit.camera(2); % TODO -  Hard-coded selection of camera ID
             obj.cam.exposure = 3000; % TODO - HARDCODED
-            
+            obj.cam.ROI = [300,100,1400,1000]; % TODO: hardcoded sensor crop
+                                            % TODO : in future user will have ROI box to interactively
+                                            %    crop and this will be saved in settings file
+                                            %    the re-applied on startup each time.
+                                            %    see also obj.can.resetROI
 
             obj.setUpFigure
 
@@ -93,7 +97,7 @@ classdef pointer < handle
             obj.DAQ.parent = obj;
 
             % TODO - Put connection to DAQ in a method
-            obj.DAQ.connectClocked(true)
+            obj.DAQ.connectUnclocked(true)
             
             
             % TODO -- we should presumbably implement the following again?
@@ -129,7 +133,28 @@ classdef pointer < handle
             delete(obj.DAQ)
         end % Destructor
         
-        
+    end % end of constructor/destructor block
+
+
+    % Getters and setters
+    methods
+        function imSize = get.imSize(obj)
+            % Return size of image being acquired by camera
+            %
+            % iSize = pointer(obj)
+            %
+            % Purpose
+            % Return size of image being acquired by camera. This could change after
+            % the camera has been started so it must be handled dynamically.
+            imSize = obj.cam.ROI;
+            imSize = imSize(3:4);
+
+        end % imsize
+    end % getters and setters
+
+
+    % Other short methods
+    methods
         function zeroScanners(obj)
             % TODO -- does it really make sense for galvo control methods to be in the DAQ class?
             % TODO -- running this currently does not update the plot by there are properties
@@ -162,7 +187,10 @@ classdef pointer < handle
             obj.hTask = dabs.ni.daqmx.Task('unclocked');
             obj.hTask.createAOVoltageChan(obj.devName, 0:2, [], -obj.AIrange, obj.AIrange);
         end % createUnclockedTask
+
         
+
+
 
         function sendSamples(obj, new_trial)
             % take coordinates of two points[x and y Coords], and exchange laser between

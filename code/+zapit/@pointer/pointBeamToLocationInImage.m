@@ -16,7 +16,7 @@ function pointBeamToLocationInImage(obj,~,~)
     yPos = pos(1,2);
     
     % convert to voltage values to send to scanners
-    [xVolts, yVolts] = pixelToVolt(obj, xPos, yPos);
+    [xVolts, yVolts] = pixelToVolt(obj, xPos, yPos); % TODO -- how is this working? I've moved it!
     
     obj.hLastPoint.XData = xPos;
     obj.hLastPoint.YData = yPos;

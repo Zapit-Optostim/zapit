@@ -1,4 +1,4 @@
-function varargout = logPoints(obj, nPoints, doPointGrid)
+function varargout = logPoints(obj)
     % Log precision of beam pointing: conduct an affine transform to calibrate camera and beam
     %
     % TODO -- I think we need a better name for this method
@@ -10,8 +10,7 @@ function varargout = logPoints(obj, nPoints, doPointGrid)
     % required to point the beam at that location.
     %
     % Inputs (optional):
-    % nPoints - how many points to record. If empty or less than three, a set of hard-coded
-    % coordinates are scanned.
+    % none
     %
     % Outputs
     % optional - target and actual pixel coordinates in a structure
@@ -19,81 +18,70 @@ function varargout = logPoints(obj, nPoints, doPointGrid)
     % Maja Skretowska - SWC 2021
     % Rob Campbell - SWC 2022
 
-    % lower camera illumination for increased precision in detecting beam location 
-    obj.cam.src.Gain = 1; % TODO - hard-coded
-    obj.cam.exposure = 3000; % TODO - hard-coded
+    obj.DAQ.setLaserPowerControlVoltage(0) %TODO -- will replace with call to a laser class
 
-    if nargin<2
-        nPoints = [];
-    end
+    % lower camera illumination for increased precision in detecting beam location 
+    obj.cam.src.Gain = 4; % TODO - hard-coded
+    obj.cam.exposure = 3000; % TODO - hard-coded
 
 
     % Wipe the previous transform
     obj.transform = [];
 
-    if isempty(nPoints) || nPoints<3
-        doPointGrid = true;
-    else
-        doPointGrid = false;
+
+    % TODO -- this works but I don't know exactly why. I don't follow what the dimensions mean
+    % Generate points that will sample the imaged area.
+    % User should have cropped the FOV so we shouldn't be stimulating silly large positions
+
+    % Unique row and column values to sample
+    pointSpacingInPixels = 200;
+    bufferPixels = 200; % So we don't stimulate very close to the edges
+    pixel_rows = bufferPixels:pointSpacingInPixels:obj.imSize(1)-bufferPixels;
+    pixel_cols = bufferPixels:pointSpacingInPixels:obj.imSize(2)-bufferPixels;
+
+
+    % Calculate a set product to go to all combinations
+    [R,C] = meshgrid(pixel_rows,pixel_cols);
+
+    R = R(:);
+    C = C(:);
+
+    % change pixel coords into voltage %TODO -- R and C correct?
+    [rVolts(:,1), rVolts(:,2)] = obj.pixelToVolt(R,C);
+    obj.DAQ.moveBeamXY(rVolts(1,:)); % Move to first position
+    pause(0.05)
+    fprintf('Running calibration')
+
+    obj.DAQ.setLaserPowerControlVoltage(2) %TODO -- will replace with call to a laser class
+
+    obj.hLastPoint.Visible = 'off';
+    figure(obj.hFig) % TODO -- can parent this. I'm being lazy
+    hold on
+    hPcurrent = plot(nan,nan, 'or','MarkerSize',14,'LineWidth',3);
+    hPall = plot(nan,nan, 'og','MarkerSize',12,'LineWidth',2);
+    hold off
+    for ii=1:length(R)
+        % feed volts into scan mirrors, wait for precise image
+        % without smudges and take position in pixels
+        obj.DAQ.moveBeamXY(rVolts(ii,:));
+        pause(0.05)
+        %obj.getLaserPosAccuracy([R(ii), C(ii)]);
+
+        % Attempt to get laser position and append to list if the position was found
+        out = obj.getLaserPosAccuracy([R(ii), C(ii)], true);
+        if ~isempty(out)
+            v(ii)= out;
+            hPall.XData(end+1) = out.actualPixelCoords(1);
+            hPall.YData(end+1) = out.actualPixelCoords(2);
+
+            set(hPcurrent, 'XData', out.actualPixelCoords(1), 'YData', out.actualPixelCoords(2))
+            pause(0.025)
+            set(hPcurrent, 'XData', nan, 'YData', nan)
+        end
+        fprintf('.')
     end
-
-    if doPointGrid
-
-        % TODO -- this works but I don't know why and I don't know
-        % why the clicky version fails.
-        % if no varargin given, use standard coordinates
-        % TODO -- what are these hardcoded numbers??
-
-        % Unique row and column values to sample
-        pixel_rows = [550:200:1300]+300; % TODO -- why do we need to add the constant?
-                                         % Beam is not going to the requested location
-        pixel_cols = [250:125:750];
-
-        % Calculate a set product to go to all combinations
-        [R,C] = meshgrid(pixel_rows,pixel_cols);
-
-        R = R(:);
-        C = C(:);
-
-        % change pixel coords into voltage %TODO -- R and C correct?
-        [rVolts(:,1), rVolts(:,2)] = obj.pixelToVolt(R,C);
-
-        fprintf('Running calibration')
-        for ii=1:length(R)
-            % feed volts into scan mirrors, wait for precise image
-            % without smudges and take position in pixels
-            obj.hTask.writeAnalogData([rVolts(ii,:), 3.3]);
-            pause(0.125)
-            v(ii)=obj.getLaserPosAccuracy([R(ii), C(ii)]);
-            fprintf('.')
-        end
-        fprintf('\n')
-
-    else
-        % TODO -- DOES NOT WORK RIGHT NOW FOR SOME REASON
-
-        % same procedure as above, but using points clicked by user
-        fprintf('Click on %d points whilst pressing ALT\n', nPoints)
-        ind = 1;
-        while ind <= nPoints
-
-            obj.hTask.writeAnalogData([0 0 0])
-            title(obj.hImAx, string(ind));
-            figure(obj.hFig)
-
-            points = obj.hImAx.CurrentPoint([1 3]);
-            waitforbuttonpress;
-            pause(0.125)
-            tmp = obj.getLaserPosAccuracy(points);
-            if ~isempty(tmp)
-                v(ind) = tmp;
-                fprintf('%d points clicked\n', ind)
-                ind = ind +1;
-            end
-        end
-
-    end % if doPointGrid
-
+    fprintf('\n')
+    delete(hPcurrent)
 
     % Save the recorded output (intended) and incoming (calculated) pixel coordinates 
     % in order to calculate the offset and transformation.
@@ -105,10 +93,21 @@ function varargout = logPoints(obj, nPoints, doPointGrid)
     obj.cam.exposure = 3000; %TODO: likely we should be returning this to the original value
 
     obj.runAffineTransform(OUT);
-    obj.hTask.writeAnalogData([0 0 0]); % Zero beam and turn off laser. TODO -- we have nicer system for this in the new DAQ class
 
-    % TODO: now demonstrate that it worked
+    % Now demonstrate that it worked
+    % TODO -- have it loop until we stop it.
+    hPall.Color=[0,0.7,0];
+    for ii=1:size(OUT.actualPixelCoords,1)
+        [xVolt,yVolt] = obj.pixelToVolt(OUT.actualPixelCoords(ii,1),...
+                 OUT.actualPixelCoords(ii,2));
+        obj.DAQ.moveBeamXY([xVolt,yVolt])
+        pause(0.05)
+    end
 
+    obj.DAQ.setLaserPowerControlVoltage(0) %TODO -- will replace with call to a laser class
+    obj.zeroScanners;
+    obj.hLastPoint.Visible = 'on';
+    delete(hPall)
 
     if nargout>0
         varargout{1} = OUT;

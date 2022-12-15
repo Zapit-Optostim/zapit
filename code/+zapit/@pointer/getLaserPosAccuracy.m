@@ -1,4 +1,4 @@
-function varargout = getLaserPosAccuracy(obj, XYdata)
+function varargout = getLaserPosAccuracy(obj, XYdata, verbose)
     % Quantify accuracy of beam pointing
     %
     % function out = getLaserPosAccuracy(obj, XYdata)
@@ -20,8 +20,13 @@ function varargout = getLaserPosAccuracy(obj, XYdata)
     
     %% find centre of laser field after averaging a few frames
 
+
+    if nargin<3
+        verbose = false;
+    end
+
     % Get images
-    nFrames = 5;
+    nFrames = 7;
     tFrames = obj.hImLive.CData;
     lastFrameAcquired = obj.cam.vid.FramesAcquired;
 
@@ -42,14 +47,38 @@ function varargout = getLaserPosAccuracy(obj, XYdata)
     BWmean = mean(tFrames,3);
 
     BW = BWmean>(max(BWmean(:))*0.7);
-    BWc = regionprops(bwareaopen(BW,50),'Centroid');
-    
+    BW = bwareaopen(BW,50);
+
+    BWa = regionprops(BW,'Area');
+    BWc = regionprops(BW,'Centroid');
+
     % Bail out if we find no or multiple points
+    bailOut = false;
     if length(BWc) ~= 1
-        fprintf('Expected to find one point. Found %d points\n', length(BWc))
-        return
+        bailOut = true;
+        if verbose
+            fprintf('Expected to find one point. Found %d points\n', length(BWc))
+        end
     end
     
+    % Bail out if the area of the region is too large. Then it can't be the laser
+    areaThreshold = 400; % TODO -- hardcoded
+
+    if ~bailOut && (BWa.Area > areaThreshold)
+        bailOut = true;
+        if verbose
+            fprintf('Area of laser is %d pixels. This is larger than threshold of %d pixels\n', ...
+             BWa.Area, areaThreshold)
+        end
+    end
+
+    if bailOut
+        if nargout>0
+            varargout{1} = [];
+        end
+        return
+    end
+
     %% report to screen or return as a structure
     if nargout==0
 
@@ -75,8 +104,8 @@ function varargout = getLaserPosAccuracy(obj, XYdata)
         out.actualPixelCoords = BWc.Centroid;
         out.error = out.targetPixelCoords-out.actualPixelCoords;
         out.absErrorMicrons = abs(out.error) * obj.micsPix;
-
         varargout{1} = out;
+
     end
     
 end % getLaserPosAccuracy
