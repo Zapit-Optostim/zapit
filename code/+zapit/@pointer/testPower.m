@@ -40,11 +40,11 @@ function laserPower = testPower(obj)
         
         if laserPower(3, ii) == -1
             condition = 0;
-            obj.hTask.stop;
+            obj.DAQ.hC.stop;
         else
             marker_color = [1 (1-(laserPower(3,ii)/5)) 1];
             hold on;
-            plot(obj.hImAx, laserPower(1,ii), laserPower(2, ii), 'o', ...
+            plot(obj.hImAx, laserPower(1,ii), laserPower(2, ii), 'o', ..
                 'MarkerEdgeColor', marker_color, 'MarkerFaceColor', marker_color);
         end
     end % while
@@ -71,10 +71,10 @@ function laserPower = testPower(obj)
         % the pointer
         taskName = 'testPower';
         
-        if ~strcmp(obj.hTask.taskName, taskName)
+        if ~strcmp(obj.DAQ.hC.taskName, taskName)
             createTestTask(obj);
         else
-            obj.hTask.abort;
+            obj.DAQ.hC.abort;
             pause(0.3);
         end
         
@@ -84,8 +84,8 @@ function laserPower = testPower(obj)
         voltChannel(:,3) = trialPower*lightChnl;
         
         % send voltage to ni daq
-        obj.hTask.writeAnalogData(voltChannel);
-        obj.hTask.start;
+        obj.DAQ.hC.writeAnalogData(voltChannel);
+        obj.DAQ.hC.start;
         
         
         
@@ -132,8 +132,14 @@ function laserPower = testPower(obj)
 
 
     function createTestTask(obj)
-        devName = 'Dev2';
+        % TODO -- leave this method for now because I don't know exactly what it does
+        % I think we can just use the DAQ.connectClocked method with maybe param/val
+        % pairs in cases such as this.
+
+        obj.DAQ.stopAndDeleteTask
+        devName = obj.DAQ.device_ID;
         taskName = 'testPower';
+
         % channel 0 = x Axis
         % channel 1 = y Axis
         % channel 2 = analog laser
@@ -149,40 +155,22 @@ function laserPower = testPower(obj)
         numSamplesPerChannel = sampleRate/obj.freqLaser*(numHalfCycles/2);    % set in makeChanSamples
         obj.numSamplesPerChannel = numSamplesPerChannel;
         
-        % Execute a cleanup function (below)
-        cleanUpFunction;
-        
-        
-        
         %% Create the inactivation task
         % taskName is defined in the previous function ('flashAreas')
-        obj.hTask = dabs.ni.daqmx.Task(taskName);
+        obj.DAQ.hC = dabs.ni.daqmx.Task(taskName);
         
         % Set output channels
-        obj.hTask.createAOVoltageChan(devName, chanIDs);
+        obj.DAQ.hC.createAOVoltageChan(devName, chanIDs);
         
         
         % Configure the task sample clock, the sample size and mode to be continuous and set the size of the output buffer
-        obj.hTask.cfgSampClkTiming(sampleRate, sampleMode, numSamplesPerChannel, sampleClockSource);
-        obj.hTask.cfgOutputBuffer(numSamplesPerChannel);
+        obj.DAQ.hC.cfgSampClkTiming(sampleRate, sampleMode, numSamplesPerChannel, sampleClockSource);
+        obj.DAQ.hC.cfgOutputBuffer(numSamplesPerChannel);
         
         % allow sample regeneration
-        obj.hTask.set('writeRegenMode', 'DAQmx_Val_AllowRegen');
-        obj.hTask.set('writeRelativeTo','DAQmx_Val_FirstSample');
-        
-        
-        
-        
-        %% cleanup function copied from example
-        function cleanUpFunction
-            if exist('obj.hTask')
-                fprintf('Cleaning up DAQ task\n');
-                obj.hTask.stop;    % Calls DAQmxStopTask
-                delete(obj.hTask); % The destructor (dabs.ni.daqmx.Task.delete) calls DAQmxClearTask
-            else
-                fprintf('this task is not available for cleanup\n')
-            end
-        end
+        obj.DAQ.hC.set('writeRegenMode', 'DAQmx_Val_AllowRegen');
+        obj.DAQ.hC.set('writeRelativeTo','DAQmx_Val_FirstSample');
+
     end % createTestTask
     
 end % testPower

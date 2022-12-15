@@ -18,7 +18,7 @@ function laserPower = findLaserRange(obj)
             
             if laserPower(3, ii) == -1
                 condition = 0;
-                obj.hTask.stop;
+                obj.DAQ.hC.stop;
             else
                 marker_color = [1 (1-(laserPower(3,ii)/3)) 1];
                 hold on

@@ -33,7 +33,6 @@ classdef pointer < handle
         topUpCall % TODO - ??
         rampDown % Not used (yet?)
         chanSamples %Structure describing waveforms to send the scanners for each brain area
-        topCall = 1; % TODO - ??
         freqLaser % TODO - ??
         numSamplesPerChannel % TODO - why is this here? We need a better solution
         sampleRate % TODO - This is now elsewhere but keep for the moment
@@ -53,11 +52,6 @@ classdef pointer < handle
         hRefCoords  % The two reference coords
 
         axRange
-
-        % NI DAQmx TODO -- these will all go as they are being integrated into a new class
-        hTask
-        devName = 'Dev2' % HARD-CODED -- TODO
-        AIrange = 10 % +/- this many volts
 
         % Camera and image related
         cam % camera object goes here
@@ -90,7 +84,6 @@ classdef pointer < handle
                                             %    see also obj.can.resetROI
 
             obj.setUpFigure
-
 
             % Attach the DAQ (TODO: for now we hard-code the class as it's the only one)
             obj.DAQ = zapit.hardware.DAQ.NI.vidriowrapper;
@@ -128,8 +121,6 @@ classdef pointer < handle
             obj.cam.stopVideo;
             delete(obj.hFig)
             delete(obj.cam)
-
-            delete(obj.hTask)
             delete(obj.DAQ)
         end % Destructor
         
@@ -183,15 +174,6 @@ classdef pointer < handle
         end % runAffineTransform
 
 
-        function createUnclockedTask(obj)
-            obj.hTask = dabs.ni.daqmx.Task('unclocked');
-            obj.hTask.createAOVoltageChan(obj.devName, 0:2, [], -obj.AIrange, obj.AIrange);
-        end % createUnclockedTask
-
-        
-
-
-
         function sendSamples(obj, new_trial, verbose)
             % take coordinates of two points[x and y Coords], and exchange laser between
             % them at freqLaser for pulseDuration seconds, locking it at a given point for tOpen ms
@@ -236,69 +218,12 @@ classdef pointer < handle
         end % sendSamples
         
         
-        function createNewTask(obj, taskName)
-            
-            devName = 'Dev2';
-
-            % channel 0 = x Axis
-            % channel 1 = y Axis
-            % channel 2 = analog laser
-            % channel 3 = masking light %TODO -- can probably be a clocked digital line?
-            %             % channel 4 = digital laser gating
-            % channel PFI0 = digital trigger
-            
-            % output channel params
-            chanIDs = [0 1 2 3];
-            sampleRate = obj.sampleRate;                        % set in makeChanSamples
-            sampleMode = 'DAQmx_Val_ContSamps';
-            sampleClockSource = 'OnboardClock';
-            numSamplesPerChannel = obj.numSamplesPerChannel;    % set in makeChanSamples
-            
-            % trigger setup
-            dTriggerSource = 'PFI0';
-            dTriggerEdge = 'DAQmx_Val_Rising';
-            
-            % Execute a cleanup function (TODO -- WHY?)
-            obj.cleanUpFunction;
-            
-            %% Create the inactivation task
-            % taskName is defined in the previous function ('flashAreas')
-            obj.hTask = dabs.ni.daqmx.Task(taskName);
-            
-            % Set output channels
-            obj.hTask.createAOVoltageChan(devName, chanIDs);
-            
-            
-            % Configure the task sample clock, the sample size and mode to be continuous and set the size of the output buffer
-            obj.hTask.cfgSampClkTiming(sampleRate, sampleMode, numSamplesPerChannel, sampleClockSource);
-            obj.hTask.cfgOutputBuffer(numSamplesPerChannel);
-            
-            % allow sample regeneration
-            obj.hTask.set('writeRegenMode', 'DAQmx_Val_AllowRegen');
-            obj.hTask.set('writeRelativeTo','DAQmx_Val_FirstSample');
-            
-            % Configure the trigger
-            obj.hTask.cfgDigEdgeStartTrig(dTriggerSource, dTriggerEdge);
-            
-
-        end
-
-        %% cleanup function
-        function cleanUpFunction(obj)
-            if exist('obj.hTask')
-                fprintf('Cleaning up DAQ task\n');
-                obj.hTask.stop;    % Calls DAQmxStopTask
-                delete(obj.hTask); % The destructor (dabs.ni.daqmx.Task.delete) calls DAQmxClearTask
-            else
-                fprintf('this task is not available for cleanup\n')
-            end
-        end
-
         function stopInactivation(obj)
             % called at the end of a trial
             % send 0 Volts if sample generation has already been triggered
             % and stops task
             
+            % TODO -- this method we will change to allow for the ramp-down
             try
                 % try-end used because overwriting buffer before trigger
                 % comes (e.g. run abort before inactivation) may throw errors
@@ -306,7 +231,7 @@ classdef pointer < handle
                 voltChannel(:,1:2) = obj.chanSamples.light(:,[1 1],1); % just zeros
                 voltChannel(:,3:4) = obj.chanSamples.light(:,[1 1],1); % just zeros
                 
-                obj.hTask.writeAnalogData(voltChannel);
+                obj.DAQ.hC.writeAnalogData(voltChannel);
                 
                 % pause to wait for 0s to be updated in the buffer and
                 % generated before closing
@@ -315,18 +240,9 @@ classdef pointer < handle
             
             % stop task and send to pre-generation stage, allowing to write
             % next trial samples without conflicts
-            obj.hTask.abort
+            obj.DAQ.hC.abort
         end % stopInactivation
         
-        
-        function topUpBuffer(obj)
-            % NOT USED FOR NOW (TODO -- really? topCall is true by default)
-            if logical(obj.topCall)
-                disp('Top Up')
-                obj.hTask.writeAnalogData(obj.voltChannel);
-            end
-        end % topUpBuffer
-
         
         function [xVolts, yVolts] = pixelToVolt(obj, pixelColumn, pixelRow)
             % Converts pixel position to voltage value to send to scanners
