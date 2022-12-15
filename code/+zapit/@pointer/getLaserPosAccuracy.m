@@ -25,16 +25,7 @@ function varargout = getLaserPosAccuracy(obj, XYdata, verbose)
 
     % Get images: average a few frames before looking for the laser
     nFrames = 7;
-    tFrames = obj.hImLive.CData;
-    lastFrameAcquired = obj.cam.vid.FramesAcquired;
-
-    while size(tFrames,3) < nFrames
-        currentFramesAcquired = obj.cam.vid.FramesAcquired;
-        if currentFramesAcquired > lastFrameAcquired
-            tFrames(:,:,end+1) = obj.hImLive.CData;
-            lastFrameAcquired = currentFramesAcquired;
-        end
-    end
+    tFrames = obj.returnCurrentFrame(nFrames);
 
     % Binarize
     for ii = 1:nFrames
