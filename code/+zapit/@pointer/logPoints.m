@@ -52,7 +52,7 @@ function varargout = logPoints(obj)
     pause(0.05)
     fprintf('Running calibration')
 
-    obj.DAQ.setLaserPowerControlVoltage(2) %TODO -- will replace with call to a laser class
+    obj.DAQ.setLaserPowerControlVoltage(1.7) %TODO -- will replace with call to a laser class
 
     obj.hLastPoint.Visible = 'off';
 
