@@ -16,16 +16,14 @@ function varargout = getLaserPosAccuracy(obj, XYdata, verbose)
     % Optional structure containing results.
     %
     % 
-    % Maja Skretowska - 2021
+    % Maja Skretowska - SWC 2021
     
-    %% find centre of laser field after averaging a few frames
-
 
     if nargin<3
         verbose = false;
     end
 
-    % Get images
+    % Get images: average a few frames before looking for the laser
     nFrames = 7;
     tFrames = obj.hImLive.CData;
     lastFrameAcquired = obj.cam.vid.FramesAcquired;
@@ -62,7 +60,7 @@ function varargout = getLaserPosAccuracy(obj, XYdata, verbose)
     end
     
     % Bail out if the area of the region is too large. Then it can't be the laser
-    areaThreshold = 400; % TODO -- hardcoded
+    areaThreshold = 400; % TODO -- hardcoded. On non-flat surfaces this can vary a good deal
 
     if ~bailOut && (BWa.Area > areaThreshold)
         bailOut = true;
