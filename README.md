@@ -7,6 +7,12 @@ A narrow collimated beam enters the scan head and is focused on the sample using
 The scan lens doubles as an objective, as the sample is imaged onto a camera in order to visualise where the beam is pointing.
 The [Change Log](CHANGELOG.md) describes the project history and recent changes.
 
+## Status as of December 2022
+* The project is currently under heavy development but has basic functionality and in theory could be used to run experiments right now.
+* Expected API freeze: mid January 2022
+* Expected GUI and conversion to model/view: mid February 2022
+
+
 ## Requirements
 * [Image Processing Toolbox](https://uk.mathworks.com/help/images/index.html)
 * [Image Acquisition Toolbox](https://uk.mathworks.com/products/image-acquisition.html)
@@ -119,9 +125,7 @@ Here we are switching at 40 Hz with a laser amplitude of 0.36
 P.makeChanSamples(40, 0.36);
 ```
 
-
-
-### Let's run it
+### Let's run it!
 For one brain area
 
 ```
@@ -137,7 +141,7 @@ Randomly stimulate each brain area once for 0.5 seconds before moving onto the n
 newTrial.LaserOn = 1;
 newTrial.powerOption = 1;
 
-numAreasToStim = size(P.chanSamples.scan,3)
+numAreasToStim = size(P.chanSamples.scan,3);
 areas = randperm(numAreasToStim);
 
 for ii=1:numAreasToStim
@@ -151,3 +155,7 @@ for ii=1:numAreasToStim
 end
 
 ```
+
+## Contributing
+Contributions and collaborations are welcome.
+If you are thinking of contributing please contact us before starting work as changes that are not well organized or break conventions will not be accepted.

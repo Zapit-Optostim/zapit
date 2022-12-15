@@ -26,20 +26,28 @@ function varargout = version
 % Rob Campbell - SWC 2022
 
 
-
+%% EDIT THE FOLLOWING TO INCREMENT THE VERSION
 out.version.MAJOR = 0;
-out.version.MINOR = 0;
+out.version.MINOR = 1;
 out.version.PATCH = 1;
+
+%% UPDATE THIS IF NEEDED
 out.version.preRleaseString = '-alpha'; % When heavy development phase is over this will be empty
+
+%%% UPDATE THE DATE
+out.date.year = 2022;
+out.date.month = 12;
+out.date.day = 15;
+
+
+
+
 out.version.string = sprintf('%d.%d.%d%s', ...
                 out.version.MAJOR, ...
                 out.version.MINOR, ...
                 out.version.PATCH,...
                 out.version.preRleaseString);
 
-out.date.year = 2022;
-out.date.month = 12;
-out.date.day = 13;
 
 out.gitInfo = zapit.utils.getGitInfo;
 
