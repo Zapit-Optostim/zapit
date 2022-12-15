@@ -119,48 +119,35 @@ Here we are switching at 40 Hz with a laser amplitude of 0.36
 P.makeChanSamples(40, 0.36);
 ```
 
-### Set up NI task for the stimulation
-```
-P.createNewTask %% TODO - should run this in sendSamples
-```
 
 
 ### Let's run it
 For one brain area
 
 ```
-newTrial.area = 4; % first brain area on the list
+newTrial.area = 1; % first brain area on the list
 newTrial.LaserOn = 1;
 newTrial.powerOption = 1; % if 1 send 2 mW, if 2 send 4 mW (mean)
 
 P.sendSamples(newTrial)
 ```
 
-
-### Legacy example
+Randomly stimulate each brain area once for 0.5 seconds before moving onto the next.
 ```
-x = randi(6, 300, 1);
-t = 0.5 + rand(1,300)*5.5;
+newTrial.LaserOn = 1;
+newTrial.powerOption = 1;
 
+numAreasToStim = size(P.chanSamples.scan,3)
+areas = randperm(numAreasToStim);
 
-%%
-% loop 100 times
-for ii = 1:300
-    {'ii' 'x' 't' }
-    [ii x(ii) t(ii) ]
-    %
-    P.sendSamples(x(ii), 1);
-    pause(t(ii));
-    P.hTask.stop;
-    P.sendSamples(x(ii), 0);
-    pause(t(ii));
-    P.hTask.stop;
+for ii=1:numAreasToStim
+    newTrial.area = areas(ii);
+    P.sendSamples(newTrial,true) % True for verbose
+    pause(0.5)
+
+    % TODO -- we have a better stop method coming that will also deal with the laser rampdown
+    P.DAQ.stop
+    P.DAQ.setLaserPowerControlVoltage(0)
 end
 
-%%
-% get order of inactivated areas
-save('runningtest4', 'x', 't', 'P');
-
 ```
-
-

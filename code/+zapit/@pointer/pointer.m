@@ -192,7 +192,7 @@ classdef pointer < handle
 
 
 
-        function sendSamples(obj, new_trial)
+        function sendSamples(obj, new_trial, verbose)
             % take coordinates of two points[x and y Coords], and exchange laser between
             % them at freqLaser for pulseDuration seconds, locking it at a given point for tOpen ms
             % inputs: obj.chanSamples,
@@ -202,16 +202,21 @@ classdef pointer < handle
             % output: nothing. The function just sends correct samples to
             % the pointer
 
+            if nargin<3
+                verbose = false;
+            end
+
             CoordNum = new_trial.area;
             LaserOn = new_trial.LaserOn;
             trialPower = new_trial.powerOption;
-            taskName = 'flashAreas';
-            
-            if ~strcmp(obj.hTask.taskName, taskName);
-                % close the old task used for logging points and open a new one with the
-                % right properties. hTask is an object that 'rests' on the NI
-                % board and gives it information to play back once command start
-                % arrives. It contains a clock and sampled voltages.
+
+            if verbose
+                fprintf('Stimulating area %d\n', CoordNum)
+            end
+
+            if ~strcmp(obj.DAQ.hC.taskName, 'clocked'); % TODO-- maybe this check should be in the
+                                                        % the createNewTask. So we don't make unless
+                                                        % the task names don't match?
                 obj.createNewTask(taskName);
             end
             
@@ -223,13 +228,11 @@ classdef pointer < handle
             % get higher output wattage from obis laser)
             
             % write voltage samples onto the task
-            obj.hTask.writeAnalogData(voltChannel);
+            obj.DAQ.hC.writeAnalogData(voltChannel);
 
             % start the execution of the new task
-            obj.hTask.start;
+            obj.DAQ.start;
 
-            % TODO the task is continuing to run, which is wrong. It should play out the finite
-            % samples then it stops.
         end % sendSamples
         
         
