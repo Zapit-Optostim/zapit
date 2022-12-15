@@ -52,4 +52,6 @@ function points = recordPoints(obj)
     obj.hRefCoords = plot(obj.hImAx, points(:,1), points(:,2));
     hold(obj.hImAx, 'off');
 
+    pause(0.1)
+    title(obj.hImAx, '')
 end % recordPoints

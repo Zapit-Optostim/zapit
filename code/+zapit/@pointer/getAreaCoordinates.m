@@ -42,7 +42,7 @@ function varargout = getAreaCoordinates(obj)
 
         while obj.hFig.SelectionType ~= "alt"
             figure(obj.hFig)
-            newpoint(:,end+1,1) =obj.hImAx.CurrentPoint([1 3])';
+            newpoint(:,end+1,1) = obj.hImAx.CurrentPoint([1,3])';
             waitforbuttonpress;
         end
 
@@ -51,7 +51,7 @@ function varargout = getAreaCoordinates(obj)
 
         while obj.hFig.SelectionType ~= "alt"
             figure(obj.hFig)
-            newpoint(:,end,2) =obj.hImAx.CurrentPoint([1 3])';
+            newpoint(:,end,2) = obj.hImAx.CurrentPoint([1,3])';
             waitforbuttonpress;
         end
     end % if opaqueArea
@@ -70,14 +70,6 @@ function varargout = getAreaCoordinates(obj)
     obj.newpoint = newpoint; % TODO: need a better name for this property
     
     
-    % Plot 
-    % TODO: maybe we shold colour code according to stimulation pairs and use different symbols for left and right?
-    hold(obj.hImAx, 'on');
-    obj.hAreaCoords(1) = plot(obj.hImAx, newpoint(1,:,1), newpoint(2,:,1), 'o'); % left hemisphere coords
-    obj.hAreaCoords(2) = plot(obj.hImAx, newpoint(1,:,2), newpoint(2,:,2), 'o'); % right hemisphere coords
-    hold(obj.hImAx, 'off');
-
-
     % Cycle the laser through all locations to check visually that all is good
     % TODO -- in future this will be triggered by a button press or can happen once automatically then button press?
     %         maybe we can have it cycle much faster than now but continuously?

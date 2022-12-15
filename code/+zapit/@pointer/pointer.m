@@ -324,20 +324,6 @@ classdef pointer < handle
             end
         end % topUpBuffer
 
-        function testCoordsLibrary(obj)
-            % move laser into each position as a check
-            for xx = 1:length(obj.newpoint)
-                for yy = 1:2
-                    fprintf('Testing coordinate %0.2f %0.2f\n', ...
-                     obj.coordsLibrary(xx, 1, yy), ...
-                     obj.coordsLibrary(xx, 2, yy))
-                    obj.hTask.writeAnalogData([obj.coordsLibrary(xx, 1, yy), obj.coordsLibrary(xx, 2, yy),2]);
-                    pause(0.25)
-                end
-            end
-        end  % testCoordsLibrary
-
-
         
         function [xVolts, yVolts] = pixelToVolt(obj, pixelColumn, pixelRow)
             % Converts pixel position to voltage value to send to scanners
