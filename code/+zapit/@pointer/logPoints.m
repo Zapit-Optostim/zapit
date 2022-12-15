@@ -60,6 +60,12 @@ function varargout = logPoints(obj)
     hPcurrent = plot(obj.hImAx,nan,nan, 'or','MarkerSize',14,'LineWidth',3);
     hPall = plot(obj.hImAx,nan,nan, 'og','MarkerSize',12,'LineWidth',2);
     hold off
+
+    % Get the current frame with laser off
+    backgroundFrame = obj.returnCurrentFrame(10);
+    backgroundFrame = cast(mean(backgroundFrame,3),class(backgroundFrame));
+
+    nPointsRecorded = 0;
     for ii=1:length(R)
         % feed volts into scan mirrors, wait for precise image
         % without smudges and take position in pixels
@@ -68,25 +74,31 @@ function varargout = logPoints(obj)
         %obj.getLaserPosAccuracy([R(ii), C(ii)]);
 
         % Attempt to get laser position and append to list if the position was found
-        out = obj.getLaserPosAccuracy([R(ii), C(ii)], true);
+        out = obj.getLaserPosAccuracy([R(ii), C(ii)], backgroundFrame, true);
         if ~isempty(out)
-            v(ii)= out;
+            positionData(ii) = out;
             hPall.XData(end+1) = out.actualPixelCoords(1);
             hPall.YData(end+1) = out.actualPixelCoords(2);
 
             set(hPcurrent, 'XData', out.actualPixelCoords(1), 'YData', out.actualPixelCoords(2))
             pause(0.025)
             set(hPcurrent, 'XData', nan, 'YData', nan)
+            nPointsRecorded = nPointsRecorded + 1;
         end
         fprintf('.')
     end
     fprintf('\n')
     delete(hPcurrent)
 
+    if nPointsRecorded<3
+        fprintf('Failed to record sufficient points!\n')
+        tidyUp()
+        return
+    end
     % Save the recorded output (intended) and incoming (calculated) pixel coordinates 
     % in order to calculate the offset and transformation.
-    OUT.targetPixelCoords = cat(1,v(:).targetPixelCoords);
-    OUT.actualPixelCoords = cat(1,v(:).actualPixelCoords);
+    OUT.targetPixelCoords = cat(1,positionData(:).targetPixelCoords);
+    OUT.actualPixelCoords = cat(1,positionData(:).actualPixelCoords);
 
 
     % change the illumination of the camera image to high value again
@@ -104,12 +116,17 @@ function varargout = logPoints(obj)
         pause(0.05)
     end
 
-    obj.DAQ.setLaserPowerControlVoltage(0) %TODO -- will replace with call to a laser class
-    obj.zeroScanners;
-    obj.hLastPoint.Visible = 'on';
-    delete(hPall)
+    tidyUp()
 
     if nargout>0
         varargout{1} = OUT;
     end
+
+    function tidyUp
+        obj.DAQ.setLaserPowerControlVoltage(0) %TODO -- will replace with call to a laser class
+        obj.zeroScanners;
+        obj.hLastPoint.Visible = 'on';
+        delete(hPall)
+    end
+
 end % logPoints

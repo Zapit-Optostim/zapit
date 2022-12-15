@@ -1,4 +1,4 @@
-function varargout = getLaserPosAccuracy(obj, XYdata, verbose)
+function varargout = getLaserPosAccuracy(obj, XYdata, backgroundImage, verbose)
     % Quantify accuracy of beam pointing
     %
     % function out = getLaserPosAccuracy(obj, XYdata)
@@ -11,15 +11,22 @@ function varargout = getLaserPosAccuracy(obj, XYdata, verbose)
     % Inputs
     % XYdata - [optional] The target pixel coordinates. If not supplied, uses the 
     %          hLastPoint property. TODO -- THIS SEEMS BAD BECAUSE IT'S ONLY USED IN ONE PLACE (SEE BELOW)
+    % backgroundImage - [optional] if provided this image is subtracted before analysis.
+    % verbose - [optional] False by default. If true print to console debug information.
     %
     % Outputs
     % Optional structure containing results.
     %
     % 
     % Maja Skretowska - SWC 2021
+    % Rob Campbell - SWC 2022
     
 
     if nargin<3
+        backgroundImage = [];
+    end
+
+    if nargin<4
         verbose = false;
     end
 
@@ -27,16 +34,19 @@ function varargout = getLaserPosAccuracy(obj, XYdata, verbose)
     nFrames = 7;
     tFrames = obj.returnCurrentFrame(nFrames);
 
+    if isempty(backgroundImage)
+        backgroundImage = zeros(size(tFrames,[1,2]), class(tFrames));
+    end
+
     % Binarize
     for ii = 1:nFrames
-        tFrame = tFrames(:,:,ii);
+        tFrame = tFrames(:,:,ii) - backgroundImage;
         tFrames(:,:,ii) = tFrames(:,:,ii) > (max(tFrame(:))*0.5) ;
     end
 
     BWmean = mean(tFrames,3);
 
     BW = BWmean>(max(BWmean(:))*0.7);
-    BW = bwareaopen(BW,50);
 
     BWa = regionprops(BW,'Area');
     BWc = regionprops(BW,'Centroid');
