@@ -1,4 +1,4 @@
-function obj = makeChanSamples(obj, freqLaser, laserAmplitude)
+function obj = makeChanSamples(obj, freqLaser, laserAmplitude, plotFigure)
     % Prepares voltages for each inactivation site
     %
     % zapit.pointer.makeChanSamples(freqLaser, laserAmplitude)
@@ -7,15 +7,17 @@ function obj = makeChanSamples(obj, freqLaser, laserAmplitude)
     % Inputs
     % freqLaser - Frequency of inactivation, amplitude of voltage fed to laser
     % laserAmplitude -
-    %
+    % plotFigure - false by default. If true make a debug figure
     %
     % Outputs
     % None but the chanSamples property matrix is updated.
     %
     % Maja Skretowska - 2021
 
-    % you can later check if everything works if you plot figure at the end
-    plotFigure = 0;
+
+    if nargin<4
+        plotFigure = false;
+    end
     
     obj.sampleRate = 1000;                      % samples in Hz
     obj.freqLaser = freqLaser;                  % full cycles in Hz
@@ -68,10 +70,6 @@ function obj = makeChanSamples(obj, freqLaser, laserAmplitude)
         lghtChnl(:,3,lightCond+1) = digOut*lightCond;               % digital laser gate
     end
     
-    %% make up a figure to visualise what is fed from daq board (optional)
-    if plotFigure
-        showvisual();
-    end
     
     %% save all samples in a structure to access as object property
     obj.chanSamples.scan = scanChnl;
@@ -83,55 +81,46 @@ function obj = makeChanSamples(obj, freqLaser, laserAmplitude)
     % is whether laser is off or on
     
     %% visualization of channel samples
-    function showvisual()
-        % TODO -- this is weird nested function that should be somewhere else.
-        % Maja Skretowska - 2021
-        xAxis = [1:obj.numSamplesPerChannel];
+    if ~plotFigure
+        return
+    end
+
+    xAxis = [1:obj.numSamplesPerChannel];
         
-        figure(22) % TODO -- improve figure ID. This can cause a bug
-        clf
-        subplot(4,1,1)
-        % inactivation structure
-        %                 hold off
-        %                 scatter(xAxis, ones(1,obj.numSamplesPerChannel),'.')
-        %                 hold on
-        %                 plot(xAxis,freqInact,'r');
-        %                 for ii = cycleEdges(1,:)
-        %                     plot([ii ii],[0 2],'g-','LineWidth',1)
-        %                 end
-        %                 title('inactivation structure')
+    figure(22) % TODO -- improve figure ID. This can cause a bug
+    clf
+
         
-        subplot(4,1,2)
-        % analog volt output for 1st area to 1st scanner mirror
-        plot(xAxis,scanChnl(:,1,1),'.','MarkerSize',10);
-        hold on
-        for ii = cycleEdges(1,:)
-            plot([ii ii],[min(scanChnl(:,1,1)) max(scanChnl(:,1,1))],'g-','LineWidth',1)
-        end
-        title('analog output to scan mirrors')
-        ylabel('area')
+    subplot(3,1,1)
+    % analog volt output for 1st area to 1st scanner mirror
+    plot(xAxis,scanChnl(:,1,1),'.','MarkerSize',10);
+    hold on
+    for ii = cycleEdges(1,:)
+        plot([ii ii],[min(scanChnl(:,1,1)) max(scanChnl(:,1,1))],'g-','LineWidth',1)
+    end
+    title('analog output to scan mirrors')
+    ylabel('area')
         
-        subplot(4,1,3)
-        % analog volt output to laser and masking light
-        plot(xAxis,anlgOut,'.','MarkerSize',10);
-        hold on
-        for ii = cycleEdges(1,:)
-            plot([ii ii],laserAmplitude*[0 2],'g-','LineWidth',1)
-        end
-        title('analog output to laser')
-        ylabel('amplitude')
+    subplot(3,1,2)
+    % analog volt output to laser and masking light
+    plot(xAxis,anlgOut,'.','MarkerSize',10);
+    hold on
+    for ii = cycleEdges(1,:)
+        plot([ii ii],laserAmplitude*[0 2],'g-','LineWidth',1)
+    end
+    title('analog output to laser')
+    ylabel('amplitude')
         
-        subplot(4,1,4)
-        % digital volt output to laser
-        plot(xAxis, digOUT,'.','MarkerSize',10);
-        hold on
-        for ii = cycleEdges(1,:)
-            plot([ii ii],digitalAmplitude*[0 1],'g-','LineWidth',1)
-        end
-        title('digital output to laser')
-        ylabel('on/off')
-        xlabel('samples generated at 5000 Hz rate')
-    end %function showvisual
+    subplot(3,1,3)
+    % digital volt output to laser
+    plot(xAxis, digOut,'.','MarkerSize',10);
+    hold on
+    for ii = cycleEdges(1,:)
+        plot([ii ii],digitalAmplitude*[0 1],'g-','LineWidth',1)
+    end
+    title('digital output to laser')
+    ylabel('on/off')
+    xlabel('samples generated at 5000 Hz rate')
     
 end % makeChanSamples
 
