@@ -217,50 +217,6 @@ classdef pointer < handle
         end % returnCurrentFrame
 
 
-        function sendSamples(obj, new_trial, verbose)
-            % take coordinates of two points[x and y Coords], and exchange laser between
-            % them at freqLaser for pulseDuration seconds, locking it at a given point for tOpen ms
-            % inputs: obj.chanSamples,
-            %         CoordNum,
-            %         LaserOn
-            %         powerOption - if 1 send 2 mW, if 2 send 4 mW (mean)
-            % output: nothing. The function just sends correct samples to
-            % the pointer
-
-            if nargin<3
-                verbose = false;
-            end
-
-            CoordNum = new_trial.area;
-            LaserOn = new_trial.LaserOn;
-            trialPower = new_trial.powerOption;
-
-            if verbose
-                fprintf('Stimulating area %d\n', CoordNum)
-            end
-
-            if ~strcmp(obj.DAQ.hC.taskName, 'clocked'); % TODO-- maybe this check should be in the
-                                                        % the createNewTask. So we don't make unless
-                                                        % the task names don't match?
-                obj.DAQ.connectClocked;
-            end
-            
-            % update coordinate parameters/channel samples
-            voltChannel(:,1:2) = obj.chanSamples.scan(:,:,CoordNum);
-            voltChannel(:,3:4) = trialPower * obj.chanSamples.light(:,[3 2],LaserOn+1);  % if laseron = 0, no inactivation
-            % for now, I exchanged the analog output 1 with the digital 3
-            % so that we have a square waveform (until we figure out how to
-            % get higher output wattage from obis laser)
-            
-            % write voltage samples onto the task
-            obj.DAQ.hC.writeAnalogData(voltChannel);
-
-            % start the execution of the new task
-            obj.DAQ.start;
-
-        end % sendSamples
-        
-        
         function stopInactivation(obj)
             % called at the end of a trial
             % send 0 Volts if sample generation has already been triggered

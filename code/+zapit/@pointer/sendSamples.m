@@ -1,0 +1,63 @@
+function varargout = sendSamples(obj, t_trial, verbose)
+    % Take X/Y coordinates of two points and cycle the laser between them.
+    %
+    % waveforms = zapit.pointer.sendSamples(obj,newTrial,verbose)
+    %
+    %
+    % Purpose
+    % Take X/Y coordinates of two points and exchange the laser between them at freqLaser for
+    % pulseDuration seconds, locking it at a given point for tOpen ms. The parameters to actually
+    % stimulate are obtained from the structure, t_trial, which is supplied as an obligatory
+    % input argument (see below).
+    % This function builds an n by 4 matrix of waveforms to send to the DAQ. The first two columns
+    % are the scanner waveforms. The last two are the laser power and masking light.
+    %
+    % Inputs
+    % t_trial - A structure withxs the following fields.
+    %         CoordNum - [int] The index for the brain area to stimulate
+    %         LaserOn - [int] If 1 the laser is turned on. If 0 the laser is off (control trial).
+    %         powerOption - if 1 send 2 mW, if 2 send 4 mW (mean) [TODO -- this will be changed to a real mW value)
+    %
+    % verbose - [optional, false by default] If true print debug messages to screen.
+    %
+    % Outputs
+    % waveforms - optionally return the waveforms for debug.
+    %
+    %
+    % Maja Skretowska - SWC 2020-2022
+    % Rob Campbell - SWC 2022
+
+    if nargin<3
+        verbose = false;
+    end
+
+    if verbose
+        fprintf('Stimulating area %d\n', t_trial.area)
+    end
+
+    if ~strcmp(obj.DAQ.hC.taskName, 'clocked'); % TODO-- maybe this check should be in the
+                                                % the createNewTask. So we don't make unless
+                                                % the task names don't match?
+        obj.DAQ.connectClocked;
+    end
+    
+    % update coordinate parameters/channel samples
+    waveforms(:,1:2) = obj.chanSamples.scan(:,:,t_trial.area);
+    waveforms(:,3:4) = t_trial.powerOption * obj.chanSamples.light(:,[3 2], t_trial.LaserOn+1);
+
+    % TODO -- this is not needed when we figure out the control of the laser properly
+    % for now, I exchanged the analog output 1 with the digital 3
+    % so that we have a square waveform (until we figure out how to
+    % get higher output wattage from obis laser)
+    
+    % write voltage samples onto the task
+    obj.DAQ.hC.writeAnalogData(waveforms);
+
+    % start the execution of the new task
+    obj.DAQ.start;
+
+    if nargout>0
+        varargout{1} = waveforms;
+    end
+
+end % sendSamples
