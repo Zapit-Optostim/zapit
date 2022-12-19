@@ -30,7 +30,7 @@ function generateLaserCalibrationCurve(obj,minMax)
     sensorVals = zeros(size(valsToTest));
 
     % Run
-    nValsToMeasure = 4; %Average this many values
+    nValsToMeasure = 8; %Average this many values
     for ii = 1:length(valsToTest)
         obj.DAQ.setLaserPowerControlVoltage(valsToTest(ii))
 
