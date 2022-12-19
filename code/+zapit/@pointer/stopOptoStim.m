@@ -19,7 +19,7 @@ function stopOptoStim(obj, rampDownInMS)
         rampDownInMS = 250;
     end
 
-    sampleRate = obj.DAQ.sampleRate;
+    samplesPerSecond = obj.DAQ.samplesPerSecond;
     bufferSize = obj.numSamplesPerChannel;
 
     if isempty(bufferSize)
@@ -38,7 +38,7 @@ function stopOptoStim(obj, rampDownInMS)
 
 
     % Otherwise we do a ramp-down
-    msPerBuffer = (bufferSize/sampleRate) * 1E3;
+    msPerBuffer = (bufferSize/samplesPerSecond) * 1E3;
 
     % Handle case where the user asks for a ramp-down that is smaller than the
     % buffer size.

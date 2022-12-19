@@ -110,7 +110,7 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
             
             
             % Configure the task sample clock, the sample size and mode to be continuous and set the size of the output buffer
-            obj.hC.cfgSampClkTiming(obj.sampleRate, 'DAQmx_Val_ContSamps', numSamplesPerChannel, 'OnboardClock');
+            obj.hC.cfgSampClkTiming(obj.samplesPerSecond, 'DAQmx_Val_ContSamps', numSamplesPerChannel, 'OnboardClock');
             obj.hC.cfgOutputBuffer(numSamplesPerChannel);
             
             % allow sample regeneration
