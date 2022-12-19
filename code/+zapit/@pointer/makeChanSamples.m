@@ -1,12 +1,12 @@
-function obj = makeChanSamples(obj, freqLaser, laserAmplitude, plotFigure)
+function obj = makeChanSamples(obj, freqLaser, laserPowerInMW, plotFigure)
     % Prepares voltages for each inactivation site
     %
-    % zapit.pointer.makeChanSamples(freqLaser, laserAmplitude)
+    % zapit.pointer.makeChanSamples(freqLaser, laserPowerInMW)
     %
     %
     % Inputs
     % freqLaser - Frequency of inactivation, amplitude of voltage fed to laser
-    % laserAmplitude - TODO -- not working
+    % laserPowerInMW - Desired laser power in mW
     % plotFigure - false by default. If true make a debug figure
     %
     % Outputs
@@ -49,11 +49,8 @@ function obj = makeChanSamples(obj, freqLaser, laserAmplitude, plotFigure)
         
     end
     
-    %% make up samples for laser and masking light channels
-    
-    %masking light is always on, laser is on only when LaserOn == 1
-    anlgOut = ones(1,obj.numSamplesPerChannel) * laserAmplitude;
-    %anlgOut = (-cos(linspace(0, numHalfCycles*2*pi, obj.numSamplesPerChannel)) + 1) * laserAmplitude;
+    %% make up samples for laser and masking light channels    
+    anlgOut = ones(1,obj.numSamplesPerChannel) * obh.laser_mW_to_control(laserPowerInMW); %Write the correct control voltage
     digitalAmplitude = 4;
     digOut = ones(1,obj.numSamplesPerChannel) * digitalAmplitude;
 
@@ -112,7 +109,7 @@ function obj = makeChanSamples(obj, freqLaser, laserAmplitude, plotFigure)
     plot(xAxis,anlgOut,'.','MarkerSize',10);
     hold on
     for ii = cycleEdges(1,:)
-        plot([ii ii],laserAmplitude*[0 2],'g-','LineWidth',1)
+        plot([ii ii],laserPowerInMW*[0 2],'g-','LineWidth',1)
     end
     title('analog output to laser')
     ylabel('amplitude')

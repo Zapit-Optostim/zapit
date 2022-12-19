@@ -129,9 +129,9 @@ P.getAreaCoordinates
 
 ### Generate the parameters for switching the beam
 Prepare the waveforms that will be used for each brain area (stimulation site).
-Here we are switching at 40 Hz with a laser amplitude of 0.36
+Here we are switching at 40 Hz with a laser power at the sample of 10 mW.
 ```
-P.makeChanSamples(40, 1.75);
+P.makeChanSamples(40, 10);
 ```
 
 ### Let's run it!

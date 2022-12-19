@@ -5,6 +5,8 @@ function controlVal = laser_mW_to_control(obj,mW)
 %
 %  Purpose
 %  Convert laser valye in mW to control voltage
+%
+% See also: zapit.pointer.setLaserInMW
 
 
 if isempty(obj.laserFit)
