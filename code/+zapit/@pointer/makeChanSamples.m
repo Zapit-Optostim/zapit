@@ -6,7 +6,7 @@ function obj = makeChanSamples(obj, freqLaser, laserAmplitude, plotFigure)
     %
     % Inputs
     % freqLaser - Frequency of inactivation, amplitude of voltage fed to laser
-    % laserAmplitude -
+    % laserAmplitude - TODO -- not working
     % plotFigure - false by default. If true make a debug figure
     %
     % Outputs
@@ -21,13 +21,9 @@ function obj = makeChanSamples(obj, freqLaser, laserAmplitude, plotFigure)
     
     obj.freqLaser = freqLaser;                  % full cycles in Hz
     numHalfCycles = 4;                          % arbitrary, no of half cycles to buffer
-    obj.numSamplesPerChannel = obj.DAQ.sampleRate/obj.freqLaser*(numHalfCycles/2);
+    obj.numSamplesPerChannel = obj.DAQ.samplesPerSecond/obj.freqLaser*(numHalfCycles/2);
     
-    % TODO -- hardcoded stuff
-    %  digitalAmplitude = 0.72;                       % old version with analog obis settings and without an arduino (gives 3.8 mW power)
-    digitalAmplitude = 1.5; % fed into Arduino
-    
-    % find edges of half cycles
+        % find edges of half cycles
     cycleEdges = linspace(1, obj.numSamplesPerChannel, numHalfCycles+1);
     edgeSamples = ceil(cycleEdges(1,:));
     
@@ -56,19 +52,30 @@ function obj = makeChanSamples(obj, freqLaser, laserAmplitude, plotFigure)
     %% make up samples for laser and masking light channels
     
     %masking light is always on, laser is on only when LaserOn == 1
-    anlgOut = (-cos(linspace(0, numHalfCycles*2*pi, obj.numSamplesPerChannel)) + 1) * laserAmplitude;
+    anlgOut = ones(1,obj.numSamplesPerChannel) * laserAmplitude;
+    %anlgOut = (-cos(linspace(0, numHalfCycles*2*pi, obj.numSamplesPerChannel)) + 1) * laserAmplitude;
+    digitalAmplitude = 4;
     digOut = ones(1,obj.numSamplesPerChannel) * digitalAmplitude;
 
-    % allow 2 samples around halfcycle change to be 0 (in case scanners are not in the right spot
-    digOut([edgeSamples,edgeSamples(1:end-1)+1])= 0; 
-    
-    for lightCond = 0:1
-        % if light condition is 0, then laser samples become 0 too
-        lghtChnl(:,1,lightCond+1) = anlgOut*lightCond;              % analog laser output
-        lghtChnl(:,2,lightCond+1) = digOut*(5/digitalAmplitude);    % analog masking light output
-        lghtChnl(:,3,lightCond+1) = digOut*lightCond;               % digital laser gate
+    % allow 1 ms around halfcycle change to be 0 (in case scanners are not in the right spot
+    % TODO -- this should be based on empirical values
+
+    MASK = ones(1,obj.numSamplesPerChannel);
+    sampleInterval = 1/obj.DAQ.samplesPerSecond;
+    nSamplesInOneMS = 1E-3 / sampleInterval;
+
+    for ii=1:nSamplesInOneMS
+        MASK(edgeSamples(1:end-1)+(ii-1))=0;
     end
-    
+
+    anlgOut = anlgOut.*MASK;
+    digOut = digOut.*MASK;
+
+    % Can probabky make
+    lghtChnl(:,1) = anlgOut;              % analog laser output
+    lghtChnl(:,2) = digOut*(5/digitalAmplitude);    % analog masking light output
+    lghtChnl(:,3) = digOut;               % digital laser gate
+
     
     %% save all samples in a structure to access as object property
     obj.chanSamples.scan = scanChnl;

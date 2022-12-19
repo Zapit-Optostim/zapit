@@ -45,12 +45,13 @@ function varargout = sendSamples(obj, t_trial, verbose)
     % update coordinate parameters/channel samples
     obj.waveforms = [];
     obj.waveforms(:,1:2) = obj.chanSamples.scan(:,:,t_trial.area);
-    obj.waveforms(:,3:4) = t_trial.powerOption * obj.chanSamples.light(:,[3 2], t_trial.LaserOn+1);
+    obj.waveforms(:,3:4) = t_trial.powerOption * obj.chanSamples.light(:,[1 2]);
 
-    % TODO -- this is not needed when we figure out the control of the laser properly
-    % for now, I exchanged the analog output 1 with the digital 3
-    % so that we have a square waveform (until we figure out how to
-    % get higher output wattage from obis laser)
+    % Disable laser  if the user asked fior this
+    if t_trial.LaserOn == 0
+        obj.waveforms(:,3) = 0;
+    end
+
     
     % write voltage samples onto the task
     obj.DAQ.hC.writeAnalogData(obj.waveforms);
