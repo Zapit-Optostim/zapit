@@ -96,7 +96,7 @@ function varargout = getLaserPosAccuracy(obj, XYdata, backgroundImage, verbose)
         else
             out.targetPixelCoords = XYdata; %ONLY APPEARS HERE NOT ABOVE (TODO)
                                             %IF XYdata REALLY IS NOT NEEDED WE SHOULD REMOVE IT
-                                            % TEST IF REMOVING IT FROM logPoints MAKES A DIFFERENCE
+                                            % TEST IF REMOVING IT FROM calibrateScanners MAKES A DIFFERENCE -- TODO
         end
 
         % Return

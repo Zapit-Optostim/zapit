@@ -114,7 +114,7 @@ P = zapit.pointer;
 
 Now you need to determine the transform between pixel coordinates and the scan mirrors.
 ```
-P.logPoints;
+P.calibrateScanners;
 ```
 
 You can now click on the image and the beam should go to that location.

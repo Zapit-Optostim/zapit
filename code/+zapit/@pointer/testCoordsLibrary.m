@@ -22,7 +22,7 @@ function testCoordsLibrary(obj, verbose)
     end
 
     obj.hLastPoint.Visible = 'off';
-    obj.DAQ.setLaserPowerControlVoltage(2) % TODO-- hard-coded
+    obj.setLaserInMW(20) 
     hold(obj.hImAx, 'on');
 
     % Plot points to stimulate in different colors for each brain area on the two sides of the brain
@@ -61,6 +61,6 @@ function testCoordsLibrary(obj, verbose)
     obj.hRefCoords = [];
 
     obj.hLastPoint.Visible = 'on';
-    obj.DAQ.setLaserPowerControlVoltage(0) % TODO-- hard-coded
+    obj.setLaserInMW(0)
 end  % testCoordsLibrary
 

@@ -1,7 +1,7 @@
-function varargout = logPoints(obj)
-    % Log precision of beam pointing: conduct an affine transform to calibrate camera and beam
+¿function varargout = calibrateScanners(obj)
+    % Calibrate scanners with camera: conduct an affine transform to calibrate camera and beam
     %
-    % TODO -- I think we need a better name for this method
+    % function varargout = zapit.pointer.calibrateScanners(obj)
     %
     % Purpose
     % Moves beam sequentially across a series of locations and records the intended vs
@@ -18,7 +18,7 @@ function varargout = logPoints(obj)
     % Maja Skretowska - SWC 2021
     % Rob Campbell - SWC 2022
 
-    obj.DAQ.setLaserPowerControlVoltage(0) %TODO -- will replace with call to a laser class
+    obj.setLaserInMW(0)
 
     % lower camera illumination for increased precision in detecting beam location 
     obj.cam.src.Gain = 4; % TODO - hard-coded
@@ -52,8 +52,7 @@ function varargout = logPoints(obj)
     pause(0.05)
     fprintf('Running calibration')
 
-    obj.DAQ.setLaserPowerControlVoltage(1.7) %TODO -- will replace with call to a laser class
-
+    obj.setLaserInMW(20) 
     obj.hLastPoint.Visible = 'off';
 
     hold on
@@ -123,10 +122,10 @@ function varargout = logPoints(obj)
     end
 
     function tidyUp
-        obj.DAQ.setLaserPowerControlVoltage(0) %TODO -- will replace with call to a laser class
+        obj.setLaserInMW(0) 
         obj.zeroScanners;
         obj.hLastPoint.Visible = 'on';
         delete(hPall)
     end
 
-end % logPoints
+end % calibrateScanners

@@ -10,7 +10,7 @@ function [xVolts, yVolts] = pixelToVolt(obj, pixelColumn, pixelRow)
     %
     % This function is important and used every time the laser is
     % pointed to a location. Called in: pointBeamToLocationInImage,
-    % getAreaCoordinates and logPoints
+    % getAreaCoordinates and calibrateScanners.
     %
     %
     % Inputs

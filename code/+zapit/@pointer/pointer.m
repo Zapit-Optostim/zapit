@@ -19,7 +19,7 @@ classdef pointer < handle
         invertX = true
         invertY = true
         flipXY % TODO -- should add this but only once everything else is working
-        voltsPerPixel = 2.2E-3 %TODO -- HARDCODED
+        voltsPerPixel = 2.2E-3 %TODO -- HARDCODED. MOVE TO SETTINGS
         micsPix = 19.3 %Measured this %TODO -- HARDCODED
         
         % Properties related to where we stimulate
@@ -30,8 +30,6 @@ classdef pointer < handle
         % behavioural task properties
         coordsLibrary % TODO - I think this is where all computed waveforms are kept
         newpoint % TODO - ??
-        topUpCall % TODO - ??
-        rampDown % Not used (yet?)
         chanSamples %Structure describing waveforms to send the scanners for each brain area
         freqLaser % TODO - ??
         numSamplesPerChannel % TODO - why is this here? We need a better solution
@@ -44,11 +42,13 @@ classdef pointer < handle
 
     properties (Hidden)
         % Handles for plot elements
+
         hFig
         hImAx
         hImLive
-        hLastPoint % plot handle with location of the last clicked point
 
+        % TODO: these plot elements should have a system like BT acq window, where we delete and create without a property for each.
+        hLastPoint % plot handle with location of the last clicked point
         hAreaCoords % locations where the beam will be sent. see getAreaCoords
         hRefCoords  % The two reference coords
 
@@ -79,8 +79,6 @@ classdef pointer < handle
                 fname = [];
             end
 
-            disp('STARTING BEAMPOINTER')
-
             % Connect to camera
             obj.cam = zapit.camera(2); % TODO -  Hard-coded selection of camera ID
             obj.cam.exposure = 3000; % TODO - HARDCODED
@@ -92,26 +90,21 @@ classdef pointer < handle
 
             obj.setUpFigure
 
-            % Attach the DAQ (TODO: for now we hard-code the class as it's the only one)
+            fprintf('Connecting to DAQ\n')
             obj.DAQ = zapit.hardware.DAQ.NI.vidriowrapper;
             obj.DAQ.parent = obj;
 
-            % TODO - Put connection to DAQ in a method
             obj.DAQ.connectUnclockedAO(true)
             
             
-            % TODO -- we should presumbably implement the following again?
-            % When window closes we disconnect from the DAQ
-            % obj.hFig.CloseRequestFcn = @obj.figClose;
-            
             obj.zeroScanners
 
-            % TODO -- we evenually want to be setting laser power in mW with a laser class.
-            % so we will need the laser class to talk to the DAQ. Therefore it might make
-            % sense to have a scanner class that talks to the DAQ (see above)
-            obj.DAQ.setLaserPowerControlVoltage(1) % TODO -- we will need
 
-            % load configuration files
+            obj.setLaserInMW(20) % TODO -- temporary
+
+
+            % TODO -- this does not have to be here. We can calibrate camera without this. It should be elsewhere. 
+            % Load configuration files
             if isempty(fname)
                 [fname,fpath] = uigetfile('*.yaml','Pick a config file');
                 pathToConfig = fullfile(fpath,fname);
@@ -124,9 +117,10 @@ classdef pointer < handle
         
         
         function delete(obj,~,~)
+            % Stop the camera and disconnect from hardware
             fprintf('Shutting down optostim software\n')
             obj.cam.stopVideo;
-            delete(obj.hFig)
+            delete(obj.hFig) % close figure
             delete(obj.cam)
             delete(obj.DAQ)
         end % Destructor
@@ -226,6 +220,12 @@ classdef pointer < handle
 
         function dispFrame(obj,~,~)
             % This callback is run every time a frame has been acquired
+            %
+            %  function zapit.pointer.dispFrame(obj,~,~)
+            %
+            % Purpose
+            % Callback function that gets the last frame from the camera then displays it.
+
             if obj.cam.vid.FramesAvailable==0
                 return
             end
