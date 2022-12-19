@@ -72,15 +72,15 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
                 verbose = false;
             end
 
-            obj.stopAndDeleteAOTask('hAI')
+            obj.stopAndDeleteAITask
 
-            obj.hAI = dabs.ni.daqmx.Task('unclocked');
+            obj.hAI = dabs.ni.daqmx.Task('unclockedai');
 
             if verbose
                 fprintf('Creating unclocked AI task on %s\n', obj.device_ID)
             end
-            obj.hAO.createAIVoltageChan(obj.device_ID, ...
-                                        obj.AOchans, ...
+            obj.hAI.createAIVoltageChan(obj.device_ID, ...
+                                        chans, ...
                                         [], ...
                                         -obj.AOrange, ...
                                         obj.AOrange);
@@ -93,7 +93,7 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
 
             obj.stopAndDeleteAOTask
 
-            obj.hAO = dabs.ni.daqmx.Task('unclocked');
+            obj.hAO = dabs.ni.daqmx.Task('unclockedao');
 
             if verbose
                 fprintf('Creating unclocked AO task on %s\n', obj.device_ID)
@@ -128,7 +128,7 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
             end
             
             %% Create the inactivation task
-            obj.hAO = dabs.ni.daqmx.Task('clocked');
+            obj.hAO = dabs.ni.daqmx.Task('clockedao');
             
             % Set output channels
             obj.hAO.createAOVoltageChan(obj.device_ID, ...
@@ -155,7 +155,7 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
 
 
         function setLaserPowerControlVoltage(obj,laserControlVoltage)
-            if ~strcmp(obj.hAO.taskName, 'unclocked')
+            if ~strcmp(obj.hAO.taskName, 'unclockedao')
                 return
             end
             obj.hAO.writeAnalogData([obj.lastXgalvoVoltage, obj.lastYgalvoVoltage, laserControlVoltage])
@@ -166,7 +166,7 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
 
 
         function moveBeamXY(obj,beamXY)
-            if ~strcmp(obj.hAO.taskName, 'unclocked')
+            if ~strcmp(obj.hAO.taskName, 'unclockedao')
                 return
             end
             beamXY = beamXY(:)'; % Ensure column vector
