@@ -91,7 +91,7 @@ classdef pointer < handle
             obj.DAQ.parent = obj;
 
             % TODO - Put connection to DAQ in a method
-            obj.DAQ.connectUnclocked(true)
+            obj.DAQ.connectUnclockedAO(true)
             
             
             % TODO -- we should presumbably implement the following again?

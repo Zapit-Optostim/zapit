@@ -40,7 +40,7 @@ function laserPower = testPower(obj)
         
         if laserPower(3, ii) == -1
             condition = 0;
-            obj.DAQ.hC.stop;
+            obj.DAQ.hAO.stop;
         else
             marker_color = [1 (1-(laserPower(3,ii)/5)) 1];
             hold on;
@@ -71,10 +71,10 @@ function laserPower = testPower(obj)
         % the pointer
         taskName = 'testPower';
         
-        if ~strcmp(obj.DAQ.hC.taskName, taskName)
+        if ~strcmp(obj.DAQ.hAO.taskName, taskName)
             createTestTask(obj);
         else
-            obj.DAQ.hC.abort;
+            obj.DAQ.hAO.abort;
             pause(0.3);
         end
         
@@ -84,8 +84,8 @@ function laserPower = testPower(obj)
         voltChannel(:,3) = trialPower*lightChnl;
         
         % send voltage to ni daq
-        obj.DAQ.hC.writeAnalogData(voltChannel);
-        obj.DAQ.hC.start;
+        obj.DAQ.hAO.writeAnalogData(voltChannel);
+        obj.DAQ.hAO.start;
         
         
         
@@ -133,7 +133,7 @@ function laserPower = testPower(obj)
 
     function createTestTask(obj)
         % TODO -- leave this method for now because I don't know exactly what it does
-        % I think we can just use the DAQ.connectClocked method with maybe param/val
+        % I think we can just use the DAQ.connectClockedAO method with maybe param/val
         % pairs in cases such as this.
 
         obj.DAQ.stopAndDeleteTask
@@ -147,29 +147,29 @@ function laserPower = testPower(obj)
         % output channel params
         chanIDs = [0 1 2];
         obj.freqLaser = 40;
-        sampleRate = 1000;                        % set in makeChanSamples
-        obj.sampleRate = sampleRate;
+        samplesPerSecond = 1000;                        % set in makeChanSamples
+        obj.samplesPerSecond = samplesPerSecond;
         sampleMode = 'DAQmx_Val_ContSamps';
         sampleClockSource = 'OnboardClock';
         numHalfCycles = 4;
-        numSamplesPerChannel = sampleRate/obj.freqLaser*(numHalfCycles/2);    % set in makeChanSamples
+        numSamplesPerChannel = samplesPerSecond/obj.freqLaser*(numHalfCycles/2);    % set in makeChanSamples
         obj.numSamplesPerChannel = numSamplesPerChannel;
         
         %% Create the inactivation task
         % taskName is defined in the previous function ('flashAreas')
-        obj.DAQ.hC = dabs.ni.daqmx.Task(taskName);
+        obj.DAQ.hAO = dabs.ni.daqmx.Task(taskName);
         
         % Set output channels
-        obj.DAQ.hC.createAOVoltageChan(devName, chanIDs);
+        obj.DAQ.hAO.createAOVoltageChan(devName, chanIDs);
         
         
         % Configure the task sample clock, the sample size and mode to be continuous and set the size of the output buffer
-        obj.DAQ.hC.cfgSampClkTiming(sampleRate, sampleMode, numSamplesPerChannel, sampleClockSource);
-        obj.DAQ.hC.cfgOutputBuffer(numSamplesPerChannel);
+        obj.DAQ.hAO.cfgSampClkTiming(samplesPerSecond, sampleMode, numSamplesPerChannel, sampleClockSource);
+        obj.DAQ.hAO.cfgOutputBuffer(numSamplesPerChannel);
         
         % allow sample regeneration
-        obj.DAQ.hC.set('writeRegenMode', 'DAQmx_Val_AllowRegen');
-        obj.DAQ.hC.set('writeRelativeTo','DAQmx_Val_FirstSample');
+        obj.DAQ.hAO.set('writeRegenMode', 'DAQmx_Val_AllowRegen');
+        obj.DAQ.hAO.set('writeRelativeTo','DAQmx_Val_FirstSample');
 
     end % createTestTask
     

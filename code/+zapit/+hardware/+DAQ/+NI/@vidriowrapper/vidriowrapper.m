@@ -31,53 +31,82 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
 
         function start(obj)
             % Definition of abstract class declared in zapit.hardware.DAQ
-            if isempty(obj.hC) || ~isvalid(obj.hC)
+            if isempty(obj.hAO) || ~isvalid(obj.hAO)
                 return
             end
-            obj.hC.start
+            obj.hAO.start
         end
 
 
         function stop(obj)
             % Definition of abstract class declared in zapit.hardware.DAQ
-            if isempty(obj.hC) || ~isvalid(obj.hC)
+            if isempty(obj.hAO) || ~isvalid(obj.hAO)
                 return
             end
-            obj.hC.stop
+            obj.hAO.stop
         end
 
 
-        function stopAndDeleteTask(obj)
+        function stopAndDeleteAOTask(obj)
             % Definition of abstract class declared in zapit.hardware.DAQ.NI
-            if isempty(obj.hC) || ~isvalid(obj.hC)
+            if isempty(obj.hAO) || ~isvalid(obj.hAO)
                 return
             end
-            obj.hC.stop;    % Calls DAQmxStopTask
-            delete(obj.hC); % The destructor (dabs.ni.daqmx.Task.delete) calls DAQmxClearTask
-        end % stopAndDeleteTask
+            obj.hAO.stop;    % Calls DAQmxStopTask
+            delete(obj.hAO);
+        end % stopAndDeleteAOTask
 
 
-        function connectUnclocked(obj, verbose)
-            if nargin<2
+        function stopAndDeleteAITask(obj)
+            % Definition of abstract class declared in zapit.hardware.DAQ.NI
+            if isempty(obj.hAI) || ~isvalid(obj.hAI)
+                return
+            end
+            obj.hAI.stop;    % Calls DAQmxStopTask
+            delete(obj.hAI);
+        end % stopAndDeleteAITask
+
+
+        function connectUnclockedAI(obj, chans, verbose)
+            if nargin<3
                 verbose = false;
             end
 
-            obj.stopAndDeleteTask
+            obj.stopAndDeleteAOTask('hAI')
 
-            obj.hC = dabs.ni.daqmx.Task('unclocked');
+            obj.hAI = dabs.ni.daqmx.Task('unclocked');
 
             if verbose
-                fprintf('Creating unclocked task on %s\n', obj.device_ID)
+                fprintf('Creating unclocked AI task on %s\n', obj.device_ID)
             end
-            obj.hC.createAOVoltageChan(obj.device_ID, ...
+            obj.hAO.createAIVoltageChan(obj.device_ID, ...
                                         obj.AOchans, ...
                                         [], ...
                                         -obj.AOrange, ...
                                         obj.AOrange);
-        end % connectUnclocked
+        end % connectUnclockedAI
+
+        function connectUnclockedAO(obj, verbose)
+            if nargin<2
+                verbose = false;
+            end
+
+            obj.stopAndDeleteAOTask
+
+            obj.hAO = dabs.ni.daqmx.Task('unclocked');
+
+            if verbose
+                fprintf('Creating unclocked AO task on %s\n', obj.device_ID)
+            end
+            obj.hAO.createAOVoltageChan(obj.device_ID, ...
+                                        obj.AOchans, ...
+                                        [], ...
+                                        -obj.AOrange, ...
+                                        obj.AOrange);
+        end % connectUnclockedAO
 
 
-        function connectClocked(obj, numSamplesPerChannel, makeTriggerable, verbose)
+        function connectClockedAO(obj, numSamplesPerChannel, makeTriggerable, verbose)
 
             if nargin<2 || isempty(numSamplesPerChannel)
                 numSamplesPerChannel = 1000;
@@ -92,17 +121,17 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
             end
 
 
-            obj.stopAndDeleteTask
+            obj.stopAndDeleteAOTask
 
             if verbose
-                fprintf('Creating clocked task on %s\n', obj.device_ID)
+                fprintf('Creating clocked AO task on %s\n', obj.device_ID)
             end
             
             %% Create the inactivation task
-            obj.hC = dabs.ni.daqmx.Task('clocked');
+            obj.hAO = dabs.ni.daqmx.Task('clocked');
             
             % Set output channels
-            obj.hC.createAOVoltageChan(obj.device_ID, ...
+            obj.hAO.createAOVoltageChan(obj.device_ID, ...
                                         obj.AOchans, ...
                                         [], ...
                                         -obj.AOrange, ...
@@ -110,26 +139,26 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
             
             
             % Configure the task sample clock, the sample size and mode to be continuous and set the size of the output buffer
-            obj.hC.cfgSampClkTiming(obj.samplesPerSecond, 'DAQmx_Val_ContSamps', numSamplesPerChannel, 'OnboardClock');
-            obj.hC.cfgOutputBuffer(numSamplesPerChannel);
+            obj.hAO.cfgSampClkTiming(obj.samplesPerSecond, 'DAQmx_Val_ContSamps', numSamplesPerChannel, 'OnboardClock');
+            obj.hAO.cfgOutputBuffer(numSamplesPerChannel);
             
             % allow sample regeneration
-            obj.hC.set('writeRegenMode', 'DAQmx_Val_AllowRegen');
-            obj.hC.set('writeRelativeTo','DAQmx_Val_FirstSample');
+            obj.hAO.set('writeRegenMode', 'DAQmx_Val_AllowRegen');
+            obj.hAO.set('writeRelativeTo','DAQmx_Val_FirstSample');
             
             % Configure the trigger
             if makeTriggerable
-                obj.hC.cfgDigEdgeStartTrig(obj.triggerChannel, 'DAQmx_Val_Rising');
+                obj.hAO.cfgDigEdgeStartTrig(obj.triggerChannel, 'DAQmx_Val_Rising');
             end
 
-        end % connectClocked
+        end % connectClockedAO
 
 
         function setLaserPowerControlVoltage(obj,laserControlVoltage)
-            if ~strcmp(obj.hC.taskName, 'unclocked')
+            if ~strcmp(obj.hAO.taskName, 'unclocked')
                 return
             end
-            obj.hC.writeAnalogData([obj.lastXgalvoVoltage, obj.lastYgalvoVoltage, laserControlVoltage])
+            obj.hAO.writeAnalogData([obj.lastXgalvoVoltage, obj.lastYgalvoVoltage, laserControlVoltage])
 
             % update cached values
             obj.lastLaserVoltage = laserControlVoltage; 
@@ -137,11 +166,11 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
 
 
         function moveBeamXY(obj,beamXY)
-            if ~strcmp(obj.hC.taskName, 'unclocked')
+            if ~strcmp(obj.hAO.taskName, 'unclocked')
                 return
             end
             beamXY = beamXY(:)'; % Ensure column vector
-            obj.hC.writeAnalogData([beamXY, obj.lastLaserVoltage])
+            obj.hAO.writeAnalogData([beamXY, obj.lastLaserVoltage])
 
             % update cached values
             obj.lastXgalvoVoltage = beamXY(1);

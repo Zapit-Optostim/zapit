@@ -88,14 +88,30 @@ classdef (Abstract) NI < zapit.hardware.DAQ.DAQ
 
     methods (Abstract)
         % TODO -- document
-        connectUnclocked(obj)
-        % connectUnclocked(obj)
+
+        connectUnclockedAI(obj,chans)
+        % connectUnclockedAO(obj)
         %
-        % Create a task that is unclocked and can be used or sample setup.
+        % Create a task that is unclocked AI and can be used for misc tasks.
+        %
+        % Inputs
+        % chans - which chans to conect. Must be supplied.
         % TODO -- more docs
 
-        stopAndDeleteTask(obj)
-        % stopAndDeleteTask(obj)
+        connectUnclockedAO(obj)
+        % connectUnclockedAO(obj)
+        %
+        % Create a task that is unclocked AO and can be used for sample setup.
+        % TODO -- more docs
+
+        connectClockedAO(obj)
+        % connectClockedAO(obj)
+        %
+        % Create a task that is clocked AO and can be used for running the experiment
+        % TODO -- more docs
+
+        stopAndDeleteAOTask(obj)
+        % stopAndDeleteAOTask(obj)
         %
         % Stop the task and then delete it, which will run DAQmxClearTask
     end
