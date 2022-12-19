@@ -217,69 +217,6 @@ classdef pointer < handle
         end % returnCurrentFrame
 
 
-        function stopInactivation(obj)
-            % called at the end of a trial
-            % send 0 Volts if sample generation has already been triggered
-            % and stops task
-            
-            % TODO -- this method we will change to allow for the ramp-down
-            try
-                % try-end used because overwriting buffer before trigger
-                % comes (e.g. run abort before inactivation) may throw errors
-                
-                voltChannel(:,1:2) = obj.chanSamples.light(:,[1 1],1); % just zeros
-                voltChannel(:,3:4) = obj.chanSamples.light(:,[1 1],1); % just zeros
-                
-                obj.DAQ.hC.writeAnalogData(voltChannel);
-                
-                % pause to wait for 0s to be updated in the buffer and
-                % generated before closing
-                pause(1);
-            end
-            
-            % stop task and send to pre-generation stage, allowing to write
-            % next trial samples without conflicts
-            obj.DAQ.hC.abort
-        end % stopInactivation
-        
-        
-        function [xVolts, yVolts] = pixelToVolt(obj, pixelColumn, pixelRow)
-            % Converts pixel position to voltage value to send to scanners
-            %
-            % function [xVolts, yVolts] = pixelToVolt(obj, pixelColumn, pixelRow)
-            %
-            % Purpose
-            % Converts pixel coordinates to volt values for scanner mirrors
-            % taking into account created transformation matrices (infinite
-            % number of those allowed).
-            %
-            % This function is important and used every time the laser is
-            % pointed to a location. Called in: pointBeamToLocationInImage,
-            % getAreaCoordinates and logPoints
-            %
-            %
-            % Inputs
-            % Pixel row and column
-
-
-            if ~isempty(obj.transform)
-                [pixelColumn, pixelRow] = transformPointsInverse(obj.transform, pixelColumn, pixelRow);
-            end
-            
-            
-            xVolts = (pixelColumn - (obj.imSize(1)/2)) * obj.voltsPerPixel;
-            yVolts = (pixelRow    - (obj.imSize(2)/2)) * obj.voltsPerPixel;
-            
-            if obj.invertX
-                xVolts = xVolts*-1;
-            end
-
-            if obj.invertY
-                yVolts= yVolts*-1;
-            end
-        end % pixelToVolt
-        
-        
         function dispFrame(obj,~,~)
             % This callback is run every time a frame has been acquired
             if obj.cam.vid.FramesAvailable==0
