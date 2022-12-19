@@ -16,8 +16,9 @@ The [Change Log](CHANGELOG.md) describes the project history and recent changes.
 
 
 ## Requirements
-* [Image Processing Toolbox](https://uk.mathworks.com/help/images/index.html)
-* [Image Acquisition Toolbox](https://uk.mathworks.com/products/image-acquisition.html)
+* [Image Processing Toolbox](https://www.mathworks.com/help/images/index.html)
+* [Image Acquisition Toolbox](https://www.mathworks.com/products/image-acquisition.html)
+* [Curve Fittting Toolbox](https://www.mathworks.com/help/curvefit/)
 * [The free version of ScanImage](https://vidriotechnologies.com/) because Zapit uses its DAQmx wrapper (but see [here](https://github.com/BaselLaserMouse/zapit/issues/14)). You need add to the path the base ScanImage directory. No need to add to path with all sub-directories.
 * To communicate with the camera you will need to install [Basler's instructions for the GenICam interface](https://www.baslerweb.com/en/downloads/document-downloads/using-pylon-gentl-producers-for-basler-cameras-with-matlab/).
 Although the Zapit system is tested against this, the goal is that it is able to handle other drivers and cameras also.

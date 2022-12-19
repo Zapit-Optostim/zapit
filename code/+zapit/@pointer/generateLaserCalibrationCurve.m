@@ -1,4 +1,4 @@
-function laserFit = generateLaserCalibrationCurve(obj,minMax)
+function generateLaserCalibrationCurve(obj,minMax)
     % Calibrate the laser
     %
     % function laserFit = generateLaserCalibrationCurve(obj,minMax)
@@ -7,23 +7,16 @@ function laserFit = generateLaserCalibrationCurve(obj,minMax)
     % Calibrate the laser
     % Connect AI0 to the photodiode. Point laser at photodiode.
     % Run this function and get a curve.
+    % Data go to laserFit property
     %
     % Inputs
-    % minMax - [minValueToTest, maxValueToTest] by default this is [0,5]
-    %
-    % Outputs
-    % fit objects. One that is sensor as a function of control values and one that is control
-    % value as a function of sensor. The idea being that we can rescale the control values
-    % by actually making a measurement of max and min power. Then do:
-    % intendedPower -> my_Sensor_value
-    % controlVoltage = laserFit.sensorOnControl(my_Sensor_value)
-    % Then we know the control volage to use.
+    % minMax - [minValueToTest, maxValueToTest] by default it comes from props of object
     %
     %
     % Rob Campbell - SWC 2022
 
     if nargin<2
-        minMax = [0,5];
+        minMax = obj.laserMinMaxControl;
     end
 
     % Connect to DAQs
@@ -57,20 +50,33 @@ function laserFit = generateLaserCalibrationCurve(obj,minMax)
     valsToTest = valsToTest';
     sensorVals = sensorVals';
 
+    laserFit.controlOnSensor = fit(valsToTest,sensorVals,'poly3');
+    laserFit.sensorOnControl = fit(sensorVals,valsToTest,'poly3');
+
+
     figure(123)
     subplot(1,2,1)
-    laserFit.controlOnSensor = fit(valsToTest,sensorVals,'poly3');
-
-    plot(laserFit.controlsOnSensor,valsToTest,sensorVals)
+    plot(laserFit.controlOnSensor,valsToTest,sensorVals)
     ylim([0,12])
     grid on
     xlabel('Control value')
     ylabel('Analog voltage')
 
     subplot(1,2,2)
-    laserFit.sensorOnConrtrol = fit(sensorVals,valsToTest,'poly3');
     plot(laserFit.sensorOnControl,sensorVals,valsToTest)
     grid on
     ylabel('Control value')
     xlabel('Analog voltage')
+
+
+
+
+    obj.laserFit = laserFit;
+    obj.laserFit.dateMade = now;
+    obj.laserFit.sensorValues = sensorVals;
+    obj.laserFit.controlValues = valsToTest;
+
+    % TODO -- we will save to disk right here but this needs to be optional
+    % For now it's OK to do this just to get it all working
+    obj.saveLaserFit
 

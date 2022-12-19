@@ -57,6 +57,12 @@ classdef pointer < handle
         % Camera and image related
         cam % camera object goes here
 
+        %Laser stuff. TODO -- this might move to a separate class but for now it stays here
+        laserFit  % laserfits. See generateLaserCalibrationCurve
+        laserMinMaxControl = [1.5,3.5]; %TODO - must go to settings. Max and min control values
+        laserMinMax_mW = [0,100]; % TODO can not be here! number of mW at the control min/max
+
+
     end % hidden properties
 
     % read-only properties that are associated with getters
