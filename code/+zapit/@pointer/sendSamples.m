@@ -21,7 +21,8 @@ function varargout = sendSamples(obj, t_trial, verbose)
     % verbose - [optional, false by default] If true print debug messages to screen.
     %
     % Outputs
-    % waveforms - optionally return the waveforms for debug.
+    % waveforms - optionally return the waveforms for debug. Waveforms are also present in the
+    %             waveforms property.
     %
     %
     % Maja Skretowska - SWC 2020-2022
@@ -35,15 +36,16 @@ function varargout = sendSamples(obj, t_trial, verbose)
         fprintf('Stimulating area %d\n', t_trial.area)
     end
 
-    if ~strcmp(obj.DAQ.hC.taskName, 'clocked'); % TODO-- maybe this check should be in the
+    if ~isvalid(obj.DAQ.hC) || ~strcmp(obj.DAQ.hC.taskName, 'clocked'); % TODO-- maybe this check should be in the
                                                 % the createNewTask. So we don't make unless
                                                 % the task names don't match?
-        obj.DAQ.connectClocked;
+        obj.DAQ.connectClocked(obj.numSamplesPerChannel);
     end
     
     % update coordinate parameters/channel samples
-    waveforms(:,1:2) = obj.chanSamples.scan(:,:,t_trial.area);
-    waveforms(:,3:4) = t_trial.powerOption * obj.chanSamples.light(:,[3 2], t_trial.LaserOn+1);
+    obj.waveforms = [];
+    obj.waveforms(:,1:2) = obj.chanSamples.scan(:,:,t_trial.area);
+    obj.waveforms(:,3:4) = t_trial.powerOption * obj.chanSamples.light(:,[3 2], t_trial.LaserOn+1);
 
     % TODO -- this is not needed when we figure out the control of the laser properly
     % for now, I exchanged the analog output 1 with the digital 3
@@ -51,13 +53,13 @@ function varargout = sendSamples(obj, t_trial, verbose)
     % get higher output wattage from obis laser)
     
     % write voltage samples onto the task
-    obj.DAQ.hC.writeAnalogData(waveforms);
+    obj.DAQ.hC.writeAnalogData(obj.waveforms);
 
     % start the execution of the new task
     obj.DAQ.start;
 
     if nargout>0
-        varargout{1} = waveforms;
+        varargout{1} = obj.waveforms;
     end
 
 end % sendSamples

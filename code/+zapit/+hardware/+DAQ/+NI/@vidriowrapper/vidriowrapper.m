@@ -80,7 +80,7 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
         function connectClocked(obj, numSamplesPerChannel, makeTriggerable, verbose)
 
             if nargin<2 || isempty(numSamplesPerChannel)
-                numSamplesPerChannel = 1000;   % HOW TO DO THIS? CAN WE DO LATER? TODO
+                numSamplesPerChannel = 1000;
             end
 
             if nargin<3 || isempty(makeTriggerable)

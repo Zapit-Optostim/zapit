@@ -19,10 +19,9 @@ function obj = makeChanSamples(obj, freqLaser, laserAmplitude, plotFigure)
         plotFigure = false;
     end
     
-    obj.sampleRate = 1000;                      % samples in Hz
     obj.freqLaser = freqLaser;                  % full cycles in Hz
     numHalfCycles = 4;                          % arbitrary, no of half cycles to buffer
-    obj.numSamplesPerChannel = obj.sampleRate/obj.freqLaser*(numHalfCycles/2);
+    obj.numSamplesPerChannel = obj.DAQ.sampleRate/obj.freqLaser*(numHalfCycles/2);
     
     % TODO -- hardcoded stuff
     %  digitalAmplitude = 0.72;                       % old version with analog obis settings and without an arduino (gives 3.8 mW power)

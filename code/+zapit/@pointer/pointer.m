@@ -35,8 +35,9 @@ classdef pointer < handle
         chanSamples %Structure describing waveforms to send the scanners for each brain area
         freqLaser % TODO - ??
         numSamplesPerChannel % TODO - why is this here? We need a better solution
-        sampleRate % TODO - This is now elsewhere but keep for the moment
 
+
+        waveforms % The last set of waveforms sent to the DAQ by sendSamples or stopInactivation
         DAQ % instance of class that controls the DAQ will be attached here
     end % properties
 
