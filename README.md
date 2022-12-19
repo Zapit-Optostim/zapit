@@ -120,19 +120,21 @@ You can now click on the image and the beam should go to that location.
 
 
 ### Calibrate to mouse skull
-Now you can tell the system where is Bregma and another reference location
+Now you can tell the system where is Bregma and another reference location.
+This method call populates the `chanSamples` property.
 ```
 P.getAreaCoordinates
 ```
 
 ### Generate the parameters for switching the beam
+Prepare the waveforms that will be used for each brain area (stimulation site).
 Here we are switching at 40 Hz with a laser amplitude of 0.36
 ```
-P.makeChanSamples(40, 0.36);
+P.makeChanSamples(40, 1.75);
 ```
 
 ### Let's run it!
-For one brain area
+The following code will send samples to the DAQ to stimulate one brain area bilaterally.
 
 ```
 newTrial.area = 1; % first brain area on the list
@@ -141,9 +143,9 @@ newTrial.powerOption = 1; % if 1 send 2 mW, if 2 send 4 mW (mean)
 
 P.sendSamples(newTrial)
 ```
-To stop it run:
+To stop it gracefully run:
 ```
-P.DAQ.stop
+P.stopOptoStim
 ```
 
 Randomly stimulate each brain area once for 0.5 seconds before moving onto the next.

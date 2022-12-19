@@ -35,8 +35,9 @@ classdef pointer < handle
         chanSamples %Structure describing waveforms to send the scanners for each brain area
         freqLaser % TODO - ??
         numSamplesPerChannel % TODO - why is this here? We need a better solution
-        sampleRate % TODO - This is now elsewhere but keep for the moment
 
+
+        waveforms % The last set of waveforms sent to the DAQ by sendSamples or stopInactivation
         DAQ % instance of class that controls the DAQ will be attached here
     end % properties
 
@@ -217,113 +218,6 @@ classdef pointer < handle
         end % returnCurrentFrame
 
 
-        function sendSamples(obj, new_trial, verbose)
-            % take coordinates of two points[x and y Coords], and exchange laser between
-            % them at freqLaser for pulseDuration seconds, locking it at a given point for tOpen ms
-            % inputs: obj.chanSamples,
-            %         CoordNum,
-            %         LaserOn
-            %         powerOption - if 1 send 2 mW, if 2 send 4 mW (mean)
-            % output: nothing. The function just sends correct samples to
-            % the pointer
-
-            if nargin<3
-                verbose = false;
-            end
-
-            CoordNum = new_trial.area;
-            LaserOn = new_trial.LaserOn;
-            trialPower = new_trial.powerOption;
-
-            if verbose
-                fprintf('Stimulating area %d\n', CoordNum)
-            end
-
-            if ~strcmp(obj.DAQ.hC.taskName, 'clocked'); % TODO-- maybe this check should be in the
-                                                        % the createNewTask. So we don't make unless
-                                                        % the task names don't match?
-                obj.DAQ.connectClocked;
-            end
-            
-            % update coordinate parameters/channel samples
-            voltChannel(:,1:2) = obj.chanSamples.scan(:,:,CoordNum);
-            voltChannel(:,3:4) = trialPower * obj.chanSamples.light(:,[3 2],LaserOn+1);  % if laseron = 0, no inactivation
-            % for now, I exchanged the analog output 1 with the digital 3
-            % so that we have a square waveform (until we figure out how to
-            % get higher output wattage from obis laser)
-            
-            % write voltage samples onto the task
-            obj.DAQ.hC.writeAnalogData(voltChannel);
-
-            % start the execution of the new task
-            obj.DAQ.start;
-
-        end % sendSamples
-        
-        
-        function stopInactivation(obj)
-            % called at the end of a trial
-            % send 0 Volts if sample generation has already been triggered
-            % and stops task
-            
-            % TODO -- this method we will change to allow for the ramp-down
-            try
-                % try-end used because overwriting buffer before trigger
-                % comes (e.g. run abort before inactivation) may throw errors
-                
-                voltChannel(:,1:2) = obj.chanSamples.light(:,[1 1],1); % just zeros
-                voltChannel(:,3:4) = obj.chanSamples.light(:,[1 1],1); % just zeros
-                
-                obj.DAQ.hC.writeAnalogData(voltChannel);
-                
-                % pause to wait for 0s to be updated in the buffer and
-                % generated before closing
-                pause(1);
-            end
-            
-            % stop task and send to pre-generation stage, allowing to write
-            % next trial samples without conflicts
-            obj.DAQ.hC.abort
-        end % stopInactivation
-        
-        
-        function [xVolts, yVolts] = pixelToVolt(obj, pixelColumn, pixelRow)
-            % Converts pixel position to voltage value to send to scanners
-            %
-            % function [xVolts, yVolts] = pixelToVolt(obj, pixelColumn, pixelRow)
-            %
-            % Purpose
-            % Converts pixel coordinates to volt values for scanner mirrors
-            % taking into account created transformation matrices (infinite
-            % number of those allowed).
-            %
-            % This function is important and used every time the laser is
-            % pointed to a location. Called in: pointBeamToLocationInImage,
-            % getAreaCoordinates and logPoints
-            %
-            %
-            % Inputs
-            % Pixel row and column
-
-
-            if ~isempty(obj.transform)
-                [pixelColumn, pixelRow] = transformPointsInverse(obj.transform, pixelColumn, pixelRow);
-            end
-            
-            
-            xVolts = (pixelColumn - (obj.imSize(1)/2)) * obj.voltsPerPixel;
-            yVolts = (pixelRow    - (obj.imSize(2)/2)) * obj.voltsPerPixel;
-            
-            if obj.invertX
-                xVolts = xVolts*-1;
-            end
-
-            if obj.invertY
-                yVolts= yVolts*-1;
-            end
-        end % pixelToVolt
-        
-        
         function dispFrame(obj,~,~)
             % This callback is run every time a frame has been acquired
             if obj.cam.vid.FramesAvailable==0

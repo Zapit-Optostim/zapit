@@ -28,7 +28,7 @@ classdef (Abstract) NI < zapit.hardware.DAQ.DAQ
     properties 
         % The following are default parameters for the class (see above)
         device_ID = 'Dev1'
-        sampleRate = 10E3
+        samplesPerSecond = 10E3
         AOrange = 10
         AOchans = 0:4
         triggerChannel = 'PFI0'
@@ -50,8 +50,8 @@ classdef (Abstract) NI < zapit.hardware.DAQ.DAQ
             if isfield(obj.settings.NI,'device_ID')
                 obj.device_ID = obj.settings.NI.device_ID;
             end
-            if isfield(obj.settings.NI,'sampleRate')
-                obj.sampleRate = obj.settings.NI.sampleRate;
+            if isfield(obj.settings.NI,'samplesPerSecond')
+                obj.samplesPerSecond = obj.settings.NI.samplesPerSecond;
             end
             if isfield(obj.settings.NI,'AOrange')
                 obj.AOrange = obj.settings.NI.AOrange;
@@ -68,7 +68,7 @@ classdef (Abstract) NI < zapit.hardware.DAQ.DAQ
             params.CaseSensitive = false;
             
             params.addParameter('device_ID', obj.device_ID, @(x) ischar(x));
-            params.addParameter('sampleRate', obj.sampleRate, @(x) isnumeric(x));
+            params.addParameter('samplesPerSecond', obj.samplesPerSecond, @(x) isnumeric(x));
             params.addParameter('AOrange', obj.AOrange, @(x) isnumeric(x));
             params.addParameter('AOchans', obj.AOchans, @(x) isnumeric(x));
             params.addParameter('triggerChannel', obj.triggerChannel, @(x) ischar(x));
@@ -77,7 +77,7 @@ classdef (Abstract) NI < zapit.hardware.DAQ.DAQ
             % Then replace the properties with the results of the parser. This will
             % mean that anything specified as an input arg will take precedence
             obj.device_ID= params.Results.device_ID;
-            obj.sampleRate = params.Results.sampleRate;
+            obj.samplesPerSecond = params.Results.samplesPerSecond;
             obj.AOrange = params.Results.AOrange;
             obj.AOchans = params.Results.AOchans;
             obj.triggerChannel = params.Results.triggerChannel;

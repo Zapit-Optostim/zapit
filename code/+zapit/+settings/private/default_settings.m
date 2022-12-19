@@ -4,7 +4,7 @@ function settings = default_settings
     % settings = default_settings
 
     settings.NI.device_ID = 'Dev1';
-    settings.NI.sampleRate = 10000;
+    settings.NI.samplesPerSecond = 10000;
     settings.NI.AOrange = 10;
     settings.NI.AOchans = 0:2;
     settings.NI.triggerChannel = 'PFI0';
