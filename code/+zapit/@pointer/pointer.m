@@ -13,7 +13,6 @@ classdef pointer < handle
 
     
     properties
-
         % TODO -- The following properties need to be in a settings structure
         % 0/0 volts on DAQ corresponds to the middle of the image
         invertX = true
@@ -37,23 +36,14 @@ classdef pointer < handle
         coordsLibrary % TODO - I think this is where all computed waveforms are kept
         newpoint % TODO - ??
         chanSamples %Structure describing waveforms to send the scanners for each brain area
-
-
-        numSamplesPerChannel % TODO - why is this here? We need a better solution
-
-
-
-
-
-
-
         waveforms % The last set of waveforms sent to the DAQ by sendSamples or stopInactivation
 
+        numSamplesPerChannel % TODO - why is this here? We need a better solution
     end % properties
 
 
     properties (Hidden)
-        % Handles for plot elements
+        % Handles for plot elements.
         hFig  % GUI figure window
         hImAx % axes of image
         hImLive  %The image
@@ -61,11 +51,13 @@ classdef pointer < handle
         plotOverlayHandles   % All plotted objects laid over the image should keep their handles here
     end % hidden properties
 
+
     % read-only properties that are associated with getters
     properties(SetAccess=protected, GetAccess=public)
        imSize
     end
-    
+
+
     % Constructor and destructor
     methods
         function obj = pointer(fname)
@@ -114,7 +106,6 @@ classdef pointer < handle
         end % Constructor
         
         
-        
         function delete(obj,~,~)
             % Stop the camera and disconnect from hardware
             fprintf('Shutting down optostim software\n')
@@ -139,7 +130,6 @@ classdef pointer < handle
             % the camera has been started so it must be handled dynamically.
             imSize = obj.cam.ROI;
             imSize = imSize(3:4);
-
         end % imsize
     end % getters and setters
 
