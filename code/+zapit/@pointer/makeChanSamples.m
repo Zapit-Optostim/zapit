@@ -1,11 +1,10 @@
-function obj = makeChanSamples(obj, freqLaser, laserPowerInMW, plotFigure)
+function obj = makeChanSamples(obj, laserPowerInMW, plotFigure)
     % Prepares voltages for each inactivation site
     %
-    % zapit.pointer.makeChanSamples(freqLaser, laserPowerInMW)
+    % zapit.pointer.makeChanSamples(laserPowerInMW)
     %
     %
     % Inputs
-    % freqLaser - Frequency of inactivation, amplitude of voltage fed to laser
     % laserPowerInMW - Desired laser power in mW
     % plotFigure - false by default. If true make a debug figure
     %
@@ -15,13 +14,16 @@ function obj = makeChanSamples(obj, freqLaser, laserPowerInMW, plotFigure)
     % Maja Skretowska - 2021
 
 
+    
     if nargin<4
         plotFigure = false;
     end
     
-    obj.freqLaser = freqLaser;                  % full cycles in Hz
+
     numHalfCycles = 4;                          % arbitrary, no of half cycles to buffer
-    obj.numSamplesPerChannel = obj.DAQ.samplesPerSecond/obj.freqLaser*(numHalfCycles/2);
+
+    % TODO: defaultLaserFrequency will probably be used to make the brain area config file and from there that will be the relevant value
+    obj.numSamplesPerChannel = obj.DAQ.samplesPerSecond/obj.settings.experiment.defaultLaserFrequency*(numHalfCycles/2);
     
     % find edges of half cycles
     cycleEdges = linspace(1, obj.numSamplesPerChannel, numHalfCycles+1);

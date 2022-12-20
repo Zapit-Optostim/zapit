@@ -18,47 +18,47 @@ classdef pointer < handle
         % 0/0 volts on DAQ corresponds to the middle of the image
         invertX = true
         invertY = true
-        flipXY % TODO -- should add this but only once everything else is working
 
-        
+        % The following are associated with hardware components
+        cam % camera
+        DAQ % instance of class that controls the DAQ (laser and scanners)
+
+
+        % The following properties relate to settings or other similar state parameters
         % Properties related to where we stimulate
-        transform
-        config % Object of class zapit.config
+        settings % The settings read in from the YAML file
+        config % Object of class zapit.config. This contains the locations to stimulate
+        %Laser stuff. TODO -- this might move to a separate class but for now it stays here
+        laserFit  % laserfits. See generateLaserCalibrationCurve
+        transform % The transform describing the relationship between scanners and camera
 
-        
-        % behavioural task properties
+
+        % The following relate to running the behavioral task itself
         coordsLibrary % TODO - I think this is where all computed waveforms are kept
         newpoint % TODO - ??
         chanSamples %Structure describing waveforms to send the scanners for each brain area
-        freqLaser % TODO - ??
+
+
         numSamplesPerChannel % TODO - why is this here? We need a better solution
 
 
+
+
+
+
+
         waveforms % The last set of waveforms sent to the DAQ by sendSamples or stopInactivation
-        DAQ % instance of class that controls the DAQ will be attached here
+
     end % properties
 
 
     properties (Hidden)
         % Handles for plot elements
-
         hFig  % GUI figure window
         hImAx % axes of image
         hImLive  %The image
-
-        % TODO: these plot elements should have a system like BT acq window, where we delete and create without a property for each.
-        hLastPoint % plot handle with location of the last clicked point
+        hLastPoint % plot handle with location of the last clicked point. TODO-- do we leave this here? It's a unique one. 
         plotOverlayHandles   % All plotted objects laid over the image should keep their handles here
-
-        axRange
-
-        % Camera and image related
-        cam % camera object goes here
-
-        %Laser stuff. TODO -- this might move to a separate class but for now it stays here
-        laserFit  % laserfits. See generateLaserCalibrationCurve
-
-        settings % The settings read in from the YAML file
     end % hidden properties
 
     % read-only properties that are associated with getters

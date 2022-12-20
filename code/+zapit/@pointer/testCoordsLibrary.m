@@ -28,7 +28,9 @@ function testCoordsLibrary(obj, verbose)
     % Plot points to stimulate in different colors for each brain area on the two sides of the brain
     % TODO: certainly not everyone will do things this way. So this needs to be optional. Some might
     % want unilateral only, for instance.
+
     colors = lines(size(obj.newpoint(1,:,1),2));
+
     for ii = 1:size(obj.newpoint(1,:,1),2)
         prop = {'MarkerSize',12,'MarkerEdgeColor', colors(ii,:), 'LineWidth',2};
         % Left hemisphere
@@ -39,6 +41,7 @@ function testCoordsLibrary(obj, verbose)
         obj.plotOverlayHandles.(mfilename).hAreaCoords(ii,2) = ...
             plot(obj.hImAx, obj.newpoint(1,ii,2), obj.newpoint(2,ii,2), 'o', prop{:});
     end
+
     hold(obj.hImAx, 'off');
 
     % TODO - run fast and cycle until user quits. This will have to wait until we have a full GUI.
