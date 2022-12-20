@@ -22,11 +22,18 @@ in mW. We next need to add the ability to set power in mW. The Arduino was being
 implement a ramp-down following stim offset. We will now implement this via the NI DAQ.
 Development now switches to the Dev branch.
 
+
 2022/12/15 -- v0.1.2
 Minor bug fixes
+
 
 2022/12/19 -- v0.1.3
  * Major refactoring
  * The stopOptoStim method implements a rampdown
  * Fix bugs that were causing waveforms to not be what were expected
  * Laser is disabled for a fixed number of ms when location switching. Before it was 1 sample.
+
+
+2022/12/19 -- v0.2.0
+ * Add a system (partially working) for converting the control signal voltager to mW.
+ * Code all now uses mW instead of a voltage value when setting laser power.

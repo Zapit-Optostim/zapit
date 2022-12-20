@@ -9,11 +9,14 @@
     % transform that converts a pixel location on the image to the scanner command voltages
     % required to point the beam at that location.
     %
+    %
     % Inputs (optional):
     % none
     %
+    %
     % Outputs
     % optional - target and actual pixel coordinates in a structure
+    %
     %
     % Maja Skretowska - SWC 2021
     % Rob Campbell - SWC 2022

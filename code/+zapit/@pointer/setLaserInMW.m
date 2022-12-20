@@ -3,6 +3,7 @@ function setLaserInMW(obj,mW)
 %
 % function setLaserInMW(obj,mW)
 %
+%
 % Purpose
 % User supplies value in mW. This is converted to a control value
 % and applied to the laser.

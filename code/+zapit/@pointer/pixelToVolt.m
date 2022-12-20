@@ -1,7 +1,8 @@
 function [xVolts, yVolts] = pixelToVolt(obj, pixelColumn, pixelRow)
     % Converts pixel position to voltage value to send to scanners
     %
-    % function [xVolts, yVolts] = pixelToVolt(obj, pixelColumn, pixelRow)
+    % function [xVolts, yVolts] = zapit.pointer.pixelToVolt(obj, pixelColumn, pixelRow)
+    %
     %
     % Purpose
     % Converts pixel coordinates to volt values for scanner mirrors
