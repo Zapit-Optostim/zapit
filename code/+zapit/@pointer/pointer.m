@@ -62,7 +62,7 @@ classdef pointer < handle
         laserMinMaxControl = [1.5,3.5]; %TODO - must go to settings. Max and min control values
         laserMinMax_mW = [0,100]; % TODO can not be here! number of mW at the control min/max
 
-
+        settings % The settings read in from the YAML file
     end % hidden properties
 
     % read-only properties that are associated with getters
@@ -79,14 +79,17 @@ classdef pointer < handle
                 fname = [];
             end
 
+            obj.settings = zapit.settings.readSettings;
+
             % Connect to camera
-            obj.cam = zapit.camera(2); % TODO -  Hard-coded selection of camera ID
-            obj.cam.exposure = 3000; % TODO - HARDCODED
+            obj.cam = zapit.camera(obj.settings.camera.connection_index);
+            obj.cam.exposure = obj.settings.camera.default_exposure;
+
             obj.cam.ROI = [300,100,1400,1000]; % TODO: hardcoded sensor crop
                                             % TODO : in future user will have ROI box to interactively
                                             %    crop and this will be saved in settings file
                                             %    the re-applied on startup each time.
-                                            %    see also obj.can.resetROI
+                                            %    see also obj.cam.resetROI
 
             obj.setUpFigure
 
@@ -96,7 +99,7 @@ classdef pointer < handle
 
             obj.DAQ.connectUnclockedAO(true)
             
-            
+            obj.loadLaserFit
             obj.zeroScanners
 
 

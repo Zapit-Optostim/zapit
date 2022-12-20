@@ -23,7 +23,7 @@ function obj = makeChanSamples(obj, freqLaser, laserPowerInMW, plotFigure)
     numHalfCycles = 4;                          % arbitrary, no of half cycles to buffer
     obj.numSamplesPerChannel = obj.DAQ.samplesPerSecond/obj.freqLaser*(numHalfCycles/2);
     
-        % find edges of half cycles
+    % find edges of half cycles
     cycleEdges = linspace(1, obj.numSamplesPerChannel, numHalfCycles+1);
     edgeSamples = ceil(cycleEdges(1,:));
     
@@ -56,7 +56,6 @@ function obj = makeChanSamples(obj, freqLaser, laserPowerInMW, plotFigure)
 
     % allow 1 ms around halfcycle change to be 0 (in case scanners are not in the right spot
     % TODO -- this should be based on empirical values
-
     MASK = ones(1,obj.numSamplesPerChannel);
     sampleInterval = 1/obj.DAQ.samplesPerSecond;
     nSamplesInOneMS = 1E-3 / sampleInterval;

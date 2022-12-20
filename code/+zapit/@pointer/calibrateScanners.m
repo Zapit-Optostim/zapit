@@ -1,4 +1,4 @@
-¿function varargout = calibrateScanners(obj)
+function varargout = calibrateScanners(obj)
     % Calibrate scanners with camera: conduct an affine transform to calibrate camera and beam
     %
     % function varargout = zapit.pointer.calibrateScanners(obj)
@@ -24,8 +24,8 @@
     obj.setLaserInMW(0)
 
     % lower camera illumination for increased precision in detecting beam location 
-    obj.cam.src.Gain = 4; % TODO - hard-coded
-    obj.cam.exposure = 3000; % TODO - hard-coded
+    %obj.cam.src.Gain = 4; % TODO - hard-coded
+    obj.cam.exposure = obj.settings.calibrateScanners.beam_calib_exposure;
 
 
     % Wipe the previous transform
@@ -55,7 +55,7 @@
     pause(0.05)
     fprintf('Running calibration')
 
-    obj.setLaserInMW(20) 
+    obj.setLaserInMW(obj.settings.calibrateScanners.calibration_power_mW)
     obj.hLastPoint.Visible = 'off';
 
     hold on
@@ -91,6 +91,9 @@
     end
     fprintf('\n')
     delete(hPcurrent)
+    delete(hPall)
+
+
 
     if nPointsRecorded<3
         fprintf('Failed to record sufficient points!\n')
@@ -103,20 +106,11 @@
     OUT.actualPixelCoords = cat(1,positionData(:).actualPixelCoords);
 
 
-    % change the illumination of the camera image to high value again
-    obj.cam.exposure = 3000; %TODO: likely we should be returning this to the original value
 
     obj.runAffineTransform(OUT);
 
     % Now demonstrate that it worked
-    % TODO -- have it loop until we stop it.
-    hPall.Color=[0,0.7,0];
-    for ii=1:size(OUT.actualPixelCoords,1)
-        [xVolt,yVolt] = obj.pixelToVolt(OUT.actualPixelCoords(ii,1),...
-                 OUT.actualPixelCoords(ii,2));
-        obj.DAQ.moveBeamXY([xVolt,yVolt])
-        pause(0.05)
-    end
+    obj.checkScannerCalib(OUT.actualPixelCoords)
 
     tidyUp()
 
@@ -125,7 +119,8 @@
     end
 
     function tidyUp
-        obj.setLaserInMW(0) 
+        obj.cam.exposure = obj.settings.camera.default_exposure;
+        obj.setLaserInMW(0)
         obj.zeroScanners;
         obj.hLastPoint.Visible = 'on';
         delete(hPall)

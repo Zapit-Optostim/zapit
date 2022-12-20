@@ -61,7 +61,7 @@ function varargout = getLaserPosAccuracy(obj, XYdata, backgroundImage, verbose)
     end
     
     % Bail out if the area of the region is too large. Then it can't be the laser
-    areaThreshold = 500; % TODO -- hardcoded. On non-flat surfaces this can vary a good deal
+    areaThreshold = obj.settings.calibrateScanners.areaThreshold;
 
     if ~bailOut && (BWa.Area > areaThreshold)
         bailOut = true;
