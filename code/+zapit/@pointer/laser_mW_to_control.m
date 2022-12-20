@@ -11,7 +11,7 @@ function controlVal = laser_mW_to_control(obj,mW)
 
 if isempty(obj.laserFit)
     fprintf('** No laser fit. Making linear conversion as a guess! ** \n')
-    laserFit_mWToControl = fit(obj.laserMinMax_mW', obj.laserMinMaxControl','linear');
+    laserFit_mWToControl = fit(obj.settings.laser.laserMinMax_mW', obj.settings.laser.laserMinMaxControlVolts','linear');
     controlVal = laserFit_mWToControl(mW);
 else
     % Re-scale the sensory values so they are in mW
@@ -20,7 +20,7 @@ else
     mWvals = mWvals / max(mWvals);
 
     % TODO -- for now let us just assume that it starts at zero
-    mWvals = mWvals * obj.laserMinMax_mW(2);
+    mWvals = mWvals * obj.settings.laser.laserMinMax_mW(2);
 
     % We want the other way around, but this is the correct way to fit
     laserFit_ControlToMW = fit(obj.laserFit.controlValues,mWvals,'poly5');

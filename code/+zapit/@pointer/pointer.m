@@ -19,8 +19,7 @@ classdef pointer < handle
         invertX = true
         invertY = true
         flipXY % TODO -- should add this but only once everything else is working
-        voltsPerPixel = 2.2E-3 %TODO -- HARDCODED. MOVE TO SETTINGS
-        micsPix = 19.3 %Measured this %TODO -- HARDCODED
+
         
         % Properties related to where we stimulate
         transform
@@ -59,8 +58,6 @@ classdef pointer < handle
 
         %Laser stuff. TODO -- this might move to a separate class but for now it stays here
         laserFit  % laserfits. See generateLaserCalibrationCurve
-        laserMinMaxControl = [1.5,3.5]; %TODO - must go to settings. Max and min control values
-        laserMinMax_mW = [0,100]; % TODO can not be here! number of mW at the control min/max
 
         settings % The settings read in from the YAML file
     end % hidden properties

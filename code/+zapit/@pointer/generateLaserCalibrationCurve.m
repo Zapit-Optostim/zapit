@@ -16,7 +16,7 @@ function generateLaserCalibrationCurve(obj,minMax)
     % Rob Campbell - SWC 2022
 
     if nargin<2
-        minMax = obj.laserMinMaxControl;
+        minMax = obj.settings.laser.laserMinMaxControlVolts;
     end
 
     % Connect to DAQs
@@ -54,6 +54,8 @@ function generateLaserCalibrationCurve(obj,minMax)
     laserFit.sensorOnControl = fit(sensorVals,valsToTest,'poly3');
 
 
+    % TODO -- we don't need both fits. The second (?) "wrong" fit can go. 
+
     figure(123)
     subplot(1,2,1)
     plot(laserFit.controlOnSensor,valsToTest,sensorVals)
@@ -67,8 +69,6 @@ function generateLaserCalibrationCurve(obj,minMax)
     grid on
     ylabel('Control value')
     xlabel('Analog voltage')
-
-
 
 
     obj.laserFit = laserFit;
