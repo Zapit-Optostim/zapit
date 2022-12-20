@@ -32,11 +32,11 @@ function testCoordsLibrary(obj, verbose)
     for ii = 1:size(obj.newpoint(1,:,1),2)
         prop = {'MarkerSize',12,'MarkerEdgeColor', colors(ii,:), 'LineWidth',2};
         % Left hemisphere
-        obj.hAreaCoords(ii,1) = ...
+        obj.plotOverlayHandles.(mfilename).hAreaCoords(ii,1) = ...
            plot(obj.hImAx, obj.newpoint(1,ii,1), obj.newpoint(2,ii,1), 'o', prop{:});
 
         % Right hemisphere
-        obj.hAreaCoords(ii,2) = ...
+        obj.plotOverlayHandles.(mfilename).hAreaCoords(ii,2) = ...
             plot(obj.hImAx, obj.newpoint(1,ii,2), obj.newpoint(2,ii,2), 'o', prop{:});
     end
     hold(obj.hImAx, 'off');
@@ -54,11 +54,8 @@ function testCoordsLibrary(obj, verbose)
         end
     end
 
-    delete(obj.hAreaCoords)
-    obj.hAreaCoords = [];
+    obj.removeOverlays(mfilename)
 
-    delete(obj.hRefCoords)
-    obj.hRefCoords = [];
 
     obj.hLastPoint.Visible = 'on';
     obj.setLaserInMW(0)

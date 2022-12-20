@@ -58,10 +58,13 @@ function varargout = calibrateScanners(obj)
     obj.setLaserInMW(obj.settings.calibrateScanners.calibration_power_mW)
     obj.hLastPoint.Visible = 'off';
 
-    hold on
-    hPcurrent = plot(obj.hImAx,nan,nan, 'or','MarkerSize',14,'LineWidth',3);
-    hPall = plot(obj.hImAx,nan,nan, 'og','MarkerSize',12,'LineWidth',2);
-    hold off
+
+    % Set up
+
+    hold(obj.hImAx,'on')
+    obj.plotOverlayHandles.(mfilename).hPcurrent = plot(obj.hImAx,nan,nan, 'or','MarkerSize',14,'LineWidth',3);
+    obj.plotOverlayHandles.(mfilename).hPall = plot(obj.hImAx,nan,nan, 'og','MarkerSize',12,'LineWidth',2);
+    hold(obj.hImAx,'off')
 
     % Get the current frame with laser off
     backgroundFrame = obj.returnCurrentFrame(10);
@@ -79,10 +82,12 @@ function varargout = calibrateScanners(obj)
         out = obj.getLaserPosAccuracy([R(ii), C(ii)], backgroundFrame, true);
         if ~isempty(out)
             positionData(ii) = out;
-            hPall.XData(end+1) = out.actualPixelCoords(1);
-            hPall.YData(end+1) = out.actualPixelCoords(2);
+            obj.plotOverlayHandles.(mfilename).hPall.XData(end+1) = out.actualPixelCoords(1);
+            obj.plotOverlayHandles.(mfilename).hPall.YData(end+1) = out.actualPixelCoords(2);
 
-            set(hPcurrent, 'XData', out.actualPixelCoords(1), 'YData', out.actualPixelCoords(2))
+            set(obj.plotOverlayHandles.(mfilename).hPcurrent, ...
+                'XData', out.actualPixelCoords(1), ...
+                'YData', out.actualPixelCoords(2))
             pause(0.025)
             set(hPcurrent, 'XData', nan, 'YData', nan)
             nPointsRecorded = nPointsRecorded + 1;
@@ -90,9 +95,8 @@ function varargout = calibrateScanners(obj)
         fprintf('.')
     end
     fprintf('\n')
-    delete(hPcurrent)
-    delete(hPall)
 
+    obj.removeOverlays(mfilename)
 
 
     if nPointsRecorded<3
@@ -123,7 +127,7 @@ function varargout = calibrateScanners(obj)
         obj.setLaserInMW(0)
         obj.zeroScanners;
         obj.hLastPoint.Visible = 'on';
-        delete(hPall)
+        obj.removeOverlays(mfilename)
     end
 
 end % calibrateScanners

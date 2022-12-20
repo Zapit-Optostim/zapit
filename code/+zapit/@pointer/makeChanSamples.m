@@ -82,7 +82,9 @@ function obj = makeChanSamples(obj, freqLaser, laserPowerInMW, plotFigure)
     % x-by-3-by-2, where rows are samples, columns are channels, and 3rd dim
     % is whether laser is off or on
     
-    %% visualization of channel samples
+
+
+    %% visualization of channel samples TODO -- make this neater or maybe refactor elsewhere?
     if ~plotFigure
         return
     end

@@ -42,14 +42,13 @@ classdef pointer < handle
     properties (Hidden)
         % Handles for plot elements
 
-        hFig
-        hImAx
-        hImLive
+        hFig  % GUI figure window
+        hImAx % axes of image
+        hImLive  %The image
 
         % TODO: these plot elements should have a system like BT acq window, where we delete and create without a property for each.
         hLastPoint % plot handle with location of the last clicked point
-        hAreaCoords % locations where the beam will be sent. see getAreaCoords
-        hRefCoords  % The two reference coords
+        plotOverlayHandles   % All plotted objects laid over the image should keep their handles here
 
         axRange
 
