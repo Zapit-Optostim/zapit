@@ -43,7 +43,16 @@ function removeOverlays(obj,overlayToRemove)
         if ~isempty(overlayToRemove) && ~strcmp(f{ii},overlayToRemove)
             continue
         end
-        delete(obj.plotOverlayHandles.(f{ii}))
+
+        t_Handles = obj.plotOverlayHandles.(f{ii});
+        if iscell(t_Handles)
+            cellfun(@(x) delete(x), t_Handles)
+        elseif isstruct(t_Handles)
+            structfun(@(x) delete(x), t_Handles)
+        elseif ismatrix(t_Handles)
+            delete(obj.plotOverlayHandles.(f{ii}))
+        end
+
         obj.plotOverlayHandles = rmfield(obj.plotOverlayHandles,(f{ii}));
     end
 

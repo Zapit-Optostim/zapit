@@ -89,7 +89,8 @@ function varargout = calibrateScanners(obj)
                 'XData', out.actualPixelCoords(1), ...
                 'YData', out.actualPixelCoords(2))
             pause(0.025)
-            set(hPcurrent, 'XData', nan, 'YData', nan)
+            % Make current point invisible
+            set(obj.plotOverlayHandles.(mfilename).hPcurrent, 'XData', nan, 'YData', nan)
             nPointsRecorded = nPointsRecorded + 1;
         end
         fprintf('.')

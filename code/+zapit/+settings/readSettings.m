@@ -79,10 +79,19 @@ function [settings,settingsNonHardCoded] = readSettings
         allValid=false;
     end
 
+    % TODO -- if there are no cell arrays that are supposed to be there, we can replace with a loop
+    % Or maybe we can have for some (like the lasers, a min and a max field so all are scalers)
     if iscell(settings.NI.AOchans)
         settings.NI.AOchans = cell2mat(settings.NI.AOchans);
     end
 
+    if iscell(settings.laser.laserMinMaxControlVolts)
+        settings.laser.laserMinMaxControlVolts = cell2mat(settings.laser.laserMinMaxControlVolts);
+    end
+
+    if iscell(settings.laser.laserMinMax_mW)
+        settings.laser.laserMinMax_mW = cell2mat(settings.laser.laserMinMax_mW);
+    end
 
     if ~isnumeric(settings.camera.connection_index)
         fprintf('camera.connection_index should be a number. Setting it to %d \n', ...
