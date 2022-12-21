@@ -25,8 +25,6 @@ classdef camera < handle
 
 
 
-
-
     methods
         function obj = camera(camToStart)
             if nargin<1 || isempty(camToStart)
@@ -36,7 +34,7 @@ classdef camera < handle
             % Find which adapters are installed
             cams=imaqhwinfo;
             if isempty(cams.InstalledAdaptors)
-                fprintf('NO CAMERAS FOUND by dws.camera\n');
+                fprintf('NO CAMERAS FOUND by zapit.hardware.camera\n');
                 return
             end
 
@@ -57,7 +55,7 @@ classdef camera < handle
             end
 
             constructorCommand=[];
-            if length(constructorCommands)==1
+            if length(constructorCommands) == 1
                 constructorCommand = constructorCommands{1};
             elseif length(constructorCommands)>1 && isempty(camToStart)
                 for ii=1:length(constructorCommands)
@@ -79,24 +77,20 @@ classdef camera < handle
                 fprintf('\nConnecting to number %d\n', camToStart)
                 constructorCommand = constructorCommands{camToStart};
             else
-                fprintf('NO CAMERAS FOUND by dws.camera\n');             
+                fprintf('NO CAMERAS FOUND by zapit.hardware.camera\n');             
             end
 
 
-            %Runs one of the camera functions in the camera private sub-directory
-            if ~isempty(constructorCommand)
-                obj.vid = eval(constructorCommand);
-                obj.src = getselectedsource(obj.vid);
+            % Build the camera
+            obj.vid = eval(constructorCommand);
+            obj.src = getselectedsource(obj.vid);
 
-                % Set up the camera so that it is manually triggerable an 
-                % unlimited number of times. 
-                triggerconfig(obj.vid,'manual')
-                vid.TriggerRepeat=inf;
-                obj.vid.FramesPerTrigger = inf;
-                obj.vid.FramesAcquiredFcnCount=1; %Run frame acq fun every frame
-            else
-                obj.demoMode
-            end
+            % Set up the camera so that it is manually triggerable an 
+            % unlimited number of times. 
+            triggerconfig(obj.vid,'manual')
+            vid.TriggerRepeat=inf;
+            obj.vid.FramesPerTrigger = inf;
+            obj.vid.FramesAcquiredFcnCount=1; %Run frame acq fun every frame
             
             % set gain to maximum
             obj.src.Gain = 10; % TODO - this is hardcoded based on a Basler camera
@@ -111,6 +105,7 @@ classdef camera < handle
                 delete(obj.vid)
             end
         end % close destructor
+
     end % methods
 
 
@@ -124,6 +119,7 @@ classdef camera < handle
             end
         end % startVideo
 
+
         function stopVideo(obj)
             if isa(obj.vid,'videoinput')
                 stop(obj.vid)
@@ -131,17 +127,20 @@ classdef camera < handle
             end
         end % stopVideo
 
+
         function flushdata(obj)
             if isa(obj.vid,'videoinput')
                 flushdata(obj.vid)
             end
         end % flushdata
 
+
         function lastFrame=getLastFrame(obj)
             if isa(obj.vid,'videoinput')
                 lastFrame=squeeze(peekdata(obj.vid,1));
             end
         end % getLastFrame
+
 
         function vidRunning=isrunning(obj)
             if isa(obj.vid,'videoinput')
@@ -151,6 +150,7 @@ classdef camera < handle
             end
         end % isrunning
 
+
         function nFrm=framesAcquired(obj)
             if isa(obj.vid,'videoinput')
                 nFrm=obj.vid.FramesAcquired;
@@ -158,6 +158,7 @@ classdef camera < handle
                 nFrm=0;
             end
         end % framesAcquired
+
 
         function resetROI(obj,~,~)
             % reset ROI to full sensor size
@@ -189,6 +190,7 @@ classdef camera < handle
             end
         end % get.exposure
 
+
         function set.exposure(obj, exposure)
             if contains(obj.vid.Name,'gentl')
                 obj.src.ExposureTime = exposure;
@@ -196,6 +198,7 @@ classdef camera < handle
                 obj.src.Exposure = exposure;
             end
         end % set.exposure
+
 
         function ROIpos = get.ROI(obj)
             if contains(obj.vid.Name,'gentl')
@@ -205,6 +208,7 @@ classdef camera < handle
                 ROIpos = obj.vid.ROIPosition;
             end
         end % get.ROI
+
 
         function set.ROI(obj,ROIpos)
             if strcmp(obj.vid.Running,'on')

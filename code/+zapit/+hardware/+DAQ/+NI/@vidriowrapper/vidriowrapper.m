@@ -18,6 +18,7 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
 
 
         function connect(obj,connectionType)
+            % TODO -- I think we don't use this. 
             switch connectionType
                 case 'unclocked'
                     obj.connectUnlocked
