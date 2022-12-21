@@ -171,4 +171,5 @@ end
 
 ## Contributing
 Contributions and collaborations are welcome.
-If you are thinking of contributing please contact us before starting work as changes that are not well organized or break conventions will not be accepted.
+Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
+
