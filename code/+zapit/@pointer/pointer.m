@@ -43,15 +43,15 @@ classdef pointer < handle
 
 
     properties (Hidden)
-        % Handles for plot elements.
-        hFig  % GUI figure window
-        hImAx % axes of image
-        hImLive  %The image
-        hLastPoint % plot handle with location of the last clicked point. TODO-- do we leave this here? It's a unique one. 
-        plotOverlayHandles   % All plotted objects laid over the image should keep their handles here
-
         buildFailed = true %Used during boostrap by start_zapit
     end % hidden properties
+
+    properties (Hidden,SetObservable=true)
+        lastAcquiredFrame % The last frame acquired by the camera
+        calibrateScannersPosData % Used to plot data during scanner calibration
+        scannersCalibrated = false % Gets set to true if the scanners are calibrated
+        sampleCalibrated = false % Gets set to true if the sample is calibrated
+    end
 
 
     % read-only properties that are associated with getters
@@ -81,7 +81,11 @@ classdef pointer < handle
                                             %    the re-applied on startup each time.
                                             %    see also obj.cam.resetROI
 
-            %obj.setUpFigure
+            % Log camera frames to lastAcquiredFrame and start camera
+            obj.cam.vid.FramesAcquiredFcn = @obj.storeLastFrame;
+            obj.cam.vid.FramesAcquiredFcnCount=1; %Run frame acq fun every N frames
+            obj.cam.startVideo;
+
 
             fprintf('Connecting to DAQ\n')
             obj.DAQ = zapit.hardware.DAQ.NI.vidriowrapper;
@@ -113,8 +117,9 @@ classdef pointer < handle
         function delete(obj,~,~)
             % Stop the camera and disconnect from hardware
             fprintf('Shutting down optostim software\n')
+            obj.cam.vid.FramesAcquiredFcn = [];
+
             obj.cam.stopVideo;
-            delete(obj.hFig) % close figure
             delete(obj.cam)
             delete(obj.DAQ)
         end % Destructor
@@ -168,6 +173,23 @@ classdef pointer < handle
         end % runAffineTransform
 
 
+        function storeLastFrame(obj,~,~)
+            % This callback is run every time a frame has been acquired
+            %
+            %  function zapit.pointer.storeLastFrame(obj,~,~)
+            %
+            % Purpose
+            % Stores the last acquired frame in an observable property
+
+            if obj.cam.vid.FramesAvailable==0
+                return
+            end
+
+            obj.lastAcquiredFrame = obj.cam.getLastFrame;
+            obj.cam.flushdata
+        end % storeLastFrame
+
+
         function im = returnCurrentFrame(obj,nFrames)
             % Return the last recorded camera image and optionally the last n frames
             %
@@ -188,7 +210,7 @@ classdef pointer < handle
                 nFrames = 1;
             end
 
-            im = obj.hImLive.CData;
+            im = obj.lastAcquiredFrame;
 
             if nFrames==1
                 return
@@ -203,32 +225,12 @@ classdef pointer < handle
                 % has incrememted
                 currentFramesAcquired = obj.cam.vid.FramesAcquired;
                 if currentFramesAcquired > lastFrameAcquired
-                    im(:,:,indexToInsertFrameInto) = obj.hImLive.CData;
+                    im(:,:,indexToInsertFrameInto) = obj.lastAcquiredFrame;
                     lastFrameAcquired = currentFramesAcquired;
                     indexToInsertFrameInto = indexToInsertFrameInto +1;
                 end
             end
         end % returnCurrentFrame
-
-
-        function dispFrame(obj,~,~)
-            % This callback is run every time a frame has been acquired
-            %
-            %  function zapit.pointer.dispFrame(obj,~,~)
-            %
-            % Purpose
-            % Callback function that gets the last frame from the camera then displays it.
-
-            if obj.cam.vid.FramesAvailable==0
-                return
-            end
-            
-            tmp = obj.cam.getLastFrame;
-            
-            obj.hImLive.CData = tmp;
-            drawnow
-            obj.cam.flushdata
-        end % dispFrame
 
 
     end % methods

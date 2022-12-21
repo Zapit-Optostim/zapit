@@ -33,14 +33,19 @@ classdef controller < zapit.gui.main.view
             % Add a listener to the sampleSavePath property of the BT model
             %% obj.listeners{end+1} = addlistener(obj.model, 'sampleSavePath', 'PostSet', @obj.updateSampleSavePathBox); % FOR EXAMPLE
             obj.prepareWindow
+            obj.buildListeners
+
+            % Call the class destructor when figure is closed. This ensures all
+            % the hardware tasks are stopped.
+            obj.hFig.CloseRequestFcn = @obj.delete;
         end %close constructor
 
 
         function delete(obj,~,~)
             fprintf('zapit.gui.view is cleaning up\n')
             cellfun(@delete,obj.listeners)
-
             delete(obj.model);
+
             obj.model=[];
 
             delete(obj.hFig);
@@ -66,14 +71,54 @@ classdef controller < zapit.gui.main.view
 
         function prepareWindow(obj)
             % Prepare the window
+
+            % Insert and empty image into axes
+            obj.hImLive = image(zeros(obj.model.imSize),'Parent',obj.hImAx);
             obj.hImAx.XTick = [];
             obj.hImAx.YTick = [];
+            obj.hImAx.DataAspectRatio = [1,1,1]; % Make axis aspect ratio square
 
-            obj.ResetROIButton.ButtonPushedFcn = @obj.model.cam.resetROI;
+            % Set axis limits
+            imSize = obj.model.imSize;
+            obj.hImAx.XLim = [0,imSize(1)];
+            obj.hImAx.YLim = [0,imSize(2)];
+
+            hold(obj.hImAx,'on')
+            obj.hLastPoint = plot(obj.hImAx,nan,nan,'or','MarkerSize',8,'LineWidth',1);
+            hold(obj.hImAx,'off')
+
+            % Run method on mouse click
+            obj.hImLive.ButtonDownFcn = @obj.pointBeamToLocationInImage;
+
+            obj.ResetROIButton.ButtonPushedFcn = @(~,~) obj.model.cam.resetROI;
+            obj.RunScannerCalibrationButton.ButtonPushedFcn = @(~,~) obj.calibrateScanners_Callback;
+
         end
 
 
-        function set_scannersCalibrated(obj,calibrated)
+        function buildListeners(obj)
+            obj.listeners{end+1} = ...
+                addlistener(obj.model, 'lastAcquiredFrame', 'PostSet', @obj.dispFrame);
+            obj.listeners{end+1} = ...
+                addlistener(obj.model, 'scannersCalibrated', 'PostSet', @obj.scannersCalibrateCallback);
+            obj.listeners{end+1} = ...
+                addlistener(obj.model, 'sampleCalibrated', 'PostSet', @obj.sampleCalibrateCallback);
+
+
+        end
+
+
+        function scannersCalibrateCallback(obj,~,~)
+            % Perform any actions needed upon change in scanner calibration state
+            obj.set_scannersLampCalibrated(obj.model.scannersCalibrated)
+        end
+
+        function sampleCalibrateCallback(obj,~,~)
+            % Perform any actions needed upon change in sample calibration state
+            obj.set_sampleLampCalibrated(obj.model.sampleCalibrated)
+        end
+
+        function set_scannersLampCalibrated(obj,calibrated)
             % Set lamp state for scanner calibration
             if calibrated
                 obj.ScannersCalibratedLamp.Color = [0 1 0];
@@ -82,7 +127,7 @@ classdef controller < zapit.gui.main.view
             end
         end
 
-        function set_sampleCalibrated(obj,calibrated)
+        function set_sampleLampCalibrated(obj,calibrated)
             % Set lamp state for sample calibration
             if calibrated
                 obj.SampleCalibratedLamp.Color = [0 1 0];

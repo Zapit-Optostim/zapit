@@ -3,9 +3,12 @@ classdef view < matlab.apps.AppBase
     % Properties that correspond to app components
     properties (Access = public)
         hFig                         matlab.ui.Figure
-        Menu                         matlab.ui.container.Menu
+        ToolsMenu                    matlab.ui.container.Menu
+        CalibratelaserMenu           matlab.ui.container.Menu
+        ReloadsettingsMenu           matlab.ui.container.Menu
         HelpMenu                     matlab.ui.container.Menu
-        FileIssueReportMenu          matlab.ui.container.Menu
+        FileGitHubissueMenu          matlab.ui.container.Menu
+        GeneratesupportreportMenu    matlab.ui.container.Menu
         GridLayout                   matlab.ui.container.GridLayout
         Panel                        matlab.ui.container.Panel
         SampleCalibratedLamp         matlab.ui.control.Lamp
@@ -23,7 +26,7 @@ classdef view < matlab.apps.AppBase
         CatMouseButton               matlab.ui.control.StateButton
         PointModeButton              matlab.ui.control.StateButton
         TestCalibrationButton        matlab.ui.control.Button
-        RunCalibrationButton         matlab.ui.control.Button
+        RunScannerCalibrationButton  matlab.ui.control.Button
         ResetROIButton               matlab.ui.control.Button
         ROIButton                    matlab.ui.control.Button
         CalibrateSampleTab           matlab.ui.container.Tab
@@ -43,20 +46,32 @@ classdef view < matlab.apps.AppBase
             % Create hFig and hide until all components are created
             app.hFig = uifigure('Visible', 'off');
             app.hFig.Position = [100 100 771 820];
-            app.hFig.Name = 'MATLAB App';
+            app.hFig.Name = 'Zapit';
             app.hFig.Resize = 'off';
 
-            % Create Menu
-            app.Menu = uimenu(app.hFig);
-            app.Menu.Text = 'Menu';
+            % Create ToolsMenu
+            app.ToolsMenu = uimenu(app.hFig);
+            app.ToolsMenu.Text = 'Tools';
+
+            % Create CalibratelaserMenu
+            app.CalibratelaserMenu = uimenu(app.ToolsMenu);
+            app.CalibratelaserMenu.Text = 'Calibrate laser';
+
+            % Create ReloadsettingsMenu
+            app.ReloadsettingsMenu = uimenu(app.ToolsMenu);
+            app.ReloadsettingsMenu.Text = 'Reload settings';
 
             % Create HelpMenu
             app.HelpMenu = uimenu(app.hFig);
             app.HelpMenu.Text = 'Help';
 
-            % Create FileIssueReportMenu
-            app.FileIssueReportMenu = uimenu(app.HelpMenu);
-            app.FileIssueReportMenu.Text = 'File Issue Report';
+            % Create FileGitHubissueMenu
+            app.FileGitHubissueMenu = uimenu(app.HelpMenu);
+            app.FileGitHubissueMenu.Text = 'File GitHub issue';
+
+            % Create GeneratesupportreportMenu
+            app.GeneratesupportreportMenu = uimenu(app.HelpMenu);
+            app.GeneratesupportreportMenu.Text = 'Generate support report';
 
             % Create GridLayout
             app.GridLayout = uigridlayout(app.hFig);
@@ -92,10 +107,10 @@ classdef view < matlab.apps.AppBase
             app.ResetROIButton.Position = [15 16 105 41];
             app.ResetROIButton.Text = 'Reset ROI';
 
-            % Create RunCalibrationButton
-            app.RunCalibrationButton = uibutton(app.CalibrateScannersTab, 'push');
-            app.RunCalibrationButton.Position = [149 69 100 41];
-            app.RunCalibrationButton.Text = 'Run Calibration';
+            % Create RunScannerCalibrationButton
+            app.RunScannerCalibrationButton = uibutton(app.CalibrateScannersTab, 'push');
+            app.RunScannerCalibrationButton.Position = [149 69 100 41];
+            app.RunScannerCalibrationButton.Text = 'Run Calibration';
 
             % Create TestCalibrationButton
             app.TestCalibrationButton = uibutton(app.CalibrateScannersTab, 'push');
