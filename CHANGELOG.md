@@ -43,4 +43,4 @@ Minor bug fixes
  * Have a working model/view/controller system. 
  * Basic GUI working.
  * Refactored everything up to the scanner calibration stage to the MVC system and GUI. 
- 
+ * The program can now be started by running `start_zapit`.
