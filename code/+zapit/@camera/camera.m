@@ -159,7 +159,7 @@ classdef camera < handle
             end
         end % framesAcquired
 
-        function resetROI(obj)
+        function resetROI(obj,~,~)
             % reset ROI to full sensor size
             %
             % function resetROI(obj)

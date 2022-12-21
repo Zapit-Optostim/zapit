@@ -1,4 +1,4 @@
-classdef view < zapit.gui.app1_exported
+classdef controller < zapit.gui.main.view
 
     % zapit.gui.view is the main GUI window: that which first appears when the 
     % user starts the software.
@@ -21,7 +21,7 @@ classdef view < zapit.gui.app1_exported
 
     methods
 
-        function obj = view(hZP)
+        function obj = controller(hZP)
             if nargin>0
                 obj.model = hZP;
             else
@@ -32,7 +32,7 @@ classdef view < zapit.gui.app1_exported
 
             % Add a listener to the sampleSavePath property of the BT model
             %% obj.listeners{end+1} = addlistener(obj.model, 'sampleSavePath', 'PostSet', @obj.updateSampleSavePathBox); % FOR EXAMPLE
-
+            obj.prepareWindow
         end %close constructor
 
 
@@ -60,6 +60,34 @@ classdef view < zapit.gui.app1_exported
                     %pass
                 case 'Yes'
                     obj.delete
+            end
+        end
+
+
+        function prepareWindow(obj)
+            % Prepare the window
+            obj.hImAx.XTick = [];
+            obj.hImAx.YTick = [];
+
+            obj.ResetROIButton.ButtonPushedFcn = @obj.model.cam.resetROI;
+        end
+
+
+        function set_scannersCalibrated(obj,calibrated)
+            % Set lamp state for scanner calibration
+            if calibrated
+                obj.ScannersCalibratedLamp.Color = [0 1 0];
+            else
+                obj.ScannersCalibratedLamp.Color = [1 0 0];
+            end
+        end
+
+        function set_sampleCalibrated(obj,calibrated)
+            % Set lamp state for sample calibration
+            if calibrated
+                obj.SampleCalibratedLamp.Color = [0 1 0];
+            else
+                obj.SampleCalibratedLamp.Color = [1 0 0];
             end
         end
         % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

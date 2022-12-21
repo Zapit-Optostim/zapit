@@ -10,7 +10,7 @@ function start_zapit(varargin)
     % Optional Input args (param/val pairs
     % 'useExisting' - [false by default] if true, any existing BT object in the 
     %                 base workspace is used to start BakingTray
-    % 'startGUI' - [false by default] TODO -- LATER MAKE TRUE
+    % 'startGUI' - [true by default]
     %
     %
     % Rob Campbell - SWC 2022
@@ -20,7 +20,7 @@ function start_zapit(varargin)
     params = inputParser;
     params.CaseSensitive = false;
     params.addParameter('useExisting', false, @(x) islogical(x) || x==0 || x==1);
-    params.addParameter('startGUI', false, @(x) islogical(x) || x==0 || x==1);
+    params.addParameter('startGUI', true, @(x) islogical(x) || x==0 || x==1);
     params.parse(varargin{:});
 
     useExisting=params.Results.useExisting;
@@ -64,7 +64,8 @@ function start_zapit(varargin)
 
 
     if hZP.buildFailed
-        fprintf('%s failed to create an instance of BT. Quitting.\n', mfilename)
+        fprintf('%s failed to create an instance of zapit pointer. Quitting.\n', mfilename)
+        hZP.delete
         evalin('base','clear hZP')
         return
     end %if hZP.buildFailed
@@ -74,7 +75,8 @@ function start_zapit(varargin)
 
     % Now we make the view
     if startGUI
-        hZPview = zapit.gui.view(hZP);
+        fprintf('Building GUI\n')
+        hZPview = zapit.gui.main.controller(hZP);
         assignin('base','hZPview',hZPview);
     end
 

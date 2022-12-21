@@ -49,6 +49,8 @@ classdef pointer < handle
         hImLive  %The image
         hLastPoint % plot handle with location of the last clicked point. TODO-- do we leave this here? It's a unique one. 
         plotOverlayHandles   % All plotted objects laid over the image should keep their handles here
+
+        buildFailed = true %Used during boostrap by start_zapit
     end % hidden properties
 
 
@@ -79,7 +81,7 @@ classdef pointer < handle
                                             %    the re-applied on startup each time.
                                             %    see also obj.cam.resetROI
 
-            obj.setUpFigure
+            %obj.setUpFigure
 
             fprintf('Connecting to DAQ\n')
             obj.DAQ = zapit.hardware.DAQ.NI.vidriowrapper;
@@ -93,6 +95,8 @@ classdef pointer < handle
 
             obj.setLaserInMW(20) % TODO -- temporary
 
+            obj.buildFailed = false; % signal to start_zapit that all went well
+            return
 
             % TODO -- this does not have to be here. We can calibrate camera without this. It should be elsewhere. 
             % Load configuration files
