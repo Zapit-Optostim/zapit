@@ -94,6 +94,7 @@ classdef controller < zapit.gui.main.view
 
 
             obj.ResetROIButton.ButtonPushedFcn = @(~,~) obj.model.cam.resetROI;
+            obj.ROIButton.ButtonPushedFcn = @(~,~) obj.drawROI_Callback;
             obj.RunScannerCalibrationButton.ButtonPushedFcn = @(~,~) obj.calibrateScanners_Callback;
             obj.TestCalibrationButton.ButtonPushedFcn = @(~,~) obj.checkScannerCalib_Callback;
             obj.PointModeButton.ValueChangedFcn = @(~,~) obj.pointButton_Callback;
