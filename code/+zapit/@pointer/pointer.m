@@ -206,6 +206,7 @@ classdef pointer < handle
             %
             %
 
+            % TODO -- this is really slow right now if nFrames > 1 (since refactoring 21/12/2022)
             if nargin<2
                 nFrames = 1;
             end

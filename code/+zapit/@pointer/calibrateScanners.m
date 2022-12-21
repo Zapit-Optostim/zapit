@@ -79,10 +79,7 @@ function varargout = calibrateScanners(obj)
             end
             ind = ind+1;
         end
-        fprintf('.')
     end
-    fprintf('\n')
-
 
 
     if ind<3

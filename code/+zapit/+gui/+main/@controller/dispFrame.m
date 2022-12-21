@@ -15,6 +15,4 @@ function dispFrame(obj,~,~)
     obj.hImAx.XLim = [0,imSize(1)];
     obj.hImAx.YLim = [0,imSize(2)];
 
-    drawnow
-
 end % dispFrame

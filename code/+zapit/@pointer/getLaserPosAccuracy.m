@@ -31,7 +31,7 @@ function varargout = getLaserPosAccuracy(obj, XYdata, backgroundImage, verbose)
     end
 
     % Get images: average a few frames before looking for the laser
-    nFrames = 7;
+    nFrames = 1;
     tFrames = obj.returnCurrentFrame(nFrames);
 
     if isempty(backgroundImage)
