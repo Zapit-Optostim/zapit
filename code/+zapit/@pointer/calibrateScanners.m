@@ -30,7 +30,7 @@ function varargout = calibrateScanners(obj)
 
     % Wipe the previous transform
     obj.transform = [];
-
+    obj.scannersCalibrated = false;
 
     % TODO -- this works but I don't know exactly why. I don't follow what the dimensions mean
     % Generate points that will sample the imaged area.
@@ -56,21 +56,12 @@ function varargout = calibrateScanners(obj)
     fprintf('Running calibration')
 
     obj.setLaserInMW(obj.settings.calibrateScanners.calibration_power_mW)
-    obj.hLastPoint.Visible = 'off';
-
-
-    % Set up
-
-    hold(obj.hImAx,'on')
-    obj.plotOverlayHandles.(mfilename).hPcurrent = plot(obj.hImAx,nan,nan, 'or','MarkerSize',14,'LineWidth',3);
-    obj.plotOverlayHandles.(mfilename).hPall = plot(obj.hImAx,nan,nan, 'og','MarkerSize',12,'LineWidth',2);
-    hold(obj.hImAx,'off')
 
     % Get the current frame with laser off
     backgroundFrame = obj.returnCurrentFrame(10);
     backgroundFrame = cast(mean(backgroundFrame,3),class(backgroundFrame));
 
-    nPointsRecorded = 0;
+    ind=1;
     for ii=1:length(R)
         % feed volts into scan mirrors, wait for precise image
         % without smudges and take position in pixels
@@ -81,43 +72,38 @@ function varargout = calibrateScanners(obj)
         % Attempt to get laser position and append to list if the position was found
         out = obj.getLaserPosAccuracy([R(ii), C(ii)], backgroundFrame, true);
         if ~isempty(out)
-            positionData(ii) = out;
-            obj.plotOverlayHandles.(mfilename).hPall.XData(end+1) = out.actualPixelCoords(1);
-            obj.plotOverlayHandles.(mfilename).hPall.YData(end+1) = out.actualPixelCoords(2);
-
-            set(obj.plotOverlayHandles.(mfilename).hPcurrent, ...
-                'XData', out.actualPixelCoords(1), ...
-                'YData', out.actualPixelCoords(2))
-            pause(0.025)
-            % Make current point invisible
-            set(obj.plotOverlayHandles.(mfilename).hPcurrent, 'XData', nan, 'YData', nan)
-            nPointsRecorded = nPointsRecorded + 1;
+            if ind == 1
+                obj.calibrateScannersPosData = out;
+            else
+                obj.calibrateScannersPosData(ind) = out;
+            end
+            ind = ind+1;
         end
         fprintf('.')
     end
     fprintf('\n')
 
-    obj.removeOverlays(mfilename)
 
 
-    if nPointsRecorded<3
+    if ind<3
         fprintf('Failed to record sufficient points!\n')
         tidyUp()
         return
     end
     % Save the recorded output (intended) and incoming (calculated) pixel coordinates 
     % in order to calculate the offset and transformation.
-    OUT.targetPixelCoords = cat(1,positionData(:).targetPixelCoords);
-    OUT.actualPixelCoords = cat(1,positionData(:).actualPixelCoords);
+    OUT.targetPixelCoords = cat(1,obj.calibrateScannersPosData(:).targetPixelCoords);
+    OUT.actualPixelCoords = cat(1,obj.calibrateScannersPosData(:).actualPixelCoords);
 
 
 
     obj.runAffineTransform(OUT);
 
     % Now demonstrate that it worked
-    obj.checkScannerCalib(OUT.actualPixelCoords)
+    %obj.checkScannerCalib(OUT.actualPixelCoords)
 
     tidyUp()
+    obj.scannersCalibrated = true; % TODO -- Assumes that calibration was a success
 
     if nargout>0
         varargout{1} = OUT;
@@ -127,8 +113,6 @@ function varargout = calibrateScanners(obj)
         obj.cam.exposure = obj.settings.camera.default_exposure;
         obj.setLaserInMW(0)
         obj.zeroScanners;
-        obj.hLastPoint.Visible = 'on';
-        obj.removeOverlays(mfilename)
     end
 
 end % calibrateScanners
