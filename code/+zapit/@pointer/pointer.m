@@ -96,9 +96,6 @@ classdef pointer < handle
             obj.loadLaserFit
             obj.zeroScanners
 
-
-            obj.setLaserInMW(20) % TODO -- temporary
-
             obj.buildFailed = false; % signal to start_zapit that all went well
             return
 

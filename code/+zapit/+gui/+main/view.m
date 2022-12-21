@@ -2,36 +2,38 @@ classdef view < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
-        hFig                         matlab.ui.Figure
-        ToolsMenu                    matlab.ui.container.Menu
-        CalibratelaserMenu           matlab.ui.container.Menu
-        ReloadsettingsMenu           matlab.ui.container.Menu
-        HelpMenu                     matlab.ui.container.Menu
-        FileGitHubissueMenu          matlab.ui.container.Menu
-        GeneratesupportreportMenu    matlab.ui.container.Menu
-        GridLayout                   matlab.ui.container.GridLayout
-        Panel                        matlab.ui.container.Panel
-        SampleCalibratedLamp         matlab.ui.control.Lamp
-        SampleCalibratedLampLabel    matlab.ui.control.Label
-        ScannersCalibratedLamp       matlab.ui.control.Lamp
-        ScannersCalibratedLampLabel  matlab.ui.control.Label
-        TabGroup                     matlab.ui.container.TabGroup
-        CalibrateScannersTab         matlab.ui.container.Tab
-        SizeThreshSpinner            matlab.ui.control.Spinner
-        SizeThreshSpinnerLabel       matlab.ui.control.Label
-        CalibExposureSpinner         matlab.ui.control.Spinner
-        CalibExposureSpinnerLabel    matlab.ui.control.Label
-        LaserPowerSlider             matlab.ui.control.Slider
-        LaserPowerSliderLabel        matlab.ui.control.Label
-        CatMouseButton               matlab.ui.control.StateButton
-        PointModeButton              matlab.ui.control.StateButton
-        TestCalibrationButton        matlab.ui.control.Button
-        RunScannerCalibrationButton  matlab.ui.control.Button
-        ResetROIButton               matlab.ui.control.Button
-        ROIButton                    matlab.ui.control.Button
-        CalibrateSampleTab           matlab.ui.container.Tab
-        RunTab                       matlab.ui.container.Tab
-        hImAx                        matlab.ui.control.UIAxes
+        hFig                          matlab.ui.Figure
+        ToolsMenu                     matlab.ui.container.Menu
+        CalibratelaserMenu            matlab.ui.container.Menu
+        ReloadsettingsMenu            matlab.ui.container.Menu
+        HelpMenu                      matlab.ui.container.Menu
+        FileGitHubissueMenu           matlab.ui.container.Menu
+        GeneratesupportreportMenu     matlab.ui.container.Menu
+        GridLayout                    matlab.ui.container.GridLayout
+        Panel                         matlab.ui.container.Panel
+        SampleCalibratedLamp          matlab.ui.control.Lamp
+        SampleCalibratedLampLabel     matlab.ui.control.Label
+        ScannersCalibratedLamp        matlab.ui.control.Lamp
+        ScannersCalibratedLampLabel   matlab.ui.control.Label
+        TabGroup                      matlab.ui.container.TabGroup
+        CalibrateScannersTab          matlab.ui.container.Tab
+        CalibPowerSpinner             matlab.ui.control.Spinner
+        CalibPowerSpinnerLabel        matlab.ui.control.Label
+        SizeThreshSpinner             matlab.ui.control.Spinner
+        SizeThreshSpinnerLabel        matlab.ui.control.Label
+        CalibExposureSpinner          matlab.ui.control.Spinner
+        CalibExposureSpinnerLabel     matlab.ui.control.Label
+        LaserPowerScannerCalibSlider  matlab.ui.control.Slider
+        LaserPowerSliderLabel         matlab.ui.control.Label
+        CatMouseButton                matlab.ui.control.StateButton
+        PointModeButton               matlab.ui.control.StateButton
+        TestCalibrationButton         matlab.ui.control.Button
+        RunScannerCalibrationButton   matlab.ui.control.Button
+        ResetROIButton                matlab.ui.control.Button
+        ROIButton                     matlab.ui.control.Button
+        CalibrateSampleTab            matlab.ui.container.Tab
+        RunTab                        matlab.ui.container.Tab
+        hImAx                         matlab.ui.control.UIAxes
     end
 
     % Component initialization
@@ -133,9 +135,9 @@ classdef view < matlab.apps.AppBase
             app.LaserPowerSliderLabel.Position = [405 88 150 22];
             app.LaserPowerSliderLabel.Text = 'Laser Power';
 
-            % Create LaserPowerSlider
-            app.LaserPowerSlider = uislider(app.CalibrateScannersTab);
-            app.LaserPowerSlider.Position = [405 87 150 3];
+            % Create LaserPowerScannerCalibSlider
+            app.LaserPowerScannerCalibSlider = uislider(app.CalibrateScannersTab);
+            app.LaserPowerScannerCalibSlider.Position = [405 87 150 3];
 
             % Create CalibExposureSpinnerLabel
             app.CalibExposureSpinnerLabel = uilabel(app.CalibrateScannersTab);
@@ -156,6 +158,16 @@ classdef view < matlab.apps.AppBase
             % Create SizeThreshSpinner
             app.SizeThreshSpinner = uispinner(app.CalibrateScannersTab);
             app.SizeThreshSpinner.Position = [670 16 62 22];
+
+            % Create CalibPowerSpinnerLabel
+            app.CalibPowerSpinnerLabel = uilabel(app.CalibrateScannersTab);
+            app.CalibPowerSpinnerLabel.HorizontalAlignment = 'right';
+            app.CalibPowerSpinnerLabel.Position = [582 78 74 22];
+            app.CalibPowerSpinnerLabel.Text = 'Calib. Power';
+
+            % Create CalibPowerSpinner
+            app.CalibPowerSpinner = uispinner(app.CalibrateScannersTab);
+            app.CalibPowerSpinner.Position = [667 78 49 22];
 
             % Create CalibrateSampleTab
             app.CalibrateSampleTab = uitab(app.TabGroup);

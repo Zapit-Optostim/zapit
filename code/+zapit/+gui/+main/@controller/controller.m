@@ -87,14 +87,19 @@ classdef controller < zapit.gui.main.view
             obj.hLastPoint = plot(obj.hImAx,nan,nan,'or','MarkerSize',8,'LineWidth',1);
             hold(obj.hImAx,'off')
 
+            % Update elements from settings file
+            % TODO: changing this spin box should change the settings file
+            obj.CalibPowerSpinner.Value = obj.model.settings.calibrateScanners.calibration_power_mW;
             % Run method on mouse click
-            obj.hImLive.ButtonDownFcn = @obj.pointBeamToLocationInImage;
+
 
             obj.ResetROIButton.ButtonPushedFcn = @(~,~) obj.model.cam.resetROI;
             obj.RunScannerCalibrationButton.ButtonPushedFcn = @(~,~) obj.calibrateScanners_Callback;
             obj.TestCalibrationButton.ButtonPushedFcn = @(~,~) obj.checkScannerCalib_Callback;
-
-            % Set GUI state baseon calibration
+            obj.PointModeButton.ValueChangedFcn = @(~,~) obj.pointButton_Callback;
+            obj.CatMouseButton.ValueChangedFcn = @(~,~) obj.catAndMouseButton_Callback;
+            obj.LaserPowerScannerCalibSlider.ValueChangedFcn = @(src,evt) obj.setLaserPower_Callback(src,evt);
+            % Set GUI state based on calibration state
             obj.scannersCalibrateCallback
             obj.sampleCalibrateCallback
         end
@@ -145,6 +150,11 @@ classdef controller < zapit.gui.main.view
             else
                 obj.SampleCalibratedLamp.Color = [1 0 0];
             end
+        end
+
+        function setLaserPower_Callback(obj,src,event)
+            % Should be able to recieve from any UI
+            obj.model.setLaserInMW(event.Value)
         end
         % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

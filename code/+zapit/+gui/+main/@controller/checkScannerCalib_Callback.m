@@ -3,7 +3,8 @@ function checkScannerCalib_Callback(obj,~,~)
 %
 %    function checkScannerCalib(obj)
 
-    % TODO -- read exposure from spinbox and update settings
+   obj.PointModeButton.Value = 0;
+   % TODO -- read exposure from spinbox and update settings
     obj.model.cam.exposure = obj.model.settings.calibrateScanners.beam_calib_exposure;
 
     actualPixelCoords = cat(1,obj.model.calibrateScannersPosData(:).actualPixelCoords);
@@ -24,7 +25,7 @@ function checkScannerCalib_Callback(obj,~,~)
     % TODO -- try setting up a task and having the beam scan through all points fast or maybe
     % line by line. I'm wondering whether, with the right params, all points will appear to 
     % illuminate at once. That would nice!
-    obj.model.setLaserInMW(20)
+    obj.model.setLaserInMW(obj.LaserPowerScannerCalibSlider.Value)
 
     for ii=1:size(actualPixelCoords,1)
         [xVolt,yVolt] = obj.model.pixelToVolt(actualPixelCoords(ii,1),...
