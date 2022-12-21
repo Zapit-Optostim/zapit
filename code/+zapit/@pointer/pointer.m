@@ -72,7 +72,7 @@ classdef pointer < handle
             obj.settings = zapit.settings.readSettings;
 
             % Connect to camera
-            obj.cam = zapit.camera(obj.settings.camera.connection_index);
+            obj.cam = zapit.hardware.camera(obj.settings.camera.connection_index);
             obj.cam.exposure = obj.settings.camera.default_exposure;
 
             obj.cam.ROI = [300,100,1400,1000]; % TODO: hardcoded sensor crop

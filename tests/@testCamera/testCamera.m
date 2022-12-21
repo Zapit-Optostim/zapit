@@ -52,7 +52,7 @@ classdef testCamera < handle
 
             % Connect to the camera and bail out if this fails
             try
-                obj.cam = zapit.camera(camToStart);
+                obj.cam = zapit.hardware.camera(camToStart);
 
                 % Build figure window: make a new one or clear an existing one and re-use it.
                 obj.hFig = zapit.utils.focusNamedFig(obj.figTagName);

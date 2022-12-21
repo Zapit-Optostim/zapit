@@ -1,5 +1,5 @@
 classdef camera < handle
-    % zapit.camera
+    % zapit.hardware.camera
     %
     % Purpose
     % This class acts as an interface between the zapit.pointer class and the MATLAB
