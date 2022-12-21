@@ -1,12 +1,13 @@
-classdef view < handle
+classdef view < zapit.gui.app1_exported
 
     % zapit.gui.view is the main GUI window: that which first appears when the 
-    % user starts the software. It'
+    % user starts the software.
+    %
+    % The GUI itself is made in MATLAB AppDesigner and is inherited by this class
 
     properties
-        % Handles for plot elements. (THESE MAY GO ELSEWHERE. NOT SURE YET. OR INHERITED?)
-        hFig  % GUI figure window
-        hImAx % axes of image
+        % Handles for some plot elements are inherited from the superclass
+
         hImLive  %The image
         hLastPoint % plot handle with location of the last clicked point. TODO-- do we leave this here? It's a unique one. 
         plotOverlayHandles   % All plotted objects laid over the image should keep their handles here
@@ -25,6 +26,7 @@ classdef view < handle
                 obj.model = hZP;
             else
                 fprintf('Can''t build zapit.gui.view please supply ZP model as input argument\n');
+                obj.delete
                 return
             end
 

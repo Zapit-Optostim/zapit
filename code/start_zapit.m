@@ -78,9 +78,7 @@ function start_zapit(varargin)
         assignin('base','hZPview',hZPview);
     end
 
-
     fprintf('Zapit has started\n')
-
 
 
 %-------------------------------------------------------------------------------------------------------------------------
