@@ -16,14 +16,12 @@ function pointBeamToLocationInImage(obj,~,~)
     yPos = pos(1,2);
     
     % convert to voltage values to send to scanners
-    [xVolts, yVolts] = pixelToVolt(obj, xPos, yPos); % TODO -- how is this working? I've moved it!
+    [xVolts, yVolts] = obj.model.pixelToVolt(xPos, yPos);
     
     obj.hLastPoint.XData = xPos;
     obj.hLastPoint.YData = yPos;
-    
-    %SEND TO SCANNERS: (TODO: use new API)
 
-    obj.DAQ.moveBeamXY([xVolts, yVolts]); % send beam to this location
+    obj.model.DAQ.moveBeamXY([xVolts, yVolts]); % send beam to this location
 
 
     % Update figure title    
