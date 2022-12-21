@@ -92,7 +92,11 @@ classdef controller < zapit.gui.main.view
 
             obj.ResetROIButton.ButtonPushedFcn = @(~,~) obj.model.cam.resetROI;
             obj.RunScannerCalibrationButton.ButtonPushedFcn = @(~,~) obj.calibrateScanners_Callback;
+            obj.TestCalibrationButton.ButtonPushedFcn = @(~,~) obj.checkScannerCalib_Callback;
 
+            % Set GUI state baseon calibration
+            obj.scannersCalibrateCallback
+            obj.sampleCalibrateCallback
         end
 
 
@@ -111,12 +115,19 @@ classdef controller < zapit.gui.main.view
         function scannersCalibrateCallback(obj,~,~)
             % Perform any actions needed upon change in scanner calibration state
             obj.set_scannersLampCalibrated(obj.model.scannersCalibrated)
+
+            if obj.model.scannersCalibrated
+                obj.TestCalibrationButton.Enable = 'on';
+            else
+                obj.TestCalibrationButton.Enable = 'off';
+            end
         end
 
         function sampleCalibrateCallback(obj,~,~)
             % Perform any actions needed upon change in sample calibration state
             obj.set_sampleLampCalibrated(obj.model.sampleCalibrated)
         end
+
 
         function set_scannersLampCalibrated(obj,calibrated)
             % Set lamp state for scanner calibration

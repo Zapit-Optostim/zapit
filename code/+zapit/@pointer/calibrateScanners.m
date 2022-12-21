@@ -96,9 +96,6 @@ function varargout = calibrateScanners(obj)
 
     obj.runAffineTransform(OUT);
 
-    % Now demonstrate that it worked
-    %obj.checkScannerCalib(OUT.actualPixelCoords)
-
     tidyUp()
     obj.scannersCalibrated = true; % TODO -- Assumes that calibration was a success
 
