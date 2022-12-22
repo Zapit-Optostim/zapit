@@ -93,6 +93,8 @@ classdef controller < zapit.gui.main.view
             % TODO: changing this spin box should change the settings file
             obj.CalibPowerSpinner.Value = obj.model.settings.calibrateScanners.calibration_power_mW;
             obj.LaserPowerScannerCalibSlider.Value = obj.CalibPowerSpinner.Value;
+            obj.PointSpacingSpinner.Value = obj.model.settings.calibrateScanners.pointSpacingInPixels;
+            obj.BorderBufferSpinner.Value = obj.model.settings.calibrateScanners.bufferPixels;
             % Run method on mouse click
 
 
@@ -104,6 +106,8 @@ classdef controller < zapit.gui.main.view
             obj.CatMouseButton.ValueChangedFcn = @(~,~) obj.catAndMouseButton_Callback;
             obj.LaserPowerScannerCalibSlider.ValueChangedFcn = @(src,evt) obj.setLaserPower_Callback(src,evt);
             obj.CalibLaserSwitch.ValueChangedFcn = @(~,~) obj.switchLaser_Callback;
+            obj.PointSpacingSpinner.ValueChangedFcn = @(~,~) obj.pointSpacing_CallBack;
+            obj.BorderBufferSpinner.ValueChangedFcn = @(~,~) obj.borderBuffer_CallBack;
             % Set GUI state based on calibration state
             obj.scannersCalibrateCallback
             obj.sampleCalibrateCallback
@@ -183,6 +187,16 @@ classdef controller < zapit.gui.main.view
             end
             obj.CalibLaserSwitch.Value = value;
             obj.switchLaser_Callback
+        end
+
+
+        function pointSpacing_CallBack(obj,~,~)
+            obj.model.settings.calibrateScanners.pointSpacingInPixels = obj.PointSpacingSpinner.Value;
+        end
+
+
+        function borderBuffer_CallBack(obj,~,~)
+            obj.model.settings.calibrateScanners.bufferPixels = obj.BorderBufferSpinner.Value;
         end
 
         % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

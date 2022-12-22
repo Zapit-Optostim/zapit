@@ -22,6 +22,8 @@ function settings = default_settings
     settings.calibrateScanners.areaThreshold = 500;
     settings.calibrateScanners.calibration_power_mW = 10;
     settings.calibrateScanners.beam_calib_exposure = 0;
+    settings.calibrateScanners.bufferPixels = 100;
+    settings.calibrateScanners.pointSpacingInPixels = 200;
 
     settings.experiment.defaultLaserFrequency = 40; % TODO: this will probably be used to make the brain area config file and from there that will be the relevant value
 end % default_settings

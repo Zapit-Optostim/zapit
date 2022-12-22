@@ -37,8 +37,9 @@ function varargout = calibrateScanners(obj)
     % User should have cropped the FOV so we shouldn't be stimulating silly large positions
 
     % Unique row and column values to sample
-    pointSpacingInPixels = 100;
-    bufferPixels = 200; % So we don't stimulate very close to the edges
+    pointSpacingInPixels = obj.settings.calibrateScanners.pointSpacingInPixels;
+    bufferPixels = obj.settings.calibrateScanners.bufferPixels; % So we don't stimulate very close to the edges
+
     pixel_rows = bufferPixels:pointSpacingInPixels:obj.imSize(1)-bufferPixels;
     pixel_cols = bufferPixels:pointSpacingInPixels:obj.imSize(2)-bufferPixels;
 
