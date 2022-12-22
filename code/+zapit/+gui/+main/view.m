@@ -32,7 +32,7 @@ classdef view < matlab.apps.AppBase
         LaserPowerSliderLabel         matlab.ui.control.Label
         CatMouseButton                matlab.ui.control.StateButton
         PointModeButton               matlab.ui.control.StateButton
-        TestCalibrationButton         matlab.ui.control.Button
+        CheckCalibrationButton        matlab.ui.control.Button
         RunScannerCalibrationButton   matlab.ui.control.Button
         ResetROIButton                matlab.ui.control.Button
         ROIButton                     matlab.ui.control.Button
@@ -120,10 +120,10 @@ classdef view < matlab.apps.AppBase
             app.RunScannerCalibrationButton.Position = [99 69 73 41];
             app.RunScannerCalibrationButton.Text = {'Run'; 'Calibration'};
 
-            % Create TestCalibrationButton
-            app.TestCalibrationButton = uibutton(app.CalibrateScannersTab, 'push');
-            app.TestCalibrationButton.Position = [99 16 73 41];
-            app.TestCalibrationButton.Text = {'Test'; 'Calibration'};
+            % Create CheckCalibrationButton
+            app.CheckCalibrationButton = uibutton(app.CalibrateScannersTab, 'push');
+            app.CheckCalibrationButton.Position = [99 16 73 41];
+            app.CheckCalibrationButton.Text = {'Check'; 'Calibration'};
 
             % Create PointModeButton
             app.PointModeButton = uibutton(app.CalibrateScannersTab, 'state');

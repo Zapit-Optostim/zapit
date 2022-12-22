@@ -10,13 +10,16 @@ function pointButton_Callback(obj,~,~)
         obj.hLastPoint.XData = nan;
         obj.hLastPoint.YData = nan;
 
-        obj.model.setLaserInMW(obj.LaserPowerScannerCalibSlider.Value);
+        % Turn on laser
+        obj.setCalibLaserSwitch('On');
         obj.hImLive.ButtonDownFcn = @obj.pointBeamToLocationInImage;
         obj.hLastPoint.Visible = 'on';
 
     elseif obj.PointModeButton.Value == 0
 
-        obj.model.setLaserInMW(0)
+        % Turn off laser
+        obj.setCalibLaserSwitch('Off');
+
         obj.hImLive.ButtonDownFcn = [];
         obj.hLastPoint.Visible = 'off';
 

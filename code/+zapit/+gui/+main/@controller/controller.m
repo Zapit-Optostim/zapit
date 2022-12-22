@@ -77,7 +77,7 @@ classdef controller < zapit.gui.main.view
             obj.hImAx.XTick = [];
             obj.hImAx.YTick = [];
             obj.hImAx.DataAspectRatio = [1,1,1]; % Make axis aspect ratio square
-
+            pan(obj.hImAx,'off')
             % Set axis limits
             imSize = obj.model.imSize;
             obj.hImAx.XLim = [0,imSize(1)];
@@ -90,16 +90,18 @@ classdef controller < zapit.gui.main.view
             % Update elements from settings file
             % TODO: changing this spin box should change the settings file
             obj.CalibPowerSpinner.Value = obj.model.settings.calibrateScanners.calibration_power_mW;
+            obj.LaserPowerScannerCalibSlider.Value = obj.CalibPowerSpinner.Value;
             % Run method on mouse click
 
 
             obj.ResetROIButton.ButtonPushedFcn = @(~,~) obj.model.cam.resetROI;
             obj.ROIButton.ButtonPushedFcn = @(~,~) obj.drawROI_Callback;
             obj.RunScannerCalibrationButton.ButtonPushedFcn = @(~,~) obj.calibrateScanners_Callback;
-            obj.TestCalibrationButton.ButtonPushedFcn = @(~,~) obj.checkScannerCalib_Callback;
+            obj.CheckCalibrationButton.ButtonPushedFcn = @(~,~) obj.checkScannerCalib_Callback;
             obj.PointModeButton.ValueChangedFcn = @(~,~) obj.pointButton_Callback;
             obj.CatMouseButton.ValueChangedFcn = @(~,~) obj.catAndMouseButton_Callback;
             obj.LaserPowerScannerCalibSlider.ValueChangedFcn = @(src,evt) obj.setLaserPower_Callback(src,evt);
+            obj.CalibLaserSwitch.ValueChangedFcn = @(~,~) obj.switchLaser_Callback;
             % Set GUI state based on calibration state
             obj.scannersCalibrateCallback
             obj.sampleCalibrateCallback
@@ -123,9 +125,9 @@ classdef controller < zapit.gui.main.view
             obj.set_scannersLampCalibrated(obj.model.scannersCalibrated)
 
             if obj.model.scannersCalibrated
-                obj.TestCalibrationButton.Enable = 'on';
+                obj.CheckCalibrationButton.Enable = 'on';
             else
-                obj.TestCalibrationButton.Enable = 'off';
+                obj.CheckCalibrationButton.Enable = 'off';
             end
         end
 
@@ -155,8 +157,32 @@ classdef controller < zapit.gui.main.view
 
         function setLaserPower_Callback(obj,src,event)
             % Should be able to recieve from any UI
-            obj.model.setLaserInMW(event.Value)
+            if strcmp(obj.CalibLaserSwitch.Value,'On')
+                obj.model.setLaserInMW(event.Value)
+            end
         end
+
+        function switchLaser_Callback(obj,~,~)
+            if strcmp(obj.CalibLaserSwitch.Value,'On')
+                obj.model.setLaserInMW(obj.LaserPowerScannerCalibSlider.Value);
+            else
+                obj.model.setLaserInMW(0)
+            end
+        end
+
+        function setCalibLaserSwitch(obj,value)
+            % Because changing the switch value programmaticaly does not
+            % fire the callback. WHY DID TMW THEY DO THIS?!
+            if ~char(value)
+                return
+            end
+            if ~strcmp(value,'On') && ~strcmp(value,'Off')
+                return
+            end
+            obj.CalibLaserSwitch.Value = value;
+            obj.switchLaser_Callback
+        end
+
         % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 

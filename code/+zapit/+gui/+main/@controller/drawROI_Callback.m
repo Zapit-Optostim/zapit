@@ -10,13 +10,14 @@ function drawROI_Callback(obj,~,~)
 
     % Draw box and get coords
     imSize = obj.model.imSize;
-    borderPix = 30;
+    borderPix = 50;
     defaultPos = [borderPix/2, ...
                 borderPix/2, ...
                 imSize(1)-borderPix, ...
                 imSize(2)-borderPix];
 
     roi = images.roi.Rectangle('Parent',obj.hImAx,'Position',defaultPos);
+    %roi = images.roi.Rectangle('Parent',obj.hImAx);
     roi.Label='Adjust then double-click';
 
     % The only way I can find to move the label to the centre

@@ -53,7 +53,6 @@ function varargout = calibrateScanners(obj)
     [rVolts(:,1), rVolts(:,2)] = obj.pixelToVolt(R,C);
     obj.DAQ.moveBeamXY(rVolts(1,:)); % Move to first position
     pause(0.05)
-    fprintf('Running calibration')
 
     obj.setLaserInMW(obj.settings.calibrateScanners.calibration_power_mW)
 

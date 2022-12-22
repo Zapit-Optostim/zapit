@@ -14,6 +14,13 @@ function calibrateScanners_Callback(obj,~,~)
 
     updatePlotListener = addlistener(obj.model, 'calibrateScannersPosData', 'PostSet', @myUpdatePlot);
     % Run calibration method in model
+
+
+    % Turn on laser and set to the calibration laser power
+    origLaserPower = obj.LaserPowerScannerCalibSlider.Value;
+    obj.LaserPowerScannerCalibSlider.Value = obj.CalibPowerSpinner.Value;
+    obj.setCalibLaserSwitch('On');
+
     try
         obj.model.calibrateScanners
     catch ME
@@ -32,6 +39,9 @@ function calibrateScanners_Callback(obj,~,~)
     function tidy
         obj.removeOverlays(mfilename)
         delete(updatePlotListener)
+        % Return power to orginal value
+        obj.setCalibLaserSwitch('Off');
+        obj.LaserPowerScannerCalibSlider.Value = origLaserPower;
     end
 
     function myUpdatePlot(~,~)

@@ -25,7 +25,11 @@ function checkScannerCalib_Callback(obj,~,~)
     % TODO -- try setting up a task and having the beam scan through all points fast or maybe
     % line by line. I'm wondering whether, with the right params, all points will appear to 
     % illuminate at once. That would nice!
-    obj.model.setLaserInMW(obj.LaserPowerScannerCalibSlider.Value)
+
+    % Turn on laser and set to the calibration laser power
+    origLaserPower = obj.LaserPowerScannerCalibSlider.Value;
+    obj.LaserPowerScannerCalibSlider.Value = obj.CalibPowerSpinner.Value;
+    obj.setCalibLaserSwitch('On');
 
     for ii=1:size(actualPixelCoords,1)
         [xVolt,yVolt] = obj.model.pixelToVolt(actualPixelCoords(ii,1),...
@@ -34,8 +38,8 @@ function checkScannerCalib_Callback(obj,~,~)
         pause(0.05)
     end
 
-    obj.model.setLaserInMW(0)
-
+    obj.setCalibLaserSwitch('Off');
+    obj.LaserPowerScannerCalibSlider.Value = origLaserPower;
 
     % Tidy up
     obj.removeOverlays(mfilename)
