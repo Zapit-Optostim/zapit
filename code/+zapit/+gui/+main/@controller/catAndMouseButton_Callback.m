@@ -10,6 +10,7 @@ function catAndMouseButton_Callback(obj,~,~)
     if obj.CatMouseButton.Value == 1
         obj.setCalibLaserSwitch('On');
         obj.PointModeButton.Value = 0;
+        obj.hLastPoint.Visible = 'off';
         obj.hFig.WindowButtonMotionFcn = @mouseMove;
     end
 
