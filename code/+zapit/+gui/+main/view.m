@@ -17,8 +17,13 @@ classdef view < matlab.apps.AppBase
         ScannersCalibratedLampLabel   matlab.ui.control.Label
         TabGroup                      matlab.ui.container.TabGroup
         CalibrateScannersTab          matlab.ui.container.Tab
+        BorderBufferSpinner           matlab.ui.control.Spinner
+        PointBorderBufferLabel        matlab.ui.control.Label
+        PointSpacingSpinner           matlab.ui.control.Spinner
+        PointSpacingLabel             matlab.ui.control.Label
+        CalibLaserSwitch              matlab.ui.control.Switch
         CalibPowerSpinner             matlab.ui.control.Spinner
-        CalibPowerSpinnerLabel        matlab.ui.control.Label
+        CalibPowerLabel               matlab.ui.control.Label
         SizeThreshSpinner             matlab.ui.control.Spinner
         SizeThreshSpinnerLabel        matlab.ui.control.Label
         CalibExposureSpinner          matlab.ui.control.Spinner
@@ -100,54 +105,55 @@ classdef view < matlab.apps.AppBase
             % Create ROIButton
             app.ROIButton = uibutton(app.CalibrateScannersTab, 'push');
             app.ROIButton.Icon = fullfile(pathToMLAPP, 'Icons', 'icon-mat-zoom-in.png');
-            app.ROIButton.Position = [15 69 105 41];
+            app.ROIButton.Tooltip = {'Draw a ROI and '};
+            app.ROIButton.Position = [15 69 73 41];
             app.ROIButton.Text = 'ROI';
 
             % Create ResetROIButton
             app.ResetROIButton = uibutton(app.CalibrateScannersTab, 'push');
             app.ResetROIButton.Icon = fullfile(pathToMLAPP, 'Icons', 'icon-mat-zoom-out-map.png');
-            app.ResetROIButton.Position = [15 16 105 41];
-            app.ResetROIButton.Text = 'Reset ROI';
+            app.ResetROIButton.Position = [15 16 73 41];
+            app.ResetROIButton.Text = 'Reset';
 
             % Create RunScannerCalibrationButton
             app.RunScannerCalibrationButton = uibutton(app.CalibrateScannersTab, 'push');
-            app.RunScannerCalibrationButton.Position = [149 69 100 41];
-            app.RunScannerCalibrationButton.Text = 'Run Calibration';
+            app.RunScannerCalibrationButton.Position = [99 69 73 41];
+            app.RunScannerCalibrationButton.Text = {'Run'; 'Calibration'};
 
             % Create TestCalibrationButton
             app.TestCalibrationButton = uibutton(app.CalibrateScannersTab, 'push');
-            app.TestCalibrationButton.Position = [149 16 101 41];
-            app.TestCalibrationButton.Text = ' Test Calibration';
+            app.TestCalibrationButton.Position = [99 16 73 41];
+            app.TestCalibrationButton.Text = {'Test'; 'Calibration'};
 
             % Create PointModeButton
             app.PointModeButton = uibutton(app.CalibrateScannersTab, 'state');
-            app.PointModeButton.Text = 'Point Mode';
-            app.PointModeButton.Position = [274 69 100 41];
+            app.PointModeButton.Text = {'Point'; 'Mode'};
+            app.PointModeButton.Position = [186 69 73 41];
 
             % Create CatMouseButton
             app.CatMouseButton = uibutton(app.CalibrateScannersTab, 'state');
-            app.CatMouseButton.Text = 'Cat & Mouse';
-            app.CatMouseButton.Position = [274 16 100 41];
+            app.CatMouseButton.Text = {'Cat &'; 'Mouse'};
+            app.CatMouseButton.Position = [186 17 73 41];
 
             % Create LaserPowerSliderLabel
             app.LaserPowerSliderLabel = uilabel(app.CalibrateScannersTab);
             app.LaserPowerSliderLabel.HorizontalAlignment = 'center';
-            app.LaserPowerSliderLabel.Position = [405 88 150 22];
+            app.LaserPowerSliderLabel.Position = [279 93 150 22];
             app.LaserPowerSliderLabel.Text = 'Laser Power';
 
             % Create LaserPowerScannerCalibSlider
             app.LaserPowerScannerCalibSlider = uislider(app.CalibrateScannersTab);
-            app.LaserPowerScannerCalibSlider.Position = [405 87 150 3];
+            app.LaserPowerScannerCalibSlider.Position = [279 92 150 3];
 
             % Create CalibExposureSpinnerLabel
             app.CalibExposureSpinnerLabel = uilabel(app.CalibrateScannersTab);
             app.CalibExposureSpinnerLabel.HorizontalAlignment = 'right';
-            app.CalibExposureSpinnerLabel.Position = [392 16 87 22];
+            app.CalibExposureSpinnerLabel.Position = [266 5 87 22];
             app.CalibExposureSpinnerLabel.Text = 'Calib Exposure';
 
             % Create CalibExposureSpinner
             app.CalibExposureSpinner = uispinner(app.CalibrateScannersTab);
-            app.CalibExposureSpinner.Position = [491 16 75 22];
+            app.CalibExposureSpinner.Position = [364 5 76 22];
 
             % Create SizeThreshSpinnerLabel
             app.SizeThreshSpinnerLabel = uilabel(app.CalibrateScannersTab);
@@ -159,15 +165,39 @@ classdef view < matlab.apps.AppBase
             app.SizeThreshSpinner = uispinner(app.CalibrateScannersTab);
             app.SizeThreshSpinner.Position = [670 16 62 22];
 
-            % Create CalibPowerSpinnerLabel
-            app.CalibPowerSpinnerLabel = uilabel(app.CalibrateScannersTab);
-            app.CalibPowerSpinnerLabel.HorizontalAlignment = 'right';
-            app.CalibPowerSpinnerLabel.Position = [582 78 74 22];
-            app.CalibPowerSpinnerLabel.Text = 'Calib. Power';
+            % Create CalibPowerLabel
+            app.CalibPowerLabel = uilabel(app.CalibrateScannersTab);
+            app.CalibPowerLabel.HorizontalAlignment = 'right';
+            app.CalibPowerLabel.Position = [283 36 70 22];
+            app.CalibPowerLabel.Text = 'Calib Power';
 
             % Create CalibPowerSpinner
             app.CalibPowerSpinner = uispinner(app.CalibrateScannersTab);
-            app.CalibPowerSpinner.Position = [667 78 49 22];
+            app.CalibPowerSpinner.Position = [364 36 49 22];
+
+            % Create CalibLaserSwitch
+            app.CalibLaserSwitch = uiswitch(app.CalibrateScannersTab, 'slider');
+            app.CalibLaserSwitch.Position = [471 83 45 20];
+
+            % Create PointSpacingLabel
+            app.PointSpacingLabel = uilabel(app.CalibrateScannersTab);
+            app.PointSpacingLabel.HorizontalAlignment = 'right';
+            app.PointSpacingLabel.Position = [583 88 80 22];
+            app.PointSpacingLabel.Text = 'Point Spacing';
+
+            % Create PointSpacingSpinner
+            app.PointSpacingSpinner = uispinner(app.CalibrateScannersTab);
+            app.PointSpacingSpinner.Position = [670 88 62 22];
+
+            % Create PointBorderBufferLabel
+            app.PointBorderBufferLabel = uilabel(app.CalibrateScannersTab);
+            app.PointBorderBufferLabel.HorizontalAlignment = 'right';
+            app.PointBorderBufferLabel.Position = [586 52 77 22];
+            app.PointBorderBufferLabel.Text = 'Border Buffer';
+
+            % Create BorderBufferSpinner
+            app.BorderBufferSpinner = uispinner(app.CalibrateScannersTab);
+            app.BorderBufferSpinner.Position = [670 52 62 22];
 
             % Create CalibrateSampleTab
             app.CalibrateSampleTab = uitab(app.TabGroup);
