@@ -77,11 +77,13 @@ classdef controller < zapit.gui.main.view
             obj.hImAx.XTick = [];
             obj.hImAx.YTick = [];
             obj.hImAx.DataAspectRatio = [1,1,1]; % Make axis aspect ratio square
-            pan(obj.hImAx,'off')
+
             % Set axis limits
             imSize = obj.model.imSize;
             obj.hImAx.XLim = [0,imSize(1)];
             obj.hImAx.YLim = [0,imSize(2)];
+
+            pan(obj.hImAx,'off')
 
             hold(obj.hImAx,'on')
             obj.hLastPoint = plot(obj.hImAx,nan,nan,'or','MarkerSize',8,'LineWidth',1);
