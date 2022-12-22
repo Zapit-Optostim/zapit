@@ -75,7 +75,7 @@ classdef pointer < handle
             obj.cam = zapit.hardware.camera(obj.settings.camera.connection_index);
             obj.cam.exposure = obj.settings.camera.default_exposure;
 
-            %obj.cam.ROI = [300,100,1400,1000]; % TODO: hardcoded sensor crop
+            obj.cam.ROI = [300,100,1400,1000]; % TODO: hardcoded sensor crop
                                             % TODO : in future user will have ROI box to interactively
                                             %    crop and this will be saved in settings file
                                             %    the re-applied on startup each time.
