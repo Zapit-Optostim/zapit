@@ -6,11 +6,17 @@ function drawROI_Callback(obj,~,~)
 
     % Disable button until ROI has been drawn
     obj.ROIButton.Enable='off';
+    obj.model.cam.stopVideo
 
     % Draw box and get coords
     imSize = obj.model.imSize;
-    defaultPos = [1,1,imSize(2), imSize(1)];
-    roi = images.roi.Rectangle(obj.hImAx,'Position',defaultPos);
+    borderPix = 30;
+    defaultPos = [borderPix/2, ...
+                borderPix/2, ...
+                imSize(1)-borderPix, ...
+                imSize(2)-borderPix];
+
+    roi = images.roi.Rectangle('Parent',obj.hImAx,'Position',defaultPos);
     roi.Label='Adjust then double-click';
 
     % The only way I can find to move the label to the centre
@@ -22,19 +28,20 @@ function drawROI_Callback(obj,~,~)
     uiwait;
 
     % Get the ROI position
-    rect_pos = (roi.Position);
+    rect_pos = roi.Position;
     delete(L)
     delete(roi)
 
 
     %  We have obtained this in local image coords so if user is drawing a ROI on a zoomed-in image we need to 
     % add the existing offset.  
-    originalROI = obj.model.camera.ROI;
+    originalROI = obj.model.cam.ROI;
     originalROI(3:4) = 0;
     newROI = originalROI + rect_pos;
-    obj.model.camera.ROI = newROI;
+    obj.model.cam.ROI = newROI;
 
     obj.ROIButton.Enable='on';
+    obj.model.cam.startVideo
 
 end % drawROI
 
