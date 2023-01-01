@@ -25,11 +25,13 @@ function settingsDirs = settingsLocation
         settingsDirs(n).locationType = 'homefolder';
     end
 
-    % In C:\
-    n = n+1;
-    settingsDirs(n).settingsLocation = fullfile('C:\', 'ZapitSettings');
-    settingsDirs(n).backupSettingsLocation = fullfile(settingsDirs(n).settingsLocation,'BackupSettings');
-        settingsDirs(n).locationType = 'C';
+    % In C:\ (on Windows)
+    if ispc
+        n = n+1;
+        settingsDirs(n).settingsLocation = fullfile('C:\', 'ZapitSettings');
+        settingsDirs(n).backupSettingsLocation = fullfile(settingsDirs(n).settingsLocation,'BackupSettings');
+            settingsDirs(n).locationType = 'C';
+    end
 
     % In Zapit folder
     n = n+1;
