@@ -33,7 +33,6 @@ classdef camera < handle
             
             obj.vid.FramesAcquired=0;
             obj.vid.VideoResolution = [1900,1600]; %The camera default resolution
-            obj.vid.VideoResolution=obj.defaultROI;
         end % close constructor
 
 

@@ -51,7 +51,7 @@ classdef DAQ < handle
         function connectUnclockedAI(obj,chans)
         end
         
-        function connectUnclockedAO(obj)
+        function connectUnclockedAO(obj,verbose)
         end
 
         function connectClockedAO(obj)

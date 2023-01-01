@@ -22,7 +22,7 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
             switch connectionType
                 case 'unclocked'
                     obj.connectUnlocked
-                case 'clocked'                    
+                case 'clocked'
                     body
                 otherwise
                     fprintf('Unknown connection type %s in zapit.hardware.DAQ.NI.vidriowrapper.connect\n', connectionType)
