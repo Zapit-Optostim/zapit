@@ -1,5 +1,5 @@
 function result = merge_struct(p, s, donotmerge, deep)
-import BakingTray.yaml.*;
+import zapit.yaml.*;
 if ~( isstruct(p) && isstruct(s) )
         error('Only structures can be merged.');
     end;
