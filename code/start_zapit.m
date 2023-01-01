@@ -8,10 +8,10 @@ function start_zapit(varargin)
     %
     %
     % Optional Input args (param/val pairs
-    % 'simulated'  -  [false by default] If true does not connect to hardware but runs in 
-    %             simulated mode.
-    % 'useExisting'  -  [false by default] If true, an exsiting instance of hZP is used.
-    % 'startGUI'  -  [true by default]
+    % 'simulated'  -  [False by default on Windows. True on Linux and Mac] If true does not connect 
+    %                to hardware but runs in  simulated mode.
+    % 'useExisting'  -  [False by default] If true, an exsiting instance of hZP is used.
+    % 'startGUI'  -  [True by default]
     %
     %
     % Rob Campbell - SWC 2022
@@ -20,7 +20,12 @@ function start_zapit(varargin)
     %Parse optional arguments
     params = inputParser;
     params.CaseSensitive = false;
-    params.addParameter('simulated', false, @(x) islogical(x) || x==0 || x==1);
+    if isunix
+        defaultSimulated = true;
+    else
+        defaultSimulated = false;
+    end
+    params.addParameter('simulated', defaultSimulated, @(x) islogical(x) || x==0 || x==1);
     params.addParameter('useExisting', false, @(x) islogical(x) || x==0 || x==1);
     params.addParameter('startGUI', true, @(x) islogical(x) || x==0 || x==1);
 
