@@ -32,7 +32,7 @@ classdef config < handle
             % zaptit.config.loadConfig(fname)
 
             if ~exist(fname)
-                fprintf('No file "%s" found\n', fname)
+                fprintf('No config file found at "%s"\n', fname)
                 return
             end
 

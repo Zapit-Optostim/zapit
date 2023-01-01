@@ -62,17 +62,32 @@ classdef pointer < handle
 
     % Constructor and destructor
     methods
-        function obj = pointer(fname)
+        function obj = pointer(varargin)
             % Constructor
+            %
+            % Inputs
+            % 'simulated' - [false by default] If true does not connect to hardware but 
+            %   runs in simulated mode.
+            % 'pointsFile' - [empty by default] If provided, should be path to points file for stim
 
-            if nargin < 1
-                fname = [];
-            end
+            params = inputParser;
+            params.CaseSensitive = false;
+            params.addParameter('simulated', false, @(x) islogical(x) || x==0 || x==1);
+            params.addParameter('pointsFile', '', @(x) ischar(x));
+
+            params.parse(varargin{:});
+
+            simulated=params.Results.simulated;
+            pointsFile=params.Results.pointsFile;
 
             obj.settings = zapit.settings.readSettings;
 
             % Connect to camera
-            obj.cam = zapit.hardware.camera(obj.settings.camera.connection_index);
+            if simulated
+                obj.cam = zapit.simulated.camera;
+            else
+                obj.cam = zapit.hardware.camera(obj.settings.camera.connection_index);
+            end
             obj.cam.exposure = obj.settings.camera.default_exposure;
 
             obj.cam.ROI = [300,100,1400,1000]; % TODO: hardcoded sensor crop
@@ -87,8 +102,13 @@ classdef pointer < handle
             obj.cam.startVideo;
 
 
-            fprintf('Connecting to DAQ\n')
-            obj.DAQ = zapit.hardware.DAQ.NI.vidriowrapper;
+            if simulated
+                obj.DAQ = zapit.simulated.DAQ;
+            else
+                fprintf('Connecting to DAQ\n')
+                obj.DAQ = zapit.hardware.DAQ.NI.vidriowrapper;
+            end
+
             obj.DAQ.parent = obj;
 
             obj.DAQ.connectUnclockedAO(true)
@@ -101,11 +121,11 @@ classdef pointer < handle
 
             % TODO -- this does not have to be here. We can calibrate camera without this. It should be elsewhere. 
             % Load configuration files
-            if isempty(fname)
-                [fname,fpath] = uigetfile('*.yaml','Pick a config file');
-                pathToConfig = fullfile(fpath,fname);
+            if isempty(pointsFile)
+                [pointsFile,fpath] = uigetfile('*.yaml','Pick a config file');
+                pathToConfig = fullfile(fpath,pointsFile);
             else
-                pathToConfig = fname;
+                pathToConfig = pointsFile;
             end
             obj.config = zapit.config(pathToConfig);
         end % Constructor

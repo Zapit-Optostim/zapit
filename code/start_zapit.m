@@ -8,9 +8,10 @@ function start_zapit(varargin)
     %
     %
     % Optional Input args (param/val pairs
-    % 'useExisting' - [false by default] if true, any existing BT object in the 
-    %                 base workspace is used to start BakingTray
-    % 'startGUI' - [true by default]
+    % 'simulated'  -  [false by default] If true does not connect to hardware but runs in 
+    %             simulated mode.
+    % 'useExisting'  -  [false by default] If true, an exsiting instance of hZP is used.
+    % 'startGUI'  -  [true by default]
     %
     %
     % Rob Campbell - SWC 2022
@@ -19,17 +20,20 @@ function start_zapit(varargin)
     %Parse optional arguments
     params = inputParser;
     params.CaseSensitive = false;
+    params.addParameter('simulated', false, @(x) islogical(x) || x==0 || x==1);
     params.addParameter('useExisting', false, @(x) islogical(x) || x==0 || x==1);
     params.addParameter('startGUI', true, @(x) islogical(x) || x==0 || x==1);
+
     params.parse(varargin{:});
 
     useExisting=params.Results.useExisting;
+    simulated=params.Results.simulated;
     startGUI=params.Results.startGUI;
 
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
     % Build optional arguments to feed to Zapit during its construction
-    ZPargs={};
+    ZPargs={'simulated',simulated};
 
 
     %Does a Zapit object exist in the base workspace?
@@ -51,12 +55,11 @@ function start_zapit(varargin)
         end
 
     else
-
         %If it does exist, we only re-use it if the user explicitly asked for this and there
         if useExisting
             assignin('base','hZP',hZP);
-        elseif ~isSafeToMake_hZP
-            %TODO: run delete ourselves?
+        else
+            fprintf('hZP already exists. No building.\n')
             return
         end
 
