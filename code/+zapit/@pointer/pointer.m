@@ -44,6 +44,8 @@ classdef pointer < handle
 
     properties (Hidden)
         buildFailed = true %Used during boostrap by start_zapit
+        simulated = false % Tag to indicate whether it is in simulated mode
+        listeners = {}
     end % hidden properties
 
     properties (Hidden,SetObservable=true)
@@ -77,13 +79,13 @@ classdef pointer < handle
 
             params.parse(varargin{:});
 
-            simulated=params.Results.simulated;
+            obj.simulated=params.Results.simulated;
             pointsFile=params.Results.pointsFile;
 
             obj.settings = zapit.settings.readSettings;
 
             % Connect to camera
-            if simulated
+            if obj.simulated
                 obj.cam = zapit.simulated.camera;
             else
                 obj.cam = zapit.hardware.camera(obj.settings.camera.connection_index);
@@ -97,12 +99,19 @@ classdef pointer < handle
                                             %    see also obj.cam.resetROI
 
             % Log camera frames to lastAcquiredFrame and start camera
-            obj.cam.vid.FramesAcquiredFcn = @obj.storeLastFrame;
-            obj.cam.vid.FramesAcquiredFcnCount=1; %Run frame acq fun every N frames
-            obj.cam.startVideo;
+            if ~obj.simulated
+                obj.cam.vid.FramesAcquiredFcn = @obj.storeLastFrame;
+                obj.cam.vid.FramesAcquiredFcnCount=1; %Run frame acq fun every N frames
+            else
+               obj.listeners{end+1} = ...
+                    addlistener(obj.cam, 'lastAcquiredFrame', 'PostSet', @obj.storeLastFrame);
+               % Make a listener instead of the FramesAcquiredFcn
+               obj.cam.startVideo; pause(0.2), obj.cam.stopVideo; pause(0.2) % TODO -- for some reason we need to call this twice for it to start working properly
+            end
+            obj.cam.startVideo; 
 
 
-            if simulated
+            if obj.simulated
                 obj.DAQ = zapit.simulated.DAQ;
             else
                 fprintf('Connecting to DAQ\n')
@@ -134,11 +143,13 @@ classdef pointer < handle
         function delete(obj,~,~)
             % Stop the camera and disconnect from hardware
             fprintf('Shutting down optostim software\n')
+            cellfun(@delete,obj.listeners)
             obj.cam.vid.FramesAcquiredFcn = [];
-
             obj.cam.stopVideo;
             delete(obj.cam)
             delete(obj.DAQ)
+
+
         end % Destructor
         
     end % end of constructor/destructor block
