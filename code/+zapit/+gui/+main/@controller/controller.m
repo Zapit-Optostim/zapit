@@ -101,7 +101,7 @@ classdef controller < zapit.gui.main.view
             obj.SizeThreshSpinner.Value = obj.model.settings.calibrateScanners.areaThreshold;
             obj.CalibExposureSpinner.Value = obj.model.settings.calibrateScanners.beam_calib_exposure;
 
-            obj.LoadRecentDropDown.Items={'LOAD NEW FILE','some_file','file_v2'};
+            obj.LoadRecentDropDown.Items={};
             obj.TestSiteDropDown.Items={}; % Nothing loaded yet...
 
             % Run method on mouse click
@@ -120,7 +120,7 @@ classdef controller < zapit.gui.main.view
             obj.SizeThreshSpinner.ValueChangedFcn = @(~,~) obj.sizeThreshSpinner_CallBack;
             obj.CalibExposureSpinner.ValueChangedFcn = @(~,~) obj.calibExposureSpinner_CallBack;
             obj.CycleBeamOverCoordsButton.ValueChangedFcn = @(~,~) obj.CycleBeamOverCoords_Callback;
-            obj.LoadRecentDropDown.ValueChangedFcn = @(~,~) obj.loadStimConfig_Callback;
+            obj.LoadStimConfigButton.ButtonPushedFcn = @(~,~) obj.loadStimConfig_Callback;
             obj.ZapSiteButton.ButtonPushedFcn = @(~,~) obj.zapSite_Callback;
             obj.CalibrateSampleButton.ButtonPushedFcn = @(~,~) obj.calibrateSample_Callback;
 

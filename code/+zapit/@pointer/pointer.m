@@ -70,17 +70,14 @@ classdef pointer < handle
             % Inputs
             % 'simulated' - [false by default] If true does not connect to hardware but 
             %   runs in simulated mode.
-            % 'pointsFile' - [empty by default] If provided, should be path to points file for stim
 
             params = inputParser;
             params.CaseSensitive = false;
             params.addParameter('simulated', false, @(x) islogical(x) || x==0 || x==1);
-            params.addParameter('pointsFile', '', @(x) ischar(x));
 
             params.parse(varargin{:});
 
             obj.simulated=params.Results.simulated;
-            pointsFile=params.Results.pointsFile;
 
             obj.settings = zapit.settings.readSettings;
 
@@ -126,17 +123,7 @@ classdef pointer < handle
             obj.zeroScanners
 
             obj.buildFailed = false; % signal to start_zapit that all went well
-            return
 
-            % TODO -- this does not have to be here. We can calibrate camera without this. It should be elsewhere. 
-            % Load configuration files
-            if isempty(pointsFile)
-                [pointsFile,fpath] = uigetfile('*.yaml','Pick a config file');
-                pathToConfig = fullfile(fpath,pointsFile);
-            else
-                pathToConfig = pointsFile;
-            end
-            obj.stimConfig = zapit.stimConfig(pathToConfig);
         end % Constructor
         
         

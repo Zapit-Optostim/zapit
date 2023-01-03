@@ -90,6 +90,7 @@ function start_zapit(varargin)
 
     fprintf('Zapit has started\n')
 
+    zapit.version
 
 %-------------------------------------------------------------------------------------------------------------------------
 function safe = isSafeToMake_hZP
