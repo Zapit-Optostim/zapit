@@ -5,10 +5,14 @@ function pointButton_Callback(obj,~,~)
     if obj.PointModeButton.Value == 1
         % Entering point mode
 
-        if obj.CatMouseButton.Value==1
+        if  obj.CheckCalibrationButton.Value == 1
+            obj.CheckCalibrationButton.Value = 0;
+            obj.checkScannerCalib_Callback
+        end
+
+        if obj.CatMouseButton.Value == 1
             obj.CatMouseButton.Value = 0; % Both can not be activate at the the same time
-            obj.hFig.WindowButtonMotionFcn = [];
-            obj.model.DAQ.stopAndDeleteAOTask
+            obj.catAndMouseButton_Callback;
         end
 
         % Initially no last clicked position should be visible
@@ -34,8 +38,6 @@ function pointButton_Callback(obj,~,~)
 
         obj.hImLive.ButtonDownFcn = [];
         obj.hLastPoint.Visible = 'off';
-
     end
-
 
 end

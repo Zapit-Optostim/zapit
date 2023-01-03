@@ -13,17 +13,24 @@ function catAndMouseButton_Callback(obj,~,~)
 
     if obj.CatMouseButton.Value == 1
         % Pointer is a hand
-        obj.hFig.Pointer = 'hand';
+        if  obj.CheckCalibrationButton.Value == 1
+            obj.CheckCalibrationButton.Value = 0;
+            obj.checkScannerCalib_Callback
+        end
 
+        if obj.PointModeButton.Value == 1
+            obj.PointModeButton.Value = 0;
+            obj.pointButton_Callback
+        end
+
+        obj.hFig.Pointer = 'hand';
         obj.setCalibLaserSwitch('On');
-        obj.PointModeButton.Value = 0; % Both can not be activate at the the same time
-        obj.hLastPoint.Visible = 'off';
         obj.hFig.WindowButtonMotionFcn = @mouseMove;
     end
 
 
 
-    function mouseMove (object, eventdata)
+    function mouseMove (~, ~)
         C = get (obj.hImAx, 'CurrentPoint');
         X = round(C(1,1));
         Y = round(C(1,2));

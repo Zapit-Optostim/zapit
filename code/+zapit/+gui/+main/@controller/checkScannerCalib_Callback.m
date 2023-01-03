@@ -9,7 +9,17 @@ function checkScannerCalib_Callback(obj,~,~)
     if obj.CheckCalibrationButton.Value == 1
         % We start to run through the points
 
-        obj.PointModeButton.Value = 0;
+
+        if obj.CatMouseButton.Value == 1
+            obj.CatMouseButton.Value = 0; % Both can not be activate at the the same time
+            obj.catAndMouseButton_Callback;
+        end
+
+        if obj.PointModeButton.Value == 1
+            obj.PointModeButton.Value = 0;
+            obj.pointButton_Callback
+        end
+
 
         % TODO -- read exposure from spinbox and update settings
         obj.model.cam.exposure = obj.model.settings.calibrateScanners.beam_calib_exposure;
