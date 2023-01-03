@@ -31,7 +31,7 @@ function varargout = getAreaCoordinates(obj)
     
 
     % Now we calculate the rotation and displacement in pixel coordinates
-    [newpoint, rotMat] = zapit.utils.coordsRotation(obj.config.template, obj.config.refPoints, realPoints);
+    [newpoint, rotMat] = zapit.utils.coordsRotation(obj.stimConfig.template, obj.stimConfig.refPoints, realPoints);
     
     % ask if you're using the option of an opaque area as additional control for inactivation
     opaqueArea = input('Are you using an additional opaque area as control?\n[1 or 0] ');

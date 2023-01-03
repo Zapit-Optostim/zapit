@@ -10,7 +10,7 @@ function points = recordPoints(obj)
     %
     % When run the user is prompted to point the beam at bregma with a left click then
     % confirm the location with a right click. After this, the user is prompted to click
-    % on a reference point specified in the stimulation config file. Again, left click
+    % on a reference point specified in the stimulation stim config file. Again, left click
     % then right-click to confirm. Once this is done, the orientation and scale of the
     % head is determined and the stimulation points are superimposed onto the image. 
     %
@@ -34,7 +34,7 @@ function points = recordPoints(obj)
         waitforbuttonpress;
     end
 
-    figureText = sprintf('** Bregma recorded! Please click on %d %d ** ', obj.config.refPoints(:,2));
+    figureText = sprintf('** Bregma recorded! Please click on %d %d ** ', obj.stimConfig.refPoints(:,2));
     title(obj.hImAx,figureText);
     figure(obj.hFig)
 

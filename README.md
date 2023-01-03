@@ -11,8 +11,7 @@ The [Change Log](CHANGELOG.md) describes the project history and recent changes.
 
 ## Status as of December 2022
 * The project is currently under heavy development but has basic functionality and in theory could be used to run experiments right now.
-* Expected API freeze: mid January 2022
-* Expected GUI and conversion to model/view: mid February 2022
+* Expected API freeze: end January 2022
 
 
 ## Requirements

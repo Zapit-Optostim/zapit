@@ -26,7 +26,7 @@ classdef pointer < handle
         % The following properties relate to settings or other similar state parameters
         % Properties related to where we stimulate
         settings % The settings read in from the YAML file
-        config % Object of class zapit.config. This contains the locations to stimulate
+        stimConfig % Object of class zapit.stimConfig. This contains the locations to stimulate
         %Laser stuff. TODO -- this might move to a separate class but for now it stays here
         laserFit  % laserfits. See generateLaserCalibrationCurve
         transform % The transform describing the relationship between scanners and camera
@@ -136,7 +136,7 @@ classdef pointer < handle
             else
                 pathToConfig = pointsFile;
             end
-            obj.config = zapit.config(pathToConfig);
+            obj.stimConfig = zapit.stimConfig(pathToConfig);
         end % Constructor
         
         
