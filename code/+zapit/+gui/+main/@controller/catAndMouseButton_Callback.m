@@ -1,15 +1,22 @@
 function catAndMouseButton_Callback(obj,~,~)
 
 
-    % Both can not be activate at the the same time
+
     if obj.CatMouseButton.Value == 0
         obj.hFig.WindowButtonMotionFcn = [];
         obj.setCalibLaserSwitch('Off');
+
+        % Pointer is back to an arrow
+        obj.hFig.Pointer = 'arrow';
     end
 
+
     if obj.CatMouseButton.Value == 1
+        % Pointer is a hand
+        obj.hFig.Pointer = 'hand';
+
         obj.setCalibLaserSwitch('On');
-        obj.PointModeButton.Value = 0;
+        obj.PointModeButton.Value = 0; % Both can not be activate at the the same time
         obj.hLastPoint.Visible = 'off';
         obj.hFig.WindowButtonMotionFcn = @mouseMove;
     end

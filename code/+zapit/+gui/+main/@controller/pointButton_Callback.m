@@ -4,7 +4,12 @@ function pointButton_Callback(obj,~,~)
     % Switch back and forth between click and point mode
     if obj.PointModeButton.Value == 1
         % Entering point mode
-        obj.CatMouseButton.Value = 0; % Both can not be activate at the the same time
+
+        if obj.CatMouseButton.Value==1
+            obj.CatMouseButton.Value = 0; % Both can not be activate at the the same time
+            obj.hFig.WindowButtonMotionFcn = [];
+            obj.model.DAQ.stopAndDeleteAOTask
+        end
 
         % Initially no last clicked position should be visible
         obj.hLastPoint.XData = nan;
