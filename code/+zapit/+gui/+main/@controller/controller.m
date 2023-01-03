@@ -93,13 +93,16 @@ classdef controller < zapit.gui.main.view
             hold(obj.hImAx,'off')
 
             % Update elements from settings file
-            % TODO: changing this spin box should change the settings file
+            % TODO: changing the settings spin boxes should change the settings file
             obj.CalibPowerSpinner.Value = obj.model.settings.calibrateScanners.calibration_power_mW;
             obj.LaserPowerScannerCalibSlider.Value = obj.CalibPowerSpinner.Value;
             obj.PointSpacingSpinner.Value = obj.model.settings.calibrateScanners.pointSpacingInPixels;
             obj.BorderBufferSpinner.Value = obj.model.settings.calibrateScanners.bufferPixels;
             obj.SizeThreshSpinner.Value = obj.model.settings.calibrateScanners.areaThreshold;
             obj.CalibExposureSpinner.Value = obj.model.settings.calibrateScanners.beam_calib_exposure;
+
+            obj.LoadRecentDropDown.Items={'LOAD NEW FILE','some_file','file_v2'};
+            obj.TestSiteDropDown.Items={}; % Nothing loaded yet...
 
             % Run method on mouse click
 
@@ -116,6 +119,10 @@ classdef controller < zapit.gui.main.view
             obj.BorderBufferSpinner.ValueChangedFcn = @(~,~) obj.borderBuffer_CallBack;
             obj.SizeThreshSpinner.ValueChangedFcn = @(~,~) obj.sizeThreshSpinner_CallBack;
             obj.CalibExposureSpinner.ValueChangedFcn = @(~,~) obj.calibExposureSpinner_CallBack;
+            obj.CycleBeamOverCoordsButton.ValueChangedFcn = @(~,~) obj.CycleBeamOverCoords_Callback;
+            obj.LoadRecentDropDown.ValueChangedFcn = @(~,~) obj.loadStimConfig_Callback;
+            obj.ZapSiteButton.ButtonPushedFcn = @(~,~) obj.zapSite_Callback;
+            obj.CalibrateSampleButton.ButtonPushedFcn = @(~,~) obj.calibrateSample_Callback;
 
             % Set GUI state based on calibration state
             obj.scannersCalibrateCallback

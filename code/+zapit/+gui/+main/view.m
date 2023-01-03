@@ -37,6 +37,14 @@ classdef view < matlab.apps.AppBase
         ResetROIButton                matlab.ui.control.Button
         ROIButton                     matlab.ui.control.Button
         CalibrateSampleTab            matlab.ui.container.Tab
+        CalibrateSampleButton         matlab.ui.control.Button
+        ZapSiteButton                 matlab.ui.control.Button
+        TestSiteDropDown              matlab.ui.control.DropDown
+        TestSiteDropDownLabel         matlab.ui.control.Label
+        CycleBeamOverCoordsButton     matlab.ui.control.StateButton
+        LoadRecentDropDown            matlab.ui.control.DropDown
+        LoadRecentDropDownLabel       matlab.ui.control.Label
+        LoadStimConfigButton          matlab.ui.control.Button
         RunTab                        matlab.ui.container.Tab
         hImAx                         matlab.ui.control.UIAxes
     end
@@ -202,6 +210,46 @@ classdef view < matlab.apps.AppBase
             % Create CalibrateSampleTab
             app.CalibrateSampleTab = uitab(app.TabGroup);
             app.CalibrateSampleTab.Title = 'Calibrate Sample';
+
+            % Create LoadStimConfigButton
+            app.LoadStimConfigButton = uibutton(app.CalibrateSampleTab, 'push');
+            app.LoadStimConfigButton.Position = [17 74 87 36];
+            app.LoadStimConfigButton.Text = {'Load '; 'Stim Config'};
+
+            % Create LoadRecentDropDownLabel
+            app.LoadRecentDropDownLabel = uilabel(app.CalibrateSampleTab);
+            app.LoadRecentDropDownLabel.HorizontalAlignment = 'right';
+            app.LoadRecentDropDownLabel.Position = [10 41 74 22];
+            app.LoadRecentDropDownLabel.Text = 'Load Recent';
+
+            % Create LoadRecentDropDown
+            app.LoadRecentDropDown = uidropdown(app.CalibrateSampleTab);
+            app.LoadRecentDropDown.Position = [99 41 151 22];
+
+            % Create CycleBeamOverCoordsButton
+            app.CycleBeamOverCoordsButton = uibutton(app.CalibrateSampleTab, 'state');
+            app.CycleBeamOverCoordsButton.Text = {'Cycle Beam'; 'Over Coords'};
+            app.CycleBeamOverCoordsButton.Position = [276 68 103 36];
+
+            % Create TestSiteDropDownLabel
+            app.TestSiteDropDownLabel = uilabel(app.CalibrateSampleTab);
+            app.TestSiteDropDownLabel.HorizontalAlignment = 'right';
+            app.TestSiteDropDownLabel.Position = [421 81 52 22];
+            app.TestSiteDropDownLabel.Text = 'Test Site';
+
+            % Create TestSiteDropDown
+            app.TestSiteDropDown = uidropdown(app.CalibrateSampleTab);
+            app.TestSiteDropDown.Position = [488 81 100 22];
+
+            % Create ZapSiteButton
+            app.ZapSiteButton = uibutton(app.CalibrateSampleTab, 'push');
+            app.ZapSiteButton.Position = [590 81 59 22];
+            app.ZapSiteButton.Text = 'Zap Site';
+
+            % Create CalibrateSampleButton
+            app.CalibrateSampleButton = uibutton(app.CalibrateSampleTab, 'push');
+            app.CalibrateSampleButton.Position = [65 5 108 22];
+            app.CalibrateSampleButton.Text = 'Calibrate Sample';
 
             % Create RunTab
             app.RunTab = uitab(app.TabGroup);
