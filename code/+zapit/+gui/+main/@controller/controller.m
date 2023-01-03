@@ -98,6 +98,9 @@ classdef controller < zapit.gui.main.view
             obj.LaserPowerScannerCalibSlider.Value = obj.CalibPowerSpinner.Value;
             obj.PointSpacingSpinner.Value = obj.model.settings.calibrateScanners.pointSpacingInPixels;
             obj.BorderBufferSpinner.Value = obj.model.settings.calibrateScanners.bufferPixels;
+            obj.SizeThreshSpinner.Value = obj.model.settings.calibrateScanners.areaThreshold;
+            obj.CalibExposureSpinner.Value = obj.model.settings.calibrateScanners.beam_calib_exposure;
+
             % Run method on mouse click
 
 
@@ -111,6 +114,9 @@ classdef controller < zapit.gui.main.view
             obj.CalibLaserSwitch.ValueChangedFcn = @(~,~) obj.switchLaser_Callback;
             obj.PointSpacingSpinner.ValueChangedFcn = @(~,~) obj.pointSpacing_CallBack;
             obj.BorderBufferSpinner.ValueChangedFcn = @(~,~) obj.borderBuffer_CallBack;
+            obj.SizeThreshSpinner.ValueChangedFcn = @(~,~) obj.sizeThreshSpinner_CallBack;
+            obj.CalibExposureSpinner.ValueChangedFcn = @(~,~) obj.calibExposureSpinner_CallBack;
+
             % Set GUI state based on calibration state
             obj.scannersCalibrateCallback
             obj.sampleCalibrateCallback
@@ -201,6 +207,24 @@ classdef controller < zapit.gui.main.view
         function borderBuffer_CallBack(obj,~,~)
             obj.model.settings.calibrateScanners.bufferPixels = obj.BorderBufferSpinner.Value;
         end
+
+
+
+        function sizeThreshSpinner_CallBack(obj,~,~)
+            if obj.SizeThreshSpinner.Value < 1
+                obj.SizeThreshSpinner.Value = 1;
+            end
+            obj.model.settings.calibrateScanners.areaThreshold = obj.SizeThreshSpinner.Value;
+        end
+
+
+        function calibExposureSpinner_CallBack(obj,~,~)
+            if obj.CalibExposureSpinner.Value < 0
+                obj.CalibExposureSpinner.Value = 0;
+            end
+            obj.model.settings.calibrateScanners.beam_calib_exposure = obj.CalibExposureSpinner.Value;
+        end
+
 
         % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
