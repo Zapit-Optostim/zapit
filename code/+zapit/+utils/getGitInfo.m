@@ -81,9 +81,13 @@ while length(pathToFile)>1
     end
 end
 
+verbose = false;
+
 % In case nothing was found
 if length(pathToFile)==1
-    fprintf('%s failed to find a .git directory in project.\n', mfilename);
+    if verbose
+        fprintf('%s failed to find a .git directory in project.\n', mfilename);
+    end
     return
 end
 

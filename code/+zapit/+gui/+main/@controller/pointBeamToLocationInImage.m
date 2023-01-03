@@ -25,8 +25,12 @@ function pointBeamToLocationInImage(obj,~,~)
 
 
     % Update figure title    
-    msg = sprintf('X=%0.2f (%0.1f V) Y=%0.2f (%0.1f V)',...
-        xPos, xVolts, yPos, yVolts);
-    set(get( obj.hImAx,'Title'),'String',msg)
+    showPosInTitle = false;
+
+    if showPosInTitle
+        msg = sprintf('X=%0.2f (%0.1f V) Y=%0.2f (%0.1f V)',...
+            xPos, xVolts, yPos, yVolts);
+        set(get( obj.hImAx,'Title'),'String',msg)
+    end
     
 end % pointBeamToLocationInImage
