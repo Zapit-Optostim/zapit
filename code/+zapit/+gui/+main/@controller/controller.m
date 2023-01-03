@@ -17,7 +17,9 @@ classdef controller < zapit.gui.main.view
         listeners = {}; % All go in this cell array
     end
 
-
+    properties(Hidden)
+        laserPowerBeforeCalib % Used to reset the laser power to the value it had before calibration
+    end
 
     methods
 
@@ -84,6 +86,7 @@ classdef controller < zapit.gui.main.view
             obj.hImAx.YLim = [0,imSize(2)];
 
             pan(obj.hImAx,'off')
+            zoom(obj.hImAx,'off')
 
             hold(obj.hImAx,'on')
             obj.hLastPoint = plot(obj.hImAx,nan,nan,'or','MarkerSize',8,'LineWidth',1);
@@ -101,7 +104,7 @@ classdef controller < zapit.gui.main.view
             obj.ResetROIButton.ButtonPushedFcn = @(~,~) obj.model.cam.resetROI;
             obj.ROIButton.ButtonPushedFcn = @(~,~) obj.drawROI_Callback;
             obj.RunScannerCalibrationButton.ButtonPushedFcn = @(~,~) obj.calibrateScanners_Callback;
-            obj.CheckCalibrationButton.ButtonPushedFcn = @(~,~) obj.checkScannerCalib_Callback;
+            obj.CheckCalibrationButton.ValueChangedFcn = @(~,~) obj.checkScannerCalib_Callback;
             obj.PointModeButton.ValueChangedFcn = @(~,~) obj.pointButton_Callback;
             obj.CatMouseButton.ValueChangedFcn = @(~,~) obj.catAndMouseButton_Callback;
             obj.LaserPowerScannerCalibSlider.ValueChangedFcn = @(src,evt) obj.setLaserPower_Callback(src,evt);

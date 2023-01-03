@@ -107,19 +107,37 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
         end % connectUnclockedAO
 
 
-        function connectClockedAO(obj, numSamplesPerChannel, makeTriggerable, verbose)
+        function connectClockedAO(obj, varargin)
+            % Start a clocked task. Optional input args:
+            %
+            % Inputs (optional)
+            % numSamplesPerChannel - Size of the buffer
+            % samplesPerSecond - determines output rate and default comes from YAML file. Likely
+            %                   this will be about 1E6.
+            % taskName - 'clockedao' by default
+            % verbose - false by default
+            % makeTriggerable - false by default. If true, task waits for trigger (PFI0 by default
+            %            and this line can be changed in the settings YAML)
+            %
+            % The task writes to the default number of AO lines (likely all four).
 
-            if nargin<2 || isempty(numSamplesPerChannel)
-                numSamplesPerChannel = 1000;
-            end
+            %Parse optional arguments
+            params = inputParser;
+            params.CaseSensitive = false;
 
-            if nargin<3 || isempty(makeTriggerable)
-                makeTriggerable = false;
-            end
+            params.addParameter('numSamplesPerChannel', 1000, @(x) isnumeric(x) && isscalar(x));
+            params.addParameter('samplesPerSecond', obj.samplesPerSecond, @(x) isnumeric(x) && isscalar(x));
+            params.addParameter('taskName', 'clockedAO', @(x) ischar(x));
+            params.addParameter('verbose', false, @(x) islogical(x) || x==0 || x==1);
+            params.addParameter('makeTriggerable', false, @(x) islogical(x) || x==0 || x==1);
 
-            if nargin<4
-                verbose = false;
-            end
+            params.parse(varargin{:});
+
+            numSamplesPerChannel=params.Results.numSamplesPerChannel;
+            samplesPerSecond=params.Results.samplesPerSecond;
+            taskName=params.Results.taskName;
+            verbose=params.Results.verbose;
+            makeTriggerable=params.Results.makeTriggerable;
 
 
             obj.stopAndDeleteAOTask
@@ -129,7 +147,7 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
             end
             
             %% Create the inactivation task
-            obj.hAO = dabs.ni.daqmx.Task('clockedao');
+            obj.hAO = dabs.ni.daqmx.Task(taskName);
             
             % Set output channels
             obj.hAO.createAOVoltageChan(obj.device_ID, ...
@@ -140,7 +158,7 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
             
             
             % Configure the task sample clock, the sample size and mode to be continuous and set the size of the output buffer
-            obj.hAO.cfgSampClkTiming(obj.samplesPerSecond, 'DAQmx_Val_ContSamps', numSamplesPerChannel, 'OnboardClock');
+            obj.hAO.cfgSampClkTiming(samplesPerSecond, 'DAQmx_Val_ContSamps', numSamplesPerChannel, 'OnboardClock');
             obj.hAO.cfgOutputBuffer(numSamplesPerChannel);
             
             % allow sample regeneration
@@ -156,8 +174,8 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
 
 
         function setLaserPowerControlVoltage(obj,laserControlVoltage)
-            if ~strcmp(obj.hAO.taskName, 'unclockedao')
-                return
+            if ~isvalid(obj.hAO) || ~strcmp(obj.hAO.taskName, 'unclockedao')
+                obj.connectUnclockedAO
             end
             obj.hAO.writeAnalogData([obj.lastXgalvoVoltage, obj.lastYgalvoVoltage, laserControlVoltage])
 
@@ -167,8 +185,8 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
 
 
         function moveBeamXY(obj,beamXY)
-            if ~strcmp(obj.hAO.taskName, 'unclockedao')
-                return
+            if ~isvalid(obj.hAO) || ~strcmp(obj.hAO.taskName, 'unclockedao')
+                obj.connectUnclockedAO
             end
             beamXY = beamXY(:)'; % Ensure column vector
             obj.hAO.writeAnalogData([beamXY, obj.lastLaserVoltage])

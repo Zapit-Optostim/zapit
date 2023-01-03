@@ -36,10 +36,10 @@ function varargout = sendSamples(obj, t_trial, verbose)
         fprintf('Stimulating area %d\n', t_trial.area)
     end
 
-    if ~isvalid(obj.DAQ.hAO) || ~strcmp(obj.DAQ.hAO.taskName, 'clocked'); % TODO-- maybe this check should be in the
+    if ~isvalid(obj.DAQ.hAO) || ~strcmp(obj.DAQ.hAO.taskName, 'clockedao'); % TODO-- maybe this check should be in the
                                                 % the createNewTask. So we don't make unless
                                                 % the task names don't match?
-        obj.DAQ.connectClockedAO(obj.numSamplesPerChannel);
+        obj.DAQ.connectClockedAO('numSamplesPerChannel',obj.numSamplesPerChannel);
     end
     
     % update coordinate parameters/channel samples

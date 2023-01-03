@@ -17,6 +17,7 @@ classdef view < matlab.apps.AppBase
         ScannersCalibratedLampLabel   matlab.ui.control.Label
         TabGroup                      matlab.ui.container.TabGroup
         CalibrateScannersTab          matlab.ui.container.Tab
+        CheckCalibrationButton        matlab.ui.control.StateButton
         BorderBufferSpinner           matlab.ui.control.Spinner
         PointBorderBufferLabel        matlab.ui.control.Label
         PointSpacingSpinner           matlab.ui.control.Spinner
@@ -32,7 +33,6 @@ classdef view < matlab.apps.AppBase
         LaserPowerSliderLabel         matlab.ui.control.Label
         CatMouseButton                matlab.ui.control.StateButton
         PointModeButton               matlab.ui.control.StateButton
-        CheckCalibrationButton        matlab.ui.control.Button
         RunScannerCalibrationButton   matlab.ui.control.Button
         ResetROIButton                matlab.ui.control.Button
         ROIButton                     matlab.ui.control.Button
@@ -120,11 +120,6 @@ classdef view < matlab.apps.AppBase
             app.RunScannerCalibrationButton.Position = [99 69 73 41];
             app.RunScannerCalibrationButton.Text = {'Run'; 'Calibration'};
 
-            % Create CheckCalibrationButton
-            app.CheckCalibrationButton = uibutton(app.CalibrateScannersTab, 'push');
-            app.CheckCalibrationButton.Position = [99 16 73 41];
-            app.CheckCalibrationButton.Text = {'Check'; 'Calibration'};
-
             % Create PointModeButton
             app.PointModeButton = uibutton(app.CalibrateScannersTab, 'state');
             app.PointModeButton.Text = {'Point'; 'Mode'};
@@ -198,6 +193,11 @@ classdef view < matlab.apps.AppBase
             % Create BorderBufferSpinner
             app.BorderBufferSpinner = uispinner(app.CalibrateScannersTab);
             app.BorderBufferSpinner.Position = [670 52 62 22];
+
+            % Create CheckCalibrationButton
+            app.CheckCalibrationButton = uibutton(app.CalibrateScannersTab, 'state');
+            app.CheckCalibrationButton.Text = {'Check'; 'Calibration'};
+            app.CheckCalibrationButton.Position = [99 16 73 41];
 
             % Create CalibrateSampleTab
             app.CalibrateSampleTab = uitab(app.TabGroup);
