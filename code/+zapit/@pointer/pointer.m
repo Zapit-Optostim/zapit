@@ -181,26 +181,18 @@ classdef pointer < handle
             %         corresponding to these values that we can pick off from the DAQ class.
             obj.DAQ.moveBeamXY([0,0]);
         end % zeroScanners
-        
-        
-        function varargout = runAffineTransform(obj, OUT)
-            % TODO - refactor
-            % method running a transformation of x-y beam position into pixels
-            % in camera
-            
-            % it can be run repeatedly with each new mouse and it doesn't
-            % require scaling from the start (new transformation matrices
-            % are added on top of existing ones in function pixelToVolt)
-            
-            % runs affine transformation
-            tform = fitgeotrans(OUT.targetPixelCoords,OUT.actualPixelCoords,'similarity');
-            
-            obj.transform = tform;
 
-            if nargout>0
-                varargout{1} = tform;
+        function actualPixelCoords = returnScannerCalibTargetCoords(obj)
+            % Return the coordinates the beam is supposed to have gone to during
+            % calibration. These are the coordinates for which we also got a location
+            % for where the beam actually went
+
+            if isempty(obj.calibrateScannersPosData)
+                actualPixelCoords = [];
             end
-        end % runAffineTransform
+
+            actualPixelCoords = cat(1,obj.calibrateScannersPosData(:).actualPixelCoords);
+        end
 
 
         function storeLastFrame(obj,~,~)

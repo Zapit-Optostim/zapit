@@ -62,16 +62,21 @@ function varargout = calibrateScanners(obj)
     backgroundFrame = cast(mean(backgroundFrame,3),class(backgroundFrame));
 
     ind=1;
+    verbose=false;
     for ii=1:length(R)
         % feed volts into scan mirrors, wait for precise image
         % without smudges and take position in pixels
         obj.DAQ.moveBeamXY(rVolts(ii,:));
-        pause(0.05)
+        pause(0.1)
         %obj.getLaserPosAccuracy([R(ii), C(ii)]);
 
         % Attempt to get laser position and append to list if the position was found
         out = obj.getLaserPosAccuracy([R(ii), C(ii)], backgroundFrame, true);
         if ~isempty(out)
+            if verbose
+                fprintf('Target: %d/%d Actual: %d/%d\n',  ...
+                    out.targetPixelCoords, round(out.actualPixelCoords))
+            end
             if ind == 1
                 obj.calibrateScannersPosData = out;
             else
@@ -87,15 +92,9 @@ function varargout = calibrateScanners(obj)
         tidyUp()
         return
     end
-    % Save the recorded output (intended) and incoming (calculated) pixel coordinates 
-    % in order to calculate the offset and transformation.
-    OUT.targetPixelCoords = cat(1,obj.calibrateScannersPosData(:).targetPixelCoords);
-    OUT.actualPixelCoords = cat(1,obj.calibrateScannersPosData(:).actualPixelCoords);
 
-
-
-    obj.runAffineTransform(OUT);
-
+    % Run transform
+    obj.runAffineTransform
     tidyUp()
     obj.scannersCalibrated = true; % TODO -- Assumes that calibration was a success
 
