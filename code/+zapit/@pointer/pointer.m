@@ -144,8 +144,10 @@ classdef pointer < handle
             % Stop the camera and disconnect from hardware
             fprintf('Shutting down optostim software\n')
             cellfun(@delete,obj.listeners)
-            obj.cam.vid.FramesAcquiredFcn = [];
-            obj.cam.stopVideo;
+            if isvalid(obj.cam)
+                obj.cam.vid.FramesAcquiredFcn = [];
+                obj.cam.stopVideo;
+            end
             delete(obj.cam)
             delete(obj.DAQ)
 

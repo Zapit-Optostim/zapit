@@ -142,6 +142,7 @@ function [settings,settingsNonHardCoded] = readSettings
        fprintf('Making backup of settings file at %s\n', backupFname)
        copyfile(settingsFile,backupFname)
 
+       % TODO -- Keep only the last N backups and/or no backups older than a certain time frame
        % Write the new file to the settings location
        fprintf('Replacing settings file with updated version\n')
        zapit.yaml.WriteYaml(settingsFile,settings);
