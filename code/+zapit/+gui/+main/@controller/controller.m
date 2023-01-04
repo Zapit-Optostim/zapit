@@ -17,9 +17,19 @@ classdef controller < zapit.gui.main.view
         listeners = {}; % All go in this cell array
     end
 
+
     properties(Hidden)
         laserPowerBeforeCalib % Used to reset the laser power to the value it had before calibration
     end
+
+
+    properties(Hidden,SetObservable=true)
+        % The following are used to build the recently loaded stim config drop-down
+        % A structure that contains names and paths to recently loaded stim config files.
+        previouslyLoadedStimConfigs = struct('fname', '', 'pathToFname', '', 'timeAdded', []);
+        maxPreviouslyLoadedStimConfigs = 10 % Max number to display. 
+    end
+
 
     methods
 
@@ -123,7 +133,7 @@ classdef controller < zapit.gui.main.view
             obj.LoadStimConfigButton.ButtonPushedFcn = @(~,~) obj.loadStimConfig_Callback;
             obj.ZapSiteButton.ButtonPushedFcn = @(~,~) obj.zapSite_Callback;
             obj.CalibrateSampleButton.ButtonPushedFcn = @(~,~) obj.calibrateSample_Callback;
-
+            obj.LoadRecentDropDown.ClickedFcn = @(~,~) obj.loadRecentConfig_Callback;
             % Set GUI state based on calibration state
             obj.scannersCalibrateCallback
             obj.sampleCalibrateCallback
@@ -137,6 +147,8 @@ classdef controller < zapit.gui.main.view
                 addlistener(obj.model, 'scannersCalibrated', 'PostSet', @obj.scannersCalibrateCallback);
             obj.listeners{end+1} = ...
                 addlistener(obj.model, 'sampleCalibrated', 'PostSet', @obj.sampleCalibrateCallback);
+            obj.listeners{end+1} = ...
+                addlistener(obj, 'previouslyLoadedStimConfigs', 'PostSet', @obj.updatePreviouslyLoadedStimConfigList_Callback);
 
 
         end

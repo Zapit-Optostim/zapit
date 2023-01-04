@@ -48,6 +48,10 @@ function start_zapit(varargin)
     if isempty(hZP)
         %If not, we build hZP and place it in the base workspace
         try
+            if simulated
+                fprintf('Running Zapit in simulated mode\n')
+            end
+
             hZP = zapit.pointer(ZPargs{:});
 
             % Place the object in the base workspace as a variable called "hZP"
