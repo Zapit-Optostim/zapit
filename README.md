@@ -123,7 +123,7 @@ You can now click on the image and the beam should go to that location.
 Now you can tell the system where is Bregma and another reference location.
 This method call populates the `chanSamples` property.
 ```
-P.getAreaCoordinates
+P.calibrateSample
 ```
 
 ### Generate the parameters for switching the beam

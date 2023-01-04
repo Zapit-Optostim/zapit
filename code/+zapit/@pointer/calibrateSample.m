@@ -1,7 +1,7 @@
-function varargout = getAreaCoordinates(obj)
+function varargout = calibrateSample(obj)
     % Determine the stimulation locations in this animal
     %
-    % function varargout = zapit.pointer.getAreaCoordinates(obj)
+    % function varargout = zapit.pointer.calibrateSample(obj)
     %
     % Purpose
     % The locations that we want to stimulate are stored in the template variable
