@@ -117,10 +117,10 @@ classdef pointer < handle
 
             obj.DAQ.parent = obj;
 
-            obj.DAQ.connectUnclockedAO(true)
-            
+            obj.DAQ.connectUnclockedAO(true) % TODO -- In principle this should not be needed here. 
+            obj.zeroScanners % TODO ... as this will do the connection. Try it.            
+
             obj.loadLaserFit
-            obj.zeroScanners
 
             obj.buildFailed = false; % signal to start_zapit that all went well
 
@@ -162,12 +162,14 @@ classdef pointer < handle
 
     % Other short methods
     methods
+
         function zeroScanners(obj)
             % TODO -- does it really make sense for galvo control methods to be in the DAQ class?
             % TODO -- running this currently does not update the plot by there are properties
             %         corresponding to these values that we can pick off from the DAQ class.
             obj.DAQ.moveBeamXY([0,0]);
         end % zeroScanners
+
 
         function actualPixelCoords = returnScannerCalibTargetCoords(obj)
             % Return the coordinates the beam is supposed to have gone to during

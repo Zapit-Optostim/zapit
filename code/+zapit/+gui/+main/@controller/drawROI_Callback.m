@@ -39,7 +39,7 @@ function drawROI_Callback(obj,~,~)
     originalROI = obj.model.cam.ROI;
     originalROI(3:4) = 0;
     newROI = originalROI + rect_pos;
-    obj.model.cam.ROI = newROI;
+    obj.model.cam.ROI = round(newROI);
 
     obj.ROIButton.Enable='on';
     obj.model.cam.startVideo

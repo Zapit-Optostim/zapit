@@ -43,7 +43,7 @@ classdef camera < handle
             obj.vid.FramesAcquired = 0;
             obj.vid.FramesAcquiredFcnCount=1; % Not used
             obj.vid.VideoResolution = [1900,1600]; %Default ROI
-            obj.ROI = obj.vid.VideoResolution; %Current ROI
+            obj.ROI = [1,1,obj.vid.VideoResolution]; %Current ROI
             obj.generateFrame
 
             obj.vid.FramesAvailable = 0; % Set to 1 if the timer is running (see below
@@ -78,7 +78,7 @@ classdef camera < handle
         end
     
         function varargout  = generateFrame(obj)
-            im = round(rand(obj.ROI)*100);
+            im = round(rand(obj.ROI(3:4))*100);
 
             % Set the simulated laser spot to an image of zeros if it is not the same
             % size as the image
