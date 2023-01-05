@@ -26,7 +26,7 @@ function drawROI_Callback(obj,~,~)
     % So control is returned if user double-clicks
     L=addlistener(roi,'ROIClicked',@clickCallback);
 
-    uiwait;
+    uiwait(obj.hFig);
 
     % Get the ROI position
     rect_pos = roi.Position;
@@ -48,9 +48,9 @@ end % drawROI
 
 
 
-function clickCallback(~,evt)
+function clickCallback(src,evt)
     % Returns control to the user if they double-click on the ROI
     if strcmp(evt.SelectionType,'double')
-        uiresume;
+        uiresume(src.Parent.Parent.Parent);
     end
 end

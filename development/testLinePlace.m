@@ -82,9 +82,8 @@ function [uF,uA] = testPointPlace
         if length(mod)==1
             isPressed = strcmp(mod{1},'shift');
         end
-
     end
-end % testROI
 
+end
 
 

@@ -20,7 +20,7 @@ function test_full_view
         % So control is returned if user double-clicks
     L=addlistener(roi,'ROIClicked',@clickCallback);
 
-    uiwait;
+    uiwait(uF); %needs parent to avoid new figure
 
     % Get the ROI position
     rect_pos = roi.Position;
@@ -31,9 +31,9 @@ end % testROI
 
 
 
-function clickCallback(~,evt)
+function clickCallback(src,evt)
     % Returns control to the user if they double-click on the ROI
     if strcmp(evt.SelectionType,'double')
-        uiresume;
+        uiresume(src.Parent.Parent); %needs parent to avoid full figure
     end
 end

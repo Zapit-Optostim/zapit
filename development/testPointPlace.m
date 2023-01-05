@@ -53,7 +53,6 @@ function [uF,uA] = testPointPlace
         end
     end
 
-end % testROI
-
+end
 
 

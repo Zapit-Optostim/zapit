@@ -20,7 +20,7 @@ function testROI
         % So control is returned if user double-clicks
     L=addlistener(roi,'ROIClicked',@clickCallback);
 
-    uiwait;
+    uiwait(uF); % Must supply a parent or it spawns a new figure
 
     % Get the ROI position
     rect_pos = roi.Position;
@@ -31,9 +31,11 @@ end % testROI
 
 
 
-function clickCallback(~,evt)
+function clickCallback(src,evt)
     % Returns control to the user if they double-click on the ROI
+
+    uF = src.Parent.Parent;
     if strcmp(evt.SelectionType,'double')
-        uiresume;
+        uiresume(uF); % Must supply a parent or it spawns a new figure
     end
 end
