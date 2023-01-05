@@ -19,6 +19,9 @@ function pasteBrainThenScale(atlas_data)
 
 
     p = plot(nan,nan,'-','parent',uA);
+    hold(uA,'on')
+    p_bregma = plot(nan,nan,'or','markerfacecolor','r','parent',uA);
+    hold(uA,'off')
 
     refPoints = zeros(2);
     atlasRef = [0,0;0,3];
@@ -31,8 +34,10 @@ function pasteBrainThenScale(atlas_data)
 
 
     function down_callback(sr,evt)
-        % Returns control to the user if they double-click on the ROI
 
+        if strcmp(uF.SelectionType,'alt')
+            return
+        end
         C = get (uA, 'CurrentPoint');
         X = C(1,1);
         Y = C(1,2);
@@ -43,15 +48,31 @@ function pasteBrainThenScale(atlas_data)
             return
         end
 
+
         % Paste
         if nInd == 1
             p.XData = b(:,2)+X;
             p.YData = b(:,1)+Y;
 
             refPoints(nInd,:) = [X,Y];
-
+            nInd = nInd + 1;
+            p_bregma.XData=X;
+            p_bregma.YData=Y;
+        elseif nInd==2
+            if isShiftPressed
+                nInd = 1;
+                refPoints(:,2) = 0;
+                p_bregma.XData=nan;
+                p_bregma.YData=nan;
+            else
+                disp('ADDING AGAIN')
+                nInd = nInd + 1;
+            end
+        elseif nInd==3 & isShiftPressed
+            nInd = nInd-1;
         end
-        nInd = nInd + 1;
+
+
     end
 
 
@@ -88,7 +109,13 @@ function pasteBrainThenScale(atlas_data)
         end
     end
 
-end % testROI
+    function isPressed = isShiftPressed
+        mod = get(gcbo,'currentModifier');
+        isPressed = false;
+        if length(mod)==1
+            isPressed = strcmp(mod{1},'shift');
+        end
+    end
 
-
+end
 

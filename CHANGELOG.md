@@ -15,16 +15,25 @@ The project will adhere to [semantic versioning](http://semver.org) guidelines, 
 * PATCH version when you make backwards compatible bug fixes
 
 
-2022/12/15 -- v0.1.1-alpha
-Software is now refactored and likely working as intended bar the laser power. The laser
-power was originally being set via an Arduino and there was no facility to specify a power
-in mW. We next need to add the ability to set power in mW. The Arduino was being use to
-implement a ramp-down following stim offset. We will now implement this via the NI DAQ.
-Development now switches to the Dev branch.
+2023/01/05 -- v0.4.0-alpha
+ * All UI elements in scanner calibration tab working as expected.
+ * Improvements to startup and GUI.
+ * Bugfixes.
+ * Simulated mode partially working
+ * Fix trivial bug that was causing scanner calibration transform to behave erratically. 
+ * Begin work on sample calibration, including several demo files in the development directory. 
 
 
-2022/12/15 -- v0.1.2-alpha
-Minor bug fixes
+2022/12/21 -- v0.3.0-alpha
+ * Have a working model/view/controller system. 
+ * Basic GUI working.
+ * Refactored everything up to the scanner calibration stage to the MVC system and GUI. 
+ * The program can now be started by running `start_zapit`.
+
+
+2022/12/19 -- v0.2.0-alpha
+ * Add a system (partially working) for converting the control signal voltage to mW.
+ * Code all now uses mW instead of a voltage value when setting laser power.
 
 
 2022/12/19 -- v0.1.3-alpha
@@ -34,13 +43,16 @@ Minor bug fixes
  * Laser is disabled for a fixed number of ms when location switching. Before it was 1 sample.
 
 
-2022/12/19 -- v0.2.0-alpha
- * Add a system (partially working) for converting the control signal voltage to mW.
- * Code all now uses mW instead of a voltage value when setting laser power.
+2022/12/15 -- v0.1.2-alpha
+Minor bug fixes
 
 
-2022/12/21 -- v0.0.3.0-alpha
- * Have a working model/view/controller system. 
- * Basic GUI working.
- * Refactored everything up to the scanner calibration stage to the MVC system and GUI. 
- * The program can now be started by running `start_zapit`.
+2022/12/15 -- v0.1.1-alpha
+Software is now refactored and likely working as intended bar the laser power. The laser
+power was originally being set via an Arduino and there was no facility to specify a power
+in mW. We next need to add the ability to set power in mW. The Arduino was being use to
+implement a ramp-down following stim offset. We will now implement this via the NI DAQ.
+Development now switches to the Dev branch.
+
+
+
