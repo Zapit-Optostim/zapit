@@ -1,4 +1,4 @@
-classdef config < handle
+classdef stimConfig < handle
 
     % class for handling the configuration files used to
     % determine where the laser stim locations are
@@ -7,7 +7,7 @@ classdef config < handle
 
     properties
 
-        configFileName % file name of the loaded config file
+        configFileName % file name of the loaded stimConfig file
 
         % powerOption -  if 1 send 2 mW, if 2 send 4 mW (mean)
         powerOption % TODO - likely to be changed. This isn't a value in mW right now
@@ -16,8 +16,8 @@ classdef config < handle
     end % properties
 
     methods
-        function obj = config(fname)
-            % Construct a config file object and load data
+        function obj = stimConfig(fname)
+            % Construct a stimConfig file object and load data
             obj.loadConfig(fname)
         end % Constructor
 
@@ -29,10 +29,10 @@ classdef config < handle
         function loadConfig(obj,fname)
             % Load a YAML config file
             %
-            % zaptit.config.loadConfig(fname)
+            % zaptit.stimConfig.loadConfig(fname)
 
             if ~exist(fname)
-                fprintf('No file "%s" found\n', fname)
+                fprintf('No config file found at "%s"\n', fname)
                 return
             end
 
@@ -62,7 +62,7 @@ classdef config < handle
         function writeConfig(obj,fname)
             % Write a YAML config file
             %
-            % zapit.config(fname)
+            % zapit.stimConfig(fname)
             %
             data.powerOption = obj.powerOption;
             data.refPoints = obj.refPoints;

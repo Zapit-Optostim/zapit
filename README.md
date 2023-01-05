@@ -11,13 +11,13 @@ The [Change Log](CHANGELOG.md) describes the project history and recent changes.
 
 ## Status as of December 2022
 * The project is currently under heavy development but has basic functionality and in theory could be used to run experiments right now.
-* Expected API freeze: mid January 2022
-* Expected GUI and conversion to model/view: mid February 2022
+* Expected API freeze: end January 2022
 
 
 ## Requirements
-* [Image Processing Toolbox](https://uk.mathworks.com/help/images/index.html)
-* [Image Acquisition Toolbox](https://uk.mathworks.com/products/image-acquisition.html)
+* [Image Processing Toolbox](https://www.mathworks.com/help/images/index.html)
+* [Image Acquisition Toolbox](https://www.mathworks.com/products/image-acquisition.html)
+* [Curve Fittting Toolbox](https://www.mathworks.com/help/curvefit/)
 * [The free version of ScanImage](https://vidriotechnologies.com/) because Zapit uses its DAQmx wrapper (but see [here](https://github.com/BaselLaserMouse/zapit/issues/14)). You need add to the path the base ScanImage directory. No need to add to path with all sub-directories.
 * To communicate with the camera you will need to install [Basler's instructions for the GenICam interface](https://www.baslerweb.com/en/downloads/document-downloads/using-pylon-gentl-producers-for-basler-cameras-with-matlab/).
 Although the Zapit system is tested against this, the goal is that it is able to handle other drivers and cameras also.
@@ -113,7 +113,7 @@ P = zapit.pointer;
 
 Now you need to determine the transform between pixel coordinates and the scan mirrors.
 ```
-P.logPoints;
+P.calibrateScanners;
 ```
 
 You can now click on the image and the beam should go to that location.
@@ -123,14 +123,14 @@ You can now click on the image and the beam should go to that location.
 Now you can tell the system where is Bregma and another reference location.
 This method call populates the `chanSamples` property.
 ```
-P.getAreaCoordinates
+P.calibrateSample
 ```
 
 ### Generate the parameters for switching the beam
 Prepare the waveforms that will be used for each brain area (stimulation site).
-Here we are switching at 40 Hz with a laser amplitude of 0.36
+Here we are stimulating with laser power at the sample of 10 mW.
 ```
-P.makeChanSamples(40, 1.75);
+P.makeChanSamples(10);
 ```
 
 ### Let's run it!
@@ -170,4 +170,5 @@ end
 
 ## Contributing
 Contributions and collaborations are welcome.
-If you are thinking of contributing please contact us before starting work as changes that are not well organized or break conventions will not be accepted.
+Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
+

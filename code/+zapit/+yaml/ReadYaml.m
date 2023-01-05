@@ -1,5 +1,5 @@
 function result = ReadYaml(filename, nosuchfileaction, makeords, treatasdata, dictionary)
-import BakingTray.yaml.*;
+import zapit.yaml.*;
 if ~exist('nosuchfileaction','var')
         nosuchfileaction = 0;
     end

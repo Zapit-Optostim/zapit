@@ -18,10 +18,11 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
 
 
         function connect(obj,connectionType)
+            % TODO -- I think we don't use this. 
             switch connectionType
                 case 'unclocked'
                     obj.connectUnlocked
-                case 'clocked'                    
+                case 'clocked'
                     body
                 otherwise
                     fprintf('Unknown connection type %s in zapit.hardware.DAQ.NI.vidriowrapper.connect\n', connectionType)
@@ -31,78 +32,125 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
 
         function start(obj)
             % Definition of abstract class declared in zapit.hardware.DAQ
-            if isempty(obj.hC) || ~isvalid(obj.hC)
+            if isempty(obj.hAO) || ~isvalid(obj.hAO)
                 return
             end
-            obj.hC.start
+            obj.hAO.start
         end
 
 
         function stop(obj)
             % Definition of abstract class declared in zapit.hardware.DAQ
-            if isempty(obj.hC) || ~isvalid(obj.hC)
+            if isempty(obj.hAO) || ~isvalid(obj.hAO)
                 return
             end
-            obj.hC.stop
+            obj.hAO.stop
         end
 
 
-        function stopAndDeleteTask(obj)
+        function stopAndDeleteAOTask(obj)
             % Definition of abstract class declared in zapit.hardware.DAQ.NI
-            if isempty(obj.hC) || ~isvalid(obj.hC)
+            if isempty(obj.hAO) || ~isvalid(obj.hAO)
                 return
             end
-            obj.hC.stop;    % Calls DAQmxStopTask
-            delete(obj.hC); % The destructor (dabs.ni.daqmx.Task.delete) calls DAQmxClearTask
-        end % stopAndDeleteTask
+            obj.hAO.stop;    % Calls DAQmxStopTask
+            delete(obj.hAO);
+        end % stopAndDeleteAOTask
 
 
-        function connectUnclocked(obj, verbose)
+        function stopAndDeleteAITask(obj)
+            % Definition of abstract class declared in zapit.hardware.DAQ.NI
+            if isempty(obj.hAI) || ~isvalid(obj.hAI)
+                return
+            end
+            obj.hAI.stop;    % Calls DAQmxStopTask
+            delete(obj.hAI);
+        end % stopAndDeleteAITask
+
+
+        function connectUnclockedAI(obj, chans, verbose)
+            if nargin<3
+                verbose = false;
+            end
+
+            obj.stopAndDeleteAITask
+
+            obj.hAI = dabs.ni.daqmx.Task('unclockedai');
+
+            if verbose
+                fprintf('Creating unclocked AI task on %s\n', obj.device_ID)
+            end
+            obj.hAI.createAIVoltageChan(obj.device_ID, ...
+                                        chans, ...
+                                        [], ...
+                                        -obj.AOrange, ...
+                                        obj.AOrange);
+        end % connectUnclockedAI
+
+        function connectUnclockedAO(obj, verbose)
             if nargin<2
                 verbose = false;
             end
 
-            obj.stopAndDeleteTask
+            obj.stopAndDeleteAOTask
 
-            obj.hC = dabs.ni.daqmx.Task('unclocked');
+            obj.hAO = dabs.ni.daqmx.Task('unclockedao');
 
             if verbose
-                fprintf('Creating unclocked task on %s\n', obj.device_ID)
+                fprintf('Creating unclocked AO task on %s\n', obj.device_ID)
             end
-            obj.hC.createAOVoltageChan(obj.device_ID, ...
+            obj.hAO.createAOVoltageChan(obj.device_ID, ...
                                         obj.AOchans, ...
                                         [], ...
                                         -obj.AOrange, ...
                                         obj.AOrange);
-        end % connectUnclocked
+        end % connectUnclockedAO
 
 
-        function connectClocked(obj, numSamplesPerChannel, makeTriggerable, verbose)
+        function connectClockedAO(obj, varargin)
+            % Start a clocked task. Optional input args:
+            %
+            % Inputs (optional)
+            % numSamplesPerChannel - Size of the buffer
+            % samplesPerSecond - determines output rate and default comes from YAML file. Likely
+            %                   this will be about 1E6.
+            % taskName - 'clockedao' by default
+            % verbose - false by default
+            % makeTriggerable - false by default. If true, task waits for trigger (PFI0 by default
+            %            and this line can be changed in the settings YAML)
+            %
+            % The task writes to the default number of AO lines (likely all four).
 
-            if nargin<2 || isempty(numSamplesPerChannel)
-                numSamplesPerChannel = 1000;
-            end
+            %Parse optional arguments
+            params = inputParser;
+            params.CaseSensitive = false;
 
-            if nargin<3 || isempty(makeTriggerable)
-                makeTriggerable = false;
-            end
+            params.addParameter('numSamplesPerChannel', 1000, @(x) isnumeric(x) && isscalar(x));
+            params.addParameter('samplesPerSecond', obj.samplesPerSecond, @(x) isnumeric(x) && isscalar(x));
+            params.addParameter('taskName', 'clockedAO', @(x) ischar(x));
+            params.addParameter('verbose', false, @(x) islogical(x) || x==0 || x==1);
+            params.addParameter('makeTriggerable', false, @(x) islogical(x) || x==0 || x==1);
 
-            if nargin<4
-                verbose = false;
-            end
+            params.parse(varargin{:});
+
+            numSamplesPerChannel=params.Results.numSamplesPerChannel;
+            samplesPerSecond=params.Results.samplesPerSecond;
+            taskName=params.Results.taskName;
+            verbose=params.Results.verbose;
+            makeTriggerable=params.Results.makeTriggerable;
 
 
-            obj.stopAndDeleteTask
+            obj.stopAndDeleteAOTask
 
             if verbose
-                fprintf('Creating clocked task on %s\n', obj.device_ID)
+                fprintf('Creating clocked AO task on %s\n', obj.device_ID)
             end
             
             %% Create the inactivation task
-            obj.hC = dabs.ni.daqmx.Task('clocked');
+            obj.hAO = dabs.ni.daqmx.Task(taskName);
             
             % Set output channels
-            obj.hC.createAOVoltageChan(obj.device_ID, ...
+            obj.hAO.createAOVoltageChan(obj.device_ID, ...
                                         obj.AOchans, ...
                                         [], ...
                                         -obj.AOrange, ...
@@ -110,26 +158,26 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
             
             
             % Configure the task sample clock, the sample size and mode to be continuous and set the size of the output buffer
-            obj.hC.cfgSampClkTiming(obj.samplesPerSecond, 'DAQmx_Val_ContSamps', numSamplesPerChannel, 'OnboardClock');
-            obj.hC.cfgOutputBuffer(numSamplesPerChannel);
+            obj.hAO.cfgSampClkTiming(samplesPerSecond, 'DAQmx_Val_ContSamps', numSamplesPerChannel, 'OnboardClock');
+            obj.hAO.cfgOutputBuffer(numSamplesPerChannel);
             
             % allow sample regeneration
-            obj.hC.set('writeRegenMode', 'DAQmx_Val_AllowRegen');
-            obj.hC.set('writeRelativeTo','DAQmx_Val_FirstSample');
+            obj.hAO.set('writeRegenMode', 'DAQmx_Val_AllowRegen');
+            obj.hAO.set('writeRelativeTo','DAQmx_Val_FirstSample');
             
             % Configure the trigger
             if makeTriggerable
-                obj.hC.cfgDigEdgeStartTrig(obj.triggerChannel, 'DAQmx_Val_Rising');
+                obj.hAO.cfgDigEdgeStartTrig(obj.triggerChannel, 'DAQmx_Val_Rising');
             end
 
-        end % connectClocked
+        end % connectClockedAO
 
 
         function setLaserPowerControlVoltage(obj,laserControlVoltage)
-            if ~strcmp(obj.hC.taskName, 'unclocked')
-                return
+            if ~isvalid(obj.hAO) || ~strcmp(obj.hAO.taskName, 'unclockedao')
+                obj.connectUnclockedAO
             end
-            obj.hC.writeAnalogData([obj.lastXgalvoVoltage, obj.lastYgalvoVoltage, laserControlVoltage])
+            obj.hAO.writeAnalogData([obj.lastXgalvoVoltage, obj.lastYgalvoVoltage, laserControlVoltage])
 
             % update cached values
             obj.lastLaserVoltage = laserControlVoltage; 
@@ -137,11 +185,11 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
 
 
         function moveBeamXY(obj,beamXY)
-            if ~strcmp(obj.hC.taskName, 'unclocked')
-                return
+            if ~isvalid(obj.hAO) || ~strcmp(obj.hAO.taskName, 'unclockedao')
+                obj.connectUnclockedAO
             end
             beamXY = beamXY(:)'; % Ensure column vector
-            obj.hC.writeAnalogData([beamXY, obj.lastLaserVoltage])
+            obj.hAO.writeAnalogData([beamXY, obj.lastLaserVoltage])
 
             % update cached values
             obj.lastXgalvoVoltage = beamXY(1);

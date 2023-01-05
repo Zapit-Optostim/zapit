@@ -1,5 +1,5 @@
 function result = WriteYaml(filename, data, flowstyle)
-    import BakingTray.yaml.*
+    import zapit.yaml.*
     
     if ~exist('flowstyle','var')
         flowstyle = 0;
@@ -19,7 +19,7 @@ function result = WriteYaml(filename, data, flowstyle)
     catch
         dp = [pth filesep 'external' filesep 'snakeyaml-1.9.jar'];
         if not(ismember(dp, javaclasspath ('-dynamic')))
-        	javaaddpath(dp); % javaaddpath clears global variables!?
+            javaaddpath(dp); % javaaddpath clears global variables!?
         end
         import('org.yaml.snakeyaml.*');
     end
@@ -59,7 +59,7 @@ end
 
 
 function result = scan(r)
-    import BakingTray.yaml.*
+    import zapit.yaml.*
     if ischar(r)
         result = scan_char(r);
     elseif iscell(r)
@@ -67,7 +67,7 @@ function result = scan(r)
     elseif isord(r)
         result = scan_ord(r);
     elseif isstruct(r)
-        result = scan_struct(r);                
+        result = scan_struct(r);
     elseif isnumeric(r)
         result = scan_numeric(r);
     elseif islogical(r)
@@ -80,7 +80,7 @@ function result = scan(r)
 end
 
 function result = scan_numeric(r)
-    import BakingTray.yaml.*
+    import zapit.yaml.*
     if isempty(r)
         result = java.util.ArrayList();
     elseif(isinteger(r))
@@ -91,7 +91,7 @@ function result = scan_numeric(r)
 end
 
 function result = scan_logical(r)
-    import BakingTray.yaml.*
+    import zapit.yaml.*
     if isempty(r)
         result = java.util.ArrayList();
     else
@@ -100,7 +100,7 @@ function result = scan_logical(r)
 end
 
 function result = scan_char(r)
-    import BakingTray.yaml.*
+    import zapit.yaml.*
     if isempty(r)
         result = java.util.ArrayList();
     else
@@ -109,14 +109,14 @@ function result = scan_char(r)
 end
 
 function result = scan_datetime(r)
-    import BakingTray.yaml.*
+    import zapit.yaml.*
     [Y, M, D, H, MN,S] = datevec(double(r));            
-	result = java.util.GregorianCalendar(Y, M-1, D, H, MN,S);
-	result.setTimeZone(java.util.TimeZone.getTimeZone('UTC'));
+    result = java.util.GregorianCalendar(Y, M-1, D, H, MN,S);
+    result.setTimeZone(java.util.TimeZone.getTimeZone('UTC'));
 end
 
 function result = scan_cell(r)
-    import BakingTray.yaml.*
+    import zapit.yaml.*
     if(isrowvector(r))  
         result = scan_cell_row(r);
     elseif(iscolumnvector(r))
@@ -133,7 +133,7 @@ function result = scan_cell(r)
 end
 
 function result = scan_ord(r)
-    import BakingTray.yaml.*
+    import zapit.yaml.*
     if(isrowvector(r))
         result = scan_ord_row(r);
     elseif(iscolumnvector(r))
@@ -150,7 +150,7 @@ function result = scan_ord(r)
 end
 
 function result = scan_cell_row(r)
-    import BakingTray.yaml.*
+    import zapit.yaml.*
     result = java.util.ArrayList();
     for ii = 1:size(r,2)
         result.add(scan(r{ii}));
@@ -158,7 +158,7 @@ function result = scan_cell_row(r)
 end
 
 function result = scan_cell_column(r)
-    import BakingTray.yaml.*
+    import zapit.yaml.*
     result = java.util.ArrayList();
     for ii = 1:size(r,1)
         tmp = r{ii};
@@ -170,7 +170,7 @@ function result = scan_cell_column(r)
 end
 
 function result = scan_cell_matrix(r)
-    import BakingTray.yaml.*
+    import zapit.yaml.*
     result = java.util.ArrayList();
     for ii = 1:size(r,1)
         i = r(ii,:);
@@ -179,13 +179,13 @@ function result = scan_cell_matrix(r)
 end
 
 function result = scan_cell_single(r)
-    import BakingTray.yaml.*;
+    import zapit.yaml.*;
     result = java.util.ArrayList();
     result.add(scan(r{1}));
 end
 
 function result = scan_ord_row(r)
-    import BakingTray.yaml.*
+    import zapit.yaml.*
     result = java.util.ArrayList();
     for i = r
         result.add(scan(i));
@@ -193,7 +193,7 @@ function result = scan_ord_row(r)
 end
 
 function result = scan_ord_column(r)
-import BakingTray.yaml.*
+import zapit.yaml.*
 result = java.util.ArrayList();
     for i = 1:size(r,1)
         result.add(scan_ord_row(r(i)));
@@ -201,7 +201,7 @@ result = java.util.ArrayList();
 end
 
 function result = scan_ord_matrix(r)
-    import BakingTray.yaml.*
+    import zapit.yaml.*
     result = java.util.ArrayList();
     for i = r'
         result.add(scan_ord_row(i'));
@@ -209,7 +209,7 @@ function result = scan_ord_matrix(r)
 end
 
 function result = scan_ord_single(r)
-    import BakingTray.yaml.*
+    import zapit.yaml.*
     result = java.util.ArrayList();
     for i = r'
         result.add(r);
@@ -217,7 +217,7 @@ function result = scan_ord_single(r)
 end
 
 function result = scan_struct(r)
-    import BakingTray.yaml.*
+    import zapit.yaml.*
     result = java.util.LinkedHashMap();
     for i = fields(r)'
         key = i{1};

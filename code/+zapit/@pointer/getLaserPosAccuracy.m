@@ -31,7 +31,7 @@ function varargout = getLaserPosAccuracy(obj, XYdata, backgroundImage, verbose)
     end
 
     % Get images: average a few frames before looking for the laser
-    nFrames = 7;
+    nFrames = 1;
     tFrames = obj.returnCurrentFrame(nFrames);
 
     if isempty(backgroundImage)
@@ -61,7 +61,7 @@ function varargout = getLaserPosAccuracy(obj, XYdata, backgroundImage, verbose)
     end
     
     % Bail out if the area of the region is too large. Then it can't be the laser
-    areaThreshold = 500; % TODO -- hardcoded. On non-flat surfaces this can vary a good deal
+    areaThreshold = obj.settings.calibrateScanners.areaThreshold;
 
     if ~bailOut && (BWa.Area > areaThreshold)
         bailOut = true;
@@ -86,8 +86,8 @@ function varargout = getLaserPosAccuracy(obj, XYdata, backgroundImage, verbose)
             round(obj.hLastPoint.XData), round(obj.hLastPoint.YData))
         
         fprintf('Error: x = %0.2f um  y = %0.1f um\n', ...
-            abs(obj.hLastPoint.XData-BWc.Centroid(1)) * obj.micsPix, ...
-            abs(obj.hLastPoint.YData-BWc.Centroid(2)) * obj.micsPix)
+            abs(obj.hLastPoint.XData-BWc.Centroid(1)) * obj.settings.camera.micronsPerPixel, ...
+            abs(obj.hLastPoint.YData-BWc.Centroid(2)) * obj.settings.camera.micronsPerPixel)
 
     elseif nargout>0
 
@@ -96,13 +96,13 @@ function varargout = getLaserPosAccuracy(obj, XYdata, backgroundImage, verbose)
         else
             out.targetPixelCoords = XYdata; %ONLY APPEARS HERE NOT ABOVE (TODO)
                                             %IF XYdata REALLY IS NOT NEEDED WE SHOULD REMOVE IT
-                                            % TEST IF REMOVING IT FROM logPoints MAKES A DIFFERENCE
+                                            % TEST IF REMOVING IT FROM calibrateScanners MAKES A DIFFERENCE -- TODO
         end
 
         % Return
         out.actualPixelCoords = BWc.Centroid;
         out.error = out.targetPixelCoords-out.actualPixelCoords;
-        out.absErrorMicrons = abs(out.error) * obj.micsPix;
+        out.absErrorMicrons = abs(out.error) * obj.settings.camera.micronsPerPixel;
         varargout{1} = out;
 
     end

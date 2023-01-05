@@ -13,116 +13,132 @@ classdef pointer < handle
 
     
     properties
-
         % TODO -- The following properties need to be in a settings structure
         % 0/0 volts on DAQ corresponds to the middle of the image
         invertX = true
         invertY = true
-        flipXY % TODO -- should add this but only once everything else is working
-        voltsPerPixel = 2.2E-3 %TODO -- HARDCODED
-        micsPix = 19.3 %Measured this %TODO -- HARDCODED
-        
-        % Properties related to where we stimulate
-        transform
-        config % Object of class zapit.config
 
-        
-        % behavioural task properties
+        % The following are associated with hardware components
+        cam % camera
+        DAQ % instance of class that controls the DAQ (laser and scanners)
+
+
+        % The following properties relate to settings or other similar state parameters
+        % Properties related to where we stimulate
+        settings % The settings read in from the YAML file
+        stimConfig % Object of class zapit.stimConfig. This contains the locations to stimulate
+        %Laser stuff. TODO -- this might move to a separate class but for now it stays here
+        laserFit  % laserfits. See generateLaserCalibrationCurve
+        transform % The transform describing the relationship between scanners and camera
+
+
+        % The following relate to running the behavioral task itself
         coordsLibrary % TODO - I think this is where all computed waveforms are kept
         newpoint % TODO - ??
-        topUpCall % TODO - ??
-        rampDown % Not used (yet?)
         chanSamples %Structure describing waveforms to send the scanners for each brain area
-        freqLaser % TODO - ??
-        numSamplesPerChannel % TODO - why is this here? We need a better solution
-
-
         waveforms % The last set of waveforms sent to the DAQ by sendSamples or stopInactivation
-        DAQ % instance of class that controls the DAQ will be attached here
+
+        numSamplesPerChannel % TODO - why is this here? We need a better solution
     end % properties
 
 
     properties (Hidden)
-        % Handles for plot elements
-        hFig
-        hImAx
-        hImLive
-        hLastPoint % plot handle with location of the last clicked point
-
-        hAreaCoords % locations where the beam will be sent. see getAreaCoords
-        hRefCoords  % The two reference coords
-
-        axRange
-
-        % Camera and image related
-        cam % camera object goes here
-
+        buildFailed = true %Used during boostrap by start_zapit
+        simulated = false % Tag to indicate whether it is in simulated mode
+        listeners = {}
     end % hidden properties
+
+    properties (Hidden,SetObservable=true)
+        lastAcquiredFrame % The last frame acquired by the camera
+        calibrateScannersPosData % Used to plot data during scanner calibration
+        scannersCalibrated = false % Gets set to true if the scanners are calibrated
+        sampleCalibrated = false % Gets set to true if the sample is calibrated
+    end
+
 
     % read-only properties that are associated with getters
     properties(SetAccess=protected, GetAccess=public)
        imSize
     end
-    
+
+
     % Constructor and destructor
     methods
-        function obj = pointer(fname)
+        function obj = pointer(varargin)
             % Constructor
+            %
+            % Inputs
+            % 'simulated' - [false by default] If true does not connect to hardware but 
+            %   runs in simulated mode.
 
-            if nargin < 1
-                fname = [];
-            end
+            params = inputParser;
+            params.CaseSensitive = false;
+            params.addParameter('simulated', false, @(x) islogical(x) || x==0 || x==1);
 
-            disp('STARTING BEAMPOINTER')
+            params.parse(varargin{:});
+
+            obj.simulated=params.Results.simulated;
+
+            obj.settings = zapit.settings.readSettings;
 
             % Connect to camera
-            obj.cam = zapit.camera(2); % TODO -  Hard-coded selection of camera ID
-            obj.cam.exposure = 3000; % TODO - HARDCODED
+            if obj.simulated
+                obj.cam = zapit.simulated.camera;
+            else
+                obj.cam = zapit.hardware.camera(obj.settings.camera.connection_index);
+            end
+            obj.cam.exposure = obj.settings.camera.default_exposure;
+
             obj.cam.ROI = [300,100,1400,1000]; % TODO: hardcoded sensor crop
                                             % TODO : in future user will have ROI box to interactively
                                             %    crop and this will be saved in settings file
                                             %    the re-applied on startup each time.
-                                            %    see also obj.can.resetROI
+                                            %    see also obj.cam.resetROI
 
-            obj.setUpFigure
+            % Log camera frames to lastAcquiredFrame and start camera
+            if ~obj.simulated
+                obj.cam.vid.FramesAcquiredFcn = @obj.storeLastFrame;
+                obj.cam.vid.FramesAcquiredFcnCount=1; %Run frame acq fun every N frames
+            else
+               obj.listeners{end+1} = ...
+                    addlistener(obj.cam, 'lastAcquiredFrame', 'PostSet', @obj.storeLastFrame);
+               % Make a listener instead of the FramesAcquiredFcn
+               obj.cam.startVideo; pause(0.2), obj.cam.stopVideo; pause(0.2) % TODO -- for some reason we need to call this twice for it to start working properly
+            end
+            obj.cam.startVideo; 
 
-            % Attach the DAQ (TODO: for now we hard-code the class as it's the only one)
-            obj.DAQ = zapit.hardware.DAQ.NI.vidriowrapper;
+
+            if obj.simulated
+                obj.DAQ = zapit.simulated.DAQ;
+            else
+                fprintf('Connecting to DAQ\n')
+                obj.DAQ = zapit.hardware.DAQ.NI.vidriowrapper;
+            end
+
             obj.DAQ.parent = obj;
 
-            % TODO - Put connection to DAQ in a method
-            obj.DAQ.connectUnclocked(true)
-            
-            
-            % TODO -- we should presumbably implement the following again?
-            % When window closes we disconnect from the DAQ
-            % obj.hFig.CloseRequestFcn = @obj.figClose;
-            
-            obj.zeroScanners
+            obj.DAQ.connectUnclockedAO(true) % TODO -- In principle this should not be needed here. 
+            obj.zeroScanners % TODO ... as this will do the connection. Try it.            
 
-            % TODO -- we evenually want to be setting laser power in mW with a laser class.
-            % so we will need the laser class to talk to the DAQ. Therefore it might make
-            % sense to have a scanner class that talks to the DAQ (see above)
-            obj.DAQ.setLaserPowerControlVoltage(1) % TODO -- we will need
+            obj.loadLaserFit
 
-            % load configuration files
-            if isempty(fname)
-                [fname,fpath] = uigetfile('*.yaml','Pick a config file');
-                pathToConfig = fullfile(fpath,fname);
-            else
-                pathToConfig = fname;
-            end
-            obj.config = zapit.config(pathToConfig);
+            obj.buildFailed = false; % signal to start_zapit that all went well
+
         end % Constructor
         
         
-        
         function delete(obj,~,~)
+            % Stop the camera and disconnect from hardware
             fprintf('Shutting down optostim software\n')
-            obj.cam.stopVideo;
-            delete(obj.hFig)
+            cellfun(@delete,obj.listeners)
+            if isvalid(obj.cam)
+                obj.cam.vid.FramesAcquiredFcn = [];
+                obj.cam.stopVideo;
+            end
             delete(obj.cam)
             delete(obj.DAQ)
+
+
         end % Destructor
         
     end % end of constructor/destructor block
@@ -140,39 +156,49 @@ classdef pointer < handle
             % the camera has been started so it must be handled dynamically.
             imSize = obj.cam.ROI;
             imSize = imSize(3:4);
-
         end % imsize
     end % getters and setters
 
 
     % Other short methods
     methods
+
         function zeroScanners(obj)
             % TODO -- does it really make sense for galvo control methods to be in the DAQ class?
             % TODO -- running this currently does not update the plot by there are properties
             %         corresponding to these values that we can pick off from the DAQ class.
             obj.DAQ.moveBeamXY([0,0]);
         end % zeroScanners
-        
-        
-        function varargout = runAffineTransform(obj, OUT)
-            % TODO - refactor
-            % method running a transformation of x-y beam position into pixels
-            % in camera
-            
-            % it can be run repeatedly with each new mouse and it doesn't
-            % require scaling from the start (new transformation matrices
-            % are added on top of existing ones in function pixelToVolt)
-            
-            % runs affine transformation
-            tform = fitgeotrans(OUT.targetPixelCoords,OUT.actualPixelCoords,'similarity');
-            
-            obj.transform = tform;
 
-            if nargout>0
-                varargout{1} = tform;
+
+        function actualPixelCoords = returnScannerCalibTargetCoords(obj)
+            % Return the coordinates the beam is supposed to have gone to during
+            % calibration. These are the coordinates for which we also got a location
+            % for where the beam actually went
+
+            if isempty(obj.calibrateScannersPosData)
+                actualPixelCoords = [];
             end
-        end % runAffineTransform
+
+            actualPixelCoords = cat(1,obj.calibrateScannersPosData(:).actualPixelCoords);
+        end
+
+
+        function storeLastFrame(obj,~,~)
+            % This callback is run every time a frame has been acquired
+            %
+            %  function zapit.pointer.storeLastFrame(obj,~,~)
+            %
+            % Purpose
+            % Stores the last acquired frame in an observable property
+
+            if obj.cam.vid.FramesAvailable==0
+                return
+            end
+
+            obj.lastAcquiredFrame = obj.cam.getLastFrame;
+            obj.cam.flushdata
+        end % storeLastFrame
 
 
         function im = returnCurrentFrame(obj,nFrames)
@@ -191,11 +217,12 @@ classdef pointer < handle
             %
             %
 
+            % TODO -- this is really slow right now if nFrames > 1 (since refactoring 21/12/2022)
             if nargin<2
                 nFrames = 1;
             end
 
-            im = obj.hImLive.CData;
+            im = obj.lastAcquiredFrame;
 
             if nFrames==1
                 return
@@ -210,26 +237,12 @@ classdef pointer < handle
                 % has incrememted
                 currentFramesAcquired = obj.cam.vid.FramesAcquired;
                 if currentFramesAcquired > lastFrameAcquired
-                    im(:,:,indexToInsertFrameInto) = obj.hImLive.CData;
+                    im(:,:,indexToInsertFrameInto) = obj.lastAcquiredFrame;
                     lastFrameAcquired = currentFramesAcquired;
                     indexToInsertFrameInto = indexToInsertFrameInto +1;
                 end
             end
         end % returnCurrentFrame
-
-
-        function dispFrame(obj,~,~)
-            % This callback is run every time a frame has been acquired
-            if obj.cam.vid.FramesAvailable==0
-                return
-            end
-            
-            tmp = obj.cam.getLastFrame;
-            
-            obj.hImLive.CData = tmp;
-            drawnow
-            obj.cam.flushdata
-        end % dispFrame
 
 
     end % methods

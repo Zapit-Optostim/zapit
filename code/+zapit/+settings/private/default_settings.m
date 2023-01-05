@@ -9,8 +9,21 @@ function settings = default_settings
     settings.NI.AOchans = 0:2;
     settings.NI.triggerChannel = 'PFI0';
 
+    settings.scanners.voltsPerPixel = 2.2E-3; %TODO -- replace with a different number
+
+    settings.laser.laserMinMaxControlVolts = [1.5,3.5]; %TODO -- replace with a different number
+    settings.laser.laserMinMax_mW = [0,100]; %TODO -- replace with a different number
 
     settings.camera.connection_index = -1;
     settings.camera.default_exposure = 0;
     settings.camera.beam_calib_exposure = 0;
+    settings.camera.micronsPerPixel = 19.3; %TODO -- replace with a different number
+
+    settings.calibrateScanners.areaThreshold = 500;
+    settings.calibrateScanners.calibration_power_mW = 10;
+    settings.calibrateScanners.beam_calib_exposure = 0;
+    settings.calibrateScanners.bufferPixels = 100;
+    settings.calibrateScanners.pointSpacingInPixels = 200;
+
+    settings.experiment.defaultLaserFrequency = 40; % TODO: this will probably be used to make the brain area config file and from there that will be the relevant value
 end % default_settings

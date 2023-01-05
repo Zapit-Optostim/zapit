@@ -1,12 +1,11 @@
-function obj = makeChanSamples(obj, freqLaser, laserAmplitude, plotFigure)
+function obj = makeChanSamples(obj, laserPowerInMW, plotFigure)
     % Prepares voltages for each inactivation site
     %
-    % zapit.pointer.makeChanSamples(freqLaser, laserAmplitude)
+    % zapit.pointer.makeChanSamples(laserPowerInMW)
     %
     %
     % Inputs
-    % freqLaser - Frequency of inactivation, amplitude of voltage fed to laser
-    % laserAmplitude - TODO -- not working
+    % laserPowerInMW - Desired laser power in mW
     % plotFigure - false by default. If true make a debug figure
     %
     % Outputs
@@ -15,15 +14,18 @@ function obj = makeChanSamples(obj, freqLaser, laserAmplitude, plotFigure)
     % Maja Skretowska - 2021
 
 
+    
     if nargin<4
         plotFigure = false;
     end
     
-    obj.freqLaser = freqLaser;                  % full cycles in Hz
+
     numHalfCycles = 4;                          % arbitrary, no of half cycles to buffer
-    obj.numSamplesPerChannel = obj.DAQ.samplesPerSecond/obj.freqLaser*(numHalfCycles/2);
+
+    % TODO: defaultLaserFrequency will probably be used to make the brain area config file and from there that will be the relevant value
+    obj.numSamplesPerChannel = obj.DAQ.samplesPerSecond/obj.settings.experiment.defaultLaserFrequency*(numHalfCycles/2);
     
-        % find edges of half cycles
+    % find edges of half cycles
     cycleEdges = linspace(1, obj.numSamplesPerChannel, numHalfCycles+1);
     edgeSamples = ceil(cycleEdges(1,:));
     
@@ -49,17 +51,13 @@ function obj = makeChanSamples(obj, freqLaser, laserAmplitude, plotFigure)
         
     end
     
-    %% make up samples for laser and masking light channels
-    
-    %masking light is always on, laser is on only when LaserOn == 1
-    anlgOut = ones(1,obj.numSamplesPerChannel) * laserAmplitude;
-    %anlgOut = (-cos(linspace(0, numHalfCycles*2*pi, obj.numSamplesPerChannel)) + 1) * laserAmplitude;
+    %% make up samples for laser and masking light channels    
+    anlgOut = ones(1,obj.numSamplesPerChannel) * obh.laser_mW_to_control(laserPowerInMW); %Write the correct control voltage
     digitalAmplitude = 4;
     digOut = ones(1,obj.numSamplesPerChannel) * digitalAmplitude;
 
     % allow 1 ms around halfcycle change to be 0 (in case scanners are not in the right spot
     % TODO -- this should be based on empirical values
-
     MASK = ones(1,obj.numSamplesPerChannel);
     sampleInterval = 1/obj.DAQ.samplesPerSecond;
     nSamplesInOneMS = 1E-3 / sampleInterval;
@@ -86,7 +84,9 @@ function obj = makeChanSamples(obj, freqLaser, laserAmplitude, plotFigure)
     % x-by-3-by-2, where rows are samples, columns are channels, and 3rd dim
     % is whether laser is off or on
     
-    %% visualization of channel samples
+
+
+    %% visualization of channel samples TODO -- make this neater or maybe refactor elsewhere?
     if ~plotFigure
         return
     end
@@ -112,7 +112,7 @@ function obj = makeChanSamples(obj, freqLaser, laserAmplitude, plotFigure)
     plot(xAxis,anlgOut,'.','MarkerSize',10);
     hold on
     for ii = cycleEdges(1,:)
-        plot([ii ii],laserAmplitude*[0 2],'g-','LineWidth',1)
+        plot([ii ii],laserPowerInMW*[0 2],'g-','LineWidth',1)
     end
     title('analog output to laser')
     ylabel('amplitude')

@@ -32,7 +32,7 @@ function stopOptoStim(obj, rampDownInMS)
     % Zero everything
         t = obj.waveforms;
         t(:) = 0;
-        obj.DAQ.hC.writeAnalogData(t);
+        obj.DAQ.hAO.writeAnalogData(t);
         obj.DAQ.stop
     end
 
@@ -58,17 +58,17 @@ function stopOptoStim(obj, rampDownInMS)
     for amp = ampSequence
         t = obj.waveforms;
         t(:,3) = t(:,3) * amp;
-        obj.DAQ.hC.writeAnalogData(t);
+        obj.DAQ.hAO.writeAnalogData(t);
     end
 
     % Zero everything
     t(:) = 0;
-    obj.DAQ.hC.writeAnalogData(t);
+    obj.DAQ.hAO.writeAnalogData(t);
 
     % stop task and send to pre-generation stage, allowing to write
     % next trial samples without conflicts
-    obj.DAQ.hC.stop
-    % TODO - might need to hC.abort
+    obj.DAQ.hAO.stop
+    % TODO - might need to hAO.abort
 
 end % stopOptoStim
 

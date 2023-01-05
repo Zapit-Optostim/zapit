@@ -1,7 +1,8 @@
 function [xVolts, yVolts] = pixelToVolt(obj, pixelColumn, pixelRow)
     % Converts pixel position to voltage value to send to scanners
     %
-    % function [xVolts, yVolts] = pixelToVolt(obj, pixelColumn, pixelRow)
+    % function [xVolts, yVolts] = zapit.pointer.pixelToVolt(obj, pixelColumn, pixelRow)
+    %
     %
     % Purpose
     % Converts pixel coordinates to volt values for scanner mirrors
@@ -10,7 +11,7 @@ function [xVolts, yVolts] = pixelToVolt(obj, pixelColumn, pixelRow)
     %
     % This function is important and used every time the laser is
     % pointed to a location. Called in: pointBeamToLocationInImage,
-    % getAreaCoordinates and logPoints
+    % getAreaCoordinates and calibrateScanners.
     %
     %
     % Inputs
@@ -22,8 +23,8 @@ function [xVolts, yVolts] = pixelToVolt(obj, pixelColumn, pixelRow)
     end
     
     
-    xVolts = (pixelColumn - (obj.imSize(1)/2)) * obj.voltsPerPixel;
-    yVolts = (pixelRow    - (obj.imSize(2)/2)) * obj.voltsPerPixel;
+    xVolts = (pixelColumn - (obj.imSize(1)/2)) * obj.settings.scanners.voltsPerPixel;
+    yVolts = (pixelRow    - (obj.imSize(2)/2)) * obj.settings.scanners.voltsPerPixel;
     
     if obj.invertX
         xVolts = xVolts*-1;

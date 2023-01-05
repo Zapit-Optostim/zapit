@@ -13,7 +13,8 @@ classdef (Abstract) DAQ < handle
 
     properties 
 
-        hC  % A reference to an object that provides access to the DAQ's API
+        hAO  % A reference to an object that provides access to the DAQ's API for the AO task
+        hAI  % A reference to an object that provides access to the DAQ's API for the AI task
 
     end %close public properties
 
@@ -66,7 +67,7 @@ classdef (Abstract) DAQ < handle
     %The following methods are common to all DAQs
     methods
         function  delete(obj)
-            delete(obj.hC)
+            delete(obj.hAO)
         end
     end %close methods
 

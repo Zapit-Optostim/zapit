@@ -1,11 +1,11 @@
 function result = deflateimports(r)
-import BakingTray.yaml.*;
+import zapit.yaml.*;
 result = recurse(r, 0, []);
 end
 
 
 function result = recurse(data, level, addit)
-import BakingTray.yaml.*;
+import zapit.yaml.*;
 if iscell(data) && ~ismymatrix(data)
         result = iter_cell(data, level, addit);
     elseif isstruct(data)
@@ -17,7 +17,7 @@ end
 
 
 function result = iter_cell(data, level, addit)
-import BakingTray.yaml.*;
+import zapit.yaml.*;
 result = {};
     icollect = {};
     ii = 1;
@@ -42,7 +42,7 @@ end
 
 
 function result = iter_struct(data, level, addit)
-import BakingTray.yaml.*;
+import zapit.yaml.*;
 result = struct();
     for i = fields(data)'
         fld = char(i);
@@ -52,19 +52,19 @@ end
 
 
 function result = issingleimport_all(r)
-import BakingTray.yaml.*;
+import zapit.yaml.*;
 result = all(cellfun(@issingleimport, r));
 end
 
 
 function result = issingleimport(r)
-import BakingTray.yaml.*;
+import zapit.yaml.*;
 result = isstruct(r) && length(fields(r)) == 1 && isfield(r, 'import');
 end
 
 
 function result = addall(list1, list2)
-import BakingTray.yaml.*;
+import zapit.yaml.*;
 for i = 1:length(list2)
         list1{end + 1} = list2{i};
     end

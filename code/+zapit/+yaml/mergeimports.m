@@ -1,5 +1,5 @@
 function result = mergeimports(data, verb)
-import BakingTray.yaml.*;
+import zapit.yaml.*;
 if ~exist('verb','var')
         verb = 0;
     end
@@ -8,7 +8,7 @@ end
 
 
 function result = recurse(data, level, addit, verb)
-import BakingTray.yaml.*;
+import zapit.yaml.*;
 indent = repmat(' | ',1,level); % for debugging
     if iscell(data)
         result = iter_cell(data, level, addit, verb);
@@ -25,7 +25,7 @@ end
 
 
 function result = iter_cell(data, level, addit, verb)
-import BakingTray.yaml.*;
+import zapit.yaml.*;
 indent = repmat(' | ',1,level); % for debugging
     result = {};
     if any(verb == 1); fprintf([indent,'cell {\n']); end% for debugging
@@ -38,7 +38,7 @@ end
 
 
 function result = iter_struct(data, level, addit, verb)
-import BakingTray.yaml.*;
+import zapit.yaml.*;
 indent = repmat(' | ',1,level); % for debugging
     result = struct();
     collected_imports = {};
@@ -66,7 +66,7 @@ end
 
 
 function result = process_import_field(data)
-import BakingTray.yaml.*;
+import zapit.yaml.*;
 if iscell(data)
         merged_structs = struct();
         collected_nonstruct = {};

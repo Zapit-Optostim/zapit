@@ -1,12 +1,12 @@
 function result = doinheritance(r, tr)
-import BakingTray.yaml.*;
+import zapit.yaml.*;
 if ~exist('tr','var')
         tr = r;
     end
     result = recurse(r, 0, {tr});
 end
 function result = recurse(data, level, addit)
-import BakingTray.yaml.*;
+import zapit.yaml.*;
 if iscell(data) && ~ismymatrix(data)
         result = iter_cell(data, level, addit);
     elseif isstruct(data)
@@ -16,7 +16,7 @@ if iscell(data) && ~ismymatrix(data)
     end
 end
 function result = iter_cell(data, level, addit)
-import BakingTray.yaml.*;
+import zapit.yaml.*;
 result = {};
     for i = 1:length(data)
         result{i} = recurse(data{i}, level + 1, addit);
@@ -28,7 +28,7 @@ result = {};
     end
 end
 function result = iter_struct(data, level, addit)
-import BakingTray.yaml.*;
+import zapit.yaml.*;
 result = data;
     for i = fields(data)'
         fld = char(i);
@@ -42,7 +42,7 @@ result = data;
     end
 end
 function result = inherit(child, parent_chr, container, oaroot, loc_imported)
-import BakingTray.yaml.*;
+import zapit.yaml.*;
 result = child;
     if ~iscell(parent_chr)
         parent_chr = {parent_chr};
@@ -69,7 +69,7 @@ result = child;
     end
 end
 function result = contains(list, chr)
-import BakingTray.yaml.*;
+import zapit.yaml.*;
 for i = 1:length(list)
         if strcmp(list{i}, chr)
             result = true;

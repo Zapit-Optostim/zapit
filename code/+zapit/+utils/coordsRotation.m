@@ -14,9 +14,10 @@ function [newpoint,rotMat] = coordsRotation(template, refPoints, points)
     %
     % Maja Skretowska - SWC 2020
 
+    % TODO -- the function does more than just rotate, so we should rename it
 
     % Get the displacement vector
-    translationVector = points(1,:);
+    translationVector = points(1,:); %This is bregma
     pntZeroed = points - points(1,:);
     
     % Get the rotation angle
@@ -28,8 +29,9 @@ function [newpoint,rotMat] = coordsRotation(template, refPoints, points)
     reScale = ro(1)/ro(2);
     
     % Map template onto new angle, scale, and displacement
-    newpoint = rotMat*template(:,:,1)*reScale;
-    newpoint = newpoint + translationVector';
-    newpoint(:,:,2) = rotMat*template(:,:,2)*reScale;
-    newpoint(:,:,2) = newpoint(:,:,2) + translationVector';
+    for ii=1:size(template,3)
+        newpoint(:,:,ii) = rotMat*template(:,:,ii)*reScale;
+        newpoint(:,:,ii) = newpoint + translationVector';
+    end
+
 end % coordsRotation

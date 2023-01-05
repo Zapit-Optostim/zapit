@@ -1,5 +1,5 @@
 function result = dosubstitution(r, dictionary)
-    import BakingTray.yaml.*;
+    import zapit.yaml.*;
     if ~exist('dictionary','var')
             dictionary = {};
         end
@@ -9,7 +9,7 @@ function result = dosubstitution(r, dictionary)
 
 
     function result = recurse(data, level, dictionary)
-    import BakingTray.yaml.*;
+    import zapit.yaml.*;
     if iscell(data) && ~ismymatrix(data)
             result = iter_cell(data, level, dictionary);
         elseif isstruct(data)
@@ -22,7 +22,7 @@ function result = dosubstitution(r, dictionary)
     end
 
     function result = iter_cell(data, level, dictionary)
-    import BakingTray.yaml.*;
+    import zapit.yaml.*;
     result = {};
         for i = 1:length(data)
             result{i} = recurse(data{i}, level + 1, dictionary);
@@ -30,7 +30,7 @@ function result = dosubstitution(r, dictionary)
     end
 
     function result = iter_struct(data, level, dictionary)
-    import BakingTray.yaml.*;
+    import zapit.yaml.*;
     result = data;
         for i = fields(data)'
             fld = char(i);

@@ -1,16 +1,14 @@
-function varargout = getAreaCoordinates(obj)
-    % Determine the stimulation locations in this animal
+function varargout = calibrateSample(obj)
+    % Calibrate the stimulation locations for this animal
     %
-    % function varargout = zapit.pointer.getAreaCoordinates(obj)
+    % function varargout = zapit.pointer.calibrateSample(obj)
     %
     % Purpose
     % The locations that we want to stimulate are stored in the template variable
-    % of the configuration file. These locations need to be converted into actual 
+    % of the stim configuration YAML file. These locations need to be converted into actual
     % pixel coordinates for the present animal and session. They will need to be 
-    % rotated and scaled. This is achieved by clicking two landmarks on the skull.
+    % rotated and scaled, etc. This function achives this by clicking two landmarks on the skull.
     %
-    % The template coordinates kept in session_settings.template, and
-    % it stores them in the object's property transformed into volts
     %
     % Maja Skretowska - 2021
 
@@ -18,21 +16,18 @@ function varargout = getAreaCoordinates(obj)
     % change illumination to get a clearer image of beam position TODO: remove hard-coding
     obj.cam.src.Gain = 2;
 
-    % Clear any old coords
-    delete(obj.hAreaCoords)
-    obj.hAreaCoords = [];
-
-    delete(obj.hRefCoords)
-    obj.hRefCoords = [];
 
     % Ask the user to identify reference point on skull surface. Typically this will be
-    % bregma plus one more  point. The results are returned as two columns: first x then y coords
+    % bregma plus one more  point. The results are returned as two columns: first x then y coords.
+    % First row is bregma
+    % TODO: this must be an input from the controller
     realPoints = obj.recordPoints; 
     
 
     % Now we calculate the rotation and displacement in pixel coordinates
-    [newpoint, rotMat] = zapit.utils.coordsRotation(obj.config.template, obj.config.refPoints, realPoints);
+    [newpoint, rotMat] = zapit.utils.coordsRotation(obj.stimConfig.template, obj.stimConfig.refPoints, realPoints);
     
+    % TODO -- this needs to be an extra button in the GUI.
     % ask if you're using the option of an opaque area as additional control for inactivation
     opaqueArea = input('Are you using an additional opaque area as control?\n[1 or 0] ');
     if opaqueArea
@@ -69,7 +64,9 @@ function varargout = getAreaCoordinates(obj)
     obj.coordsLibrary = coordsLibrary;
     obj.newpoint = newpoint; % TODO: need a better name for this property
     
-    
+    % TODO:
+    % should now run makeChanSamples and should also run this again if laser power changes.
+
     % Cycle the laser through all locations to check visually that all is good
     % TODO -- in future this will be triggered by a button press or can happen once automatically then button press?
     %         maybe we can have it cycle much faster than now but continuously?

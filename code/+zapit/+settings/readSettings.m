@@ -79,10 +79,19 @@ function [settings,settingsNonHardCoded] = readSettings
         allValid=false;
     end
 
+    % TODO -- if there are no cell arrays that are supposed to be there, we can replace with a loop
+    % Or maybe we can have for some (like the lasers, a min and a max field so all are scalers)
     if iscell(settings.NI.AOchans)
         settings.NI.AOchans = cell2mat(settings.NI.AOchans);
     end
 
+    if iscell(settings.laser.laserMinMaxControlVolts)
+        settings.laser.laserMinMaxControlVolts = cell2mat(settings.laser.laserMinMaxControlVolts);
+    end
+
+    if iscell(settings.laser.laserMinMax_mW)
+        settings.laser.laserMinMax_mW = cell2mat(settings.laser.laserMinMax_mW);
+    end
 
     if ~isnumeric(settings.camera.connection_index)
         fprintf('camera.connection_index should be a number. Setting it to %d \n', ...
@@ -133,6 +142,7 @@ function [settings,settingsNonHardCoded] = readSettings
        fprintf('Making backup of settings file at %s\n', backupFname)
        copyfile(settingsFile,backupFname)
 
+       % TODO -- Keep only the last N backups and/or no backups older than a certain time frame
        % Write the new file to the settings location
        fprintf('Replacing settings file with updated version\n')
        zapit.yaml.WriteYaml(settingsFile,settings);
