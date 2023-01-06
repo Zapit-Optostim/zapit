@@ -84,19 +84,16 @@ classdef controller < zapit.gui.main.view
         function prepareWindow(obj)
             % Prepare the window
 
-            % Insert and empty image into axes
-            obj.hImLive = image(zeros(obj.model.imSize),'Parent',obj.hImAx);
-            obj.hImAx.XTick = [];
-            obj.hImAx.YTick = [];
-            obj.hImAx.DataAspectRatio = [1,1,1]; % Make axis aspect ratio square
+            % Insert and empty image into axes.
+            obj.refreshImage
 
-            % Set axis limits
-            imSize = obj.model.imSize;
-            obj.hImAx.XLim = [0,imSize(1)];
-            obj.hImAx.YLim = [0,imSize(2)];
 
-            pan(obj.hImAx,'off')
-            zoom(obj.hImAx,'off')
+            %Make the GUI resizable on small screens
+            sSize = get(0,'ScreenSize');
+            if sSize(4)<=900
+                obj.hFig.Resize='on';
+            end
+
 
             hold(obj.hImAx,'on')
             obj.hLastPoint = plot(obj.hImAx,nan,nan,'or','MarkerSize',8,'LineWidth',1);
@@ -139,6 +136,33 @@ classdef controller < zapit.gui.main.view
             obj.sampleCalibrateCallback
         end
 
+
+        function refreshImage(obj)
+            % Add an image to empty axes or re-plot an image with new XData and YData
+            %
+            % zapit.gui.main.controller.refreshImage
+            %
+            % Purpose
+            % Insert and empty image into axes. Calling this method with no image in hImAx or an 
+            % image with empty CData will cause a new image to be produced. The image will be the
+            % size specified by the camera ROI and will be plotted in mm using the XData and YData 
+            % input args to the plotting function. This is to ensure that all plotted images have
+            % axes that remain in mm.
+
+            obj.hImLive = image(zeros(obj.model.imSize),'Parent',obj.hImAx);
+            obj.hImAx.XTick = [];
+            obj.hImAx.YTick = [];
+            obj.hImAx.DataAspectRatio = [1,1,1]; % Make axis aspect ratio square
+
+            % Set axis limits
+            imSize = obj.model.imSize;
+            obj.hImAx.XLim = [0,imSize(1)];
+            obj.hImAx.YLim = [0,imSize(2)];
+
+            pan(obj.hImAx,'off')
+            zoom(obj.hImAx,'off')
+
+        end
 
         function buildListeners(obj)
             obj.listeners{end+1} = ...
