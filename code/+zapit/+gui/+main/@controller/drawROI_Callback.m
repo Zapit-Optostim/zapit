@@ -10,11 +10,13 @@ function drawROI_Callback(obj,~,~)
 
     % Draw box and get coords
     imSize = obj.model.imSize;
-    borderPix = 50;
-    defaultPos = [borderPix/2, ...
-                borderPix/2, ...
-                imSize(1)-borderPix, ...
-                imSize(2)-borderPix];
+    mixPix = obj.model.settings.camera.micronsPerPixel*1E-3;
+
+    borderMM = 1;
+    defaultPos = [borderMM/2, ...
+                borderMM/2, ...
+                (mixPix*imSize(1))-borderMM, ...
+                (mixPix*imSize(2))-borderMM];
 
     roi = images.roi.Rectangle('Parent',obj.hImAx,'Position',defaultPos);
     %roi = images.roi.Rectangle('Parent',obj.hImAx);
@@ -28,8 +30,8 @@ function drawROI_Callback(obj,~,~)
 
     uiwait(obj.hFig);
 
-    % Get the ROI position
-    rect_pos = roi.Position;
+    % Get the ROI position and convert back to pixels
+    rect_pos = roi.Position / mixPix;
     delete(L)
     delete(roi)
 
@@ -40,6 +42,8 @@ function drawROI_Callback(obj,~,~)
     originalROI(3:4) = 0;
     newROI = originalROI + rect_pos;
     obj.model.cam.ROI = round(newROI);
+
+    obj.refreshImage % Re-draw everything so axes display the correct units in mm
 
     obj.ROIButton.Enable='on';
     obj.model.cam.startVideo

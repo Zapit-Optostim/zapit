@@ -109,7 +109,7 @@ classdef controller < zapit.gui.main.view
             % Run method on mouse click
 
 
-            obj.ResetROIButton.ButtonPushedFcn = @(~,~) obj.model.cam.resetROI;
+            obj.ResetROIButton.ButtonPushedFcn = @(~,~) obj.resetROI_Callback;
             obj.ROIButton.ButtonPushedFcn = @(~,~) obj.drawROI_Callback;
             obj.RunScannerCalibrationButton.ButtonPushedFcn = @(~,~) obj.calibrateScanners_Callback;
             obj.CheckCalibrationButton.ValueChangedFcn = @(~,~) obj.checkScannerCalib_Callback;
@@ -144,20 +144,38 @@ classdef controller < zapit.gui.main.view
             % input args to the plotting function. This is to ensure that all plotted images have
             % axes that remain in mm.
 
-            obj.hImLive = image(zeros(obj.model.imSize),'Parent',obj.hImAx);
-            obj.hImAx.XTick = [];
-            obj.hImAx.YTick = [];
-            obj.hImAx.DataAspectRatio = [1,1,1]; % Make axis aspect ratio square
+
+            imSize = obj.model.imSize;
+            mixPix = obj.model.settings.camera.micronsPerPixel;
+
+            xD = (1:imSize(1)) * mixPix * 1E-3;
+            yD = (1:imSize(2)) * mixPix * 1E-3;
+
+            obj.hImLive = image(zeros(imSize), 'XData',xD, 'YData', yD, 'Parent',obj.hImAx);
 
             % Set axis limits
-            imSize = obj.model.imSize;
-            obj.hImAx.XLim = [0,imSize(1)];
-            obj.hImAx.YLim = [0,imSize(2)];
+            obj.hImAx.XLim = [xD(1), xD(end)];
+            obj.hImAx.YLim = [yD(1), yD(end)];
 
             pan(obj.hImAx,'off')
             zoom(obj.hImAx,'off')
 
+
+            % TODO -- for now we leave the axes on as they help for debugging
+            hideAxes = false;
+
+            if hideAxes
+                obj.hImAx.XTick = [];
+                obj.hImAx.YTick = [];
+            else
+                obj.hImAx.XTick = round(xD(1):1:xD(end));
+                obj.hImAx.YTick = round(yD(1):1:yD(end));
+                grid(obj.hImAx,'on')
+            end
+
+            obj.hImAx.DataAspectRatio = [1,1,1]; % Make axis aspect ratio square
         end
+
 
         function buildListeners(obj)
             obj.listeners{end+1} = ...
@@ -168,9 +186,21 @@ classdef controller < zapit.gui.main.view
                 addlistener(obj.model, 'sampleCalibrated', 'PostSet', @obj.sampleCalibrateCallback);
             obj.listeners{end+1} = ...
                 addlistener(obj, 'previouslyLoadedStimConfigs', 'PostSet', @obj.updatePreviouslyLoadedStimConfigList_Callback);
-
-
         end
+
+
+        function resetROI_Callback(obj,~,~)
+            % Reset ROI to full sensor size
+            %
+            % zapit.gui.main.controller.resetROI_Callback
+            %
+            % Purpose
+            % Right now just calls the resetROI method of the camera object but in 
+            % future might do more stuff. 
+
+            obj.model.cam.resetROI;
+
+        end % resetROI_Callback
 
 
         function scannersCalibrateCallback(obj,~,~)

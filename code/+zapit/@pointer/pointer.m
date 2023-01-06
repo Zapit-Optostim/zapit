@@ -149,14 +149,15 @@ classdef pointer < handle
         function imSize = get.imSize(obj)
             % Return size of image being acquired by camera
             %
-            % iSize = pointer(obj)
+            % imSize = pointer.imSize(obj)
             %
             % Purpose
             % Return size of image being acquired by camera. This could change after
             % the camera has been started so it must be handled dynamically.
             imSize = obj.cam.ROI;
             imSize = imSize(3:4);
-        end % imsize
+        end % get.imsize
+
     end % getters and setters
 
 

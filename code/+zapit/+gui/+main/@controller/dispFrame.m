@@ -10,9 +10,4 @@ function dispFrame(obj,~,~)
 
     obj.hImLive.CData = obj.model.lastAcquiredFrame;
 
-    % Set axis limits
-    imSize = obj.model.imSize;
-    obj.hImAx.XLim = [0,imSize(1)];
-    obj.hImAx.YLim = [0,imSize(2)];
-
 end % dispFrame
