@@ -9,7 +9,6 @@ classdef controller < zapit.gui.main.view
         % Handles for some plot elements are inherited from the superclass
 
         hImLive  %The image
-        hLastPoint % plot handle with location of the last clicked point. TODO-- do we leave this here? It's a unique one. 
         plotOverlayHandles   % All plotted objects laid over the image should keep their handles here
 
         model % The ZP model object goes here
@@ -94,10 +93,6 @@ classdef controller < zapit.gui.main.view
                 obj.hFig.Resize='on';
             end
 
-
-            hold(obj.hImAx,'on')
-            obj.hLastPoint = plot(obj.hImAx,nan,nan,'or','MarkerSize',8,'LineWidth',1);
-            hold(obj.hImAx,'off')
 
             % Update elements from settings file
             % TODO: changing the settings spin boxes should change the settings file
