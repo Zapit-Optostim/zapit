@@ -12,11 +12,15 @@ function drawROI_Callback(obj,~,~)
     imSize = obj.model.imSize;
     mixPix = obj.model.settings.camera.micronsPerPixel*1E-3;
 
+    xl = obj.hImAx.XLim;
+    yl = obj.hImAx.YLim;
+
     borderMM = 1;
-    defaultPos = [borderMM/2, ...
-                borderMM/2, ...
-                (mixPix*imSize(1))-borderMM, ...
-                (mixPix*imSize(2))-borderMM];
+    
+    defaultPos = [xl(1)+borderMM, ...
+                  yl(1)+borderMM, ...
+                    (mixPix*imSize(1))-borderMM*2, ...
+                    (mixPix*imSize(2))-borderMM*2];
 
     roi = images.roi.Rectangle('Parent',obj.hImAx,'Position',defaultPos);
     %roi = images.roi.Rectangle('Parent',obj.hImAx);
