@@ -12,13 +12,14 @@ classdef controller < zapit.gui.main.view
         plotOverlayHandles   % All plotted objects laid over the image should keep their handles here
 
         model % The ZP model object goes here
-
+        atlasData % Brain atlas data for overlaying brain areas, etc
         listeners = {}; % All go in this cell array
     end
 
 
     properties(Hidden)
         laserPowerBeforeCalib % Used to reset the laser power to the value it had before calibration
+        nInd % a counter used by calibrateSample_Callback
     end
 
 
@@ -40,6 +41,10 @@ classdef controller < zapit.gui.main.view
                 obj.delete
                 return
             end
+
+            % Load the atlas data so we can do things like overlay the brain boundaries
+            load('atlas_data.mat')
+            obj.atlasData = atlas_data;
 
             % Add a listener to the sampleSavePath property of the BT model
             %% obj.listeners{end+1} = addlistener(obj.model, 'sampleSavePath', 'PostSet', @obj.updateSampleSavePathBox); % FOR EXAMPLE
@@ -148,8 +153,13 @@ classdef controller < zapit.gui.main.view
             imSize = obj.model.imSize;
             mixPix = obj.model.settings.camera.micronsPerPixel;
 
+            % These variables are the X and Y axis data that allow us to
+            % plot the image in units of mm rather pixels.
             xD = (1:imSize(1)) * mixPix * 1E-3;
             yD = (1:imSize(2)) * mixPix * 1E-3;
+
+            xD = xD - mean(xD);
+            yD = yD - mean(yD);
 
             obj.hImLive = image(zeros(imSize), 'XData',xD, 'YData', yD, 'Parent',obj.hImAx);
 
@@ -172,7 +182,7 @@ classdef controller < zapit.gui.main.view
                 obj.hImAx.YTick = round(yD(1):1:yD(end));
                 grid(obj.hImAx,'on')
             end
-
+            obj.hImAx.YDir = 'normal';
             obj.hImAx.DataAspectRatio = [1,1,1]; % Make axis aspect ratio square
         end
 
@@ -293,6 +303,89 @@ classdef controller < zapit.gui.main.view
             obj.model.settings.calibrateScanners.beam_calib_exposure = obj.CalibExposureSpinner.Value;
         end
 
+
+        %TODO The following two from calibrate sample should be renamed and moved out when it all works
+        function down_callback(obj,sr,evt)
+            % TODO -- refactor and change name
+            % this is a callback that responds to mouse clicks during sample calibration
+
+            if strcmp(obj.hFig.SelectionType,'alt')
+                return
+            end
+            C = get (obj.hImAx, 'CurrentPoint');
+            X = C(1,1);
+            Y = C(1,2);
+
+            xl = obj.hImAx.XLim;
+            yl = obj.hImAx.YLim;
+            if X<xl(1) || X>xl(2) || Y<yl(1) || Y>yl(2)
+                return
+            end
+
+            % Paste
+            if obj.nInd == 1
+                % The boundaries of the brain in mm
+                b = obj.atlasData.whole_brain.boundaries_stereotax{1};
+
+                obj.plotOverlayHandles.brainOutline.XData = b(:,2)+X;
+                obj.plotOverlayHandles.brainOutline.YData = b(:,1)+Y;
+
+                obj.model.refPointsSample(obj.nInd,:) = [X,Y];
+                obj.nInd = obj.nInd + 1;
+                obj.plotOverlayHandles.bregma.XData=X;
+                obj.plotOverlayHandles.bregma.YData=Y;
+            elseif obj.nInd==2
+                if zapit.utils.isShiftPressed
+                    obj.nInd = 1;
+                    refPoints(:,2) = 0;
+                    obj.plotOverlayHandles.bregma.XData=nan;
+                    obj.plotOverlayHandles.bregma.YData=nan;
+                else
+                    obj.nInd = obj.nInd + 1;
+                end
+            elseif obj.nInd==3 & zapit.utils.isShiftPressed
+                obj.nInd = obj.nInd-1;
+            end
+
+
+        end
+
+
+        function line_extender(obj,~,evt)
+            % TODO -- refactor and change name
+            % this is a callback that scales and rotates the ARA outline.
+            C = get(obj.hImAx, 'CurrentPoint');
+            X = C(1,1);
+            Y = C(1,2);
+
+            xl = obj.hImAx.XLim;
+            yl = obj.hImAx.YLim;
+            if X<xl(1) || X>xl(2) || Y<yl(1) || Y>yl(2)
+                return
+            end
+        
+            % The boundaries of the brain in mm
+            b = obj.atlasData.whole_brain.boundaries_stereotax{1};
+
+            if obj.nInd==1
+                % follow mouse
+                obj.plotOverlayHandles.brainOutline.XData = b(:,2)+X;
+                obj.plotOverlayHandles.brainOutline.YData = b(:,1)+Y;
+            end
+
+            if obj.nInd==2
+                % Rotate and scale only if mouse cursor is over 1 mm from bregma
+                err = obj.model.refPointsSample(1,:)-[X,Y];
+                if sum(sqrt(err.^2))<1.5
+                    return
+                end
+                obj.model.refPointsSample(obj.nInd,:) = [X,Y];
+                newpoint = zapit.utils.coordsRotation(fliplr(b)', obj.model.refPointsStereotaxic, obj.model.refPointsSample)';
+                newpoint = fliplr(newpoint);
+                obj.plotOverlayHandles.brainOutline.XData = newpoint(:,2);
+                obj.plotOverlayHandles.brainOutline.YData = newpoint(:,1);
+            end
+        end
 
         % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

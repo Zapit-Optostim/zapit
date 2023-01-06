@@ -68,7 +68,7 @@ function start_zapit(varargin)
         if useExisting
             assignin('base','hZP',hZP);
         else
-            fprintf('Zapit seems to already be started. Quitting.\n')
+            fprintf('Zapit seems to already be started.\n')
             return
         end
 

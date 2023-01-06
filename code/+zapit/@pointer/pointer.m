@@ -32,9 +32,16 @@ classdef pointer < handle
         transform % The transform describing the relationship between scanners and camera
 
 
-        % The following relate to running the behavioral task itself
+        % The following relate to calibration of the sample
+        calibratedBrainOutline % The outline of the brain calibrated to the sample
+        refPointsStereotaxic = [0,0;0,3]  % Two reference points in stereotaxic space. By default bregma
+                                          % (first line [ML,AP] and a point 3 mm in front (second line)
+                                          % TODO -- in future this can be a setting in the GUI.
+        refPointsSample  % The two reference points in sample space. User provides these via calibrateSample
+        calibratedPoints % The stimulation locations after they have been calibrated to the sample
         coordsLibrary % TODO - I think this is where all computed waveforms are kept
-        newpoint % TODO - ??
+
+        % TODO -- what is the difference between chanSamples and waveforms?
         chanSamples %Structure describing waveforms to send the scanners for each brain area
         waveforms % The last set of waveforms sent to the DAQ by sendSamples or stopInactivation
 
@@ -43,10 +50,11 @@ classdef pointer < handle
 
 
     properties (Hidden)
-        buildFailed = true %Used during boostrap by start_zapit
+        buildFailed = true % Used during boostrap by start_zapit
         simulated = false % Tag to indicate whether it is in simulated mode
-        listeners = {}
+        listeners = {} % Cell array that holds listeners so they can be easily cleaned up in the destructor
     end % hidden properties
+
 
     properties (Hidden,SetObservable=true)
         lastAcquiredFrame % The last frame acquired by the camera

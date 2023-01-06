@@ -1,7 +1,7 @@
-function [newpoint,rotMat] = coordsRotation(template, refPoints, points)
+function [calibratedPoints,rotMat] = coordsRotation(template, refPoints, points)
     % calculate rotation and displacement in pixel coordinates
     %
-    % function [newpoint,rotMat] = coordsRotation(template, refPoints, points)
+    % function [calibratedPoints,rotMat] = coordsRotation(template, refPoints, points)
     %
     % Purpose
     % Called by zapit.pointer.getAreaCoords to map the template stimulation locations
@@ -30,8 +30,8 @@ function [newpoint,rotMat] = coordsRotation(template, refPoints, points)
     
     % Map template onto new angle, scale, and displacement
     for ii=1:size(template,3)
-        newpoint(:,:,ii) = rotMat*template(:,:,ii)*reScale;
-        newpoint(:,:,ii) = newpoint + translationVector';
+        calibratedPoints(:,:,ii) = rotMat*template(:,:,ii)*reScale;
+        calibratedPoints(:,:,ii) = calibratedPoints + translationVector';
     end
 
 end % coordsRotation
