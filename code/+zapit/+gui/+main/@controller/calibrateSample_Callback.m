@@ -7,7 +7,7 @@ function calibrateSample_Callback(obj,~,~)
 
 
     hold(obj.hImAx,'on')
-    obj.plotOverlayHandles.brainOutline = plot(nan,nan,'-','linewidth', 2, 'parent', obj.hImAx);
+    obj.plotOverlayHandles.brainOutline = plot(nan,nan,'c-','linewidth', 2, 'parent', obj.hImAx);
     obj.plotOverlayHandles.bregma = plot(nan,nan,'or','markerfacecolor','r','parent',obj.hImAx);
     hold(obj.hImAx,'off')
 
@@ -26,19 +26,6 @@ function calibrateSample_Callback(obj,~,~)
 
     obj.model.cam.startVideo
 end % calibrateSample_Callback
-
-
-
-
-
-
-function isPressed = isShiftPressed
-    mod = get(gcbo,'currentModifier');
-    isPressed = false;
-    if length(mod)==1
-        isPressed = strcmp(mod{1},'shift');
-    end
-end
 
 
 

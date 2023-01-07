@@ -341,14 +341,28 @@ classdef controller < zapit.gui.main.view
                     obj.plotOverlayHandles.bregma.XData=nan;
                     obj.plotOverlayHandles.bregma.YData=nan;
                 else
-                    obj.nInd = obj.nInd + 1;
-                end
-            elseif obj.nInd==3 & zapit.utils.isShiftPressed
-                obj.nInd = obj.nInd-1;
-            end
+                   response = questdlg('Are you happy with the calibration?', ...
+                            'All good?','Yes?','No','No');
+                    if isempty(response) || strcmp(response,'No')
+                        obj.hFig.WindowButtonDownFcn = [];
+                        obj.hFig.WindowButtonMotionFcn = [];
+                        delete(obj.plotOverlayHandles.brainOutline)
+                        delete(obj.plotOverlayHandles.bregma)
+                        obj.model.refPointsSample(:) = 0;
+
+                        return
+                    else
+                        obj.hFig.WindowButtonDownFcn = [];
+                        obj.hFig.WindowButtonMotionFcn = [];
+                        delete(obj.plotOverlayHandles.brainOutline)
+                        delete(obj.plotOverlayHandles.bregma)
+                        return
+                    end %if response
+                end %if isShiftPressed
+            end %if nInd
 
 
-        end
+        end %
 
 
         function line_extender(obj,~,evt)
