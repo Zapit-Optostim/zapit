@@ -54,6 +54,10 @@ classdef controller < zapit.gui.main.view
             % Call the class destructor when figure is closed. This ensures all
             % the hardware tasks are stopped.
             obj.hFig.CloseRequestFcn = @obj.delete;
+
+            % Attempt to report when figure is open
+            %getframe(obj.hImAx)
+            %fprintf('DONE\n')
         end %close constructor
 
 
@@ -130,7 +134,7 @@ classdef controller < zapit.gui.main.view
             obj.LoadStimConfigButton.ButtonPushedFcn = @(~,~) obj.loadStimConfig_Callback;
             obj.ZapSiteButton.ButtonPushedFcn = @(~,~) obj.zapSite_Callback;
             obj.CalibrateSampleButton.ButtonPushedFcn = @(~,~) obj.calibrateSample_Callback;
-            obj.LoadRecentDropDown.ClickedFcn = @(~,~) obj.loadRecentConfig_Callback;
+            %% TODO -- is this R2022b? obj.LoadRecentDropDown.ClickedFcn = @(~,~) obj.loadRecentConfig_Callback;
             % Set GUI state based on calibration state
             obj.scannersCalibrateCallback
             obj.sampleCalibrateCallback
@@ -304,9 +308,9 @@ classdef controller < zapit.gui.main.view
         end
 
 
-        %TODO The following two from calibrate sample should be renamed and moved out when it all works
-        function down_callback(obj,sr,evt)
-            % TODO -- refactor and change name
+        %TODO The following two from calibrate sample should be moved out when it all works
+        function calibrateSampleClick_Callback(obj,sr,evt)
+            % TODO -- move out to own file
             % this is a callback that responds to mouse clicks during sample calibration
 
             if strcmp(obj.hFig.SelectionType,'alt')
@@ -341,23 +345,7 @@ classdef controller < zapit.gui.main.view
                     obj.plotOverlayHandles.bregma.XData=nan;
                     obj.plotOverlayHandles.bregma.YData=nan;
                 else
-                   response = questdlg('Are you happy with the calibration?', ...
-                            'All good?','Yes?','No','No');
-                    if isempty(response) || strcmp(response,'No')
-                        obj.hFig.WindowButtonDownFcn = [];
-                        obj.hFig.WindowButtonMotionFcn = [];
-                        delete(obj.plotOverlayHandles.brainOutline)
-                        delete(obj.plotOverlayHandles.bregma)
-                        obj.model.refPointsSample(:) = 0;
-
-                        return
-                    else
-                        obj.hFig.WindowButtonDownFcn = [];
-                        obj.hFig.WindowButtonMotionFcn = [];
-                        delete(obj.plotOverlayHandles.brainOutline)
-                        delete(obj.plotOverlayHandles.bregma)
-                        return
-                    end %if response
+                    obj.nInd = obj.nInd + 1;
                 end %if isShiftPressed
             end %if nInd
 
@@ -365,8 +353,8 @@ classdef controller < zapit.gui.main.view
         end %
 
 
-        function line_extender(obj,~,evt)
-            % TODO -- refactor and change name
+        function calibrateSampleRescaleOutline_Callback(obj,~,evt)
+            % TODO -- move out to own file
             % this is a callback that scales and rotates the ARA outline.
             C = get(obj.hImAx, 'CurrentPoint');
             X = C(1,1);
