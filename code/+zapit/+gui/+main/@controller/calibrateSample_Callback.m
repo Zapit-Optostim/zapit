@@ -11,7 +11,7 @@ function calibrateSample_Callback(obj,~,~)
     obj.plotOverlayHandles.bregma = plot(nan,nan,'or','markerfacecolor','r','parent',obj.hImAx);
     hold(obj.hImAx,'off')
 
-
+    obj.removeOverlays('brainOutlineCalibrated');
     obj.model.refPointsSample = zeros(2); % wipe any previous data
 
     obj.nInd = 1;
@@ -47,6 +47,7 @@ function calibrateSample_Callback(obj,~,~)
                  obj.model.refPointsStereotaxic, ...
                  obj.model.refPointsSample)';
 
+        obj.model.calibratedBrainOutline = calib;
         hold(obj.hImAx,'on')
 
         obj.plotOverlayHandles.brainOutlineCalibrated = ...

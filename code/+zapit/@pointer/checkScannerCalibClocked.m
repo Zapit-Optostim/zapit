@@ -5,30 +5,30 @@ function checkScannerCalibClocked(obj)
     %
     % Does no plotting. This method is called by checkScannerCalib_Callback
     % in zapit.gui.main.controller
-    actualPixelCoords = obj.returnScannerCalibTargetCoords;
+    actualCoords = obj.returnScannerCalibTargetCoords;
 
     % TODO -- should not have duplicates!
     % TODO - the power and exposure settings need to be set here. Currently
     % they are set in checkScannerCalib_Callback of the controller
 
-    actualPixelCoords(:,3:4)=2; % LASER POWER HERE TODO
+    actualCoords(:,3:4)=2; % LASER POWER HERE TODO
 
     %Replace first two columns with voltage values
-    [xVolt,yVolt] = obj.pixelToVolt(actualPixelCoords(:,1),...
-                     actualPixelCoords(:,2));
+    [xVolt,yVolt] = obj.mmToVolt(actualCoords(:,1),...
+                     actualCoords(:,2));
 
-    actualPixelCoords(:,1) = xVolt;
-    actualPixelCoords(:,2) = yVolt;
+    actualCoords(:,1) = xVolt;
+    actualCoords(:,2) = yVolt;
 
     % NOTE: changing the number of samples per second will speed up presentation of the spots.
     % At 1000 you will by eye see a grid of points. On the screen, though, this is not visible.
     % Would have to average many frames to see this.
 
-    obj.DAQ.connectClockedAO('numSamplesPerChannel',size(actualPixelCoords,1), ...
+    obj.DAQ.connectClockedAO('numSamplesPerChannel',size(actualCoords,1), ...
                             'samplesPerSecond',10, ...
                             'taskName','scannercalib')
 
-    obj.DAQ.hAO.writeAnalogData(actualPixelCoords)
+    obj.DAQ.hAO.writeAnalogData(actualCoords)
 
     obj.DAQ.start;
 

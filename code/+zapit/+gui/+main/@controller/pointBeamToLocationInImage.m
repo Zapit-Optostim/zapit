@@ -5,7 +5,7 @@ function pointBeamToLocationInImage(obj,~,~)
     % 
     % Purpose
     % This callback function obtains the mouse position in the
-    % image and uses this to point the scanners to this location.
+    % image and uses this to point the scanners to this location.s
     %
     % Maja Skretowska - SWC 2021
     
@@ -16,16 +16,16 @@ function pointBeamToLocationInImage(obj,~,~)
     yPos = pos(1,2);
     
     % convert to voltage values to send to scanners
-    [xVolts, yVolts] = obj.model.pixelToVolt(xPos, yPos);
+    [xVolts, yVolts] = obj.model.mmToVolt(xPos, yPos);
     
-    obj.hLastPoint.XData = xPos;
-    obj.hLastPoint.YData = yPos;
+    obj.plotOverlayHandles.hLastPoint.XData = xPos;
+    obj.plotOverlayHandles.hLastPoint.YData = yPos;
 
     obj.model.DAQ.moveBeamXY([xVolts, yVolts]); % send beam to this location
 
 
     % Update figure title    
-    showPosInTitle = false;
+    showPosInTitle = true;
 
     if showPosInTitle
         msg = sprintf('X=%0.2f (%0.1f V) Y=%0.2f (%0.1f V)',...

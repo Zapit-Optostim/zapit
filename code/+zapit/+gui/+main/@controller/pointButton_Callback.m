@@ -15,17 +15,13 @@ function pointButton_Callback(obj,~,~)
             obj.catAndMouseButton_Callback;
         end
 
-        % Initially no last clicked position should be visible
-        obj.hLastPoint.XData = nan;
-        obj.hLastPoint.YData = nan;
-
         % Pointer is a hand
         obj.hFig.Pointer = 'hand';
+        obj.addLastPointLocationMarker
 
         % Turn on laser
         obj.setCalibLaserSwitch('On');
         obj.hImLive.ButtonDownFcn = @obj.pointBeamToLocationInImage;
-        obj.hLastPoint.Visible = 'on';
 
     elseif obj.PointModeButton.Value == 0
         % Leaving point mode
@@ -37,7 +33,7 @@ function pointButton_Callback(obj,~,~)
         obj.setCalibLaserSwitch('Off');
 
         obj.hImLive.ButtonDownFcn = [];
-        obj.hLastPoint.Visible = 'off';
+        obj.removeOverlays('hLastPoint')
     end
 
 end

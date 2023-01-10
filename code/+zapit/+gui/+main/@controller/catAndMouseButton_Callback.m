@@ -5,7 +5,7 @@ function catAndMouseButton_Callback(obj,~,~)
     if obj.CatMouseButton.Value == 0
         obj.hFig.WindowButtonMotionFcn = [];
         obj.setCalibLaserSwitch('Off');
-
+        obj.removeOverlays('hLastPoint')
         % Pointer is back to an arrow
         obj.hFig.Pointer = 'arrow';
     end
@@ -25,6 +25,7 @@ function catAndMouseButton_Callback(obj,~,~)
 
         obj.hFig.Pointer = 'hand';
         obj.setCalibLaserSwitch('On');
+        obj.addLastPointLocationMarker % adds hLastPoint
         obj.hFig.WindowButtonMotionFcn = @mouseMove;
     end
 
@@ -32,8 +33,8 @@ function catAndMouseButton_Callback(obj,~,~)
 
     function mouseMove (~, ~)
         C = get (obj.hImAx, 'CurrentPoint');
-        X = round(C(1,1));
-        Y = round(C(1,2));
+        X = C(1,1);
+        Y = C(1,2);
 
 
         % Do not go go to locations outside of the axes
@@ -42,11 +43,11 @@ function catAndMouseButton_Callback(obj,~,~)
             return
         end
 
-        [xVolts, yVolts] = obj.model.pixelToVolt(X,Y);
+        [xVolts, yVolts] = obj.model.mmToVolt(X,Y);
 
         % Update the last clicked position
-        obj.hLastPoint.XData = X;
-        obj.hLastPoint.YData = Y;
+        obj.plotOverlayHandles.hLastPoint.XData = X;
+        obj.plotOverlayHandles.hLastPoint.YData = Y;
         obj.model.DAQ.moveBeamXY([xVolts, yVolts]);
     end
 end

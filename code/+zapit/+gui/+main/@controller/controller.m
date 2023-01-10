@@ -141,6 +141,16 @@ classdef controller < zapit.gui.main.view
         end
 
 
+
+        function addLastPointLocationMarker(obj)
+            % Add marker showing last point location
+            hold(obj.hImAx,'on')
+            obj.plotOverlayHandles.hLastPoint = plot(nan, nan,'or','MarkerSize',10, ...
+                'LineWidth', 2, 'Parent',obj.hImAx);
+            hold(obj.hImAx,'off')
+        end
+
+
         function refreshImage(obj)
             % Add an image to empty axes or re-plot an image with new XData and YData
             %

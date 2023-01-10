@@ -18,8 +18,8 @@ function varargout = runAffineTransform(obj, targetBeamLocation, actualBeamLocat
 
     if nargin<3 || isempty(targetBeamLocation) || isempty(actualBeamLocation)
         if ~isempty(obj.calibrateScannersPosData)
-            targetBeamLocation = cat(1,obj.calibrateScannersPosData(:).targetPixelCoords);
-            actualBeamLocation = cat(1,obj.calibrateScannersPosData(:).actualPixelCoords);
+            targetBeamLocation = cat(1,obj.calibrateScannersPosData(:).targetCoords);
+            actualBeamLocation = cat(1,obj.calibrateScannersPosData(:).actualCoords);
         else
             return
         end

@@ -180,16 +180,16 @@ classdef pointer < handle
         end % zeroScanners
 
 
-        function actualPixelCoords = returnScannerCalibTargetCoords(obj)
+        function actualCoords = returnScannerCalibTargetCoords(obj)
             % Return the coordinates the beam is supposed to have gone to during
             % calibration. These are the coordinates for which we also got a location
             % for where the beam actually went
 
             if isempty(obj.calibrateScannersPosData)
-                actualPixelCoords = [];
+                actualCoords = [];
             end
 
-            actualPixelCoords = cat(1,obj.calibrateScannersPosData(:).actualPixelCoords);
+            actualCoords = cat(1,obj.calibrateScannersPosData(:).actualCoords);
         end
 
 

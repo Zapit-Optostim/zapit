@@ -80,31 +80,21 @@ function varargout = getLaserPosAccuracy(obj, XYdata, backgroundImage, verbose)
 
     %% report to screen or return as a structure
     if nargout==0
-
         fprintf('Laser at x = %d y = %d\n', round(BWc.Centroid))
-        fprintf('User point at x = %d y = %d\n', ...
-            round(obj.hLastPoint.XData), round(obj.hLastPoint.YData))
-        
+        fprintf('User point at x = %d y = %d\n', round(XYData))
         fprintf('Error: x = %0.2f um  y = %0.1f um\n', ...
-            abs(obj.hLastPoint.XData-BWc.Centroid(1)) * obj.settings.camera.micronsPerPixel, ...
-            abs(obj.hLastPoint.YData-BWc.Centroid(2)) * obj.settings.camera.micronsPerPixel)
+            abs(XYData-BWc.Centroid) * obj.settings.camera.micronsPerPixel)
 
     elseif nargout>0
-
-        if nargin<2
-            out.targetPixelCoords = [obj.hLastPoint.XData, obj.hLastPoint.YData];
-        else
-            out.targetPixelCoords = XYdata; %ONLY APPEARS HERE NOT ABOVE (TODO)
-                                            %IF XYdata REALLY IS NOT NEEDED WE SHOULD REMOVE IT
-                                            % TEST IF REMOVING IT FROM calibrateScanners MAKES A DIFFERENCE -- TODO
-        end
-
         % Return
-        out.actualPixelCoords = BWc.Centroid;
-        out.error = out.targetPixelCoords-out.actualPixelCoords;
-        out.absErrorMicrons = abs(out.error) * obj.settings.camera.micronsPerPixel;
-        varargout{1} = out;
+        out.targetCoords = XYdata;
+        out.actualCoords = BWc.Centroid;
+        out.actualCoords = (out.actualCoords - obj.imSize/2) * ...
+                    obj.settings.camera.micronsPerPixel * 1E-3;
 
+        out.error = out.targetCoords-out.actualCoords;
+        out.absErrorMicrons = abs(out.error) * 1e3;
+        varargout{1} = out;
     end
-    
+
 end % getLaserPosAccuracy

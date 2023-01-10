@@ -1,7 +1,6 @@
 function calibrateScanners_Callback(obj,~,~)
 
     % Prep figure window
-    obj.hLastPoint.Visible = 'off';
     obj.PointModeButton.Value = 0;
     hold(obj.hImAx,'on')
 
@@ -45,13 +44,13 @@ function calibrateScanners_Callback(obj,~,~)
     end
 
     function myUpdatePlot(~,~)
-        actualPixelCoords = cat(1,obj.model.calibrateScannersPosData(:).actualPixelCoords);
+        actualCoords = cat(1,obj.model.calibrateScannersPosData(:).actualCoords);
 
-        obj.plotOverlayHandles.(mfilename).hPall.XData = actualPixelCoords(:,1);
-        obj.plotOverlayHandles.(mfilename).hPall.YData = actualPixelCoords(:,2);
+        obj.plotOverlayHandles.(mfilename).hPall.XData = actualCoords(:,1);
+        obj.plotOverlayHandles.(mfilename).hPall.YData = actualCoords(:,2);
 
-        obj.plotOverlayHandles.(mfilename).hPcurrent.XData = actualPixelCoords(end,1);
-        obj.plotOverlayHandles.(mfilename).hPcurrent.YData = actualPixelCoords(end,2);
+        obj.plotOverlayHandles.(mfilename).hPcurrent.XData = actualCoords(end,1);
+        obj.plotOverlayHandles.(mfilename).hPcurrent.YData = actualCoords(end,2);
     end
 
 end % calibrateScanners_Callback
