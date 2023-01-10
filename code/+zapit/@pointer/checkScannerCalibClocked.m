@@ -14,8 +14,7 @@ function checkScannerCalibClocked(obj)
     actualCoords(:,3:4)=2; % LASER POWER HERE TODO
 
     %Replace first two columns with voltage values
-    [xVolt,yVolt] = obj.mmToVolt(actualCoords(:,1),...
-                     actualCoords(:,2));
+    [xVolt,yVolt] = obj.mmToVolt(actualCoords(:,1), actualCoords(:,2));
 
     actualCoords(:,1) = xVolt;
     actualCoords(:,2) = yVolt;
