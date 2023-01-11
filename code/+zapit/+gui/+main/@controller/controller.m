@@ -13,7 +13,7 @@ classdef controller < zapit.gui.main.view
 
         model % The ZP model object goes here
         atlasData % Brain atlas data for overlaying brain areas, etc
-        recentLoadedConfigsMenu % Contains the menu vector for recently loaded configs
+        recentLoadedConfigsMenu = {} % Contains the menu vector for recently loaded configs
         listeners = {}; % All go in this cell array
     end
 

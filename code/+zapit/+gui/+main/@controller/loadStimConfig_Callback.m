@@ -22,5 +22,11 @@ function loadStimConfig_Callback(obj,~,~)
     fprintf('Loading %s\n', pathToConfig)
     obj.model.stimConfig = zapit.stimConfig(pathToConfig);
     obj.addStimConfigToRecents(pointsFile,fpath); % Add to the list of recently loaded files
+
+
+    % Update text indicating which config file has been loaded
+    [~,fname,ext] = fileparts(obj.model.stimConfig.configFileName);
+
+    obj.ConfigLoadedTextLabel.Text = ['Config Loaded: ',fname,ext];
     obj.model.cam.startVideo;
 end

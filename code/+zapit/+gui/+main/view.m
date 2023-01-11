@@ -43,7 +43,7 @@ classdef view < matlab.apps.AppBase
         CalibrateSampleTab            matlab.ui.container.Tab
         PaintareaButton               matlab.ui.control.StateButton
         ZapSiteButton                 matlab.ui.control.StateButton
-        ConfigLoadedNONELabel         matlab.ui.control.Label
+        ConfigLoadedTextLabel         matlab.ui.control.Label
         ShowstimcoordsButton          matlab.ui.control.StateButton
         PaintbrainborderButton        matlab.ui.control.StateButton
         CalibrateSampleButton         matlab.ui.control.Button
@@ -263,10 +263,10 @@ classdef view < matlab.apps.AppBase
             app.ShowstimcoordsButton.Text = 'Show stim coords';
             app.ShowstimcoordsButton.Position = [151 88 112 22];
 
-            % Create ConfigLoadedNONELabel
-            app.ConfigLoadedNONELabel = uilabel(app.CalibrateSampleTab);
-            app.ConfigLoadedNONELabel.Position = [17 5 396 22];
-            app.ConfigLoadedNONELabel.Text = 'Config Loaded: NONE';
+            % Create ConfigLoadedTextLabel
+            app.ConfigLoadedTextLabel = uilabel(app.CalibrateSampleTab);
+            app.ConfigLoadedTextLabel.Position = [17 5 396 22];
+            app.ConfigLoadedTextLabel.Text = 'Config Loaded: NONE';
 
             % Create ZapSiteButton
             app.ZapSiteButton = uibutton(app.CalibrateSampleTab, 'state');
