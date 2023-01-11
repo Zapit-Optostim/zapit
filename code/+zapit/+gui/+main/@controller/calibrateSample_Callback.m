@@ -32,15 +32,15 @@ function calibrateSample_Callback(obj,~,~)
 
 
     if isempty(response) || strcmp(response,'No')
-        delete(obj.plotOverlayHandles.brainOutline)
-        delete(obj.plotOverlayHandles.bregma)
+        obj.removeOverlays('brainOutline')
+        obj.removeOverlays('bregma')
         obj.model.refPointsSample(:) = 0;
         obj.hFig.WindowButtonDownFcn = [];
         obj.hFig.WindowButtonMotionFcn = [];
         obj.model.sampleCalibrated = false;
     else
-        delete(obj.plotOverlayHandles.brainOutline)
-        delete(obj.plotOverlayHandles.bregma)
+        obj.removeOverlays('brainOutline')
+        obj.removeOverlays('bregma')
         obj.hFig.WindowButtonDownFcn = [];
         obj.hFig.WindowButtonMotionFcn = [];
         obj.model.sampleCalibrated = true;
