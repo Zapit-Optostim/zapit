@@ -2,6 +2,7 @@ function calibrateScanners_Callback(obj,~,~)
 
     % Prep figure window
     obj.PointModeButton.Value = 0;
+    obj.removeOverlays % removes all overlays
     hold(obj.hImAx,'on')
 
     obj.plotOverlayHandles.(mfilename).hPcurrent = ...

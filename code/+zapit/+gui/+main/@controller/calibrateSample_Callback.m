@@ -4,7 +4,9 @@ function calibrateSample_Callback(obj,~,~)
     % Ask the user to identify reference point on skull surface. Typically this will be
     % bregma plus one more  point. The results are returned as two columns: first x then y coords
     obj.model.cam.stopVideo
-
+    obj.model.sampleCalibrated = false;
+    obj.model.refPointsSample(:) = 0;
+    obj.model.calibratedBrainOutline = [];
 
     hold(obj.hImAx,'on')
     obj.plotOverlayHandles.brainOutline = plot(nan,nan,'c-','linewidth', 2, 'parent', obj.hImAx);
@@ -28,18 +30,22 @@ function calibrateSample_Callback(obj,~,~)
     response = questdlg('Are you happy with the calibration?', ...
                         'All good?','Yes?','No','No');
 
+
     if isempty(response) || strcmp(response,'No')
         delete(obj.plotOverlayHandles.brainOutline)
         delete(obj.plotOverlayHandles.bregma)
         obj.model.refPointsSample(:) = 0;
         obj.hFig.WindowButtonDownFcn = [];
         obj.hFig.WindowButtonMotionFcn = [];
+        obj.model.sampleCalibrated = false;
     else
         delete(obj.plotOverlayHandles.brainOutline)
         delete(obj.plotOverlayHandles.bregma)
         obj.hFig.WindowButtonDownFcn = [];
         obj.hFig.WindowButtonMotionFcn = [];
+        obj.model.sampleCalibrated = true;
     end
+
 
     if sum(obj.model.refPointsSample(:))>0
         b = obj.atlasData.whole_brain.boundaries_stereotax{1};
