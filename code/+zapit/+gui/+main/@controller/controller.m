@@ -180,10 +180,6 @@ classdef controller < zapit.gui.main.view
             obj.hImAx.XLim = [xD(1), xD(end)];
             obj.hImAx.YLim = [yD(1), yD(end)];
 
-            pan(obj.hImAx,'off')
-            zoom(obj.hImAx,'off')
-
-
             % TODO -- for now we leave the axes on as they help for debugging
             hideAxes = false;
 
@@ -197,6 +193,11 @@ classdef controller < zapit.gui.main.view
             end
             obj.hImAx.YDir = 'normal';
             obj.hImAx.DataAspectRatio = [1,1,1]; % Make axis aspect ratio square
+
+            pan(obj.hImAx,'off')
+            zoom(obj.hImAx,'off')
+            axis(obj.hImAx,'equal')
+            axis(obj.hImAx,'tight')
         end
 
 
@@ -222,7 +223,7 @@ classdef controller < zapit.gui.main.view
             % future might do more stuff. 
 
             obj.model.cam.resetROI;
-
+            obj.refreshImage;
         end % resetROI_Callback
 
 
