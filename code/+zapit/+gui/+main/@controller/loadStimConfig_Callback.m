@@ -43,7 +43,11 @@ function loadStimConfig_Callback(obj,src,~)
     % Update text indicating which config file has been loaded
     [~,fname,ext] = fileparts(obj.model.stimConfig.configFileName);
 
-    obj.ConfigLoadedTextLabel.Text = ['Config Loaded: ',fname,ext];
+    obj.ConfigLoadedTextLabel.Text = ['Config Loaded: ', fname,ext];
+
+    % Update the drop-down that allows us to present the stimuli
+    obj.updateTestSiteDropdown;
+
     obj.model.cam.startVideo;
 
-end
+end % loadStimConfig_Callback

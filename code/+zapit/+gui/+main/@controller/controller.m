@@ -136,6 +136,9 @@ classdef controller < zapit.gui.main.view
             obj.ShowstimcoordsButton.ValueChangedFcn = @(~,~) obj.showStimulusCoords_Callback;
             obj.CycleBeamOverCoordsButton.ValueChangedFcn = @(~,~) obj.cycleBeamOverCoords_Callback;
             obj.ZapSiteButton.ValueChangedFcn = @(~,~) obj.zapSite_Callback;
+
+            % TODO-- disable until we get this working
+            obj.PaintareaButton.Enable = 'off';
             %obj.PaintareaButton.ValueChangedFcn = @(~,~) obj.paintArea_Callback;
             obj.PaintbrainborderButton.ValueChangedFcn = @(~,~) obj.paintBrainBorder_Callback;
 

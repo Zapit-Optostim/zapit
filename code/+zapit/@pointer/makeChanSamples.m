@@ -15,7 +15,7 @@ function obj = makeChanSamples(obj, laserPowerInMW, plotFigure)
 
 
     
-    if nargin<4
+    if nargin<3
         plotFigure = false;
     end
     
@@ -32,15 +32,16 @@ function obj = makeChanSamples(obj, laserPowerInMW, plotFigure)
     
     % make up samples for scanner channels
     % (coordsLibrary is already in a volt format)
-    scanChnl = zeros(obj.numSamplesPerChannel,2,size(obj.coordsLibrary,2)); % matrix for each channel
+    coordsLibrary = obj.coordsLibrary;
+    scanChnl = zeros(obj.numSamplesPerChannel,2,size(coordsLibrary,2)); % matrix for each channel
     %             lghtChnl = zeros(obj.numSamplesPerChannel,2,2);                         % 1st dim is samples, 2nd dim is channel, 3rd dim is conditions
     
     %% make up scanner volts to switch between two areas
-    for inactSite = 1:size(obj.coordsLibrary, 1)    % CHECK if it really is the first dim
+    for inactSite = 1:size(coordsLibrary, 1)    % CHECK if it really is the first dim
         
         % inactSite gets column from the coordinates library
-        xVolts = obj.coordsLibrary(inactSite,1,:);
-        yVolts = obj.coordsLibrary(inactSite,2,:);
+        xVolts = coordsLibrary(inactSite,1,:);
+        yVolts = coordsLibrary(inactSite,2,:);
         for cycleNum = 1:(length(edgeSamples)-1)
             segStart = edgeSamples(cycleNum);
             segStop = edgeSamples(cycleNum+1);
@@ -52,7 +53,7 @@ function obj = makeChanSamples(obj, laserPowerInMW, plotFigure)
     end
     
     %% make up samples for laser and masking light channels    
-    anlgOut = ones(1,obj.numSamplesPerChannel) * obh.laser_mW_to_control(laserPowerInMW); %Write the correct control voltage
+    anlgOut = ones(1,obj.numSamplesPerChannel) * obj.laser_mW_to_control(laserPowerInMW); %Write the correct control voltage
     digitalAmplitude = 4;
     digOut = ones(1,obj.numSamplesPerChannel) * digitalAmplitude;
 

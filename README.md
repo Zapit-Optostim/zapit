@@ -122,6 +122,7 @@ You can now click on the image and the beam should go to that location.
 ### Calibrate to mouse skull
 Now you can tell the system where is Bregma and another reference location.
 This method call populates the `chanSamples` property.
+% TODO -- this no longer works <<---- [11/01/23]
 ```
 P.calibrateSample
 ```

@@ -285,8 +285,8 @@ classdef pointer < handle
             calibratedPoints = obj.calibratedPoints;
 
             % Certainly this is a non-idiomatic way of doing this
-            [xVolt, yVolt] = mmToVolt(calibratedPoints(1,:,1), calibratedPoints(2,:,1)); % calibratedPoints should have an n-by-2 dimension
-            [xVolt2, yVolt2] = mmToVolt(obj, calibratedPoints(1,:,2), calibratedPoints(2,:,2));
+            [xVolt, yVolt] = obj.mmToVolt(calibratedPoints(1,:,1), calibratedPoints(2,:,1)); % calibratedPoints should have an n-by-2 dimension
+            [xVolt2, yVolt2] = obj.mmToVolt(calibratedPoints(1,:,2), calibratedPoints(2,:,2));
 
             cLibrary = [xVolt' yVolt'];
             cLibrary(:,:,2) = [xVolt2' yVolt2'];
