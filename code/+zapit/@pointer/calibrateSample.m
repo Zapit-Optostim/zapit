@@ -15,6 +15,7 @@ function varargout = calibrateSample(obj)
     % Rob Campbell - SWC 2023
     % Based on orginal code by Maja Skretowska (2021)
 
+    % TODO--looks like we will be removing this method?
 
     % Calculate the rotation and displacement in pixel coordinates
     % TODO -- This is actually performing a transform of the stim points,
@@ -24,6 +25,7 @@ function varargout = calibrateSample(obj)
     
     % TODO -- this needs to be an extra button in the GUI.
     % ask if you're using the option of an opaque area as additional control for inactivation
+    disp('TODO -- NEED TO SET UP OPAQUE POINT [calibrateSample]')
     if 0
         opaqueArea = input('Are you using an additional opaque area as control?\n[1 or 0] ');
         if opaqueArea

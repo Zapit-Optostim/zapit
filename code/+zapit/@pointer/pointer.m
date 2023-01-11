@@ -38,8 +38,6 @@ classdef pointer < handle
                                           % (first line [ML,AP] and a point 3 mm in front (second line)
                                           % TODO -- in future this can be a setting in the GUI.
         refPointsSample  % The two reference points in sample space. User provides these via calibrateSample
-        calibratedPoints % The stimulation locations after they have been calibrated to the sample
-        coordsLibrary % TODO - I think this is where all computed waveforms are kept
 
         % TODO -- what is the difference between chanSamples and waveforms?
         chanSamples %Structure describing waveforms to send the scanners for each brain area
@@ -253,6 +251,50 @@ classdef pointer < handle
             end
         end % returnCurrentFrame
 
+        % The calibratedPoints and coordsLibrary methods were previously properties.
+        % Now they calculate the same information on the fly.
+        % TODO -- there might be a better way of doing this, such as integrating this into the
+        %        stimConfig class. But right now we leave like this to get everything working.
+        %        then we will tidy later when it's clearer what makes sense.
+        function cPoints = calibratedPoints(obj)
+            % The stimulation locations after they have been calibrated to the sample
+            cPoints = [];
+            if isempty(obj.stimConfig)
+                return
+            end
+            % TODO -- this is clearly not ideal
+            cPoints(:,:,1) = zapit.utils.coordsRotation(...
+                            obj.stimConfig.template(:,:,1), ...
+                            obj.stimConfig.refPoints, ...
+                            obj.refPointsSample);
+            cPoints(:,:,2) = zapit.utils.coordsRotation(...
+                            obj.stimConfig.template(:,:,2), ...
+                            obj.stimConfig.refPoints, ...
+                            obj.refPointsSample);
+
+        end
+
+
+        function cLibrary = coordsLibrary(obj)
+            % TODO - I think this is where all computed waveforms are kept
+            cLibrary = [];
+            if isempty(obj.stimConfig)
+                return
+            end
+
+            calibratedPoints = obj.calibratedPoints;
+
+            % Certainly this is a non-idiomatic way of doing this
+            [xVolt, yVolt] = mmToVolt(calibratedPoints(1,:,1), calibratedPoints(2,:,1)); % calibratedPoints should have an n-by-2 dimension
+            [xVolt2, yVolt2] = mmToVolt(obj, calibratedPoints(1,:,2), calibratedPoints(2,:,2));
+
+            cLibrary = [xVolt' yVolt'];
+            cLibrary(:,:,2) = [xVolt2' yVolt2'];
+
+            % TODO:??
+            % should now run makeChanSamples and should also run this again if laser power changes.
+
+        end
 
     end % methods
 

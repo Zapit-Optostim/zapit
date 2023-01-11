@@ -7,6 +7,9 @@ function drawBrainOutlineOnSample(obj)
 
     coords = obj.calibratedBrainOutline;
 
+    % First place beam in the centre of the area we want to stimulate
+    obj.DAQ.moveBeamXY(mean(coords));
+
     % TODO -- should not have duplicates!
     % TODO - the power and exposure settings need to be set here. Currently
     % they are set in checkScannerCalib_Callback of the controller

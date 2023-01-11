@@ -5,13 +5,22 @@ function tabChange_Callback(obj,src,~)
 
     switch currentTab
     case 'Calibrate Scanners'
-        if isfield(obj.plotOverlayHandles,'brainOutlineCalibrated')
-            obj.plotOverlayHandles.brainOutlineCalibrated.Visible='off';
-        end
+        toggleOverlay('brainOutlineCalibrated','off');
+        toggleOverlay('stimConfigLocations','off');
     case 'Calibrate Sample'
-        if isfield(obj.plotOverlayHandles,'brainOutlineCalibrated')
-            obj.plotOverlayHandles.brainOutlineCalibrated.Visible='on';
-        end
+        toggleOverlay('brainOutlineCalibrated','on');
+        toggleOverlay('stimConfigLocations','on');
         obj.removeOverlays('hLastPoint')
     end
+
+
+    function toggleOverlay(overlayName,state)
+        if isfield(obj.plotOverlayHandles, overlayName)
+            obj.plotOverlayHandles.(overlayName).Visible = state;
+        end
+    end
+
 end
+
+
+
