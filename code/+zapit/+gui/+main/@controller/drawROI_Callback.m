@@ -36,8 +36,20 @@ function drawROI_Callback(obj,~,~)
 
     % Get the ROI position and convert back to pixels
     rect_pos = roi.Position / mixPix;
+
+    % Then subtract the offset
+    xl = xl / mixPix;
+    xl = xl - min(xl) + 1;
+
+    yl = yl / mixPix;
+    yl = yl - min(yl) + 1;
+
+    rect_pos(1) = rect_pos(1) + xl(2)/2;
+    rect_pos(2) = rect_pos(2) + yl(2)/2;
+
     delete(L)
     delete(roi)
+
 
 
     %  We have obtained this in local image coords so if user is drawing a ROI on a zoomed-in image we need to 
@@ -45,6 +57,8 @@ function drawROI_Callback(obj,~,~)
     originalROI = obj.model.cam.ROI;
     originalROI(3:4) = 0;
     newROI = originalROI + rect_pos;
+
+
     obj.model.cam.ROI = round(newROI);
 
     obj.refreshImage % Re-draw everything so axes display the correct units in mm
