@@ -13,6 +13,7 @@ classdef controller < zapit.gui.main.view
 
         model % The ZP model object goes here
         atlasData % Brain atlas data for overlaying brain areas, etc
+        recentLoadedConfigsMenu % Contains the menu vector for recently loaded configs
         listeners = {}; % All go in this cell array
     end
 
@@ -112,7 +113,7 @@ classdef controller < zapit.gui.main.view
             obj.SizeThreshSpinner.Value = obj.model.settings.calibrateScanners.areaThreshold;
             obj.CalibExposureSpinner.Value = obj.model.settings.calibrateScanners.beam_calib_exposure;
 
-            obj.LoadRecentDropDown.Items={};
+
             obj.TestSiteDropDown.Items={}; % Nothing loaded yet...
 
             % Run method on mouse click
@@ -131,23 +132,21 @@ classdef controller < zapit.gui.main.view
             obj.SizeThreshSpinner.ValueChangedFcn = @(~,~) obj.sizeThreshSpinner_CallBack;
             obj.CalibExposureSpinner.ValueChangedFcn = @(~,~) obj.calibExposureSpinner_CallBack;
             obj.CycleBeamOverCoordsButton.ValueChangedFcn = @(~,~) obj.CycleBeamOverCoords_Callback;
-            obj.LoadStimConfigButton.ButtonPushedFcn = @(~,~) obj.loadStimConfig_Callback;
-            obj.ZapSiteButton.ButtonPushedFcn = @(~,~) obj.zapSite_Callback;
+
+
             obj.CalibrateSampleButton.ButtonPushedFcn = @(~,~) obj.calibrateSample_Callback;
-            %% TODO -- is this R2022b? obj.LoadRecentDropDown.ClickedFcn = @(~,~) obj.loadRecentConfig_Callback;
+            obj.ZapSiteButton.ValueChangedFcn = @(~,~) obj.zapSite_Callback;
+            %obj.PaintareaButton.ValueChangedFcn = @(~,~) obj.paintArea_Callback;
+            obj.PaintbrainborderButton.ValueChangedFcn = @(~,~) obj.paintBrainBorder_Callback;
+
+            % Menus
+            obj.NewstimconfigMenu.MenuSelectedFcn = @(~,~) obj.createNewStimConfig_Callback;
+            obj.LoadstimconfigMenu.MenuSelectedFcn = @(~,~) obj.loadStimConfig_Callback;
+
+
             % Set GUI state based on calibration state
             obj.scannersCalibrateCallback
             obj.sampleCalibrateCallback
-        end
-
-
-
-        function addLastPointLocationMarker(obj)
-            % Add marker showing last point location
-            hold(obj.hImAx,'on')
-            obj.plotOverlayHandles.hLastPoint = plot(nan, nan,'or','MarkerSize',10, ...
-                'LineWidth', 2, 'Parent',obj.hImAx);
-            hold(obj.hImAx,'off')
         end
 
 

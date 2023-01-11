@@ -3,6 +3,10 @@ classdef view < matlab.apps.AppBase
     % Properties that correspond to app components
     properties (Access = public)
         hFig                          matlab.ui.Figure
+        FileMenu                      matlab.ui.container.Menu
+        NewstimconfigMenu             matlab.ui.container.Menu
+        LoadstimconfigMenu            matlab.ui.container.Menu
+        LoadrecentMenu                matlab.ui.container.Menu
         ToolsMenu                     matlab.ui.container.Menu
         CalibratelaserMenu            matlab.ui.container.Menu
         ReloadsettingsMenu            matlab.ui.container.Menu
@@ -37,14 +41,15 @@ classdef view < matlab.apps.AppBase
         ResetROIButton                matlab.ui.control.Button
         ROIButton                     matlab.ui.control.Button
         CalibrateSampleTab            matlab.ui.container.Tab
+        PaintareaButton               matlab.ui.control.StateButton
+        ZapSiteButton                 matlab.ui.control.StateButton
+        ConfigLoadedNONELabel         matlab.ui.control.Label
+        ShowstimcoordsButton          matlab.ui.control.StateButton
+        PaintbrainborderButton        matlab.ui.control.StateButton
         CalibrateSampleButton         matlab.ui.control.Button
-        ZapSiteButton                 matlab.ui.control.Button
         TestSiteDropDown              matlab.ui.control.DropDown
         TestSiteDropDownLabel         matlab.ui.control.Label
         CycleBeamOverCoordsButton     matlab.ui.control.StateButton
-        LoadRecentDropDown            matlab.ui.control.DropDown
-        LoadRecentDropDownLabel       matlab.ui.control.Label
-        LoadStimConfigButton          matlab.ui.control.Button
         RunTab                        matlab.ui.container.Tab
         hImAx                         matlab.ui.control.UIAxes
     end
@@ -63,6 +68,23 @@ classdef view < matlab.apps.AppBase
             app.hFig.Position = [100 100 771 820];
             app.hFig.Name = 'Zapit';
             app.hFig.Resize = 'off';
+            app.hFig.Tag = 'zapit_gui';
+
+            % Create FileMenu
+            app.FileMenu = uimenu(app.hFig);
+            app.FileMenu.Text = 'File';
+
+            % Create NewstimconfigMenu
+            app.NewstimconfigMenu = uimenu(app.FileMenu);
+            app.NewstimconfigMenu.Text = 'New stim config';
+
+            % Create LoadstimconfigMenu
+            app.LoadstimconfigMenu = uimenu(app.FileMenu);
+            app.LoadstimconfigMenu.Text = 'Load stim config';
+
+            % Create LoadrecentMenu
+            app.LoadrecentMenu = uimenu(app.FileMenu);
+            app.LoadrecentMenu.Text = 'Load recent';
 
             % Create ToolsMenu
             app.ToolsMenu = uimenu(app.hFig);
@@ -211,45 +233,50 @@ classdef view < matlab.apps.AppBase
             app.CalibrateSampleTab = uitab(app.TabGroup);
             app.CalibrateSampleTab.Title = 'Calibrate Sample';
 
-            % Create LoadStimConfigButton
-            app.LoadStimConfigButton = uibutton(app.CalibrateSampleTab, 'push');
-            app.LoadStimConfigButton.Position = [17 74 87 36];
-            app.LoadStimConfigButton.Text = {'Load '; 'Stim Config'};
-
-            % Create LoadRecentDropDownLabel
-            app.LoadRecentDropDownLabel = uilabel(app.CalibrateSampleTab);
-            app.LoadRecentDropDownLabel.HorizontalAlignment = 'right';
-            app.LoadRecentDropDownLabel.Position = [10 41 74 22];
-            app.LoadRecentDropDownLabel.Text = 'Load Recent';
-
-            % Create LoadRecentDropDown
-            app.LoadRecentDropDown = uidropdown(app.CalibrateSampleTab);
-            app.LoadRecentDropDown.Position = [99 41 151 22];
-
             % Create CycleBeamOverCoordsButton
             app.CycleBeamOverCoordsButton = uibutton(app.CalibrateSampleTab, 'state');
             app.CycleBeamOverCoordsButton.Text = {'Cycle Beam'; 'Over Coords'};
-            app.CycleBeamOverCoordsButton.Position = [276 68 103 36];
+            app.CycleBeamOverCoordsButton.Position = [151 45 112 36];
 
             % Create TestSiteDropDownLabel
             app.TestSiteDropDownLabel = uilabel(app.CalibrateSampleTab);
             app.TestSiteDropDownLabel.HorizontalAlignment = 'right';
-            app.TestSiteDropDownLabel.Position = [421 81 52 22];
+            app.TestSiteDropDownLabel.Position = [291 88 52 22];
             app.TestSiteDropDownLabel.Text = 'Test Site';
 
             % Create TestSiteDropDown
             app.TestSiteDropDown = uidropdown(app.CalibrateSampleTab);
-            app.TestSiteDropDown.Position = [488 81 100 22];
-
-            % Create ZapSiteButton
-            app.ZapSiteButton = uibutton(app.CalibrateSampleTab, 'push');
-            app.ZapSiteButton.Position = [590 81 59 22];
-            app.ZapSiteButton.Text = 'Zap Site';
+            app.TestSiteDropDown.Position = [358 88 100 22];
 
             % Create CalibrateSampleButton
             app.CalibrateSampleButton = uibutton(app.CalibrateSampleTab, 'push');
-            app.CalibrateSampleButton.Position = [65 5 108 22];
+            app.CalibrateSampleButton.Position = [15 88 112 22];
             app.CalibrateSampleButton.Text = 'Calibrate Sample';
+
+            % Create PaintbrainborderButton
+            app.PaintbrainborderButton = uibutton(app.CalibrateSampleTab, 'state');
+            app.PaintbrainborderButton.Text = 'Paint brain border';
+            app.PaintbrainborderButton.Position = [15 60 112 22];
+
+            % Create ShowstimcoordsButton
+            app.ShowstimcoordsButton = uibutton(app.CalibrateSampleTab, 'state');
+            app.ShowstimcoordsButton.Text = 'Show stim coords';
+            app.ShowstimcoordsButton.Position = [151 88 112 22];
+
+            % Create ConfigLoadedNONELabel
+            app.ConfigLoadedNONELabel = uilabel(app.CalibrateSampleTab);
+            app.ConfigLoadedNONELabel.Position = [17 5 396 22];
+            app.ConfigLoadedNONELabel.Text = 'Config Loaded: NONE';
+
+            % Create ZapSiteButton
+            app.ZapSiteButton = uibutton(app.CalibrateSampleTab, 'state');
+            app.ZapSiteButton.Text = 'Zap Site';
+            app.ZapSiteButton.Position = [461 88 69 22];
+
+            % Create PaintareaButton
+            app.PaintareaButton = uibutton(app.CalibrateSampleTab, 'state');
+            app.PaintareaButton.Text = 'Paint area';
+            app.PaintareaButton.Position = [533 88 70 22];
 
             % Create RunTab
             app.RunTab = uitab(app.TabGroup);
