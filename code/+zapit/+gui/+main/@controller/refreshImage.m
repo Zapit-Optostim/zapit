@@ -43,10 +43,12 @@ function refreshImage(obj)
     obj.hImAx.DataAspectRatio = [1,1,1]; % Make axis aspect ratio square
 
 
-    obj.hImAx.XLimMode = 'manual';
-    obj.hImAx.YLimMode = 'manual';
-    pan(obj.hImAx,'off')
-    zoom(obj.hImAx,'off')
+
     axis(obj.hImAx,'equal')
     axis(obj.hImAx,'tight')
+    pan(obj.hImAx,'off')
+    zoom(obj.hImAx,'off')
+    obj.hImAx.XLimMode = 'manual';
+    obj.hImAx.YLimMode = 'manual';
+
 end
