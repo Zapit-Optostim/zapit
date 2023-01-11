@@ -15,6 +15,8 @@ function updatePreviouslyLoadedStimConfigList_Callback(obj,~,~)
         obj.recentLoadedConfigsMenu{end}.Text = obj.previouslyLoadedStimConfigs(ii).fname;
         obj.recentLoadedConfigsMenu{end}.UserData = ...
             fullfile(obj.previouslyLoadedStimConfigs(ii).pathToFname, obj.previouslyLoadedStimConfigs(ii).fname);
+
+       obj.recentLoadedConfigsMenu{end}.MenuSelectedFcn = @(src,~) obj.loadStimConfig_Callback(src);
     end
 
 end

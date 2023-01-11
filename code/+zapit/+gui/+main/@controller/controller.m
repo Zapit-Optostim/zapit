@@ -145,8 +145,7 @@ classdef controller < zapit.gui.main.view
 
             % Menus
             obj.NewstimconfigMenu.MenuSelectedFcn = @(~,~) obj.createNewStimConfig_Callback;
-            obj.LoadstimconfigMenu.MenuSelectedFcn = @(~,~) obj.loadStimConfig_Callback;
-
+            obj.LoadstimconfigMenu.MenuSelectedFcn = @(src,~) obj.loadStimConfig_Callback(src);
 
             % Set GUI state based on calibration state
             obj.scannersCalibrateCallback

@@ -9,7 +9,7 @@ function addStimConfigToRecents(obj,fname,pathToFname)
     obj.previouslyLoadedStimConfigs = [newEntry, obj.previouslyLoadedStimConfigs];
 
     % Remove duplicate entries
-    allNames = arrayfun( @(x) [x.pathToFname,x.fname], obj.previouslyLoadedStimConfigs, ...
+    allNames = arrayfun( @(x) fullfile(x.pathToFname,x.fname), obj.previouslyLoadedStimConfigs, ...
             'UniformOutput',false);
 
     [~,uniqInd] = unique(allNames);
