@@ -69,17 +69,20 @@ function highlightArea_Callback(obj,~,~)
         obj.pAPtick.Visible = 'off';
     else
         area_name = [', ',brain_areas(f).names{1}];
-        b = brain_areas(f).boundaries_stereotax;
+        bAreas = brain_areas(f).boundaries_stereotax;
 
-        if X<0 || length(b)==1
-            b = b{1};
-        else
-            b = b{2};
+        % Select the correct side or both sides depending on radio button state
+        if obj.BilateralButton.Value == 0
+            if X<0 || length(bAreas)==1
+                bAreas = bAreas(1);
+            else
+                bAreas = bAreas(2);
+            end
         end
 
-        p = patch(b(:,2), b(:,1),1, 'FaceAlpha', 0.1, ...
-                'FaceColor', 'r', 'EdgeColor', 'r', ...
-                'Parent', obj.hAx);
+        % Make the one or two patches
+        patchProps = {'FaceAlpha', 0.1, 'FaceColor', 'r', 'EdgeColor', 'r', 'Parent', obj.hAx};
+        cellfun(@(x) patch(x(:,2), x(:,1), 1, patchProps{:}), bAreas);
 
         obj.hFig.Pointer = 'arrow'; %Can change the pointer when it's in the brain if we want
         obj.pMLtick.XData = [X,X];

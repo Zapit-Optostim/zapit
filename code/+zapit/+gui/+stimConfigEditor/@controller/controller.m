@@ -11,7 +11,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
         hImLive  %The image
         plotOverlayHandles   % All plotted objects laid over the image should keep their handles here
 
-        model % The ZP model object goes here
+        parent % The parent ZP model object goes here
         atlasData % Brain atlas data for overlaying brain areas, etc
 
         % Handles of plot objects associated with the brain outline
@@ -33,7 +33,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
 
         function obj = controller(hZP)
             if nargin>0
-                obj.model = hZP;
+                obj.parent = hZP;
             end
 
             % Load the atlas data so we can do things like overlay the brain boundaries
@@ -42,9 +42,9 @@ classdef controller < zapit.gui.stimConfigEditor.view
 
 
             % Button callbacks
-            obj.NewButton.ButtonPushedFcn = @(~,~) obj.resetROI_Callback;
-            obj.LoadButton.ButtonPushedFcn = @(~,~) obj.drawROI_Callback;
-            obj.SaveButton.ButtonPushedFcn = @(~,~) obj.drawROI_Callback;
+            obj.NewButton.ButtonPushedFcn = @(~,~) obj.resetPoints_Callback;
+            obj.LoadButton.ButtonPushedFcn = @(~,~) obj.loadConfigYAML;
+            obj.SaveButton.ButtonPushedFcn = @(~,~) obj.saveConfigYAML;
 
             % Set figure properties
             obj.hFig.Color = 'w';
@@ -55,18 +55,18 @@ classdef controller < zapit.gui.stimConfigEditor.view
             obj.BottomLabel.Text = ''; 
             
             % Apply default values to UI elements from settings
-            if ~isempty(obj.model)
-                obj.LaserPowermWSpinner.Value = obj.model.settings.experiment.defaultLaserPowerMW;
-                obj.StimFreqHzSpinner.Value = obj.model.settings.experiment.defaultLaserFrequencyHz;
+            if ~isempty(obj.parent)
+                obj.LaserPowermWSpinner.Value = obj.parent.settings.experiment.defaultLaserPowerMW;
+                obj.StimFreqHzSpinner.Value = obj.parent.settings.experiment.defaultLaserFrequencyHz;
             end
             
 
             % Set up callback functions for interactivity
             obj.hFig.WindowButtonMotionFcn = @obj.highlightArea_Callback;
             obj.hFig.WindowButtonDownFcn = @obj.mouseClick_Callback;
-
             obj.hFig.KeyPressFcn = @obj.keyboardPress_Callback;
             obj.hFig.KeyReleaseFcn = @obj.keyboardPress_Callback;
+
             % Call the class destructor when figure is closed. This ensures everything is tidied.
             obj.hFig.CloseRequestFcn = @obj.delete;
 
@@ -116,6 +116,46 @@ classdef controller < zapit.gui.stimConfigEditor.view
         end % keyboardPress_Callback
 
 
+        function resetPoints_Callback(obj,~,~)
+            % TODO -- should we create a file name also to help with saving?
+            % Allows the user to wipe the GUI and start over with a new file name
+            response = questdlg('Wipe points and start over?', ...
+                         'Confirm', ...
+                         'Yes', 'No', 'No');
+            if isempty(response) || strcmp(response,'No')
+                return
+            end 
+            arrayfun(@(x) delete(x), obj.pAddedPoints)
+            obj.pAddedPoints = matlab.graphics.chart.primitive.Line.empty;
+            obj.BottomLabel.Text = '';
+        end % resetPoints_Callback
+
+
+        function saveConfigYAML(obj)
+            % Save to YAML
+            stimC = obj.returnStimConfigStructure;
+            if isempty(stimC)
+                return
+            end
+            [fname,fullPath] = uiputfile('*.yml');
+            if fname == 0 || isempty(fname)
+                return
+            end
+            zapit.yaml.WriteYaml(fullfile(fullPath,fname), stimC);
+        end %saveConfigYAML
+
+
+        function loadConfigYAML(obj)
+            % Load to YAML
+            [fname,fullPath] = uigetfile('*.yml;*.yaml');
+            if fname == 0 || isempty(fname)
+                return
+            end
+            stimC = zapit.yaml.ReadYaml(fullfile(fullPath,fname));
+            % TODO -- process and plot
+        end %saveConfigYAML
+
+
         function ind = findIndexOfAddedPointNearestCursor(obj)
             % Return the index of the point nearest the cursor
 
@@ -145,6 +185,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
             end
             tCol = colors(nCol,:);
         end
+
 
         function tSym = currentSymbol(obj)
             % Returns a new symbol for plotting based upon the number of added stimuli

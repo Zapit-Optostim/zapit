@@ -14,6 +14,7 @@ function mouseClick_Callback(obj,~,~)
         return
     end
 
+    % TODO -- should we make it impossible to place points outside of the brain?
 
     % Each time the user clicks we will add a new data point color and symbol.
     % Shift click and we delete it
@@ -37,8 +38,8 @@ function mouseClick_Callback(obj,~,~)
                                             'Parent', obj.hAx);
         elseif obj.isShiftPressed && obj.BilateralButton.Value == 0
             % Then we append a point
-            if ~isempty(obj.model)
-                maxPointsPerCondition = obj.model.settings.experiment.maxStimPointsPerCondition;
+            if ~isempty(obj.parent)
+                maxPointsPerCondition = obj.parent.settings.experiment.maxStimPointsPerCondition;
             else
                 maxPointsPerCondition = 3;
             end
