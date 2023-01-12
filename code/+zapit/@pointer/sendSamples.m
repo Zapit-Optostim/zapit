@@ -36,25 +36,26 @@ function varargout = sendSamples(obj, t_trial, verbose)
         fprintf('Stimulating area %d\n', t_trial.area)
     end
 
-    if ~isvalid(obj.DAQ.hAO) || ~strcmp(obj.DAQ.hAO.taskName, 'clockedao'); % TODO-- maybe this check should be in the
-                                                % the createNewTask. So we don't make unless
-                                                % the task names don't match?
-        obj.DAQ.connectClockedAO('numSamplesPerChannel',obj.numSamplesPerChannel);
-    end
-    
-    % update coordinate parameters/channel samples
-    obj.waveforms = [];
-    obj.waveforms(:,1:2) = obj.chanSamples.scan(:,:,t_trial.area);
-    obj.waveforms(:,3:4) = t_trial.powerOption * obj.chanSamples.light(:,[1 2]);
+
+    % Make the waveforms to play
+    waveforms = [];
+    waveforms(:,1:2) = obj.stimConfig.chanSamples.scan(:,:,t_trial.area);
+    waveforms(:,3:4) = t_trial.powerOption * obj.stimConfig.chanSamples.light(:,[1 2]);
 
     % Disable laser  if the user asked fior this
     if t_trial.LaserOn == 0
         obj.waveforms(:,3) = 0;
     end
 
+    if ~isvalid(obj.DAQ.hAO) || ~strcmp(obj.DAQ.hAO.taskName, 'clockedao'); % TODO-- maybe this check should be in the
+                                                % the createNewTask. So we don't make unless
+                                                % the task names don't match?
+        obj.DAQ.connectClockedAO('numSamplesPerChannel',size(waveforms,1));
+    end
+
     
     % write voltage samples onto the task
-    obj.DAQ.hAO.writeAnalogData(obj.waveforms);
+    obj.DAQ.writeAnalogData(waveforms);
 
     % start the execution of the new task
     obj.DAQ.start;

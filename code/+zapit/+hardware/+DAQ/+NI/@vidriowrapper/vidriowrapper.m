@@ -173,6 +173,18 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
         end % connectClockedAO
 
 
+        function writeAnalogData(obj,waveforms)
+            % Write analog data to the buffer
+            %
+            % Purpose
+            % Write analod data to the buffer and also log in a property the
+            % data that were written.
+
+            obj.lastWaveform = waveforms;
+            obj.hAO.writeAnalogData(waveforms);
+        end % writeAnalogData
+
+
         function setLaserPowerControlVoltage(obj,laserControlVoltage)
             if ~isvalid(obj.hAO) || ~strcmp(obj.hAO.taskName, 'unclockedao')
                 obj.connectUnclockedAO

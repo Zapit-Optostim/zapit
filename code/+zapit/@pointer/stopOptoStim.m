@@ -22,7 +22,7 @@ function stopOptoStim(obj, rampDownInMS)
     end
 
     samplesPerSecond = obj.DAQ.samplesPerSecond;
-    bufferSize = obj.numSamplesPerChannel;
+    bufferSize = obj.DAQ.hAO.sampQuantSampPerChan;
 
     if isempty(bufferSize) || obj.DAQ.hAO.isTaskDone
         return
@@ -32,9 +32,9 @@ function stopOptoStim(obj, rampDownInMS)
     % If the user requests no ramp-down then we simply stop the task
     if rampDownInMS ==0
     % Zero everything
-        t = obj.waveforms;
+        t = obj.DAQ.lastWaveform;
         t(:) = 0;
-        obj.DAQ.hAO.writeAnalogData(t);
+        obj.DAQ.writeAnalogData(t);
         obj.DAQ.stop
     end
 
@@ -58,14 +58,14 @@ function stopOptoStim(obj, rampDownInMS)
     ampSequence(end) = [];
 
     for amp = ampSequence
-        t = obj.waveforms;
+        t = obj.DAQ.lastWaveform;
         t(:,3) = t(:,3) * amp;
-        obj.DAQ.hAO.writeAnalogData(t);
+        obj.DAQ.writeAnalogData(t);
     end
 
     % Zero everything
     t(:) = 0;
-    obj.DAQ.hAO.writeAnalogData(t);
+    obj.DAQ.writeAnalogData(t);
 
     % stop task and send to pre-generation stage, allowing to write
     % next trial samples without conflicts

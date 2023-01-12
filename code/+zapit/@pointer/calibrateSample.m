@@ -51,27 +51,14 @@ function varargout = calibrateSample(obj)
     end
 
 
-    % Translate the obtained points into volts
-    % TODO -- this is a conceptually different task so maybe should be in a different method. We could still
-    % call it here but maybe the code itself should be elsewhere.
-    [xVolt, yVolt] = pixelToVolt(obj, calibratedPoints(1,:,1), calibratedPoints(2,:,1)); % calibratedPoints should have an n-by-2 dimension
-    [xVolt2, yVolt2] = pixelToVolt(obj, calibratedPoints(1,:,2), calibratedPoints(2,:,2));
 
-
-    % Save coords into object and show in the camera image
-    coordsLibrary = [xVolt' yVolt'];
-    coordsLibrary(:,:,2) = [xVolt2' yVolt2'];
-
-    obj.coordsLibrary = coordsLibrary; % TODO: need a better name for this property
-    obj.calibratedPoints = calibratedPoints;
-    
     % TODO:
     % should now run makeChanSamples and should also run this again if laser power changes.
 
     %% Cycle the laser through all locations to check visually that all is good
     %% TODO -- in future this will be triggered by a button press or can happen once automatically then button press?
     %%         maybe we can have it cycle much faster than now but continuously?
-    % obj.testCoordsLibrary;
+
 
     if nargout > 0
         varargout{1} = opaqueArea;

@@ -36,7 +36,7 @@ function loadStimConfig_Callback(obj,src,~)
     end
 
     fprintf('Loading %s\n', pathToConfig)
-    obj.model.stimConfig = zapit.stimConfig(pathToConfig);
+    obj.model.loadStimConfig(pathToConfig);
     obj.addStimConfigToRecents(pointsFile,fpath); % Add to the list of recently loaded files
 
 

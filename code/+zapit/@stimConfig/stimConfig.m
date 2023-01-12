@@ -12,9 +12,16 @@ classdef stimConfig < handle
         % powerOption -  if 1 send 2 mW, if 2 send 4 mW (mean)
         powerOption % TODO - likely to be changed. This isn't a value in mW right now
         template % I think this where we stimulate
+        chanSamples % The waveforms to be sent to the scanners
     end % properties
 
+    properties (Hidden)
+        parent  % the zapit.pointer to which this is attached
+        numSamplesPerChannel
+    end
+
     methods
+
         function obj = stimConfig(fname)
             % Construct a stimConfig file object and load data
             obj.loadConfig(fname)
@@ -76,6 +83,44 @@ classdef stimConfig < handle
             % Return the number of stim locations as an integer
             n = size(obj.template,2);
         end % numStimLocations
+
+
+        function cPoints = calibratedPoints(obj)
+            % The stimulation locations after they have been calibrated to the sample
+            cPoints = [];
+
+            % TODO -- this is clearly not ideal
+            cPoints(:,:,1) = zapit.utils.coordsRotation(...
+                            obj.template(:,:,1), ...
+                            obj.parent.refPointsStereotaxic, ...
+                            obj.parent.refPointsSample);
+            cPoints(:,:,2) = zapit.utils.coordsRotation(...
+                            obj.template(:,:,2), ...
+                            obj.parent.refPointsStereotaxic, ...
+                            obj.parent.refPointsSample);
+        end
+
+
+        function cLibrary = coordsLibrary(obj)
+            % Translate the obtained points into volts
+
+            % TODO - I think this is where all computed waveforms are kept
+
+            cLibrary = [];
+
+
+            calibratedPoints = obj.calibratedPoints;
+
+            % Certainly this is a non-idiomatic way of doing this
+            [xVolt, yVolt] = obj.parent.mmToVolt(calibratedPoints(1,:,1), calibratedPoints(2,:,1)); % calibratedPoints should have an n-by-2 dimension
+            [xVolt2, yVolt2] = obj.parent.mmToVolt(calibratedPoints(1,:,2), calibratedPoints(2,:,2));
+
+            cLibrary = [xVolt' yVolt'];
+            cLibrary(:,:,2) = [xVolt2' yVolt2'];
+
+            % TODO:??
+            % should now run makeChanSamples and should also run this again if laser power changes.
+        end
 
     end % methods
 

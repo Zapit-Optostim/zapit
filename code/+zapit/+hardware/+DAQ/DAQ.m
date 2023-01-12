@@ -29,6 +29,7 @@ classdef (Abstract) DAQ < handle
         lastXgalvoVoltage  = 0
         lastYgalvoVoltage  = 0
         lastLaserVoltage = 0
+        lastWaveform = [] % The last waveform sent to the DAQ for AO
     end %close GUI-related properties
 
 

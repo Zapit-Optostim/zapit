@@ -8,7 +8,7 @@ function showStimulusCoords_Callback(obj,~,~)
 
         % TODO - we will need to change this once we settle on a better format
         % for the stimuli
-        calPoints = obj.model.calibratedPoints;
+        calPoints = obj.model.stimConfig.calibratedPoints;
         calPoints = reshape(calPoints,size(calPoints,1), prod(size(calPoints,2:3)))';
 
         hold(obj.hImAx,'on')

@@ -34,7 +34,7 @@ function drawBrainOutlineOnSample(obj)
                             'samplesPerSecond',sRate, ...
                             'taskName','scannercalib')
 
-    obj.DAQ.hAO.writeAnalogData(coords)
+    obj.DAQ.writeAnalogData(coords)
 
     obj.DAQ.start;
 

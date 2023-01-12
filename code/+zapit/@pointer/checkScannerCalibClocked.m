@@ -27,7 +27,7 @@ function checkScannerCalibClocked(obj)
                             'samplesPerSecond',10, ...
                             'taskName','scannercalib')
 
-    obj.DAQ.hAO.writeAnalogData(actualCoords)
+    obj.DAQ.writeAnalogData(actualCoords)
 
     obj.DAQ.start;
 

@@ -8,7 +8,7 @@ function cycleBeamOverCoords_Callback(obj,~,~)
     if obj.CycleBeamOverCoordsButton.Value == 1
         % TODO - we will need to change this once we settle on a better format
         % for the stimuli
-        c = obj.model.calibratedPoints;
+        c = obj.model.stimConfig.calibratedPoints;
 
         calPoints = zeros(size(c,1), prod(size(c,2:3)))';
 
@@ -28,7 +28,7 @@ function cycleBeamOverCoords_Callback(obj,~,~)
                                 'samplesPerSecond',500, ...
                                 'taskName','samplecalib')
 
-        obj.model.DAQ.hAO.writeAnalogData(waveforms)
+        obj.model.DAQ.writeAnalogData(waveforms)
 
         obj.model.DAQ.start;
     else
