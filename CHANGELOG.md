@@ -15,6 +15,16 @@ The project will adhere to [semantic versioning](http://semver.org) guidelines, 
 * PATCH version when you make backwards compatible bug fixes
 
 
+2023/01/12 -- v0.5.0-alpha
+ * Convert the working units of everything from pixels to mm.
+ * Sample calibration achieved by placing and scaling/rotating a brain outline.
+ * Add ability to draw brain outline on sample with the beam.
+ * stimConfig loading and recents menu works.
+ * Add ability to do test presentations of the stimuli via the GUI.
+ * Create an example showing how to use the API to present stimuli for fixed time periods.
+ * Various bugfixes.
+
+
 2023/01/05 -- v0.4.0-alpha
  * All UI elements in scanner calibration tab working as expected.
  * Improvements to startup and GUI.

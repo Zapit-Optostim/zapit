@@ -18,11 +18,12 @@ classdef pointer < handle
         invertX = true
         invertY = true
 
+        %%
         % The following are associated with hardware components
         cam % camera
         DAQ % instance of class that controls the DAQ (laser and scanners)
 
-
+        %%
         % The following properties relate to settings or other similar state parameters
         % Properties related to where we stimulate
         settings % The settings read in from the YAML file
@@ -32,11 +33,13 @@ classdef pointer < handle
         transform % The transform describing the relationship between scanners and camera
 
 
-        % The following relate to calibration of the sample
+        %%
+        % The following relate to calibration of the sample. These are not in the stim config
+        % as they are independent of it. i.e. a new config can be loaded and the the data in the
+        % following properties does not alter
         calibratedBrainOutline % The outline of the brain calibrated to the sample
         refPointsStereotaxic = [0,0;0,3]  % Two reference points in stereotaxic space. By default bregma
                                           % (first line [ML,AP] and a point 3 mm in front (second line)
-
         refPointsSample  % The two reference points in sample space. User provides these via calibrateSample
 
         % TODO -- what is the difference between chanSamples and waveforms?
