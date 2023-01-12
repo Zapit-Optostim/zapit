@@ -1,6 +1,6 @@
 classdef controller < zapit.gui.main.view
 
-    % zapit.gui.view is the main GUI window: that which first appears when the 
+    % zapit.gui.main.view is the main GUI window: that which first appears when the 
     % user starts the software.
     %
     % The GUI itself is made in MATLAB AppDesigner and is inherited by this class
@@ -66,7 +66,7 @@ classdef controller < zapit.gui.main.view
 
 
         function delete(obj,~,~)
-            fprintf('zapit.gui.view is cleaning up\n')
+            fprintf('zapit.gui.main.view is cleaning up\n')
             cellfun(@delete,obj.listeners)
             delete(obj.model);
 
