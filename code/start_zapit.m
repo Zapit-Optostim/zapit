@@ -45,6 +45,11 @@ function start_zapit(varargin)
     evalin('base','clear ans') %Because it sometimes makes a copy of BT in ans when it fails
     hZP = zapit.utils.getObject(true);
 
+    % Report where Zapit is installed
+    installLoc = which(mfilename);
+    installLoc = regexprep(installLoc,['code','\',filesep,'start_zapit.m'],'');
+    fprintf('Zapit is installed at %s\n', installLoc)
+
     if isempty(hZP)
         %If not, we build hZP and place it in the base workspace
         try
