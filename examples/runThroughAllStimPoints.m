@@ -20,6 +20,11 @@ function runThroughAllStimPoints(varargin)
     end
 
 
+    if hZP.isReadyToStim == false
+        fprintf('Zapit is not ready to stimulate.\n')
+        return
+    end
+
     % Build the input parser for the optional args
     params = inputParser;
     params.CaseSensitive = false;
