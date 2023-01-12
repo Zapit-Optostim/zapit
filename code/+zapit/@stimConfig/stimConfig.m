@@ -75,6 +75,13 @@ classdef stimConfig < handle
 
             zapit.yaml.WriteYaml(fname,data);
         end % writeConfig
+
+
+        function n = numStimLocations(obj)
+            % Return the number of stim locations as an integer
+            n = size(obj.template,2);
+        end % numStimLocations
+
     end % methods
 
 

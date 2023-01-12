@@ -13,6 +13,8 @@ function stopOptoStim(obj, rampDownInMS)
     %
     % Rob Campbell - SWC 2022
 
+    % TODO -- do not run if the stimulation has already stopped
+
 
     % Number of ms over which to ramp down. TODO -- set up as parameter
     if nargin<2
@@ -22,7 +24,7 @@ function stopOptoStim(obj, rampDownInMS)
     samplesPerSecond = obj.DAQ.samplesPerSecond;
     bufferSize = obj.numSamplesPerChannel;
 
-    if isempty(bufferSize)
+    if isempty(bufferSize) || obj.DAQ.hAO.isTaskDone
         return
     end
 
