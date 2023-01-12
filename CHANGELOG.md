@@ -15,6 +15,10 @@ The project will adhere to [semantic versioning](http://semver.org) guidelines, 
 * PATCH version when you make backwards compatible bug fixes
 
 
+2023/01/12 -- v0.5.1-alpha
+ * Add the atlas_data.mat file to the code directory.
+
+
 2023/01/12 -- v0.5.0-alpha
  * Convert the working units of everything from pixels to mm.
  * Sample calibration achieved by placing and scaling/rotating a brain outline.
