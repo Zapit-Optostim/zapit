@@ -45,11 +45,6 @@ function start_zapit(varargin)
     evalin('base','clear ans') %Because it sometimes makes a copy of BT in ans when it fails
     hZP = zapit.utils.getObject(true);
 
-    % Report where Zapit is installed
-    installLoc = which(mfilename);
-    installLoc = regexprep(installLoc,['code','\',filesep,'start_zapit.m'],'');
-    fprintf('Zapit is installed at %s\n', installLoc)
-
     if isempty(hZP)
         %If not, we build hZP and place it in the base workspace
         try
@@ -91,6 +86,11 @@ function start_zapit(varargin)
     %By this point we should have a functioning hZP object, which is the model in our model/view system
 
     % Now we make the view
+    % Report where Zapit is installed
+    installLoc = which(mfilename);
+    installLoc = regexprep(installLoc,['code','\',filesep,'start_zapit.m'],'');
+    fprintf('Zapit is installed at %s\n', installLoc)
+
     if startGUI
         fprintf('Building GUI\n')
         hZPview = zapit.gui.main.controller(hZP);
