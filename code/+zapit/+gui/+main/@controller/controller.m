@@ -56,6 +56,9 @@ classdef controller < zapit.gui.main.view
             % the hardware tasks are stopped.
             obj.hFig.CloseRequestFcn = @obj.delete;
 
+            % Load the cache file so the GUI returns to its previous state
+            obj.loadGUIcache
+
             % Attempt to report when figure is open
             %getframe(obj.hImAx)
             %fprintf('DONE\n')
@@ -151,6 +154,8 @@ classdef controller < zapit.gui.main.view
             % Menus
             obj.NewstimconfigMenu.MenuSelectedFcn = @(~,~) obj.createNewStimConfig_Callback;
             obj.LoadstimconfigMenu.MenuSelectedFcn = @(src,~) obj.loadStimConfig_Callback(src);
+            obj.FileMenu.MenuSelectedFcn = @(~,~) obj.removeMissingRecentConfigs; % So menu updates if files change
+
 
             % Set GUI state based on calibration state
             obj.scannersCalibrateCallback
@@ -284,6 +289,13 @@ classdef controller < zapit.gui.main.view
                 obj.CalibExposureSpinner.Value = 0;
             end
             obj.model.settings.calibrateScanners.beam_calib_exposure = obj.CalibExposureSpinner.Value;
+        end
+
+
+        function fname = GUIcacheLocation(obj)
+            % Return the location of the GUI cache file
+            s=zapit.settings.findSettingsFile;
+            fname = fullfile(fileparts(s),'zapitGUIcache.mat');
         end
 
 

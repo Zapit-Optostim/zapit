@@ -23,4 +23,7 @@ function addStimConfigToRecents(obj,fname,pathToFname)
             obj.previouslyLoadedStimConfigs(1:obj.maxPreviouslyLoadedStimConfigs);
     end
 
+    % Save the cache when a file is loaded
+    obj.saveGUIcache
+
 end
