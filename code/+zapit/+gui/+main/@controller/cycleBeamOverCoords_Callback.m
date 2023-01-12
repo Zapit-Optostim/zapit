@@ -23,6 +23,7 @@ function cycleBeamOverCoords_Callback(obj,~,~)
         waveforms = [xVolt,yVolt];
         waveforms(:,3) = 2; % laser power
 
+        obj.model.DAQ.moveBeamXY(waveforms(1,:))
         obj.model.DAQ.connectClockedAO('numSamplesPerChannel',size(waveforms,1), ...
                                 'samplesPerSecond',500, ...
                                 'taskName','samplecalib')
@@ -32,5 +33,6 @@ function cycleBeamOverCoords_Callback(obj,~,~)
         obj.model.DAQ.start;
     else
         obj.model.DAQ.stopAndDeleteAOTask
+        obj.model.setLaserInMW(0)
     end
 end
