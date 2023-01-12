@@ -25,5 +25,7 @@ function settings = default_settings
     settings.calibrateScanners.bufferPixels = 100;
     settings.calibrateScanners.pointSpacingInPixels = 200;
 
-    settings.experiment.defaultLaserFrequency = 40; % TODO: this will probably be used to make the brain area config file and from there that will be the relevant value
+    settings.experiment.defaultLaserFrequencyHz = 40; 
+    settings.experiment.defaultLaserPowerMW = 5;
+    settings.experiment.maxStimPointsPerCondition = 2;
 end % default_settings

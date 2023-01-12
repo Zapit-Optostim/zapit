@@ -54,6 +54,12 @@ classdef controller < zapit.gui.stimConfigEditor.view
             obj.hAx.Toolbar.Visible = 'off';
             obj.BottomLabel.Text = ''; 
             
+            % Apply default values to UI elements from settings
+            if ~isempty(obj.model)
+                obj.LaserPowermWSpinner.Value = obj.model.settings.experiment.defaultLaserPowerMW;
+                obj.StimFreqHzSpinner.Value = obj.model.settings.experiment.defaultLaserFrequencyHz;
+            end
+            
 
             % Set up callback functions for interactivity
             obj.hFig.WindowButtonMotionFcn = @obj.highlightArea_Callback;
@@ -89,12 +95,22 @@ classdef controller < zapit.gui.stimConfigEditor.view
         end % isShiftPressed
 
 
+        function isPressed = isCtrlPressed(obj)
+            % Return true if the user is pressing the ctrl key
+            mod = get(gcbo,'currentModifier');
+            isPressed = false;
+            if length(mod)==1
+                isPressed = strcmp(mod{1},'control');
+            end
+        end % isShiftPressed
+
+
         function keyboardPress_Callback(obj,~,event)
             % Runs whenever a key is pressed or released.
             % Used to cause the symbol that follows the mouse cursor to change
             % size right away and not wait until it is moved. 
 
-            if strcmp(event.Key,'shift')
+            if strcmp(event.Key,'ctrl') || strcmp(event.Key,'shift') 
                 obj.highlightArea_Callback
             end
         end % keyboardPress_Callback

@@ -2,18 +2,21 @@ classdef view < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
-        hFig                 matlab.ui.Figure
-        GridLayout           matlab.ui.container.GridLayout
-        Panel                matlab.ui.container.Panel
-        AddPointButtonGroup  matlab.ui.container.ButtonGroup
-        BilateralButton      matlab.ui.control.RadioButton
-        PointsButton         matlab.ui.control.RadioButton
-        SingleButton         matlab.ui.control.RadioButton
-        BottomLabel          matlab.ui.control.Label
-        SaveButton           matlab.ui.control.Button
-        LoadButton           matlab.ui.control.Button
-        NewButton            matlab.ui.control.Button
-        hAx                  matlab.ui.control.UIAxes
+        hFig                      matlab.ui.Figure
+        GridLayout                matlab.ui.container.GridLayout
+        Panel                     matlab.ui.container.Panel
+        StimFreqHzSpinner         matlab.ui.control.Spinner
+        StimFreqHzSpinnerLabel    matlab.ui.control.Label
+        LaserPowermWSpinner       matlab.ui.control.Spinner
+        LaserPowermWSpinnerLabel  matlab.ui.control.Label
+        AddPointButtonGroup       matlab.ui.container.ButtonGroup
+        BilateralButton           matlab.ui.control.RadioButton
+        UnilateralButton          matlab.ui.control.RadioButton
+        BottomLabel               matlab.ui.control.Label
+        SaveButton                matlab.ui.control.Button
+        LoadButton                matlab.ui.control.Button
+        NewButton                 matlab.ui.control.Button
+        hAx                       matlab.ui.control.UIAxes
     end
 
     % Component initialization
@@ -63,28 +66,50 @@ classdef view < matlab.apps.AppBase
 
             % Create BottomLabel
             app.BottomLabel = uilabel(app.Panel);
-            app.BottomLabel.Position = [85 6 487 14];
+            app.BottomLabel.BackgroundColor = [1 1 1];
+            app.BottomLabel.Position = [85 6 487 16];
 
             % Create AddPointButtonGroup
             app.AddPointButtonGroup = uibuttongroup(app.Panel);
             app.AddPointButtonGroup.AutoResizeChildren = 'off';
-            app.AddPointButtonGroup.Position = [179 34 226 39];
+            app.AddPointButtonGroup.BorderType = 'none';
+            app.AddPointButtonGroup.Title = 'Point Type';
+            app.AddPointButtonGroup.Position = [96 34 156 45];
 
-            % Create SingleButton
-            app.SingleButton = uiradiobutton(app.AddPointButtonGroup);
-            app.SingleButton.Text = 'Single';
-            app.SingleButton.Position = [12 8 55 22];
-            app.SingleButton.Value = true;
-
-            % Create PointsButton
-            app.PointsButton = uiradiobutton(app.AddPointButtonGroup);
-            app.PointsButton.Text = '2 Points';
-            app.PointsButton.Position = [77 8 66 22];
+            % Create UnilateralButton
+            app.UnilateralButton = uiradiobutton(app.AddPointButtonGroup);
+            app.UnilateralButton.Text = 'Unilateral';
+            app.UnilateralButton.Position = [7 0 73 22];
 
             % Create BilateralButton
             app.BilateralButton = uiradiobutton(app.AddPointButtonGroup);
             app.BilateralButton.Text = 'Bilateral';
-            app.BilateralButton.Position = [154 8 66 22];
+            app.BilateralButton.Position = [84 0 66 22];
+            app.BilateralButton.Value = true;
+
+            % Create LaserPowermWSpinnerLabel
+            app.LaserPowermWSpinnerLabel = uilabel(app.Panel);
+            app.LaserPowermWSpinnerLabel.HorizontalAlignment = 'right';
+            app.LaserPowermWSpinnerLabel.Position = [314 57 107 22];
+            app.LaserPowermWSpinnerLabel.Text = 'Laser  Power (mW)';
+
+            % Create LaserPowermWSpinner
+            app.LaserPowermWSpinner = uispinner(app.Panel);
+            app.LaserPowermWSpinner.Limits = [0 100];
+            app.LaserPowermWSpinner.Position = [430 57 70 22];
+            app.LaserPowermWSpinner.Value = 5;
+
+            % Create StimFreqHzSpinnerLabel
+            app.StimFreqHzSpinnerLabel = uilabel(app.Panel);
+            app.StimFreqHzSpinnerLabel.HorizontalAlignment = 'right';
+            app.StimFreqHzSpinnerLabel.Position = [334 33 88 22];
+            app.StimFreqHzSpinnerLabel.Text = 'Stim. Freq. (Hz)';
+
+            % Create StimFreqHzSpinner
+            app.StimFreqHzSpinner = uispinner(app.Panel);
+            app.StimFreqHzSpinner.Limits = [1 1000];
+            app.StimFreqHzSpinner.Position = [431 33 70 22];
+            app.StimFreqHzSpinner.Value = 40;
 
             % Show the figure after all components are created
             app.hFig.Visible = 'on';

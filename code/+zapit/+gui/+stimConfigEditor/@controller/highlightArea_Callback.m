@@ -26,18 +26,32 @@ function highlightArea_Callback(obj,~,~)
 
     % If shift is pressed we highlight points nearest the cursor and alter the current point shape
     set([obj.pAddedPoints],'MarkerSize', 14)
-    if obj.isShiftPressed && length(obj.pAddedPoints)>0
+    if obj.isCtrlPressed && length(obj.pAddedPoints)>0
         % We are in delete mode
         obj.pCurrentPoint.MarkerSize = 20;
         obj.pCurrentPoint.Marker = 'x';
         obj.pCurrentPoint.Color = 'r';
         ind = obj.findIndexOfAddedPointNearestCursor;
         obj.pAddedPoints(ind).MarkerSize=20;
+        % If this point is a single, we will make the point following the cursor a single too if needed
+        if obj.BilateralButton.Value == 1 && length(obj.pAddedPoints(ind).XData)~=2
+            obj.pCurrentPoint.XData = X;
+            obj.pCurrentPoint.YData = Y;
+        end
     else
-        % To reflect the next symbol
-        obj.pCurrentPoint.Marker = obj.currentSymbol;
-        obj.pCurrentPoint.Color = obj.currentColor;
-        obj.pCurrentPoint.MarkerSize = 14; % TODO -- hardcoded
+        % Change the marker so it indicates what the next symbol to be placed will be. 
+        % This will be either a new symbol or the current one depending on the shift key
+        % press state.
+        if obj.isShiftPressed
+            obj.pCurrentPoint.Marker = obj.pAddedPoints(end).Marker;
+            obj.pCurrentPoint.Color = obj.pAddedPoints(end).Color;
+            obj.pCurrentPoint.MarkerSize = 14; % TODO -- hardcoded
+        else
+            % Next symbol and color
+            obj.pCurrentPoint.Marker = obj.currentSymbol;
+            obj.pCurrentPoint.Color = obj.currentColor;
+            obj.pCurrentPoint.MarkerSize = 14; % TODO -- hardcoded
+        end
     end
 
     % Find brain area index

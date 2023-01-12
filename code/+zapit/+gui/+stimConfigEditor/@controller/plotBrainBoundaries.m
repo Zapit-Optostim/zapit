@@ -30,7 +30,7 @@ function plotBrainBoundaries(obj)
     xticks(obj.hAx, -5:grid_spacing:5);
     yticks(obj.hAx, -8:grid_spacing:5);
 
-    obj.hAxTitle = title('','Parent',obj.hAx);
+    obj.hAxTitle = title('Stimulus Config Editor','Parent',obj.hAx);
 
     % Draw cortical boundaries
     brain_areas = obj.atlasData.dorsal_brain_areas; % For ease
