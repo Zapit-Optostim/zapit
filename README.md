@@ -18,7 +18,7 @@ The [Change Log](CHANGELOG.md) describes the project history and recent changes.
 * [Image Processing Toolbox](https://www.mathworks.com/help/images/index.html)
 * [Image Acquisition Toolbox](https://www.mathworks.com/products/image-acquisition.html)
 * [Curve Fittting Toolbox](https://www.mathworks.com/help/curvefit/)
-* [The free version of ScanImage](https://vidriotechnologies.com/) because Zapit uses its DAQmx wrapper (but see [here](https://github.com/BaselLaserMouse/zapit/issues/14)). You need add to the path the base ScanImage directory. No need to add to path with all sub-directories.
+* [DAQmx](https://www.ni.com/en-gb/support/downloads/drivers/download.ni-daqmx.html). Supported versions: 19.0 to 21.8
 * To communicate with the camera you will need to install [Basler's instructions for the GenICam interface](https://www.baslerweb.com/en/downloads/document-downloads/using-pylon-gentl-producers-for-basler-cameras-with-matlab/).
 Although the Zapit system is tested against this, the goal is that it is able to handle other drivers and cameras also.
 If you can not get the above to work, try installing the `Image Acquisition Toolbox Support Package for OS Generic Video Interface`.
@@ -162,9 +162,8 @@ for ii=1:numAreasToStim
     P.sendSamples(newTrial,true) % True for verbose
     pause(0.5)
 
-    % TODO -- we have a better stop method coming that will also deal with the laser rampdown
-    P.DAQ.stop
-    P.DAQ.setLaserPowerControlVoltage(0)
+    P.stopOptoStim
+
 end
 
 ```
@@ -173,3 +172,5 @@ end
 Contributions and collaborations are welcome.
 Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
 
+## Acknowledgements
+Thanks to Vidrio Technologies for allowing the inclusion of their DAQmx wrapper in this project.

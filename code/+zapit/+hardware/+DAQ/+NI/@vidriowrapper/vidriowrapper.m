@@ -75,7 +75,7 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
 
             obj.stopAndDeleteAITask
 
-            obj.hAI = dabs.ni.daqmx.Task('unclockedai');
+            obj.hAI = zapit.hardware.vidrio_daqmx.Task('unclockedai');
 
             if verbose
                 fprintf('Creating unclocked AI task on %s\n', obj.device_ID)
@@ -94,7 +94,7 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
 
             obj.stopAndDeleteAOTask
 
-            obj.hAO = dabs.ni.daqmx.Task('unclockedao');
+            obj.hAO = zapit.hardware.vidrio_daqmx.Task('unclockedao');
 
             if verbose
                 fprintf('Creating unclocked AO task on %s\n', obj.device_ID)
@@ -147,7 +147,7 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
             end
             
             %% Create the inactivation task
-            obj.hAO = dabs.ni.daqmx.Task(taskName);
+            obj.hAO = zapit.hardware.vidrio_daqmx.Task(taskName);
             
             % Set output channels
             obj.hAO.createAOVoltageChan(obj.device_ID, ...

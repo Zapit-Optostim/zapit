@@ -19,7 +19,7 @@ The project will adhere to [semantic versioning](http://semver.org) guidelines, 
  * Move relevant methods into zapit.stimConfig
  * zapit.stimConfig.makeChanSamples is now turned into a getter of chanSamples
  * Recent files updates when files are missing. The list is cached and re-appears on reload.
-
+ * Move vidrio wrapper into the project (thanks to Vidrio for granting permission).
 
 2023/01/12 -- v0.5.1-alpha
  * Add the atlas_data.mat file to the code directory.
