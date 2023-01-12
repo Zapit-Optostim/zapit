@@ -7,8 +7,9 @@ function stimC = returnStimConfigStructure(obj)
     end
 
     for ii=1:length(obj.pAddedPoints)
-        stimC.stimLocations(ii).ML = obj.pAddedPoints(ii).XData;
-        stimC.stimLocations(ii).AP = obj.pAddedPoints(ii).YData;
+        fieldName = sprintf('stimLocations%02d',ii);
+        stimC.(fieldName).ML = obj.pAddedPoints(ii).XData;
+        stimC.(fieldName).AP = obj.pAddedPoints(ii).YData;
     end
 
     % TODO -- do we need to handle single points in some special retway?
