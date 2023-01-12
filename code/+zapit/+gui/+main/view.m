@@ -41,6 +41,8 @@ classdef view < matlab.apps.AppBase
         ResetROIButton                matlab.ui.control.Button
         ROIButton                     matlab.ui.control.Button
         CalibrateSampleTab            matlab.ui.container.Tab
+        RefAPDropDown                 matlab.ui.control.DropDown
+        RefAPDropDownLabel            matlab.ui.control.Label
         PaintareaButton               matlab.ui.control.StateButton
         ZapSiteButton                 matlab.ui.control.StateButton
         ConfigLoadedTextLabel         matlab.ui.control.Label
@@ -236,17 +238,17 @@ classdef view < matlab.apps.AppBase
             % Create CycleBeamOverCoordsButton
             app.CycleBeamOverCoordsButton = uibutton(app.CalibrateSampleTab, 'state');
             app.CycleBeamOverCoordsButton.Text = {'Cycle Beam'; 'Over Coords'};
-            app.CycleBeamOverCoordsButton.Position = [151 45 112 36];
+            app.CycleBeamOverCoordsButton.Position = [309 48 112 36];
 
             % Create TestSiteDropDownLabel
             app.TestSiteDropDownLabel = uilabel(app.CalibrateSampleTab);
             app.TestSiteDropDownLabel.HorizontalAlignment = 'right';
-            app.TestSiteDropDownLabel.Position = [291 88 52 22];
+            app.TestSiteDropDownLabel.Position = [421 88 52 22];
             app.TestSiteDropDownLabel.Text = 'Test Site';
 
             % Create TestSiteDropDown
             app.TestSiteDropDown = uidropdown(app.CalibrateSampleTab);
-            app.TestSiteDropDown.Position = [358 88 100 22];
+            app.TestSiteDropDown.Position = [488 88 100 22];
 
             % Create CalibrateSampleButton
             app.CalibrateSampleButton = uibutton(app.CalibrateSampleTab, 'push');
@@ -261,7 +263,7 @@ classdef view < matlab.apps.AppBase
             % Create ShowstimcoordsButton
             app.ShowstimcoordsButton = uibutton(app.CalibrateSampleTab, 'state');
             app.ShowstimcoordsButton.Text = 'Show stim coords';
-            app.ShowstimcoordsButton.Position = [151 88 112 22];
+            app.ShowstimcoordsButton.Position = [309 88 112 22];
 
             % Create ConfigLoadedTextLabel
             app.ConfigLoadedTextLabel = uilabel(app.CalibrateSampleTab);
@@ -271,12 +273,24 @@ classdef view < matlab.apps.AppBase
             % Create ZapSiteButton
             app.ZapSiteButton = uibutton(app.CalibrateSampleTab, 'state');
             app.ZapSiteButton.Text = 'Zap Site';
-            app.ZapSiteButton.Position = [461 88 69 22];
+            app.ZapSiteButton.Position = [591 88 69 22];
 
             % Create PaintareaButton
             app.PaintareaButton = uibutton(app.CalibrateSampleTab, 'state');
             app.PaintareaButton.Text = 'Paint area';
-            app.PaintareaButton.Position = [533 88 70 22];
+            app.PaintareaButton.Position = [663 88 70 22];
+
+            % Create RefAPDropDownLabel
+            app.RefAPDropDownLabel = uilabel(app.CalibrateSampleTab);
+            app.RefAPDropDownLabel.HorizontalAlignment = 'right';
+            app.RefAPDropDownLabel.Position = [137 88 43 22];
+            app.RefAPDropDownLabel.Text = 'Ref AP';
+
+            % Create RefAPDropDown
+            app.RefAPDropDown = uidropdown(app.CalibrateSampleTab);
+            app.RefAPDropDown.Items = {'1 mm', '2 mm', '3 mm', '4 mm', '5 mm', '6 mm'};
+            app.RefAPDropDown.Position = [195 88 64 22];
+            app.RefAPDropDown.Value = '3 mm';
 
             % Create RunTab
             app.RunTab = uitab(app.TabGroup);

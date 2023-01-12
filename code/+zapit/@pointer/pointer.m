@@ -36,7 +36,7 @@ classdef pointer < handle
         calibratedBrainOutline % The outline of the brain calibrated to the sample
         refPointsStereotaxic = [0,0;0,3]  % Two reference points in stereotaxic space. By default bregma
                                           % (first line [ML,AP] and a point 3 mm in front (second line)
-                                          % TODO -- in future this can be a setting in the GUI.
+
         refPointsSample  % The two reference points in sample space. User provides these via calibrateSample
 
         % TODO -- what is the difference between chanSamples and waveforms?

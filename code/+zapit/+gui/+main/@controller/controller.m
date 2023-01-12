@@ -113,6 +113,8 @@ classdef controller < zapit.gui.main.view
             obj.SizeThreshSpinner.Value = obj.model.settings.calibrateScanners.areaThreshold;
             obj.CalibExposureSpinner.Value = obj.model.settings.calibrateScanners.beam_calib_exposure;
 
+            % Disable the reference AP dropdown
+            obj.RefAPDropDown.Enable='off';
 
             obj.TestSiteDropDown.Items={}; % Nothing loaded yet...
 

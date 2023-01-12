@@ -11,7 +11,6 @@ classdef stimConfig < handle
 
         % powerOption -  if 1 send 2 mW, if 2 send 4 mW (mean)
         powerOption % TODO - likely to be changed. This isn't a value in mW right now
-        refPoints % Reference points
         template % I think this where we stimulate
     end % properties
 
@@ -39,8 +38,6 @@ classdef stimConfig < handle
             data = zapit.yaml.ReadYaml(fname);
 
             obj.powerOption = data.powerOption;
-            obj.refPoints = cell2mat(data.refPoints);
-
 
             % template is 2 by n (by n?) array
             template = [];
@@ -65,8 +62,6 @@ classdef stimConfig < handle
             % zapit.stimConfig(fname)
             %
             data.powerOption = obj.powerOption;
-            data.refPoints = obj.refPoints;
-
 
             for ii = 1:size(obj.template,3)
                 fieldName = sprintf('template_%02d',ii);
