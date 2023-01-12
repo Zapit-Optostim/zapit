@@ -1,7 +1,7 @@
-function obj = plotMakeChanSamples(obj, laserPowerInMW, plotFigure)
+function obj = plotChanSamples(obj, laserPowerInMW, plotFigure)
     % Prepares voltages for each inactivation site
     %
-    % zapit.pointer.makeChanSamples(laserPowerInMW)
+    % zapit.pointer.plotChanSamples(laserPowerInMW)
     %
     %
     % Inputs
@@ -14,6 +14,9 @@ function obj = plotMakeChanSamples(obj, laserPowerInMW, plotFigure)
     % Maja Skretowska - 2021
 
 
+    if isempty(obj.chanSamples)
+        return
+    end
 
     xAxis = [1:obj.numSamplesPerChannel];
 

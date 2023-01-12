@@ -15,6 +15,11 @@ The project will adhere to [semantic versioning](http://semver.org) guidelines, 
 * PATCH version when you make backwards compatible bug fixes
 
 
+2023/01/XX -- VERSION
+ * Move relevant methods into zapit.stimConfig
+ * zapit.stimConfig.makeChanSamples is now turned into a getter of chanSamples
+
+
 2023/01/12 -- v0.5.1-alpha
  * Add the atlas_data.mat file to the code directory.
 

@@ -131,7 +131,7 @@ P.calibrateSample
 Prepare the waveforms that will be used for each brain area (stimulation site).
 Here we are stimulating with laser power at the sample of 10 mW.
 ```
-P.makeChanSamples(10);
+P.stimConfig.laserPowerInMW = 10;
 ```
 
 ### Let's run it!
