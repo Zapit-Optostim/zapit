@@ -21,6 +21,8 @@ classdef controller < zapit.gui.main.view
     properties(Hidden)
         laserPowerBeforeCalib % Used to reset the laser power to the value it had before calibration
         nInd % a counter used by calibrateSample_Callback
+        hStimConfigEditor
+        hLaserPowerGUI
     end
 
 
@@ -73,6 +75,8 @@ classdef controller < zapit.gui.main.view
             obj.model=[];
 
             delete(obj.hFig);
+            delete(obj.hStimConfigEditor)
+            delete(obj.hLaserPowerGUI)
 
             %clear from base workspace if present
             evalin('base','clear hZP hZPview')

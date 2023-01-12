@@ -37,7 +37,7 @@ function [uF,uA] = testPointPlace
 
         switch get(uF,'SelectionType')
         case 'normal'
-            % Double-click and we add a point
+            % Click and we add a point
             p.XData(end+1) = X;
             p.YData(end+1) = Y;
         case 'alt'

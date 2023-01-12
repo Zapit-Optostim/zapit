@@ -1,3 +1,7 @@
 function createNewStimConfig_Callback(obj,~,~)
-    aratopdown.area_highlighter %PLACEHOLDER
+    % Load the stim config editor GUI
+    % 
+    % 
+    
+    obj.hStimConfigEditor = zapit.gui.stimConfigEditor.controller(obj);
 end

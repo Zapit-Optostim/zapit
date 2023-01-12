@@ -15,11 +15,13 @@ The project will adhere to [semantic versioning](http://semver.org) guidelines, 
 * PATCH version when you make backwards compatible bug fixes
 
 
-2023/01/XX -- VERSION
+2023/01/12 -- v0.6.0-alpha
  * Move relevant methods into zapit.stimConfig
  * zapit.stimConfig.makeChanSamples is now turned into a getter of chanSamples
  * Recent files updates when files are missing. The list is cached and re-appears on reload.
  * Move vidrio wrapper into the project (thanks to Vidrio for granting permission).
+ * Make a GUI to build stim config files. This is the last version that will use the existing stim config format!
+
 
 2023/01/12 -- v0.5.1-alpha
  * Add the atlas_data.mat file to the code directory.
