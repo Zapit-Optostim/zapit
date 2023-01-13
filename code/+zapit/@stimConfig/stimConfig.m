@@ -116,13 +116,16 @@ classdef stimConfig < handle
                             obj.template(:,:,2), ...
                             obj.parent.refPointsStereotaxic, ...
                             obj.parent.refPointsSample);
-        end
+        end % calibratedPoints
 
 
         function cLibrary = coordsLibrary(obj)
             % Translate the obtained points into volts
-
-            % TODO - I think this is where all computed waveforms are kept
+            %
+            % coordsLibrary
+            %
+            % Purpose
+            % Returns the compute waveforms. 
 
             cLibrary = [];
 
@@ -136,9 +139,7 @@ classdef stimConfig < handle
             cLibrary = [xVolt' yVolt'];
             cLibrary(:,:,2) = [xVolt2' yVolt2'];
 
-            % TODO:??
-            % should now run makeChanSamples and should also run this again if laser power changes.
-        end
+        end % coordsLibrary
 
 
 
@@ -223,7 +224,8 @@ classdef stimConfig < handle
             % is whether laser is off or on
 
 
-        end % makeChanSamples
+        end % get.chanSamples
+
     end % methods
 
 

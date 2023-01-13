@@ -10,11 +10,7 @@ function drawBrainOutlineOnSample(obj)
     % First place beam in the centre of the area we want to stimulate
     obj.DAQ.moveBeamXY(mean(coords));
 
-    % TODO -- should not have duplicates!
-    % TODO - the power and exposure settings need to be set here. Currently
-    % they are set in checkScannerCalib_Callback of the controller
-
-    coords(:,3:4)=2; % LASER POWER HERE TODO
+    coords(:,3:4)=2; % TODO -- LASER POWER HERE TODO
 
     %Replace first two columns with voltage values
     [xVolt,yVolt] = obj.mmToVolt(coords(:,1), coords(:,2));

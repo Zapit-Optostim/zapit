@@ -13,9 +13,6 @@ function stopOptoStim(obj, rampDownInMS)
     %
     % Rob Campbell - SWC 2022
 
-    % TODO -- do not run if the stimulation has already stopped
-
-
     % Number of ms over which to ramp down. TODO -- set up as parameter
     if nargin<2
         rampDownInMS = 250;
@@ -70,7 +67,6 @@ function stopOptoStim(obj, rampDownInMS)
     % stop task and send to pre-generation stage, allowing to write
     % next trial samples without conflicts
     obj.DAQ.hAO.stop
-    % TODO - might need to hAO.abort
 
 end % stopOptoStim
 

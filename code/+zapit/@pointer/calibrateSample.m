@@ -51,15 +51,6 @@ function varargout = calibrateSample(obj)
     end
 
 
-
-    % TODO:
-    % should now run makeChanSamples and should also run this again if laser power changes.
-
-    %% Cycle the laser through all locations to check visually that all is good
-    %% TODO -- in future this will be triggered by a button press or can happen once automatically then button press?
-    %%         maybe we can have it cycle much faster than now but continuously?
-
-
     if nargout > 0
         varargout{1} = opaqueArea;
     end
