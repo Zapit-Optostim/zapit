@@ -20,7 +20,7 @@ function varargout = calibrateSample(obj)
     % Calculate the rotation and displacement in pixel coordinates
     % TODO -- This is actually performing a transform of the stim points,
     %         which is not exactly how we are working now. 
-    [calibratedPoints, rotMat] = zapit.utils.coordsRotation(obj.stimConfig.template, obj.stimConfig.refPoints, realPoints);
+    [calibratedPoints, rotMat] = zapit.utils.rotateAndScaleCoords(obj.stimConfig.template, obj.stimConfig.refPoints, realPoints);
 
     
     % TODO -- this needs to be an extra button in the GUI.

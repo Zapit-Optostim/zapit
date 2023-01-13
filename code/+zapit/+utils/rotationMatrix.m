@@ -15,7 +15,7 @@ function rotMat = rotationMatrix(theta)
     % sin(theta), cos(theta)
     %
     % Notes
-    % Called by zapit.utils.coordsRotation
+    % Called by zapit.utils.rotateAndScaleCoords
     %
     % Maja Skretowska - SWC 2020
 

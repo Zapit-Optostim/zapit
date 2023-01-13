@@ -377,7 +377,7 @@ classdef controller < zapit.gui.main.view
                     return
                 end
                 obj.model.refPointsSample(obj.nInd,:) = [X,Y];
-                newpoint = zapit.utils.coordsRotation(fliplr(b)', obj.model.refPointsStereotaxic, obj.model.refPointsSample)';
+                newpoint = zapit.utils.rotateAndScaleCoords(fliplr(b)', obj.model.refPointsStereotaxic, obj.model.refPointsSample)';
                 newpoint = fliplr(newpoint);
                 obj.plotOverlayHandles.brainOutline.XData = newpoint(:,2);
                 obj.plotOverlayHandles.brainOutline.YData = newpoint(:,1);

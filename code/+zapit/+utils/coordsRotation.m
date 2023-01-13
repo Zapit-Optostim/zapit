@@ -1,27 +1,29 @@
-function [calibratedPoints,rotMat] = coordsRotation(template, refPoints, points)
-    % calculate rotation and displacement in pixel coordinates
+function [calibratedPoints,rotMat] = rotateAndScaleCoords(template, refPointsStereotaxic, refPointsSample)
+    % Calculate rotation and displacement of sample with respect to stereotaxic coords and apply to data
     %
-    % function [calibratedPoints,rotMat] = coordsRotation(template, refPoints, points)
+    % function [calibratedPoints,rotMat] = rotateAndScaleCoords(template, refPointsStereotaxic, refPointsSample)
     %
     % Purpose
-    % Called by zapit.pointer.getAreaCoords to map the template stimulation locations
-    % onto pixel values for this particular animal and session
+    % Calculates scale and rotation between the sample coords (refPointsSample) and standard
+    % stereotaxic coords (refPointsStereotaxic). Applies the resulting transform to the data
+    % in template. This allows us to map intended stimulation stereotaxic coords onto the 
+    % sample as imaged by the camera.
     %
-    % Inputs (TODO: define inputs more clearly)
+    % Inputs
     % template - template stimulation coordinates 
-    % refPoints - The reference points in the same space as the templates (TODO: correct?)
-    % points - The observed reference points on this particular sample. TODO: maybe we can name this better?
+    % refPointsStereotaxic - The reference points in standard stereotaxic space. 
+    % refPointsSample - The observed reference points on this particular sample.
+    %
     %
     % Maja Skretowska - SWC 2020
 
-    % TODO -- the function does more than just rotate, so we should rename it
 
     % Get the displacement vector
-    translationVector = points(1,:); %This is bregma
-    pntZeroed = points - points(1,:);
+    translationVector = refPointsSample(1,:); %This is bregma
+    pntZeroed = refPointsSample - refPointsSample(1,:);
     
     % Get the rotation angle
-    [th, ro] = cart2pol([pntZeroed(2,1), refPoints(2,1)], [pntZeroed(2,2), refPoints(2,2)]);
+    [th, ro] = cart2pol([pntZeroed(2,1), refPointsStereotaxic(2,1)], [pntZeroed(2,2), refPointsStereotaxic(2,2)]);
     rotationAngle = th(1)-th(2);
     rotMat = zapit.utils.rotationMatrix(rotationAngle);
     
@@ -34,4 +36,4 @@ function [calibratedPoints,rotMat] = coordsRotation(template, refPoints, points)
         calibratedPoints(:,:,ii) = calibratedPoints + translationVector';
     end
 
-end % coordsRotation
+end % rotateAndScaleCoords
