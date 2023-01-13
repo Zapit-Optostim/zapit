@@ -6,7 +6,7 @@ function updateTestSiteDropdown(obj)
         return
     end
 
-    for ii=1:size(obj.model.stimConfig.template,2);
+    for ii=1:length(obj.model.stimConfig.stimLocations);
         stimSite{ii} = sprintf('Site %d', ii);
     end
 

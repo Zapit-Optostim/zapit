@@ -103,7 +103,7 @@ function laserPower = testPower(obj)
             
             
             % make up samples for scanner channels
-            % (coordsLibrary is already in a volt format)
+            % (calibratedPointsInVolts is already in a volt format)
             scanChnl = zeros(obj.numSamplesPerChannel,2); % matrix for each channel
             
             %% make up scanner volts to switch between two areas

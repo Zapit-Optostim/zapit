@@ -14,7 +14,7 @@ function settings = default_settings
     settings.laser.laserMinMaxControlVolts = [1.5,3.5]; %TODO -- replace with a different number
     settings.laser.laserMinMax_mW = [0,100]; %TODO -- replace with a different number
 
-    settings.camera.connection_index = -1;
+    settings.camera.connection_index = 1;
     settings.camera.default_exposure = 0;
     settings.camera.beam_calib_exposure = 0;
     settings.camera.micronsPerPixel = 19.3; %TODO -- replace with a different number

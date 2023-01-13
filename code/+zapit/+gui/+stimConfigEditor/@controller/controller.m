@@ -162,6 +162,13 @@ classdef controller < zapit.gui.stimConfigEditor.view
 
             obj.fname = fname;
             obj.updateBottomLabel
+
+            % If the stim config editor was launched from the main GUI then we
+            % can add this file to the recents.
+            if ~isempty(obj.mainGUI)
+                obj.mainGUI.addStimConfigToRecents(fname,fullPath)
+            end
+
         end %saveConfigYAML
 
 

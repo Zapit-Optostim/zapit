@@ -81,9 +81,10 @@ classdef stimConfig < handle
         function writeConfig(obj,fname)
             % Write a YAML config file
             %
-            % zapit.stimConfig(fname)
+            % zapit.stimConfig.writeConfig(fname)
             %
-
+            % Purpose
+            % Write properties into a stim config YAML file that can be re-read.
 
             for ii = 1:length(obj.stimLocations)
                 fieldName = sprintf('stimLocations%02d',ii);
@@ -97,93 +98,129 @@ classdef stimConfig < handle
         end % writeConfig
 
 
-        function n = numStimLocations(obj)
-            % Return the number of stim locations as an integer
-            n = size(obj.template,2);
-        end % numStimLocations
-
-
-        function cPoints = calibratedPoints(obj)
+        function cPoints = calibratedPoints(obj) 
             % The stimulation locations after they have been calibrated to the sample
-            cPoints = [];
+            % 
+            % zapit.stimConfig.calibratedPoints
+            %
+            % Purpose
+            % Places the stereotaxic target coords in stimLocations into the sample
+            % space being imaged by the camera. It does this using the estimate of 
+            % bregma plus one more stereotaxic point that are stored in refPointsSample.
+            %
+            % Inputs
+            % none
+            %
+            % Outputs
+            % A cell array of converted coordinates. The cells correspond in order to
+            % the orginal data in the structure stimLocations. If the cells are 
+            % concatenated as [cPoints{:}] then the first row is ML coords and second
+            % row is AP coords. All in mm.
+            %
+            %
+            cPoints = {};
 
-            % TODO -- this is clearly not ideal
-            cPoints(:,:,1) = zapit.utils.rotateAndScaleCoords(...
-                            obj.template(:,:,1), ...
+            if isempty(obj.parent.refPointsSample)
+                return
+            end
+
+            for ii = 1:length(obj.stimLocations)
+                tmpMat = [obj.stimLocations(ii).ML; obj.stimLocations(ii).AP];
+                cPoints{ii} = zapit.utils.rotateAndScaleCoords(...
+                            tmpMat, ...
                             obj.parent.refPointsStereotaxic, ...
                             obj.parent.refPointsSample);
-            cPoints(:,:,2) = zapit.utils.rotateAndScaleCoords(...
-                            obj.template(:,:,2), ...
-                            obj.parent.refPointsStereotaxic, ...
-                            obj.parent.refPointsSample);
+            end
         end % calibratedPoints
 
 
-        function cLibrary = coordsLibrary(obj)
-            % Translate the obtained points into volts
+        function cPointsVolts = calibratedPointsInVolts(obj)
+            % Convert the calibrated points (sample space) into voltage values for the scanners
             %
-            % coordsLibrary
+            % zapit.stimConfig.calibratedPointsInVolts
             %
             % Purpose
-            % Returns the compute waveforms. 
+            % This method returns voltage values that can be sent to the scanners in order
+            % to point the beam at the locations defined calibratedPoints.
+            %
+            % Inputs
+            % none
+            %
+            % Outputs
+            % A cell array of coordinates converted into voltages. The cells correspond in order 
+            % to the orginal data in the structure stimLocations. If the cells are concatenated 
+            % as [cPointsVolts{:}] then the first column is ML coords and second column is AP 
+            % coords. All in volts. NOTE this is transposed with respect to calibratedPoints
+            %
+            %
 
-            cLibrary = [];
-
+            cPointsVolts = {};
 
             calibratedPoints = obj.calibratedPoints;
 
-            % Certainly this is a non-idiomatic way of doing this
-            [xVolt, yVolt] = obj.parent.mmToVolt(calibratedPoints(1,:,1), calibratedPoints(2,:,1)); % calibratedPoints should have an n-by-2 dimension
-            [xVolt2, yVolt2] = obj.parent.mmToVolt(calibratedPoints(1,:,2), calibratedPoints(2,:,2));
+            if isempty(calibratedPoints)
+                return 
+            end
 
-            cLibrary = [xVolt' yVolt'];
-            cLibrary(:,:,2) = [xVolt2' yVolt2'];
+            for ii = 1:length(calibratedPoints)
+                [xVolt, yVolt] = obj.parent.mmToVolt(calibratedPoints{ii}(1,:), ...
+                                                    calibratedPoints{ii}(2,:));
+                cPointsVolts{ii} = [xVolt' yVolt'];
+            end
 
-        end % coordsLibrary
-
+        end % calibratedPointsInVolts
 
 
         function chanSamples = get.chanSamples(obj)
             % Prepares voltages for each photostimulation site
             %
-            % zapit.stimConfig.makeChanSamples(laserPowerInMW)
+            % zapit.stimConfig.chanSamples
             %
+            % Purpose
+            % The calibratedPoints getter returns the locations of stimulus points in sample space.
+            % The calibratedPointsInVolts converts this to volts. This method uses these voltage 
+            % values to generate waveforms that can be played with a clocked NI output task in order
+            % stimulate the sample at the laser power and rep rate defined by properties of this 
+            % class. 
             %
             % Inputs
-            % laserPowerInMW - Desired laser power in mW. Optional. If missing the
-            %    value in the object property is used.
+            % none
             %
             % Outputs
-            % None but the chanSamples property is updated.
+            % chanSamples
             %
-            % Maja Skretowska - 2021
+            % Maja Skretowska - SWC 2021
+            % Updated by Rob Campbell - SWC 2023 to cope with new stimulus structure
 
-            coordsLibrary = obj.coordsLibrary;
-            numHalfCycles = 4; % arbitrary, no of half cycles to buffer
+            if nargin<2
+                calibratedPointsInVolts = obj.calibratedPointsInVolts;
+            else
+                calibratedPointsInVolts = IN;
+            end
 
-            % TODO: defaultLaserFrequency will probably be used to make the brain area config file and from there that will be the relevant value
-            obj.numSamplesPerChannel = obj.parent.DAQ.samplesPerSecond/obj.parent.settings.experiment.defaultLaserFrequency*(numHalfCycles/2);
+            numHalfCycles = 4; % The number of half cycles to buffer
+
+            % TODO -- we need to make sure that the number of samples per second here is the right number
+            obj.numSamplesPerChannel = obj.parent.DAQ.samplesPerSecond/obj.stimFreqInHz*(numHalfCycles/2);
 
             % find edges of half cycles
             cycleEdges = linspace(1, obj.numSamplesPerChannel, numHalfCycles+1);
             edgeSamples = ceil(cycleEdges(1,:));
 
-
-            % make up samples for scanner channels
-            % (coordsLibrary is already in a volt format)
-            scanChnl = zeros(obj.numSamplesPerChannel,2,size(coordsLibrary,2)); % matrix for each channel
-            %             lghtChnl = zeros(obj.numSamplesPerChannel,2,2);                         % 1st dim is samples, 2nd dim is channel, 3rd dim is conditions
+            % make up samples for scanner channels (of course calibratedPointsInVolts is already in volt format)
+            scanChnl = zeros(obj.numSamplesPerChannel,2,length(calibratedPointsInVolts)); % matrix for each channel
+            lghtChnl = zeros(obj.numSamplesPerChannel,2,2); % 1st dim is samples, 2nd dim is channel, 3rd dim is conditions
 
             %% make up scanner volts to switch between two areas
-            for inactSite = 1:size(coordsLibrary, 1)    % CHECK if it really is the first dim
+            for inactSite = 1:length(calibratedPointsInVolts)
 
                 % inactSite gets column from the coordinates library
-                xVolts = coordsLibrary(inactSite,1,:);
-                yVolts = coordsLibrary(inactSite,2,:);
+                xVolts = calibratedPointsInVolts{inactSite}(:,1);
+                yVolts = calibratedPointsInVolts{inactSite}(:,2);
                 for cycleNum = 1:(length(edgeSamples)-1)
                     segStart = edgeSamples(cycleNum);
                     segStop = edgeSamples(cycleNum+1);
-                    siteIndx = rem(cycleNum+1,2)+1;         % check whether it's an odd (rem = 1) or even (rem = 0) number and then add 1 to get an index
+                    siteIndx = rem(cycleNum+1,2)+1; % check whether it's an odd (rem = 1) or even (rem = 0) number and then add 1 to get an index
                     scanChnl(segStart:segStop,1,inactSite) = xVolts(siteIndx);
                     scanChnl(segStart:segStop,2,inactSite) = yVolts(siteIndx);
                 end
@@ -208,7 +245,6 @@ classdef stimConfig < handle
             anlgOut = anlgOut.*MASK;
             digOut = digOut.*MASK;
 
-            % Can probabky make
             lghtChnl(:,1) = anlgOut;              % analog laser output
             lghtChnl(:,2) = digOut*(5/digitalAmplitude);    % analog masking light output
             lghtChnl(:,3) = digOut;               % digital laser gate
