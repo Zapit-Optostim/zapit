@@ -3,8 +3,8 @@ classdef DClass < hgsetget
     %
     %% NOTES
     %    
-    %   TODO: Consider if it makes sense to factor filterPropValArgs & extractPropValArgMap out into utility functions -- they don't really need to be DClass methods..
-    %   TODO: Consider subclassing MException, to make DException -- instead of packing utility functions here. But how to make this available to all DClass instances?
+    %   ToDo: Consider if it makes sense to factor filterPropValArgs & extractPropValArgMap out into utility functions -- they don't really need to be DClass methods..
+    %   ToDo: Consider subclassing MException, to make DException -- instead of packing utility functions here. But how to make this available to all DClass instances?
     %
     %% ************************************************************************    
        
@@ -110,8 +110,8 @@ classdef DClass < hgsetget
             %       inheritanceGroupingEnable: <Default=true> If true, inherited properties are grouped
             %       explicityExcludeList: <Default={}> Cell string array listing properties to explicitly exclude from display
             
-            % TODO: Document optional arguments more fully
-            % TODO: Explore idea of 'list inheritance' -- could be very useful for selecting displayed props at each level of inheritance tree
+            % ToDo: Document optional arguments more fully
+            % ToDo: Explore idea of 'list inheritance' -- could be very useful for selecting displayed props at each level of inheritance tree
             
             if ~isvalid(obj)
                 disp(obj);
@@ -396,7 +396,7 @@ classdef DClass < hgsetget
         function [filteredPropValArgs,otherPropValArgs] = filterPropValArgs(argList,validProps,mandatoryProps)
             %Method for subclasses to filter property-value pairs from supplied argList of property-value pairs
             
-            %TODO: Eliminate this method altogether -- should just leave as a utility
+            %ToDo: Eliminate this method altogether -- should just leave as a utility
             
             try 
                 if nargin > 2

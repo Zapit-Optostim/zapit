@@ -3,7 +3,7 @@ classdef DAQmxClass < zapit.hardware.vidrio_daqmx.APIWrapper & zapit.hardware.vi
     %level of DAQmx entity that has Get/Set and other methods, e.g. 'Task',
     %'Channel', 'Device', etc.
     %
-    %% TODO:
+    %% ToDo:
     %   Look at APICallLocal() -- doesn't make too much sense as presently implemenented. Is it necessary as a method? It's only used by apiVersionDetectHookFcn().
     %    
     %% CHANGES
@@ -194,7 +194,7 @@ classdef DAQmxClass < zapit.hardware.vidrio_daqmx.APIWrapper & zapit.hardware.vi
             end
             
             
-            %TODO: Update APIWrapper apiCallXXX mechanisms so they can be used in this 'pre-constructed' case
+            %ToDo: Update APIWrapper apiCallXXX mechanisms so they can be used in this 'pre-constructed' case
             function val = apiCallLocal(funcName)
                 [status,val] = calllib(obj.apiDLLNames, funcName, 0); %Assumes apiDLLNames is a 'scalar'-string
                 if status ~= obj.apiResponseCodeSuccess
@@ -302,7 +302,7 @@ classdef DAQmxClass < zapit.hardware.vidrio_daqmx.APIWrapper & zapit.hardware.vi
                 if ~isempty(setValEncoded)
                     val = setValEncoded;
                 end
-                %TODO: Flag cases for which encode fails, to notify that subsequent errors /may/ be due to incorrect spelling of code, etc
+                %ToDo: Flag cases for which encode fails, to notify that subsequent errors /may/ be due to incorrect spelling of code, etc
             end
             
             %First check if there is a DAQmx setter (i.e. not a read-only property)

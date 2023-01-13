@@ -78,8 +78,8 @@ classdef Task < zapit.hardware.vidrio_daqmx.private.DAQmxClass
         taskType=''; %Member of {'AnalogInput', 'AnalogOutput', 'DigitalInput', 'DigitalOutput', 'CounterInput', 'CounterOutput'}
         deviceNames; %Cell array of device names (though in most cases, there's only one device per task)
         channels; %Array of Channel objects associated with this Task  %TMW: This indirection is used to allow a property to be publically gettable, but only settable by 'friends' or package-mates. Would prefer some native 'package scope' concept.
-        %startTriggerSource; %TODO: Get startTriggerSource by determining type, if any, of start trigger
-        %refTriggerSource; %TODO: Get refTriggerSource by determining type, if any, of reference trigger
+        %startTriggerSource; %ToDo: Get startTriggerSource by determining type, if any, of start trigger
+        %refTriggerSource; %ToDo: Get refTriggerSource by determining type, if any, of reference trigger
     end
     
     properties (SetAccess=private, Hidden)
@@ -261,7 +261,7 @@ classdef Task < zapit.hardware.vidrio_daqmx.private.DAQmxClass
         end
         
         function clear(obj)
-            %TODO: Consider renaming this to 'remove', or similar, to avoid
+            %ToDo: Consider renaming this to 'remove', or similar, to avoid
             %confusion with MATLAB builtin 'clear' Clears the task. Before
             %clearing, this function stops the task, if necessary, and
             %releases any resources reserved by the task. You cannot use a
@@ -341,7 +341,7 @@ classdef Task < zapit.hardware.vidrio_daqmx.private.DAQmxClass
             if nargin == 1
                 obj.unregisterXXXEventPriv('done','RegisterDoneCallback');
             else
-                try  %TODO: This try/catch is likely unnecessary, the set access method should handle this
+                try  %ToDo: This try/catch is likely unnecessary, the set access method should handle this
                     obj.doneEventCallbacks = callbackFunc;
                 catch ME
                     obj.doneEventCallbacks = {};
@@ -354,7 +354,7 @@ classdef Task < zapit.hardware.vidrio_daqmx.private.DAQmxClass
                 
         function registerSignalEvent(obj, callbackFunc, signalID)
             
-            %%%%%%%%%%%TODO%%%%%%%%
+            %%%%%%%%%%%ToDo%%%%%%%%
             %Registers a callback function to receive an event when the specified hardware event occurs. When you stop a task explicitly any pending events are discarded. For example, if you call stop() then you do not receive any pending events.
             %The signalID must be set at time of this call and cannot be changed (event must be unregistered/re-registered to change). The callbackName can be set before, during, or after time of registration, via signalEventCallbacks property.
             %NOTE: Method arguments differ in several ways from DAQmxRegisterSignalEvent()
@@ -375,7 +375,7 @@ classdef Task < zapit.hardware.vidrio_daqmx.private.DAQmxClass
                 error('Cannot register Signal Event without specifying both callback function and signalID value');
             else %The callbackFunc and everyNSamples must be specified here
                 obj.signalID = ''; %This will unregister if needed, to prevent double registration
-                try %TODO: This try/catch is likely unnecessary, the set access method should handle this
+                try %ToDo: This try/catch is likely unnecessary, the set access method should handle this
                     obj.signalEventCallbacks = callbackFunc;
                 catch ME
                     obj.signalEventCallbacks = {};
@@ -516,7 +516,7 @@ classdef Task < zapit.hardware.vidrio_daqmx.private.DAQmxClass
             %
             %   chanObj: The created Channel object
             
-            % TODO
+            % ToDo
             %   * Support comma-separated list specification of multiple physical channels. In doing so, deal with coercion: if any of the channels is port-based, then all are forced to be port-based, even if containing the string 'line'.
             %   * Create separate createDXChan() methods specifically for port and line-based channels, with numeric specification.
             %   * At moment, the 'DAQmx_Val_ChanPerLine' option is /not/ working!
@@ -556,7 +556,7 @@ classdef Task < zapit.hardware.vidrio_daqmx.private.DAQmxClass
             %   chanObj: The created Channel object
             %
                    
-            % TODO
+            % ToDo
             %   * Support comma-separated list specification of multiple physical channels. In doing so, deal with coercion: if any of the channels is port-based, then all are forced to be port-based, even if containing the string 'line'.
             %   * Create separate createDXChan() methods specifically for port and line-based channels, with numeric specification.
             %   * At moment, the 'DAQmx_Val_ChanPerLine' option is /not/ working!
@@ -1377,7 +1377,7 @@ classdef Task < zapit.hardware.vidrio_daqmx.private.DAQmxClass
     
     methods
         
-        %TODO: Add set.signalEventCallbacks() and set.doneEventCallbacks(), providing error validation (i.e. ensure string, etc)
+        %ToDo: Add set.signalEventCallbacks() and set.doneEventCallbacks(), providing error validation (i.e. ensure string, etc)
         
         function set.signalID(obj,val)
             

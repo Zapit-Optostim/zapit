@@ -27,7 +27,7 @@ classdef PDEPPropDynamic < zapit.hardware.vidrio_daqmx.PDEPProp & dynamicprops
             
             %Handle case of array of objects
             if numel(obj) > 1
-                %TODO outVal = arrayfun(@(x)get(x,varargin),obj); %TODO: Does this work in more recent Matlab releases? arrayfun didn't used to support object arrays
+                %ToDo outVal = arrayfun(@(x)get(x,varargin),obj); %ToDo: Does this work in more recent Matlab releases? arrayfun didn't used to support object arrays
                 for i=1:numel(obj)
                     outVal(i) = get(obj(i),varargin{:});
                 end
@@ -35,7 +35,7 @@ classdef PDEPPropDynamic < zapit.hardware.vidrio_daqmx.PDEPProp & dynamicprops
             end
             
             if length(varargin) < 1 || ~ischar(varargin{1}) 
-                %TODO Array first argument, or Cell array second argument not supported (at this time)
+                %ToDo Array first argument, or Cell array second argument not supported (at this time)
                 outVal = get@hgsetget(obj,varargin{:});
             else
                 propname = varargin{1};
@@ -62,7 +62,7 @@ classdef PDEPPropDynamic < zapit.hardware.vidrio_daqmx.PDEPProp & dynamicprops
         end
         
         function set(obj,propName,setVal,varargin)            
-            %Handle case of multiple property sets %TODO: Verify this can't be done via deferring to superclass set method (which does handle multiple property sets correctly)
+            %Handle case of multiple property sets %ToDo: Verify this can't be done via deferring to superclass set method (which does handle multiple property sets correctly)
             if ~isempty(varargin) && ~mod(length(varargin),2)
                 set(obj,propName,setVal);
                 for i=1:(length(varargin)/2)
@@ -72,7 +72,7 @@ classdef PDEPPropDynamic < zapit.hardware.vidrio_daqmx.PDEPProp & dynamicprops
             
             %Handle case of array of objects
             if numel(obj) > 1
-                %arrayfun(@(x)set(x,propName,setVal),obj); %TODO: Double check this doesn't work
+                %arrayfun(@(x)set(x,propName,setVal),obj); %ToDo: Double check this doesn't work
                 for i=1:numel(obj)
                     set(obj(i),propName,setVal);
                 end

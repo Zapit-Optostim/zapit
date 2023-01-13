@@ -9,20 +9,20 @@ classdef APIWrapper < zapit.hardware.vidrio_daqmx.HasClassDataFile %& zapit.hard
     %   3) General methods provided for extracting some standard/common types of API data
     
     %HIGH-PRIORITY
-    %TODO: Ideally machine data file section would have list of apiSupportedVersions automatically inserted as a comment
-    %TODO: Need to restore some static method/means to update API data when a driver has changed, etc..right now it shoudl work when driver number has changed, but no means to update when driver changes without change in version number (often occurs during development)
-    %TODO: When API Data File is deleted and recomputed for a particular class, the persistent API data store entry for that class should be flushed too somehow
+    %ToDo: Ideally machine data file section would have list of apiSupportedVersions automatically inserted as a comment
+    %ToDo: Need to restore some static method/means to update API data when a driver has changed, etc..right now it shoudl work when driver number has changed, but no means to update when driver changes without change in version number (often occurs during development)
+    %ToDo: When API Data File is deleted and recomputed for a particular class, the persistent API data store entry for that class should be flushed too somehow
     
     %TO REVIEW
-    %TODO: Provide some options related to smartLoadLibrary() to allow for (possibly version-dependent) variations in load options
-    %TODO: Consider making option to automatically unload DLL on delete() (likely with instance counting) -- currently DLL is /never/ unloaded
-    %TODO: Consider making option for 'checkout' model on construction for some subclass -- this would require use of machineData specifying the 'available' items for checkout
-    %TODO: Should we deprecate apiCachedDataPath? Why wouldn't we store API cached data in class private directory?? If there's a good reason, supporting 'class','package','packageParent' shorthand would be good
-    %TODO: For apiResponseCodeProcessor, if the subclass is to specify a map, it should probably do so directly, rather than through an apiResponseCodeMapHookFcn -- need to think if there was any reason for this.
+    %ToDo: Provide some options related to smartLoadLibrary() to allow for (possibly version-dependent) variations in load options
+    %ToDo: Consider making option to automatically unload DLL on delete() (likely with instance counting) -- currently DLL is /never/ unloaded
+    %ToDo: Consider making option for 'checkout' model on construction for some subclass -- this would require use of machineData specifying the 'available' items for checkout
+    %ToDo: Should we deprecate apiCachedDataPath? Why wouldn't we store API cached data in class private directory?? If there's a good reason, supporting 'class','package','packageParent' shorthand would be good
+    %ToDo: For apiResponseCodeProcessor, if the subclass is to specify a map, it should probably do so directly, rather than through an apiResponseCodeMapHookFcn -- need to think if there was any reason for this.
     
     
     %OTHERS
-    %TODO: Determine if there is any situation where it's useful/necessary to supply some of the abstract properties as a constructor argument -- in which case, support this as an additional option
+    %ToDo: Determine if there is any situation where it's useful/necessary to supply some of the abstract properties as a constructor argument -- in which case, support this as an additional option
     
     %% NOTES
     %   * The decision to /never/ unload DLLs wrapped by this class is currently baked into this class design.

@@ -66,7 +66,7 @@ classdef AOChan < zapit.hardware.vidrio_daqmx.private.AnalogChan
         %             if ~all(strcmpi(rawDataClasses{1},rawDataClasses)) || ...
         %                     (~isempty(task.(['rawDataArray' typeCode])) && ~strcmpi(class(task.(['rawDataArray' typeCode])), rawDataClasses{1}))
         %                 zapit.hardware.vidrio_daqmx.idioms.dispError('ERROR: At this time, a Task can only support multiple devices with same raw AI and AO data formats\n');
-        %                 delete(task); %Give up on the Task! TODO: Consider just removing the incorrectly added Channels
+        %                 delete(task); %Give up on the Task! ToDo: Consider just removing the incorrectly added Channels
         %                 return;
         %             else
         %                 task.(['rawDataArray' typeCode]) = feval(rawDataClasses{1},0); %Creates scalar array of desired class

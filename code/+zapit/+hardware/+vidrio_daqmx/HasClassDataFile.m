@@ -1,7 +1,7 @@
 classdef HasClassDataFile < handle
     %% NOTES
     %
-    %	TODO: ensureClassDataFileStatic() should perhaps ensure that all specified variables exist in any pre-existing CDF and add/initialize any that don't.
+    %	ToDo: ensureClassDataFileStatic() should perhaps ensure that all specified variables exist in any pre-existing CDF and add/initialize any that don't.
     %
     %% ************************************************************************
     

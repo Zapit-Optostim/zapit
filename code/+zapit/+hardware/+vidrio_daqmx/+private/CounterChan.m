@@ -19,7 +19,7 @@ classdef CounterChan < zapit.hardware.vidrio_daqmx.Channel
         %TMW: This function is a regular method, rather than being static (despite having no object-dependence). This allows caller in abstract superclass to invoke it  by the correct subclass version.
         %%% This would not need to be a regular method if there were a simpler way to invoke static methods, without resorting to completely qualified names.
         function [physChanNameArray,chanNameArray] = createChanIDArrays(obj, numChans, deviceName, physChanIDs,chanNames)
-            %TODO: Consider how to better share this code with AnalogChan. Implementations are extremely similar.
+            %ToDo: Consider how to better share this code with AnalogChan. Implementations are extremely similar.
             
             [physChanNameArray,chanNameArray] = deal(cell(1,numChans));
             for i=1:numChans     

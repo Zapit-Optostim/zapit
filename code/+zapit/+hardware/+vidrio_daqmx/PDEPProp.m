@@ -27,8 +27,8 @@ classdef PDEPProp < zapit.hardware.vidrio_daqmx.DClass
     %   * Error conditions generated during set/get occur in callbacks (property access listeners) and do not generate an exception interrupting program flow (just a warning)
     %   * (Related) The variable still has a value even when in an error condition, so it becomes decoupled from device
     %
-    %TODO: Improve specification of pdep properties -- i.e. don't necessarily blindly asssume /all/ set&get-observable properties are pdep properties
-    %TODO: Consider whether we should /always/ use the PreSet listener, even if not using 'restoreCached' setErrorStrategy
+    %ToDo: Improve specification of pdep properties -- i.e. don't necessarily blindly asssume /all/ set&get-observable properties are pdep properties
+    %ToDo: Consider whether we should /always/ use the PreSet listener, even if not using 'restoreCached' setErrorStrategy
     %
     %%  CHANGES
     %  TO091210A: Added some sane error messaging that's helpful in actually solving the problem. -- Tim O'Connor 9/12/10
@@ -472,7 +472,7 @@ classdef PDEPProp < zapit.hardware.vidrio_daqmx.DClass
                 catch ME
                     tfErr = true;
                     if strcmp(obj.pdepSetErrorStrategy,'setErrorHookFcn')
-                        assert(false); %TODO: implement this case
+                        assert(false); %ToDo: implement this case
                     else
                         switch obj.pdepSetErrorStrategy
                             case 'leaveErrorValue'
