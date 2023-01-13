@@ -1,18 +1,21 @@
 classdef controller < zapit.gui.stimConfigEditor.view
 
-    % zapit.gui.stimConfigEditor.view is the main GUI window: that which first appears when the 
-    % user starts the software.
+    % Graphical editor for stimulus configuration files.
     %
-    % The GUI itself is made in MATLAB AppDesigner and is inherited by this class
+    % zapit.gui.stimConfigEditor.controller
+    %
+    % Purpose
+    % This class controls a GUI that serves as an editor and creater of stimulus configuration
+    % files. This class inherits zapit.gui.stimConfigEditor.view which is what actually makes
+    % the GUI. This class controls the GUI and implements the logic that runs it. 
+    %
+    % The GUI itself is made in MATLAB AppDesigner and is never edited manually.
     %
     %
     % Rob Campbell - SWC 2023
 
     properties
-        % Handles for some plot elements are inherited from the superclass
-
-        hImLive  %The image
-        plotOverlayHandles   % All plotted objects laid over the image should keep their handles here
+        % Handles for most plot elements are inherited from the superclass
 
         zapitPointer % Reference to a parent (running) zapit.pointer object
         mainGUI % Reference to a parent (running) zapit.gui.main.controller object
@@ -38,6 +41,21 @@ classdef controller < zapit.gui.stimConfigEditor.view
     methods
 
         function obj = controller(hZP,hZPview)
+            % Constructor
+            %
+            % function zapit.gui.stimConfig.controller.controller
+            %
+            % Purpose
+            % Constructor.
+            %
+            % Inputs
+            % hZP - Optional. If the GUI is started by the main zapit GUI then this argument is
+            %       provided so the the stimConfig GUI has access to the main API. It will function
+            %       withough, however. TODO -- uses this to get settings. The settings should be obtained some other way.
+            % hZPview - optional. As above. Provided so this GUI can add saved files to the recently opened file list.
+            %
+            % 
+
 
             if nargin>0
                 obj.zapitPointer = hZP;
@@ -92,12 +110,29 @@ classdef controller < zapit.gui.stimConfigEditor.view
 
 
         function delete(obj,~,~)
+            % Destructor
+            %
+            % function zapit.gui.stimConfig.controller.delete
+            %
+
             delete(obj.hFig);
         end %close destructor
 
 
         function isPressed = isShiftPressed(obj)
             % Return true if the user is pressing the shift key
+            %
+            % function zapit.gui.stimConfig.controller.isShiftPressed
+            %
+            % Purpose
+            % Returns true if the user presses the shift key.
+            %
+            % Inputs
+            % none
+            %
+            % Outputs
+            % isPressed - True if shift is pressed. False otherwise.
+
             mod = get(gcbo,'currentModifier');
             isPressed = false;
             if length(mod)==1
@@ -107,7 +142,19 @@ classdef controller < zapit.gui.stimConfigEditor.view
 
 
         function isPressed = isCtrlPressed(obj)
-            % Return true if the user is pressing the ctrl key
+            % Return true if the user is pressing the control key
+            %
+            % function zapit.gui.stimConfig.controller.isCtrlPressed
+            %
+            % Purpose
+            % Returns true if the user presses the control key.
+            %
+            % Inputs
+            % none
+            %
+            % Outputs
+            % isPressed - True if controle is pressed. False otherwise.
+
             mod = get(gcbo,'currentModifier');
             isPressed = false;
             if length(mod)==1
@@ -117,9 +164,13 @@ classdef controller < zapit.gui.stimConfigEditor.view
 
 
         function keyboardPress_Callback(obj,~,event)
-            % Runs whenever a key is pressed or released.
-            % Used to cause the symbol that follows the mouse cursor to change
-            % size right away and not wait until it is moved. 
+            % Triggers events if shift or ctrl is pressed or released.
+            %
+            % function zapit.gui.stimConfig.controller.keyboardPress_Callback
+            %
+            % Purpose
+            % Runs whenever a key is pressed or released. Used to cause the symbol that 
+            % follows the mouse cursor to change size right away and not wait until it is moved. 
 
             if strcmp(event.Key,'ctrl') || strcmp(event.Key,'shift') 
                 obj.highlightArea_Callback
@@ -128,8 +179,17 @@ classdef controller < zapit.gui.stimConfigEditor.view
 
 
         function resetPoints_Callback(obj,~,~)
+            % Wipes all points and the file name after presenting a confirm dialog. 
+            %
+            % function zapit.gui.stimConfig.controller.resetPoints_Callback
+            %
+            % Purpose
+            % Allows the user to reset the GUI: removing the clicked points and wiping the
+            % file name.
+            %
+            % 
+
             % TODO -- should we create a file name also to help with saving?
-            % Allows the user to wipe the GUI and start over with a new file name
 
             if length(obj.pAddedPoints) == 0
                 return
@@ -149,7 +209,15 @@ classdef controller < zapit.gui.stimConfigEditor.view
 
 
         function saveConfigYAML(obj)
-            % Save to YAML
+            % Save config to a YAML
+            %
+            % function zapit.gui.stimConfig.controller.saveConfigYAML
+            %
+            % Purpose
+            % Saves the stimulus config data to a YAML file. If the GUI was launched
+            % from the main GUI, then saving a file will cause it to be added to the 
+            % recently loaded menu.  
+
             stimC = obj.returnStimConfigStructure;
             if isempty(stimC)
                 return
@@ -173,7 +241,13 @@ classdef controller < zapit.gui.stimConfigEditor.view
 
 
         function loadConfigYAML(obj)
-            % Load to YAML
+            % Load a YAML containing a stimulus config
+            %
+            % function zapit.gui.stimConfig.controller.loadConfigYAML
+            %
+            % Purpose
+            % Load a stimulus config YAML and display it. 
+
             [fname,fullPath] = uigetfile('*.yml;*.yaml');
             if fname == 0 | isempty(fname)
                 return
@@ -203,6 +277,14 @@ classdef controller < zapit.gui.stimConfigEditor.view
 
         function ind = findIndexOfAddedPointNearestCursor(obj)
             % Return the index of the point nearest the cursor
+            %
+            % function zapit.gui.stimConfig.controller.findIndexOfAddedPointNearestCursor
+            %
+            % Purpose
+            % Obtain the point nearest the cursor. From this obtain the index of the stimulus
+            % type (trial) that this is part of. 
+            %
+
 
             % Get difference between each plotted point and the current position
             X = obj.pCurrentPoint.XData;
@@ -223,6 +305,14 @@ classdef controller < zapit.gui.stimConfigEditor.view
 
         function tCol = currentColor(obj)
             % Returns a new color for plotting based upon the number of added stimuli
+            %
+            % function zapit.gui.stimConfig.controller.currentColor
+            %
+            % Purpose
+            % We want each stimulus group to be the same color. e.g. both symmetrical bilateral
+            % points shold be matched. This function returns a different colour each time a point
+            % is laid down. So points have different colours.
+
             colors = lines(20);
             nCol = mod(length(obj.pAddedPoints),length(colors));
             if nCol == 0
@@ -234,6 +324,14 @@ classdef controller < zapit.gui.stimConfigEditor.view
 
         function tSym = currentSymbol(obj)
             % Returns a new symbol for plotting based upon the number of added stimuli
+            %
+            % function zapit.gui.stimConfig.controller.currentSymbol
+            %
+            % Purpose
+            % We want each stimulus group to be the same symbol. e.g. both symmetrical bilateral
+            % points shold be matched. This function returns a different symbol each time a point
+            % is laid down.
+
             symbols = 'osd^';
             nSym = mod(length(obj.pAddedPoints),length(symbols));
             if nSym == 0
@@ -242,8 +340,16 @@ classdef controller < zapit.gui.stimConfigEditor.view
             tSym = symbols(nSym);
         end
 
+
         function updateBottomLabel(obj)
             % Update text along the bottom of the GUI
+            %
+            % function zapit.gui.stimConfig.controller.updateBottomLabel
+            %
+            % Purpose
+            % The label text reflects the file name and number of stimuli. This
+            % method updates it when changes take place. It is called manually.
+
             if isempty(obj.fname)
                 t_fname = '';
             else
@@ -252,9 +358,8 @@ classdef controller < zapit.gui.stimConfigEditor.view
 
             obj.BottomLabel.Text = sprintf('%s%d stimulus conditions', t_fname, length(obj.pAddedPoints));
         end % updateBottomLabel
+
     end % methods
-
-
 
 
 end % close classdef

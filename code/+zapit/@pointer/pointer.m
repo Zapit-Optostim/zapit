@@ -1,10 +1,11 @@
 classdef pointer < handle
-    
-    % pointer
+    % Main API class for the Zapit optostim system
     %
-    % Drives a galvo-based photo-stimulator. Scan lens doubles as an
-    % objective to scan the beam over the sample and also to form an
-    % image via a camera.
+    % zapit.pointer
+    %
+    % Purpose
+    % Drives a galvo-based photo-stimulator. The scan-lens doubles as an objective to 
+    % scan the beam over the sample and also to form an image via a camera.
     %
     %
     % Maja Skretowska - SWC 2020-2022
@@ -71,7 +72,9 @@ classdef pointer < handle
         function obj = pointer(varargin)
             % Constructor
             %
-            % Inputs
+            % zapit.pointer.pointer
+            %
+            % Inputs (param/value pairs)
             % 'simulated' - [false by default] If true does not connect to hardware but 
             %   runs in simulated mode.
 
@@ -133,6 +136,10 @@ classdef pointer < handle
         
         function delete(obj,~,~)
             % Stop the camera and disconnect from hardware
+            %
+            % zapit.pointer.delete
+            %
+            
             fprintf('Shutting down optostim software\n')
             cellfun(@delete,obj.listeners)
             if isvalid(obj.cam)
@@ -141,7 +148,6 @@ classdef pointer < handle
             end
             delete(obj.cam)
             delete(obj.DAQ)
-
 
         end % Destructor
         
@@ -153,11 +159,12 @@ classdef pointer < handle
         function imSize = get.imSize(obj)
             % Return size of image being acquired by camera
             %
-            % imSize = pointer.imSize(obj)
+            % imSize = zapit.pointer.imSize(obj)
             %
             % Purpose
             % Return size of image being acquired by camera. This could change after
             % the camera has been started so it must be handled dynamically.
+
             imSize = obj.cam.ROI;
             imSize = imSize(3:4);
         end % get.imsize
@@ -177,9 +184,15 @@ classdef pointer < handle
 
 
         function actualCoords = returnScannerCalibTargetCoords(obj)
+            % Return target coords of the beam during calibration
+            %
+            % function zapit.pointer.returnScannerCalibTargetCoords
+            %
+            % Purpose
             % Return the coordinates the beam is supposed to have gone to during
             % calibration. These are the coordinates for which we also got a location
-            % for where the beam actually went
+            % for where the beam actually went. Some locations may be missing if the
+            % software could not determine the location of the beam there. 
 
             if isempty(obj.calibrateScannersPosData)
                 actualCoords = [];
@@ -209,7 +222,7 @@ classdef pointer < handle
         function im = returnCurrentFrame(obj,nFrames)
             % Return the last recorded camera image and optionally the last n frames
             %
-            % function im = returnCurrentFrame(obj,nFrames)
+            % function im = zapit.pointer.returnCurrentFrame(obj,nFrames)
             %
             % Purpose
             % Return the last frame and, if requested, the last n frames.
