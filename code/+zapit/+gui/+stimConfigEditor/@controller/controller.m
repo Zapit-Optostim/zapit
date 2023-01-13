@@ -4,6 +4,9 @@ classdef controller < zapit.gui.stimConfigEditor.view
     % user starts the software.
     %
     % The GUI itself is made in MATLAB AppDesigner and is inherited by this class
+    %
+    %
+    % Rob Campbell - SWC 2023
 
     properties
         % Handles for some plot elements are inherited from the superclass
@@ -11,7 +14,9 @@ classdef controller < zapit.gui.stimConfigEditor.view
         hImLive  %The image
         plotOverlayHandles   % All plotted objects laid over the image should keep their handles here
 
-        parent % The parent ZP model object goes here
+        zapitPointer % Reference to a parent (running) zapit.pointer object
+        mainGUI % Reference to a parent (running) zapit.gui.main.controller object
+
         atlasData % Brain atlas data for overlaying brain areas, etc
 
         % Handles of plot objects associated with the brain outline
@@ -25,15 +30,21 @@ classdef controller < zapit.gui.stimConfigEditor.view
         pAddedPoints = matlab.graphics.chart.primitive.Line.empty % A list of all added poits
         pointCommonProps = {'ob', 'MarkerSize', 14, 'LineWidth', 2};
 
+        fname % The name of the currently loaded file (if it has one)
     end
 
 
 
     methods
 
-        function obj = controller(hZP)
+        function obj = controller(hZP,hZPview)
+
             if nargin>0
-                obj.parent = hZP;
+                obj.zapitPointer = hZP;
+            end
+
+            if nargin>1
+                obj.mainGUI = hZPview;
             end
 
             % Load the atlas data so we can do things like overlay the brain boundaries
@@ -55,9 +66,9 @@ classdef controller < zapit.gui.stimConfigEditor.view
             obj.BottomLabel.Text = ''; 
             
             % Apply default values to UI elements from settings
-            if ~isempty(obj.parent)
-                obj.LaserPowermWSpinner.Value = obj.parent.settings.experiment.defaultLaserPowerMW;
-                obj.StimFreqHzSpinner.Value = obj.parent.settings.experiment.defaultLaserFrequencyHz;
+            if ~isempty(obj.zapitPointer)
+                obj.LaserPowermWSpinner.Value = obj.zapitPointer.settings.experiment.defaultLaserPowerMW;
+                obj.StimFreqHzSpinner.Value = obj.zapitPointer.settings.experiment.defaultLaserFrequencyHz;
             end
             
 
@@ -119,6 +130,11 @@ classdef controller < zapit.gui.stimConfigEditor.view
         function resetPoints_Callback(obj,~,~)
             % TODO -- should we create a file name also to help with saving?
             % Allows the user to wipe the GUI and start over with a new file name
+
+            if length(obj.pAddedPoints) == 0
+                return
+            end
+
             response = questdlg('Wipe points and start over?', ...
                          'Confirm', ...
                          'Yes', 'No', 'No');
@@ -127,7 +143,8 @@ classdef controller < zapit.gui.stimConfigEditor.view
             end 
             arrayfun(@(x) delete(x), obj.pAddedPoints)
             obj.pAddedPoints = matlab.graphics.chart.primitive.Line.empty;
-            obj.BottomLabel.Text = '';
+            obj.fname = '' ;
+            obj.updateBottomLabel
         end % resetPoints_Callback
 
 
@@ -138,21 +155,42 @@ classdef controller < zapit.gui.stimConfigEditor.view
                 return
             end
             [fname,fullPath] = uiputfile('*.yml');
-            if fname == 0 || isempty(fname)
+            if fname == 0 | isempty(fname)
                 return
             end
             zapit.yaml.WriteYaml(fullfile(fullPath,fname), stimC);
+
+            obj.fname = fname;
+            obj.updateBottomLabel
         end %saveConfigYAML
 
 
         function loadConfigYAML(obj)
             % Load to YAML
             [fname,fullPath] = uigetfile('*.yml;*.yaml');
-            if fname == 0 || isempty(fname)
+            if fname == 0 | isempty(fname)
                 return
             end
-            stimC = zapit.yaml.ReadYaml(fullfile(fullPath,fname));
-            % TODO -- process and plot
+            stimC = zapit.stimConfig(fullfile(fullPath,fname));
+
+            % Wipe anything that is already there
+            arrayfun(@(x) delete(x), obj.pAddedPoints)
+            obj.pAddedPoints = matlab.graphics.chart.primitive.Line.empty;
+            obj.BottomLabel.Text = '';
+
+            hold(obj.hAx,'on')
+            for ii=1:length(stimC.stimLocations)
+                obj.pAddedPoints(ii) = plot(stimC.stimLocations(ii).ML, ...
+                                            stimC.stimLocations(ii).AP, ...
+                                            obj.pointCommonProps{:}, ...
+                                            'Marker', obj.currentSymbol, ...
+                                            'Color', obj.currentColor, ...
+                                            'Parent', obj.hAx);
+            end
+            hold(obj.hAx,'off')
+
+            obj.fname = fname;
+            obj.updateBottomLabel
         end %saveConfigYAML
 
 
@@ -197,6 +235,16 @@ classdef controller < zapit.gui.stimConfigEditor.view
             tSym = symbols(nSym);
         end
 
+        function updateBottomLabel(obj)
+            % Update text along the bottom of the GUI
+            if isempty(obj.fname)
+                t_fname = '';
+            else
+                t_fname = [obj.fname, ' - '];
+            end
+
+            obj.BottomLabel.Text = sprintf('%s%d stimulus conditions', t_fname, length(obj.pAddedPoints));
+        end % updateBottomLabel
     end % methods
 
 

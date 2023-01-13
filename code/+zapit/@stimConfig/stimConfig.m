@@ -9,10 +9,12 @@ classdef stimConfig < handle
 
         configFileName % file name of the loaded stimConfig file
 
+
+        laserPowerInMW
+        stimFreqInHz
+        stimLocations
         % powerOption -  if 1 send 2 mW, if 2 send 4 mW (mean)
-        laserPowerInMW = 10 % TODO -- we need a way of setting this reasonably
-        powerOption % TODO - likely to be changed. This isn't a value in mW right now
-        template % I think this where we stimulate
+        powerOption = 1 % TODO leave for now but delete as soon as possible
 
     end % properties
 
@@ -51,21 +53,27 @@ classdef stimConfig < handle
 
             data = zapit.yaml.ReadYaml(fname);
 
-            obj.powerOption = data.powerOption;
+            obj.laserPowerInMW = data.laserPowerInMW;
+            obj.stimFreqInHz = data.stimFreqInHz;
 
-            % template is 2 by n (by n?) array
-            template = [];
+
+            % Loop through a import all stimLocations
+            obj.stimLocations = struct('ML',[],'AP',[]);
             ind = 1;
             while true
-                fieldName = sprintf('template_%02d',ind);
+                fieldName = sprintf('stimLocations%02d',ind);
                 if isfield(data,fieldName)
-                    template(:,:,ind) = cell2mat(data.(fieldName));
+                    tmp = data.(fieldName);
+                    if length(tmp.ML)>1
+                        tmp.ML = cell2mat(tmp.ML);
+                        tmp.AP = cell2mat(tmp.AP);
+                    end
+                    obj.stimLocations(ind) = tmp;
                 else
                     break
                 end
                 ind = ind + 1;
             end
-            obj.template = template;
             obj.configFileName = fname;
         end % loadConfig
 
@@ -75,12 +83,15 @@ classdef stimConfig < handle
             %
             % zapit.stimConfig(fname)
             %
-            data.powerOption = obj.powerOption;
 
-            for ii = 1:size(obj.template,3)
-                fieldName = sprintf('template_%02d',ii);
-                data.(fieldName) = obj.template(:,:,ii);
+
+            for ii = 1:length(obj.stimLocations)
+                fieldName = sprintf('stimLocations%02d',ii);
+                data.(fieldName) = obj.stimLocations(ii);
             end
+
+            data.laserPowerInMW = obj.laserPowerInMW;
+            data.stimFreqInHz = obj.stimFreqInHz;
 
             zapit.yaml.WriteYaml(fname,data);
         end % writeConfig

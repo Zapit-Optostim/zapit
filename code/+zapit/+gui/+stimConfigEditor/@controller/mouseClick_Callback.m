@@ -1,6 +1,9 @@
 function mouseClick_Callback(obj,~,~)
-
     % Allows for adding and deleting points
+    %
+    % zapit.gui.stimConfig.controller.mouseClick_Callback
+    %
+    % Rob Campbell - SWC 2023
 
 
     C = get(obj.hAx, 'CurrentPoint');
@@ -38,8 +41,8 @@ function mouseClick_Callback(obj,~,~)
                                             'Parent', obj.hAx);
         elseif obj.isShiftPressed && obj.BilateralButton.Value == 0
             % Then we append a point
-            if ~isempty(obj.parent)
-                maxPointsPerCondition = obj.parent.settings.experiment.maxStimPointsPerCondition;
+            if ~isempty(obj.zapitPointer)
+                maxPointsPerCondition = obj.zapitPointer.settings.experiment.maxStimPointsPerCondition;
             else
                 maxPointsPerCondition = 3;
             end
@@ -56,7 +59,8 @@ function mouseClick_Callback(obj,~,~)
 
 
     % Update the text along the bottom
-    obj.BottomLabel.Text = sprintf('%d stimulus conditions', length(obj.pAddedPoints));
+    obj.updateBottomLabel
+
 
 
 

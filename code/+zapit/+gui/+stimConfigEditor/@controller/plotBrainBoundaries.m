@@ -5,6 +5,8 @@ function plotBrainBoundaries(obj)
     %
     % Purpose
     % Plot brain boundaries and set up figure
+    %
+    % Rob Campbell - SWC 2023
 
 
     % Plot settings
