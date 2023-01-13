@@ -23,32 +23,6 @@ function varargout = calibrateSample(obj)
     [calibratedPoints, rotMat] = zapit.utils.rotateAndScaleCoords(obj.stimConfig.template, obj.stimConfig.refPoints, realPoints);
 
     
-    % TODO -- this needs to be an extra button in the GUI.
-    % ask if you're using the option of an opaque area as additional control for inactivation
-    disp('TODO -- NEED TO SET UP OPAQUE POINT [calibrateSample]')
-    if 0
-        opaqueArea = input('Are you using an additional opaque area as control?\n[1 or 0] ');
-        if opaqueArea
-            figure(obj.hFig)
-            title(obj.hImAx, 'Find opaque area 1')
-            waitforbuttonpress
-
-            while obj.hFig.SelectionType ~= "alt"
-                figure(obj.hFig)
-                calibratedPoints(:,end+1,1) = obj.hImAx.CurrentPoint([1,3])';
-                waitforbuttonpress;
-            end
-
-            title(obj.hImAx, 'Find opaque area 2')
-            waitforbuttonpress
-
-            while obj.hFig.SelectionType ~= "alt"
-                figure(obj.hFig)
-                calibratedPoints(:,end,2) = obj.hImAx.CurrentPoint([1,3])';
-                waitforbuttonpress;
-            end
-        end % if opaqueArea
-    end
 
 
     if nargout > 0
