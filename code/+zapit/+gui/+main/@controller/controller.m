@@ -110,6 +110,9 @@ classdef controller < zapit.gui.main.view
                 obj.hFig.Resize='on';
             end
 
+            % Set the figure title to reflect the version number
+            zv = zapit.version;
+            obj.hFig.Name = ['Zapit v', zv.version.string];
 
             % Update elements from settings file
             % TODO: changing the settings spin boxes should change the settings file
