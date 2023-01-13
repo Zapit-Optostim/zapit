@@ -1,0 +1,15 @@
+stimLocations01:
+  ML: [3.56, -3.56]
+  AP: [-1.24, -1.24]
+stimLocations02:
+  ML: [3.95, -3.95]
+  AP: [-0.08, -0.08]
+stimLocations03: {ML: 0.01, AP: -0.91}
+stimLocations04:
+  ML: [2.73, 1.88]
+  AP: [1.66, 0.94]
+stimLocations05:
+  ML: [-2.73, -2.73]
+  AP: [-2.98, -4.09]
+laserPowerInMW: 5.0
+stimFreqInHz: 40.0
