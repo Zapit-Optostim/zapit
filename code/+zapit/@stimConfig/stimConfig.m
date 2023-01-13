@@ -1,7 +1,11 @@
 classdef stimConfig < handle
 
-    % class for handling the configuration files used to
-    % determine where the laser stim locations are
+    % Configuration file handling class
+    %
+    % zapit.stimConfig
+    %
+    % Purpose
+    % This class handles configuration files used to determine where the laser stim locations are.
     %
     % Rob Campbell - SWC 2022
 
@@ -9,12 +13,9 @@ classdef stimConfig < handle
 
         configFileName % file name of the loaded stimConfig file
 
-
         laserPowerInMW
         stimFreqInHz
         stimLocations
-        % powerOption -  if 1 send 2 mW, if 2 send 4 mW (mean)
-        powerOption = 1 % TODO leave for now but delete as soon as possible
 
     end % properties
 
@@ -33,11 +34,17 @@ classdef stimConfig < handle
 
         function obj = stimConfig(fname)
             % Construct a stimConfig file object and load data
+            % 
+            % zapit.stimConfig.stimConfig
+            %
+
             obj.loadConfig(fname)
         end % Constructor
 
 
         function delete(obj)
+            % zapit.stimConfig.delete
+
         end % Destructor
 
 
@@ -117,7 +124,7 @@ classdef stimConfig < handle
             % concatenated as [cPoints{:}] then the first row is ML coords and second
             % row is AP coords. All in mm.
             %
-            %
+
             cPoints = {};
 
             if isempty(obj.parent.refPointsSample)
@@ -152,7 +159,6 @@ classdef stimConfig < handle
             % as [cPointsVolts{:}] then the first column is ML coords and second column is AP 
             % coords. All in volts. NOTE this is transposed with respect to calibratedPoints
             %
-            %
 
             cPointsVolts = {};
 
@@ -169,6 +175,12 @@ classdef stimConfig < handle
             end
 
         end % calibratedPointsInVolts
+
+
+        function varargout = print(obj)
+            % Print of presentions to CLI
+            % TODO -- WRITE THIS
+        end
 
 
         function chanSamples = get.chanSamples(obj)
@@ -258,7 +270,6 @@ classdef stimConfig < handle
             chanSamples.light = lghtChnl;
             % x-by-3-by-2, where rows are samples, columns are channels, and 3rd dim
             % is whether laser is off or on
-
 
         end % get.chanSamples
 

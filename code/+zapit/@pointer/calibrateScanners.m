@@ -24,7 +24,7 @@ function varargout = calibrateScanners(obj)
     obj.setLaserInMW(0)
 
     % lower camera illumination for increased precision in detecting beam location 
-    %obj.cam.src.Gain = 4; % TODO - hard-coded
+
     obj.cam.exposure = obj.settings.calibrateScanners.beam_calib_exposure;
 
 
@@ -50,7 +50,6 @@ function varargout = calibrateScanners(obj)
     mixPix = obj.settings.camera.micronsPerPixel;
     mmPix = mixPix * 1E-3;
 
-
     pixel_rowsMM = (pixel_rows * mmPix);
     pixel_rowsMM = pixel_rowsMM - mean(pixel_rowsMM);
     pixel_colsMM = pixel_cols * mmPix;
@@ -59,9 +58,11 @@ function varargout = calibrateScanners(obj)
     % Calculate a set product to go to all combinations
     [R,C] = meshgrid(pixel_rowsMM,pixel_colsMM);
 
+    %TODO -- are R and C correct?
     R = R(:);
     C = C(:);
-    % change mm coords into voltage %TODO -- R and C correct?
+
+    % change mm coords into voltage 
     [rVolts(:,1), rVolts(:,2)] = obj.mmToVolt(R,C);
     obj.DAQ.moveBeamXY(rVolts(1,:)); % Move to first position
 
@@ -118,6 +119,6 @@ function varargout = calibrateScanners(obj)
         obj.cam.exposure = obj.settings.camera.default_exposure;
         obj.setLaserInMW(0)
         obj.zeroScanners;
-    end
+    end % tidyUp
 
 end % calibrateScanners

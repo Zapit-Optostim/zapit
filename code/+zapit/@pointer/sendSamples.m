@@ -16,13 +16,11 @@ function varargout = sendSamples(obj, t_trial, verbose)
     % t_trial - A structure withxs the following fields.
     %         CoordNum - [int] The index for the brain area to stimulate
     %         LaserOn - [int] If 1 the laser is turned on. If 0 the laser is off (control trial).
-    %         powerOption - if 1 send 2 mW, if 2 send 4 mW (mean) [TODO -- this will be changed to a real mW value)
     %
     % verbose - [optional, false by default] If true print debug messages to screen.
     %
     % Outputs
-    % waveforms - optionally return the waveforms for debug. Waveforms are also present in the
-    %             waveforms property.
+    % waveforms - optionally return the waveforms for debug. 
     %
     %
     % Maja Skretowska - SWC 2020-2022
@@ -40,18 +38,21 @@ function varargout = sendSamples(obj, t_trial, verbose)
     % Make the waveforms to play
     waveforms = [];
     waveforms(:,1:2) = obj.stimConfig.chanSamples.scan(:,:,t_trial.area);
-    waveforms(:,3:4) = t_trial.powerOption * obj.stimConfig.chanSamples.light(:,[1 2]);
+    waveforms(:,3:4) = obj.stimConfig.chanSamples.light(:,[1 2]);
 
-    % Disable laser  if the user asked fior this
+    % Disable laser  if the user asked for this
     if t_trial.LaserOn == 0
-        obj.waveforms(:,3) = 0;
+        waveforms(:,3) = 0;
     end
 
+
+    % TODO we need to set the triggering
     if ~isvalid(obj.DAQ.hAO) || ~strcmp(obj.DAQ.hAO.taskName, 'clockedao'); % TODO-- maybe this check should be in the
                                                 % the createNewTask. So we don't make unless
                                                 % the task names don't match?
         obj.DAQ.connectClockedAO('numSamplesPerChannel',size(waveforms,1));
     end
+
 
     
     % write voltage samples onto the task

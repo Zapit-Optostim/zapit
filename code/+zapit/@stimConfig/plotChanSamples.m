@@ -1,15 +1,16 @@
-function obj = plotChanSamples(obj, laserPowerInMW, plotFigure)
-    % Prepares voltages for each inactivation site
+function obj = plotChanSamples(obj)
+    % Plots the voltage waveforms that will be send to the DAQ
     %
-    % zapit.pointer.plotChanSamples(laserPowerInMW)
+    % zapit.stimConfig.plotChanSamples
     %
+    % Purpose
+    % Makes diagnostic plots of of the scanner waveforms.
     %
     % Inputs
-    % laserPowerInMW - Desired laser power in mW
-    % plotFigure - false by default. If true make a debug figure
+    % none
     %
     % Outputs
-    % None but the chanSamples property matrix is updated.
+    % none
     %
     % Maja Skretowska - 2021
 
@@ -59,5 +60,5 @@ function obj = plotChanSamples(obj, laserPowerInMW, plotFigure)
     ylabel('on/off')
     xlabel('samples generated at 5000 Hz rate')
     
-end % plotMakeChanSamples
+end % plotChanSamples
 

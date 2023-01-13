@@ -138,12 +138,10 @@ P.stimConfig.laserPowerInMW = 10;
 The following code will send samples to the DAQ to stimulate one brain area bilaterally.
 
 ```
-newTrial.area = 1; % first brain area on the list
-newTrial.LaserOn = 1;
-newTrial.powerOption = 1; % if 1 send 2 mW, if 2 send 4 mW (mean)
-
+newTrial = struct('area', 1, 'LaserOn', 1); % first brain area on the list
 P.sendSamples(newTrial)
 ```
+
 To stop it gracefully run:
 ```
 P.stopOptoStim
