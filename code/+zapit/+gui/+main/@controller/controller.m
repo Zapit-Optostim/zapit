@@ -146,8 +146,8 @@ classdef controller < zapit.gui.main.view
             obj.CycleBeamOverCoordsButton.ValueChangedFcn = @(~,~) obj.cycleBeamOverCoords_Callback;
             obj.ZapSiteButton.ValueChangedFcn = @(~,~) obj.zapSite_Callback;
 
-            % TODO-- disable until we get this working
-            obj.PaintareaButton.Enable = 'off';
+
+            obj.PaintareaButton.Enable = 'off'; % DISABLE UNTIL THIS WORKS
             %obj.PaintareaButton.ValueChangedFcn = @(~,~) obj.paintArea_Callback;
             obj.PaintbrainborderButton.ValueChangedFcn = @(~,~) obj.paintBrainBorder_Callback;
 
@@ -308,7 +308,7 @@ classdef controller < zapit.gui.main.view
 
 
 
-        %The following methods are callbacks from the menu TODO -- MAKE MENU
+        %The following methods are callbacks from the menu
         function copyAPItoBaseWorkSpace(obj,~,~)
             fprintf('\nCreating API access components in base workspace:\nmodel: hBT\nview: hBTview\n\n')
             assignin('base','hZPview',obj)

@@ -1,15 +1,13 @@
 function laserPower = testPower(obj)
     %% power-test methods
     % to test power, call obj.testPower, rest of instructions are in the program.
-    % remember to update the bridge first before runnig the program -- TODO -- what does that mean?
+    % remember to update the bridge first before runnig the program.
     %
     % Maja Skretowska - SWC 2021
 
     
     % start new task
     
-    % TODO -- refactor to model/view
-    % TODO -- what is power 1 or 2?
     trialPower = input(char("what's the power to use (1 or 2)?"));
     
     
@@ -53,7 +51,6 @@ function laserPower = testPower(obj)
     saveOption = input('save?');
     whichAnimal = input('whichAnimal', 's');
     if saveOption
-        % TODO -- hardcoded
         fileName = char(join(['D:\Maja\FSMdata\power_' trialPower '_' string(datetime('now', 'format', 'yyyy-MM-dd-hh-mm')) '_' whichAnimal], ''));
         save(fileName, 'laserPower');
     end
@@ -97,7 +94,7 @@ function laserPower = testPower(obj)
             % to laser
             % output: obj.chanSamples (matrix of channel samples for each inactivation)
             numHalfCycles = 4;                          % arbitrary, no of half cycles to buffer
-            digitalAmplitude = 1.5; % fed into Arduino TODO -- remove this
+            digitalAmplitude = 1.5; % fed into Arduino
             
             
             % find edges of half cycles
@@ -132,9 +129,6 @@ function laserPower = testPower(obj)
 
 
     function createTestTask(obj)
-        % TODO -- leave this method for now because I don't know exactly what it does
-        % I think we can just use the DAQ.connectClockedAO method with maybe param/val
-        % pairs in cases such as this.
 
         obj.DAQ.stopAndDeleteTask
         devName = obj.DAQ.device_ID;
