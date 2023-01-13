@@ -164,6 +164,16 @@ classdef controller < zapit.gui.main.view
             % Set GUI state based on calibration state
             obj.scannersCalibrateCallback
             obj.sampleCalibrateCallback
+
+            % If in simulated mode, disable UI elements that are not functional right now
+            if obj.model.simulated
+                obj.RunScannerCalibrationButton.Enable = 'off';
+                obj.PointModeButton.Enable = 'off';
+                obj.CatMouseButton.Enable = 'off';
+                obj.PaintbrainborderButton.Enable = 'off';
+                obj.CycleBeamOverCoordsButton.Enable = 'off';
+                obj.ZapSiteButton.Enable = 'off';
+            end
         end
 
 
