@@ -1,4 +1,11 @@
 function calibrateScanners_Callback(obj,~,~)
+    % Initiate the proces of calibrating the scanners with the camera
+    %
+    % zapit.gui.main.controller.calibrateScanners_Callback
+    %
+    % Purpose
+    % The scanners and camera must be calibrated with respect to each other. This
+    % method does this. 
 
     % Prep figure window
     obj.PointModeButton.Value = 0;
@@ -27,8 +34,6 @@ function calibrateScanners_Callback(obj,~,~)
         tidy
         rethrow(ME)
     end
-
-
 
 
     %Finish off and tidy

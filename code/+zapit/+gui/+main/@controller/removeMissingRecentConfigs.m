@@ -3,7 +3,9 @@ function removeMissingRecentConfigs(obj,~,~)
     %
     % zapit.gui.main.controller.removeMissingRecentConfigs
     %
-    % 
+    % Purpose
+    % Searches through the list of previously loaded configuration files.
+    % Removes any that are no longere there. 
 
     removedFiles = false;
 

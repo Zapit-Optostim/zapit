@@ -1,17 +1,27 @@
 classdef controller < zapit.gui.main.view
 
-    % zapit.gui.main.view is the main GUI window: that which first appears when the 
-    % user starts the software.
+    % Controller class for main Zapit GUI
     %
-    % The GUI itself is made in MATLAB AppDesigner and is inherited by this class
+    % zapit.gui.main.controller
+    %
+    % Purpose
+    % The "main" Zapit GUI is that which appears when the user runs "start_zapit".
+    % This class runs this GUI by controlling the elements defined by zapit.gui.main.view, 
+    % which it inherits. The view class is made in MATLAB AppDesigner and is not modified in
+    % any way. All changes are made programatically by this class. The controller also 
+    % interfaces with the Zapit API (the "model") which controls the hardware.
+    % 
+    %
+    % Rob Campbell - SWC 2022
+
 
     properties
-        % Handles for some plot elements are inherited from the superclass
+        % Note that handles for most plot elements are inherited from the view class
 
-        hImLive  %The image
+        hImLive              % The image
         plotOverlayHandles   % All plotted objects laid over the image should keep their handles here
 
-        model % The ZP model object goes here
+        model     % The zapit.pointer object that runs the hardware
         atlasData % Brain atlas data for overlaying brain areas, etc
         recentLoadedConfigsMenu = {} % Contains the menu vector for recently loaded configs
         listeners = {}; % All go in this cell array
@@ -20,9 +30,9 @@ classdef controller < zapit.gui.main.view
 
     properties(Hidden)
         laserPowerBeforeCalib % Used to reset the laser power to the value it had before calibration
-        nInd % a counter used by calibrateSample_Callback
-        hStimConfigEditor
-        hLaserPowerGUI
+        nInd                  % A counter used by calibrateSample_Callback
+        hStimConfigEditor     % The stim config editor (for making new stim config files)
+        hLaserPowerGUI        % GUI for calibrating laser power
     end
 
 
@@ -37,6 +47,10 @@ classdef controller < zapit.gui.main.view
     methods
 
         function obj = controller(hZP)
+            % Constructor of zapit.gui.main.controller
+            %
+            % zapit.gui.main.controller.controller
+
             if nargin>0
                 obj.model = hZP;
             else
@@ -49,14 +63,9 @@ classdef controller < zapit.gui.main.view
             load('atlas_data.mat')
             obj.atlasData = atlas_data;
 
-            % Add a listener to the sampleSavePath property of the BT model
-            %% obj.listeners{end+1} = addlistener(obj.model, 'sampleSavePath', 'PostSet', @obj.updateSampleSavePathBox); % FOR EXAMPLE
+            % Prepare the window and add listeners
             obj.prepareWindow
             obj.buildListeners
-
-            % Call the class destructor when figure is closed. This ensures all
-            % the hardware tasks are stopped.
-            obj.hFig.CloseRequestFcn = @obj.delete;
 
             % Load the cache file so the GUI returns to its previous state
             obj.loadGUIcache
@@ -68,6 +77,10 @@ classdef controller < zapit.gui.main.view
 
 
         function delete(obj,~,~)
+            % Destructor zapit.gui.main.controller
+            %
+            % zapit.gui.main.controller.delete
+
             fprintf('zapit.gui.main.view is cleaning up\n')
             cellfun(@delete,obj.listeners)
             delete(obj.model);
@@ -81,11 +94,27 @@ classdef controller < zapit.gui.main.view
             %clear from base workspace if present
             evalin('base','clear hZP hZPview')
         end %close destructor
+    end % constructor/destructor end
+
+
+    % Short hidden methods follow
+    methods(Hidden)
+
+        function fname = GUIcacheLocation(obj)
+            % Return the location of the GUI cache file
+            s=zapit.settings.findSettingsFile;
+            fname = fullfile(fileparts(s),'zapitGUIcache.mat');
+        end % GUIcacheLocation
 
 
         function closeZapit(obj,~,~)
-            %Confirm and quit Zapit (also closing the model and so disconnecting from hardware)
-            %This method runs when the user presses the close 
+            % Confirm and quit Zapit (also closing the model and so disconnecting from hardware)
+            %
+            % zapit.gui.main.controller.closeZapit
+            %
+            % Purpose
+            % This method runs when the user presses the close.
+
             choice = questdlg('Are you sure you want to quit Zapit?', '', 'Yes', 'No', 'No');
 
             switch choice
@@ -94,116 +123,7 @@ classdef controller < zapit.gui.main.view
                 case 'Yes'
                     obj.delete
             end
-        end
-
-
-        function prepareWindow(obj)
-            % Prepare the window
-
-            % Insert and empty image into axes.
-            obj.refreshImage
-
-
-            %Make the GUI resizable on small screens
-            sSize = get(0,'ScreenSize');
-            if sSize(4)<=900
-                obj.hFig.Resize='on';
-            end
-
-            % Set the figure title to reflect the version number
-            zv = zapit.version;
-            obj.hFig.Name = ['Zapit v', zv.version.string];
-
-            % Update elements from settings file
-            % TODO: changing the settings spin boxes should change the settings file
-            obj.CalibPowerSpinner.Value = obj.model.settings.calibrateScanners.calibration_power_mW;
-            obj.LaserPowerScannerCalibSlider.Value = obj.CalibPowerSpinner.Value;
-            obj.PointSpacingSpinner.Value = obj.model.settings.calibrateScanners.pointSpacingInPixels;
-            obj.BorderBufferSpinner.Value = obj.model.settings.calibrateScanners.bufferPixels;
-            obj.SizeThreshSpinner.Value = obj.model.settings.calibrateScanners.areaThreshold;
-            obj.CalibExposureSpinner.Value = obj.model.settings.calibrateScanners.beam_calib_exposure;
-
-            % Disable the reference AP dropdown
-            obj.RefAPDropDown.Enable='off';
-
-            obj.TestSiteDropDown.Items={}; % Nothing loaded yet...
-
-            % Run method on mouse click
-
-
-            obj.ResetROIButton.ButtonPushedFcn = @(~,~) obj.resetROI_Callback;
-            obj.ROIButton.ButtonPushedFcn = @(~,~) obj.drawROI_Callback;
-            obj.RunScannerCalibrationButton.ButtonPushedFcn = @(~,~) obj.calibrateScanners_Callback;
-            obj.CheckCalibrationButton.ValueChangedFcn = @(~,~) obj.checkScannerCalib_Callback;
-            obj.PointModeButton.ValueChangedFcn = @(~,~) obj.pointButton_Callback;
-            obj.CatMouseButton.ValueChangedFcn = @(~,~) obj.catAndMouseButton_Callback;
-            obj.LaserPowerScannerCalibSlider.ValueChangedFcn = @(src,evt) obj.setLaserPower_Callback(src,evt);
-            obj.CalibLaserSwitch.ValueChangedFcn = @(~,~) obj.switchLaser_Callback;
-            obj.PointSpacingSpinner.ValueChangedFcn = @(~,~) obj.pointSpacing_CallBack;
-            obj.BorderBufferSpinner.ValueChangedFcn = @(~,~) obj.borderBuffer_CallBack;
-            obj.SizeThreshSpinner.ValueChangedFcn = @(~,~) obj.sizeThreshSpinner_CallBack;
-            obj.CalibExposureSpinner.ValueChangedFcn = @(~,~) obj.calibExposureSpinner_CallBack;
-
-            obj.CalibrateSampleButton.ButtonPushedFcn = @(~,~) obj.calibrateSample_Callback;
-            obj.ShowstimcoordsButton.ValueChangedFcn = @(~,~) obj.showStimulusCoords_Callback;
-            obj.CycleBeamOverCoordsButton.ValueChangedFcn = @(~,~) obj.cycleBeamOverCoords_Callback;
-            obj.ZapSiteButton.ValueChangedFcn = @(~,~) obj.zapSite_Callback;
-
-
-            obj.PaintareaButton.Enable = 'off'; % DISABLE UNTIL THIS WORKS
-            %obj.PaintareaButton.ValueChangedFcn = @(~,~) obj.paintArea_Callback;
-            obj.PaintbrainborderButton.ValueChangedFcn = @(~,~) obj.paintBrainBorder_Callback;
-
-            % This callback runs when the tab is changed. This is to ensure that the GUI is
-            % tidied in any relevant ways when switching to a new tab
-            obj.TabGroup.SelectionChangedFcn = @(src,~) obj.tabChange_Callback(src);
-
-            % Menus
-            obj.NewstimconfigMenu.MenuSelectedFcn = @(~,~) obj.createNewStimConfig_Callback;
-            obj.LoadstimconfigMenu.MenuSelectedFcn = @(src,~) obj.loadStimConfig_Callback(src);
-            obj.FileMenu.MenuSelectedFcn = @(~,~) obj.removeMissingRecentConfigs; % So menu updates if files change
-            obj.FileGitHubissueMenu.MenuSelectedFcn = @(~,~) web('https://github.com/BaselLaserMouse/zapit/issues');
-            obj.GeneratesupportreportMenu.MenuSelectedFcn = @(~,~) zapit.utils.generateSupportReport;
-
-
-            % Set GUI state based on calibration state
-            obj.scannersCalibrateCallback
-            obj.sampleCalibrateCallback
-
-            % If in simulated mode, disable UI elements that are not functional right now
-            if obj.model.simulated
-                obj.RunScannerCalibrationButton.Enable = 'off';
-                obj.PointModeButton.Enable = 'off';
-                obj.CatMouseButton.Enable = 'off';
-                obj.PaintbrainborderButton.Enable = 'off';
-                obj.CycleBeamOverCoordsButton.Enable = 'off';
-                obj.ZapSiteButton.Enable = 'off';
-            end
-        end
-
-
-        function addLastPointLocationMarker(obj)
-            % Add marker showing last point location
-            hold(obj.hImAx,'on')
-            obj.plotOverlayHandles.hLastPoint = plot(nan, nan,'or','MarkerSize',10, ...
-                'LineWidth', 2, 'Parent',obj.hImAx);
-            hold(obj.hImAx,'off')
-            % Set GUI state based on calibration state
-            obj.scannersCalibrateCallback
-            obj.sampleCalibrateCallback
-        end
-
-
-        function buildListeners(obj)
-            obj.listeners{end+1} = ...
-                addlistener(obj.model, 'lastAcquiredFrame', 'PostSet', @obj.dispFrame);
-            obj.listeners{end+1} = ...
-                addlistener(obj.model, 'scannersCalibrated', 'PostSet', @obj.scannersCalibrateCallback);
-            obj.listeners{end+1} = ...
-                addlistener(obj.model, 'sampleCalibrated', 'PostSet', @obj.sampleCalibrateCallback);
-            obj.listeners{end+1} = ...
-                addlistener(obj, 'previouslyLoadedStimConfigs', 'PostSet', @obj.updatePreviouslyLoadedStimConfigList_Callback);
-        end
+        end % closeZapit
 
 
         function resetROI_Callback(obj,~,~)
@@ -222,6 +142,12 @@ classdef controller < zapit.gui.main.view
 
         function scannersCalibrateCallback(obj,~,~)
             % Perform any actions needed upon change in scanner calibration state
+            %
+            % zapit.gui.main.controller.scannersCalibrateCallback
+            %
+            % Purpose
+            % Set the scanner calibration light and enable/disable plot elements.
+
             obj.set_scannersLampCalibrated(obj.model.scannersCalibrated)
 
             if obj.model.scannersCalibrated
@@ -229,50 +155,91 @@ classdef controller < zapit.gui.main.view
             else
                 obj.CheckCalibrationButton.Enable = 'off';
             end
-        end
+        end % scannersCalibrateCallback
+
 
         function sampleCalibrateCallback(obj,~,~)
             % Perform any actions needed upon change in sample calibration state
+            %
+            % zapit.gui.main.controller.sampleCalibrateCallback
+            %
+            % Purpose
+            % Set the sample calibration light.
+
             obj.set_sampleLampCalibrated(obj.model.sampleCalibrated)
-        end
+        end % sampleCalibrateCallback
 
 
         function set_scannersLampCalibrated(obj,calibrated)
             % Set lamp state for scanner calibration
+            %
+            % zapit.gui.main.controller.set_scannersLampCalibrated
+            %
+            % Purpose
+            % Switch lamp between red and green based on calibration state.
+
             if calibrated
                 obj.ScannersCalibratedLamp.Color = [0 1 0];
             else
                 obj.ScannersCalibratedLamp.Color = [1 0 0];
             end
-        end
+        end % set_scannersLampCalibrated
+
 
         function set_sampleLampCalibrated(obj,calibrated)
             % Set lamp state for sample calibration
+            %
+            % zapit.gui.main.controller.set_sampleLampCalibrated
+            %
+            % Purpose
+            % Switch lamp between red and green based on calibration state.
+
             if calibrated
                 obj.SampleCalibratedLamp.Color = [0 1 0];
             else
                 obj.SampleCalibratedLamp.Color = [1 0 0];
             end
-        end
+        end % set_sampleLampCalibrated
+
 
         function setLaserPower_Callback(obj,src,event)
-            % Should be able to recieve from any UI
+            % Set laser to listed power when switch is set to On
+            %
+            % zapit.gui.main.controller.setLaserPower_Callback
+            %
+            % Purpose
+            % Runs when the laser power slider is changed. If the laser calibration 
+            % switch is On, the laser power is set to the power level listed in the 
+            % laser slideer.
+
             if strcmp(obj.CalibLaserSwitch.Value,'On')
                 obj.model.setLaserInMW(event.Value)
             end
-        end
+        end % setLaserPower_Callback
+
 
         function switchLaser_Callback(obj,~,~)
+            % Turn on the laser when the switch is turned on
+            %
+            % zapit.gui.main.controller.switchLaser_Callback
+            %
+            % Purpose
+            % Turning on the laser power switch turns on the laser to the power listed
+            % on the slider.
+
             if strcmp(obj.CalibLaserSwitch.Value,'On')
                 obj.model.setLaserInMW(obj.LaserPowerScannerCalibSlider.Value);
             else
                 obj.model.setLaserInMW(0)
             end
-        end
+        end % switchLaser_Callback
+
 
         function setCalibLaserSwitch(obj,value)
             % Because changing the switch value programmaticaly does not
             % fire the callback. WHY DID TMW THEY DO THIS?!
+            %
+            % zapit.gui.main.controller.setCalibLaserSwitch
             if ~char(value)
                 return
             end
@@ -281,56 +248,59 @@ classdef controller < zapit.gui.main.view
             end
             obj.CalibLaserSwitch.Value = value;
             obj.switchLaser_Callback
-        end
+        end % setCalibLaserSwitch
 
 
         function pointSpacing_CallBack(obj,~,~)
+            %
+            % zapit.gui.main.controller.pointSpacing_CallBack
+            %
+            % Purpose
+            % Changing the spinnerbox writes to the corresponding value in the settings structure. 
+
             obj.model.settings.calibrateScanners.pointSpacingInPixels = obj.PointSpacingSpinner.Value;
-        end
+        end % pointSpacing_CallBack
 
 
         function borderBuffer_CallBack(obj,~,~)
-            obj.model.settings.calibrateScanners.bufferPixels = obj.BorderBufferSpinner.Value;
-        end
+            %
+            % zapit.gui.main.controller.borderBuffer_CallBack
+            %
+            % Purpose
+            % Changing the spinnerbox writes to the corresponding value in the settings structure. 
 
+            obj.model.settings.calibrateScanners.bufferPixels = obj.BorderBufferSpinner.Value;
+        end % borderBuffer_CallBack
 
 
         function sizeThreshSpinner_CallBack(obj,~,~)
+            %
+            % zapit.gui.main.controller.sizeThreshSpinner_CallBack
+            %
+            % Purpose
+            % Changing the spinnerbox writes to the corresponding value in the settings structure. 
+
             if obj.SizeThreshSpinner.Value < 1
                 obj.SizeThreshSpinner.Value = 1;
             end
             obj.model.settings.calibrateScanners.areaThreshold = obj.SizeThreshSpinner.Value;
-        end
+        end % sizeThreshSpinner_CallBack
 
 
         function calibExposureSpinner_CallBack(obj,~,~)
+            %
+            % zapit.gui.main.controller.calibExposureSpinner_CallBack
+            %
+            % Purpose
+            % Changing the spinnerbox writes to the corresponding value in the settings structure. 
+
             if obj.CalibExposureSpinner.Value < 0
                 obj.CalibExposureSpinner.Value = 0;
             end
             obj.model.settings.calibrateScanners.beam_calib_exposure = obj.CalibExposureSpinner.Value;
-        end
+        end % calibExposureSpinner_CallBack
 
-
-        function fname = GUIcacheLocation(obj)
-            % Return the location of the GUI cache file
-            s=zapit.settings.findSettingsFile;
-            fname = fullfile(fileparts(s),'zapitGUIcache.mat');
-        end
-
-
-
-        % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-
-
-        %The following methods are callbacks from the menu
-        function copyAPItoBaseWorkSpace(obj,~,~)
-            fprintf('\nCreating API access components in base workspace:\nmodel: hBT\nview: hBTview\n\n')
-            assignin('base','hZPview',obj)
-            assignin('base','hZP',obj.model)
-        end %copyAPItoBaseWorkSpace
-
-    end
+    end % methods
 
 
 end % close classdef

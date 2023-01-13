@@ -1,5 +1,7 @@
 function pointButton_Callback(obj,~,~)
-
+    % Run on press of the Point button
+    %
+    % zapit.gui.main.controller.pointButton_Callback
 
     % Switch back and forth between click and point mode
     if obj.PointModeButton.Value == 1

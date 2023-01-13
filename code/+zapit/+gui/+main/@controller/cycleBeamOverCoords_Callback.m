@@ -1,6 +1,15 @@
 function cycleBeamOverCoords_Callback(obj,~,~)
+    % Cycle the beam over all the stimulus locations in no particular order
+    %
+    % zapit.gui.main.controller.cycleBeamOverCoords_Callback
+    %
+    % Purpose
+    % Cycle the beam over all the stimulus locations rapidly. This just indicates whether
+    % the beam is going to the right locations. It does not simulate what happens during
+    % an experiment, as it ignores the fact that points are stimulated in pairs (usually). 
+    %
 
-    % TODO: checkScannerCalibClocked is in pointer. So this is odd. [TODO there too]
+    % TODO: checkScannerCalibClocked is located in zapit.pointer. So the presence of this function here is odd. [TODO there too]
     if isempty(obj.model.stimConfig)
         return
     end
@@ -35,4 +44,5 @@ function cycleBeamOverCoords_Callback(obj,~,~)
         obj.model.DAQ.stopAndDeleteAOTask
         obj.model.setLaserInMW(0)
     end
-end
+
+end % cycleBeamOverCoords_Callback

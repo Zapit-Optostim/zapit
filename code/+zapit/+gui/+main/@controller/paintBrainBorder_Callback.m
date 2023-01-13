@@ -1,7 +1,8 @@
-function paintBrainBorder_Callback(obj,~,~)
-% Use the laser to draw the brain outline onto the sample
-%
-%    function zapit.gui.main.controller.checkScannerCalib(obj)
+    function paintBrainBorder_Callback(obj,~,~)
+    % Use the laser to draw the brain outline onto the sample
+    %
+    %    function zapit.gui.main.controller.checkScannerCalib(obj)
+    %
 
     % This is a callback from a state button so it will run the scanners until unchecked
 

@@ -1,5 +1,10 @@
 function tabChange_Callback(obj,src,~)
     % Runs when user selects a new tab
+    %
+    % zapit.gui.main.controller.tabChange_Callback
+    %
+    % Purpose
+    % Implements GUI updates related to tab changes.
 
     currentTab = src.SelectedTab.Title;
 

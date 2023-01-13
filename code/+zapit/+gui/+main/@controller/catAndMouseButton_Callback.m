@@ -1,5 +1,12 @@
 function catAndMouseButton_Callback(obj,~,~)
-
+    % Causes the laser beam to follow the mouse cursor around the screen
+    %
+    % zapit.gui.main.controller.catAndMouseButton_Callback
+    %
+    % Purpose
+    % None whatsoever
+    %
+    % Rob Campbell - SWC 2022
 
 
     if obj.CatMouseButton.Value == 0
@@ -49,7 +56,6 @@ function catAndMouseButton_Callback(obj,~,~)
         obj.plotOverlayHandles.hLastPoint.XData = X;
         obj.plotOverlayHandles.hLastPoint.YData = Y;
         obj.model.DAQ.moveBeamXY([xVolts, yVolts]);
-    end
-end
+    end % mouseMove
 
-
+end % catAndMouseButton_Callback

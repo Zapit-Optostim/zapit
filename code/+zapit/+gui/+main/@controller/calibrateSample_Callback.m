@@ -1,7 +1,14 @@
 function calibrateSample_Callback(obj,~,~)
-
-    % Ask the user to identify reference point on skull surface. Typically this will be
+    % Initiates the process of calibrating the sample
+    %
+    % zapit.gui.main.controller.calibrateSample_Callback
+    %
+    % Purpose
+    % We need a transform that takes us from the camera view to stereotaxic coordinates. 
+    % This method initiates an interactive process that achives this. It asks the user to
+    % to identify two reference points on skull surface. Typically this will be
     % bregma plus one more  point. The results are returned as two columns: first x then y coords
+    %
     obj.model.cam.stopVideo
     obj.model.sampleCalibrated = false;
     obj.model.refPointsSample(:) = 0;

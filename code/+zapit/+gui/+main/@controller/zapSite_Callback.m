@@ -1,5 +1,9 @@
 function zapSite_Callback(obj,~,~)
-    % stim a site
+    % Stimulate the areas selected by the test site drop-down
+    %
+    % zapit.gui.main.controller.zapSite_Callback
+    %
+    
 
     if obj.ZapSiteButton.Value == 1
         val = obj.TestSiteDropDown.Value;

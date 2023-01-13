@@ -1,7 +1,7 @@
 function pointBeamToLocationInImage(obj,~,~)
     % Obtain mouse cursor position and point beam here
     % 
-    % function pointBeamToLocationInImage(obj,~,~)
+    % function zapit.gui.main.controller.pointBeamToLocationInImage(obj,~,~)
     % 
     % Purpose
     % This callback function obtains the mouse position in the

@@ -1,5 +1,15 @@
 function addStimConfigToRecents(obj,fname,pathToFname)
-    % Add to recents structure
+    % Add file to the recntly loaded stim config structure
+    %
+    % zapit.gui.main.controller.addStimConfigToRecents
+    %
+    % Purpose
+    % The property previouslyLoadedStimConfigs lists all the config files
+    % that were loaded recently. This method adds a file name and path to 
+    % that list. It also removes from the list any missing configuration 
+    % files and trims the list if too long. 
+
+
     newEntry = struct(...
             'fname', fname, ...
             'pathToFname', pathToFname, ...
@@ -26,4 +36,4 @@ function addStimConfigToRecents(obj,fname,pathToFname)
     % Save the cache when a file is loaded
     obj.saveGUIcache
 
-end
+end % addStimConfigToRecents

@@ -1,10 +1,12 @@
-function checkScannerCalib_Callback(obj,~,~)
-% Sweep beam over calibration positions to visually check it worked
-%
-%    function checkScannerCalib(obj)
-
+    function checkScannerCalib_Callback(obj,~,~)
+    % Sweep beam over calibration positions to visually check it worked
+    %
+    % function zapit.gui.main.controller.checkScannerCalib(obj)
+    %
+    % Purpose
     % This is a callback from a state button so it will run the calibration
     % check continually when depressed and stop when un-pressed
+
 
     if obj.CheckCalibrationButton.Value == 1
 
@@ -58,4 +60,4 @@ function checkScannerCalib_Callback(obj,~,~)
         obj.model.cam.exposure = obj.model.settings.camera.default_exposure;
     end
 
-end
+end % checkScannerCalib_Callback
