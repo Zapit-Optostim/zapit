@@ -17,7 +17,6 @@ classdef controller < zapit.gui.stimConfigEditor.view
     properties
         % Handles for most plot elements are inherited from the superclass
 
-        zapitPointer % Reference to a parent (running) zapit.pointer object
         mainGUI % Reference to a parent (running) zapit.gui.main.controller object
 
         atlasData % Brain atlas data for overlaying brain areas, etc
@@ -36,11 +35,14 @@ classdef controller < zapit.gui.stimConfigEditor.view
         fname % The name of the currently loaded file (if it has one)
     end
 
+    properties(Hidden)
+        settings % So the GUI relies less on being connected to zapit.pointer
+    end
 
 
     methods
 
-        function obj = controller(hZP,hZPview)
+        function obj = controller(hZPview)
             % Constructor
             %
             % function zapit.gui.stimConfig.controller.controller
@@ -49,19 +51,12 @@ classdef controller < zapit.gui.stimConfigEditor.view
             % Constructor.
             %
             % Inputs
-            % hZP - Optional. If the GUI is started by the main zapit GUI then this argument is
-            %       provided so the the stimConfig GUI has access to the main API. It will function
-            %       withough, however. TODO -- uses this to get settings. The settings should be obtained some other way.
             % hZPview - optional. As above. Provided so this GUI can add saved files to the recently opened file list.
             %
             % 
 
 
             if nargin>0
-                obj.zapitPointer = hZP;
-            end
-
-            if nargin>1
                 obj.mainGUI = hZPview;
             end
 
@@ -69,6 +64,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
             load('atlas_data.mat')
             obj.atlasData = atlas_data;
 
+            obj.settings = zapit.settings.readSettings;
 
             % Button callbacks
             obj.NewButton.ButtonPushedFcn = @(~,~) obj.resetPoints_Callback;
@@ -84,10 +80,8 @@ classdef controller < zapit.gui.stimConfigEditor.view
             obj.BottomLabel.Text = ''; 
             
             % Apply default values to UI elements from settings
-            if ~isempty(obj.zapitPointer)
-                obj.LaserPowermWSpinner.Value = obj.zapitPointer.settings.experiment.defaultLaserPowerMW;
-                obj.StimFreqHzSpinner.Value = obj.zapitPointer.settings.experiment.defaultLaserFrequencyHz;
-            end
+            obj.LaserPowermWSpinner.Value = obj.settings.experiment.defaultLaserPowerMW;
+            obj.StimFreqHzSpinner.Value = obj.settings.experiment.defaultLaserFrequencyHz;
             
 
             % Set up callback functions for interactivity

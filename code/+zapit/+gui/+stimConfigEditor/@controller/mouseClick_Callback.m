@@ -41,11 +41,8 @@ function mouseClick_Callback(obj,~,~)
                                             'Parent', obj.hAx);
         elseif obj.isShiftPressed && obj.BilateralButton.Value == 0
             % Then we append a point
-            if ~isempty(obj.zapitPointer)
-                maxPointsPerCondition = obj.zapitPointer.settings.experiment.maxStimPointsPerCondition;
-            else
-                maxPointsPerCondition = 3;
-            end
+            maxPointsPerCondition = obj.settings.experiment.maxStimPointsPerCondition;
+
             if length(obj.pAddedPoints(end).XData) < maxPointsPerCondition
                 obj.pAddedPoints(end).XData(end+1) = obj.pCurrentPoint.XData;
                 obj.pAddedPoints(end).YData(end+1) = obj.pCurrentPoint.YData;
