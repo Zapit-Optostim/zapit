@@ -22,6 +22,7 @@ classdef stimConfig < handle
     properties (Hidden)
         parent  % the zapit.pointer to which this is attached
         numSamplesPerChannel
+        atlasData
     end
 
     % read-only properties that are associated with getters
@@ -37,6 +38,10 @@ classdef stimConfig < handle
             % 
             % zapit.stimConfig.stimConfig
             %
+
+            % Load the atlas data so we can find brain areas names from coordinates
+            load('atlas_data.mat')
+            obj.atlasData = atlas_data;
 
             obj.loadConfig(fname)
         end % Constructor
@@ -177,10 +182,42 @@ classdef stimConfig < handle
         end % calibratedPointsInVolts
 
 
-        function varargout = print(obj)
-            % Print of presentions to CLI
-            % TODO -- WRITE THIS
-        end
+        function print(obj)
+            % Print to the command line the index, coordinates, and brain area of each condition
+            %
+            % zapit.stimConfig
+            %
+            % Purpose
+            % Provide a summary of the conditions in this stimulus configuration file
+            % by printing to the command line what is in each stimulus condition. Example
+            % output:
+            %
+            %  1. ML = +2.57 / AP = -3.58  <-->  ML = -2.57 / AP = -3.58  1' visual 
+            %  2. ML = +0.54 / AP = +0.17  <-->  ML = -0.54 / AP = +0.17  2' motor 
+            %  3. ML = +1.94 / AP = -1.18  <-->  ML = -1.94 / AP = -1.18  1' somatosensory trunk
+            %  4. ML = -0.04 / AP = -3.89  Superior colliculus zonal layer
+
+            fprintf('\n')
+            for ii=1:length(obj.stimLocations)
+                tStim = obj.stimLocations(ii);
+                areaNames = obj.getAreaNameFromCoords(tStim.ML, tStim.AP);
+
+                fprintf('%d. ', ii)
+                if length(tStim.ML)>1
+                    fprintf('ML = %+0.2f / AP = %+0.2f  <-->  ML = %+0.2f / AP = %+0.2f  ', ...
+                        tStim.ML(1), tStim.AP(1), tStim.ML(2), tStim.AP(2))
+
+                    areaNames = unique(areaNames);
+                    if length(areaNames) == 1
+                        fprintf('%s\n', areaNames{1})
+                    else
+                        fprintf('%s  <-->  %s\n', areaNames{:})
+                    end
+                else
+                    fprintf('ML = %+0.2f / AP = %+0.2f  %s\n', tStim.ML, tStim.AP, areaNames)
+                end
+            end % for
+        end % print
 
 
         function chanSamples = get.chanSamples(obj)
@@ -274,6 +311,51 @@ classdef stimConfig < handle
         end % get.chanSamples
 
     end % methods
+
+    methods(Hidden)
+        function [areaName,areaIndex] = getAreaNameFromCoords(obj,ML,AP)
+            % Return brain area name from stereotaxic ML/AP coordinates
+            %
+            % zapit.stimConfig.getAreaNameFromCoords
+            %
+            % Purpose
+            % Get the name of a brain area associated with ML/AP coords.
+            %
+            % Inputs
+            % ML - mediolateral stereotaxic coord in mm
+            % AP - anterioposterio stereotaxic coord in mm
+            %
+            % If the above are vectors of the same length, the function
+            % will loop through and return a cell array of names associated
+            % with all coords.
+            %
+            % Outputs
+            % areaName - names of brain areas that are related to the coords. If one
+            %           set of coords only then this is a string. If multiple, it's a cell
+            %           array.
+            % areaIndex - index values of area or areas. Scalar or vector accordingly
+
+            if length(ML) ~= length(AP)
+                areaIndex = [];
+                areaName = [];
+                return
+            end
+
+            brain_areas = obj.atlasData.dorsal_brain_areas;
+            [~,indX] = arrayfun(@(x) min(abs(obj.atlasData.top_down_annotation.xData-x)), ML);
+            [~,indY] = arrayfun(@(x) min(abs(obj.atlasData.top_down_annotation.yData-x)), AP);
+            t_ind = arrayfun(@(x,y) obj.atlasData.top_down_annotation.data(x,y), indY, indX);
+            areaIndex = arrayfun(@(x) find([brain_areas.area_index]==x), t_ind);
+            areaName = arrayfun(@(x) brain_areas(x).names{1}, areaIndex, 'UniformOutput', false);
+
+            if length(areaName)==1
+                areaName = areaName{1};
+            end
+
+        end % getAreaNameFromCoords
+
+
+    end % hidden methods
 
 
 end % config
