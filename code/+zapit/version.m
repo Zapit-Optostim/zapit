@@ -32,7 +32,7 @@ out.version.MINOR = 6;
 out.version.PATCH = 0;
 
 %% UPDATE THIS IF NEEDED
-out.version.preRleaseString = '-alpha'; % When heavy development phase is over this will be empty
+out.version.preReleaseString = '-alpha'; % When heavy development phase is over this will be empty
 
 %%% UPDATE THE DATE
 out.date.year = 2023;
@@ -46,7 +46,7 @@ out.version.string = sprintf('%d.%d.%d%s', ...
                 out.version.MAJOR, ...
                 out.version.MINOR, ...
                 out.version.PATCH,...
-                out.version.preRleaseString);
+                out.version.preReleaseString);
 
 
 out.gitInfo = zapit.utils.getGitInfo;

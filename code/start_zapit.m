@@ -99,7 +99,20 @@ function start_zapit(varargin)
 
     fprintf('Zapit has started\n')
 
-    zapit.version
+    % Report whether zapit is up to date using GitHub releases
+    details = zapit.utils.checkForNewVersion;
+    if ~isempty(details)
+        if details.isUpToDate
+            fprintf(details.msg)
+            zapit.version
+        else
+            fprintf('\n\n%s\n',details.msg)
+            disp('For upgrading instructions see <a href="https://github.com/BaselLaserMouse/zapit/blob/main/README.md">the README</a>.')
+            fprintf('\n\n')
+            hZPview.hFig.Name = [hZPview.hFig.Name, ' [New Version Available]'];
+        end
+    end
+
 
 %-------------------------------------------------------------------------------------------------------------------------
 function safe = isSafeToMake_hZP
