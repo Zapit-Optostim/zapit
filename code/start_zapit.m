@@ -85,13 +85,14 @@ function start_zapit(varargin)
 
     %By this point we should have a functioning hZP object, which is the model in our model/view system
 
-    % Now we make the view
-    % Report where Zapit is installed
-    installLoc = which(mfilename);
-    installLoc = regexprep(installLoc,['code','\',filesep,'start_zapit.m'],'');
-    fprintf('Zapit is installed at %s\n', installLoc)
+ 
 
-    if startGUI
+
+    % Report where Zapit is installed
+    fprintf('Zapit is installed at %s\n', zapit.updater.getInstallPath)
+
+    % Now we make the view
+   if startGUI
         fprintf('Building GUI\n')
         hZPview = zapit.gui.main.controller(hZP);
         assignin('base','hZPview',hZPview);
