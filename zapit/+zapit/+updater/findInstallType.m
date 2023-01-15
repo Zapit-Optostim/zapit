@@ -19,10 +19,23 @@ function installType = findInstallType
 
 
     gitInfo = zapit.updater.getGitInfo
-    addons = zapit.updater.getAddonDetails
-    v = zapit.version
+    addons = zapit.updater.getAddonDetails;
+    v = zapit.version;
+
+    % If the addon is installed and the reported installed version of the package matches that
+    % reported by the AddOn manager, then we probably are working from Zapit installed via MATLAB.
+    if addons.isAddon
+        if v.version.string == addons.version % TODO -- Have not verified this is correct
+            installType = 'addon';
+            return
+        end 
+        % If the above statement is false then that means likely the user has installed the addon
+        % but the running code is from a different install. 
+    end
+
+
     if strcmp(gitInfo.branch, 'UNKNOWN')
-        installType = 'repo';
+        installType = 'manual';
     else
-        installType = 'manual' ;
+        installType = 'repo' ;
     end

@@ -29,7 +29,7 @@ If you run into errors when setting up with a driver other than GenICam, please 
 Gather and install the above requirements then install Zapit in one of the following ways:
 * *Via MATLAB*: Go to the **Apps** ribbon in MATLAB and click on **Get More Apps**. Search for Zapit and add it to MATLAB. You can also update Zapit via this route.
 * *Via your browser*: Navigate to the [Zapit File Exchange page](https://uk.mathworks.com/matlabcentral/fileexchange/122142-zapit). Download. Unpack in a reasonable place. Add the Zapit `code` directory to your path. You need add only this directory, not it and all sub-directories.
-* *Via Git*: Clone in your favourite Git client. Add the Zapit `code` directory to your path. You need add only this directory, not it and all sub-directories.
+* *Via Git*: Clone in your favourite Git client. Add the Zapit `zapit` directory (that which contains `start_zapit.m`) to your path. You need add only this directory, not it and all sub-directories.
 
 
 ### First time you run

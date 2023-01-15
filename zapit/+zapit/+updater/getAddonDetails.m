@@ -4,7 +4,7 @@ function details = getAddonDetails
     % function details = zapit.updater.getAddonDetails
     %
     % Purpose
-    % If zapit was installed as an add-on, return the details as a structure
+    % If zapit was installed as an add-on, return the details as a structure.
     % 
     % Inputs
     % none

@@ -28,7 +28,7 @@ function releases = getGitHubReleaseHistory
         releases = webread(API_URL);
     catch
         % There is a cap on how many requests we can make or the connection might fail
-        releases = []
+        releases = [];
     end
 
 end % getGitHubReleaseHistory
