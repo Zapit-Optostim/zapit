@@ -1,7 +1,7 @@
 function releases = getGitHubReleaseHistory
     % Return a structure containing the release history on GitHub
     %
-    % gURL = zapit.utils.getGitHubReleaseHistory
+    % gURL = zapit.updater.getGitHubReleaseHistory
     %
     % Purpose
     % Return the project's GitHub release history. This can be used to determine 
@@ -20,7 +20,7 @@ function releases = getGitHubReleaseHistory
     % Rob Campbell - SWC 2023
 
     % Build the URL
-    API_URL = ['https://api.', zapit.utils.returnProjectGitHubURL, '/releases'];
+    API_URL = ['https://api.', zapit.updater.returnProjectGitHubURL, '/releases'];
     API_URL = regexprep(API_URL,'github\.com', 'github.com/repos');
 
     % Read RESTful content nicely as a structure

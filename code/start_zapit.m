@@ -100,7 +100,7 @@ function start_zapit(varargin)
     fprintf('Zapit has started\n')
 
     % Report whether zapit is up to date using GitHub releases
-    details = zapit.utils.checkForNewVersion;
+    details = zapit.updater.checkForNewVersion;
     if ~isempty(details)
         if details.isUpToDate
             fprintf(details.msg)

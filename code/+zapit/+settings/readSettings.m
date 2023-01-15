@@ -152,7 +152,9 @@ function [settings,settingsNonHardCoded] = readSettings
     settingsNonHardCoded=settings;
 
 
-    % Git info will make up the version information
-    g=zapit.utils.getGitInfo;
+    % Log current version info to the settings
+    g=zapit.updater.getGitInfo;
     systemVersion = sprintf('branch=%s  commit=%s', g.branch, g.hash);
-    settings.zapit.version=systemVersion;
+    settings.zapit.gitCommit=systemVersion;
+    v = zapit.version;
+    settings.zapit.version=v.version.string;

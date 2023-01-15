@@ -1,7 +1,7 @@
 function details = checkForNewVersion
     % Check whether there is a GitHub release with a new version of the software
     %
-    % details = zapit.utils.checkForNewVersion
+    % details = zapit.updater.checkForNewVersion
     %
     % Purpose
     % Use GitHub's releases and the local reported version number to decide 
@@ -18,9 +18,11 @@ function details = checkForNewVersion
     % Rob Campbell - SWC 2023
 
     % Get version details
-    releases = zapit.utils.getGitHubReleaseHistory;
+    releases = zapit.updater.getGitHubReleaseHistory;
+
     if isempty(releases)
         details = [];
+        return
     end
 
     localVersion = zapit.version;

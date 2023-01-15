@@ -1,7 +1,7 @@
 function gURL = returnProjectGitHubURL
     % Return the URL of the project on GitHub
     %
-    % gURL = zapit.utils.returnProjectGitHubURL
+    % gURL = zapit.updater.returnProjectGitHubURL
     %
     % Purpose
     % Return the project's GitHub URL as a string without leading "https://" or "www"
@@ -14,7 +14,7 @@ function gURL = returnProjectGitHubURL
     %
     % Rob Campbell - SWC 2023
     %
-    % See also zapit.utils.getGitHubReleaseHistory
+    % See also zapit.updater.getGitHubReleaseHistory
 
     gURL = 'github.com/BaselLaserMouse/zapit';
 

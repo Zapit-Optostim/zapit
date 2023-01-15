@@ -1,5 +1,10 @@
-function gitInfo=getGitInfo()
-% Get information about the Git repository in the current directory, including: 
+function gitInfo = getGitInfo
+% Get information about the Git repository in the current directory.
+%
+% function gitInfo = zapit.updater.getGitInfo()
+%
+% Purpose
+% Get information about the Git repository in the current directory. Including:
 %          - branch name of the current Git Repo 
 %          -Git SHA1 HASH of the most recent commit
 %          -url of corresponding remote repository, if one exists
@@ -32,7 +37,7 @@ function gitInfo=getGitInfo()
 % Modifed 2020 by Rob Campbell, UCL, to make it more robust and allow it to be inserted into any project
 %
 % Instructions: place into your project path e.g. put into `myProj/code/+utils/getGitInfo.m`
-% then just call it at the command line: >> myProj/code/+utils/getGitInfo
+% then just call it at the command line: >> utils.getGitInfo
 
 
 % Copyright 2011 Andrew Leifer. All rights reserved.
