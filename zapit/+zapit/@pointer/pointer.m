@@ -118,7 +118,7 @@ classdef pointer < handle
                 obj.DAQ = zapit.simulated.DAQ;
             else
                 fprintf('Connecting to DAQ\n')
-                obj.DAQ = zapit.hardware.DAQ.NI.vidriowrapper;
+                obj.DAQ = zapit.hardware.DAQ.vidriowrapper;
             end
 
             obj.DAQ.parent = obj;
