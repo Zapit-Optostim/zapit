@@ -14,6 +14,13 @@ The project will adhere to [semantic versioning](http://semver.org) guidelines, 
 * MINOR version when you add functionality in a backwards compatible manner
 * PATCH version when you make backwards compatible bug fixes
 
+2023/01/16 -- v0.7.0-alpha
+ * Substantial refactoring and renaming.
+ * New format for stim config files.
+ * UI elements that do not work in simulated mode are disabled.
+ * A lot of documentation changes.
+ * Functions to monitor for new version (partially working)
+ * Update README
 
 2023/01/12 -- v0.6.0-alpha
  * Move relevant methods into zapit.stimConfig

@@ -3,16 +3,19 @@
 
 This software runs a scanning opto-stim system used to automatically point a beam at a series of brain areas.
 Code was initially written by Maja Skretowska and Rob Campbell at the Sainsbury Wellcome Centre (UCL) in 2021/2022.
-
-The code runs a simple galvo-based photo-stimulator.
-A narrow collimated beam enters the scan head and is focused on the sample using a single scan lens.
-The scan lens doubles as an objective, as the sample is imaged onto a camera in order to visualise where the beam is pointing.
 The [Change Log](CHANGELOG.md) describes the project history and recent changes.
 
-## Status as of December 2022
-* The project is currently under heavy development but has basic functionality and in theory could be used to run experiments right now.
-* Expected API freeze: end January 2022
+## How it works
+A narrow collimated beam enters the scan head and is focused on the sample using a single scan lens.
+The scan lens doubles as an objective and the sample is imaged onto a camera in order to visualise where the beam is pointing.
+The software registered the scanners to the camera, allowing the user to place the beam in any desired location by clicking there on the live image feed.
+The software also registers stereotaxic coordinates into the camera space, allowing the user to point the beam to coordinates defined with respect to bregma. 
+A tool for building cooridnate files for stimulation is provided. 
+A simple API for integrating the stimulation into existing behavioral code is provided.
 
+
+## Current status
+* Expected API and feature freeze: end January 2022
 
 ## Requirements
 * [Image Processing Toolbox](https://www.mathworks.com/help/images/index.html)
@@ -29,124 +32,41 @@ If you run into errors when setting up with a driver other than GenICam, please 
 Gather and install the above requirements then install Zapit in one of the following ways:
 * *Via MATLAB*: Go to the **Apps** ribbon in MATLAB and click on **Get More Apps**. Search for Zapit and add it to MATLAB. You can also update Zapit via this route.
 * *Via your browser*: Navigate to the [Zapit File Exchange page](https://uk.mathworks.com/matlabcentral/fileexchange/122142-zapit). Download. Unpack in a reasonable place. Add the Zapit `code` directory to your path. You need add only this directory, not it and all sub-directories.
-* *Via Git*: Clone in your favourite Git client. Add the Zapit `code` directory to your path. You need add only this directory, not it and all sub-directories.
+* *Via Git*: Clone in your favourite Git client. Add the Zapit `zapit` directory (that which contains `start_zapit.m`) to your path. You need add only this directory, not it and all sub-directories.
 
 
 ### First time you run
-You will need to ensure the system can talk to the camera:
-```
->> D = zapit.testCamera
-1  -  videoinput('winvideo', 1, 'Y800_1024x768')
-2  -  videoinput('winvideo', 1, 'Y800_1280x960')
-3  -  videoinput('winvideo', 1, 'Y800_1600x1200')
-4  -  videoinput('winvideo', 1, 'Y800_160x120')
-5  -  videoinput('winvideo', 1, 'Y800_1928x1208')
-6  -  videoinput('winvideo', 1, 'Y800_320x240')
-7  -  videoinput('winvideo', 1, 'Y800_40x30')
-8  -  videoinput('winvideo', 1, 'Y800_640x480')
-9  -  videoinput('winvideo', 1, 'Y800_720x480')
-10  -  videoinput('winvideo', 1, 'Y800_720x576')
-11  -  videoinput('winvideo', 1, 'Y800_800x600')
-12  -  videoinput('winvideo', 1, 'Y800_80x60')
-
-Enter device number and press return:
-```
-
-Choose the resolution you would like.
-You can select it again in future without the interactive selector by doing:
-
-
-```
->>D = zapit.testCamera(3)
-Available interfaces:
-1  -  videoinput('winvideo', 1, 'Y800_1024x768')
-2  -  videoinput('winvideo', 1, 'Y800_1280x960')
-3  -  videoinput('winvideo', 1, 'Y800_1600x1200')
-4  -  videoinput('winvideo', 1, 'Y800_160x120')
-5  -  videoinput('winvideo', 1, 'Y800_1928x1208')
-6  -  videoinput('winvideo', 1, 'Y800_320x240')
-7  -  videoinput('winvideo', 1, 'Y800_40x30')
-8  -  videoinput('winvideo', 1, 'Y800_640x480')
-9  -  videoinput('winvideo', 1, 'Y800_720x480')
-10  -  videoinput('winvideo', 1, 'Y800_720x576')
-11  -  videoinput('winvideo', 1, 'Y800_800x600')
-12  -  videoinput('winvideo', 1, 'Y800_80x60')
-
-Connecting to number 3
-
-D =
-
-  testCamera with properties:
-
-          cam: [1×1 zapit.camera]
-    lastFrame: []
-
-```
-
-This connects to the camera and brings up a live feed.
-You can change camera settings as follows:
-
-```
->> D.cam.stopVideo
->> D.cam.src.Exposure
-
-ans =
-
-  int32
-
-   -4
-
->> D.cam.src.Exposure=-10;
->> D.cam.startVideo
-```
-
-Closing the figure will also disconnect from the camera, as will `delete(D)`
-
+Instructions for first time setup are found in [SETTING_UP.md](SETTING_UP.md).
 
 
 ### Start beam pointer and calibrate
-
-Start the software and select a config file.
+Start the software
 ```
-P = zapit.pointer;
-```
-
-Now you need to determine the transform between pixel coordinates and the scan mirrors.
-```
-P.calibrateScanners;
+start_zapit
 ```
 
-You can now click on the image and the beam should go to that location.
+* The GUI appears with a live view of the sample. 
+* Focus and turn on the laser. 
+* Press "Calibrate Scanners" on the first tab. Check the calibration with other buttons.
+* Press "Calibrate Sample" on the second tab. Place brain outline on bregma. Click the second coordinate. 
+* Use the File menu to load or create then load a Sample Config file. 
+* Test it wite the other buttons on the Calibrate Sample tab. 
 
 
-### Calibrate to mouse skull
-Now you can tell the system where is Bregma and another reference location.
-This method call populates the `chanSamples` property.
-% TODO -- this no longer works <<---- [11/01/23]
-```
-P.calibrateSample
-```
 
-### Generate the parameters for switching the beam
-Prepare the waveforms that will be used for each brain area (stimulation site).
-Here we are stimulating with laser power at the sample of 10 mW.
-```
-P.stimConfig.laserPowerInMW = 10;
-```
-
-### Let's run it!
-The following code will send samples to the DAQ to stimulate one brain area bilaterally.
+### Using the API
+The MATLAB workspace contains a variable called `hZP`. 
+This is an API (Application Programming Interface) that allows controlling of almost all functions via the command line. 
+The following code, for example, will send samples to the DAQ to stimulate one condition (e.g. one brain area bilaterally).
 
 ```
-newTrial.area = 1; % first brain area on the list
-newTrial.LaserOn = 1;
-newTrial.powerOption = 1; % if 1 send 2 mW, if 2 send 4 mW (mean)
-
-P.sendSamples(newTrial)
+newTrial = struct('area', 1, 'LaserOn', 1); % first brain area on the list
+hZP.sendSamples(newTrial)
 ```
+It is now stimulating.
 To stop it gracefully run:
 ```
-P.stopOptoStim
+hZP.stopOptoStim
 ```
 
 Randomly stimulate each brain area once for 0.5 seconds before moving onto the next.
@@ -154,16 +74,15 @@ Randomly stimulate each brain area once for 0.5 seconds before moving onto the n
 newTrial.LaserOn = 1;
 newTrial.powerOption = 1;
 
-numAreasToStim = size(P.chanSamples.scan,3);
+numAreasToStim = length(hZP.stimConfig.stimLocations);
 areas = randperm(numAreasToStim);
 
 for ii=1:numAreasToStim
     newTrial.area = areas(ii);
-    P.sendSamples(newTrial,true) % True for verbose
+    hZP.sendSamples(newTrial,true) % True for verbose
     pause(0.5)
 
-    P.stopOptoStim
-
+    hZP.stopOptoStim
 end
 
 ```
@@ -172,5 +91,11 @@ end
 Contributions and collaborations are welcome.
 Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
 
+
 ## Acknowledgements
 Thanks to Vidrio Technologies for allowing the inclusion of their DAQmx wrapper in this project.
+
+
+## Related Projects
+* [AllenAtlasTopDown](https://github.com/raacampbell/AllenAtlasTopDown)
+
