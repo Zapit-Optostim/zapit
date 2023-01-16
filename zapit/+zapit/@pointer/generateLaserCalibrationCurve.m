@@ -106,7 +106,7 @@ function generateLaserCalibrationCurve(obj,minMax)
     obj.laserFit.sensorValues = sensorVals;
     obj.laserFit.controlValues = valsToTest;
 
-    % TODO -- we will save to disk right here but this should eventually be done after a confirmatiob
+    % TODO -- we will save to disk right here but this should eventually be done after a confirmatio
     % For now it's OK to do this just to get it all working
     if ~obj.simulated
         obj.saveLaserFit

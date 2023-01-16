@@ -9,8 +9,7 @@ function varargout = getLaserPosAccuracy(obj, XYdata, backgroundImage, verbose)
     % to screen.
     %
     % Inputs
-    % XYdata - [optional] The target pixel coordinates. If not supplied, uses the 
-    %          hLastPoint property. TODO -- THIS SEEMS BAD BECAUSE IT'S ONLY USED IN ONE PLACE (SEE BELOW)
+    % XYdata - The target pixel coordinates. 
     % backgroundImage - [optional] if provided this image is subtracted before analysis.
     % verbose - [optional] False by default. If true print to console debug information.
     %

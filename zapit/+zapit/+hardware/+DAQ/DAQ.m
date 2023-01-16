@@ -51,9 +51,7 @@ classdef (Abstract) DAQ < handle
         % success - true or false depending on whether a connection was established
 
 
-        % The following I know we will need but they are not full documented yet. (TODO)
-
-        moveBeamXY(obj,beamXYvoltage)
+¿        moveBeamXY(obj,beamXYvoltage)
 
         setLaserPowerControlVoltage(obj,laserVoltage)
 

@@ -87,7 +87,6 @@ classdef (Abstract) NI < zapit.hardware.DAQ.DAQ
     end
 
     methods (Abstract)
-        % TODO -- document
 
         connectUnclockedAI(obj,chans)
         % connectUnclockedAO(obj)
@@ -96,19 +95,16 @@ classdef (Abstract) NI < zapit.hardware.DAQ.DAQ
         %
         % Inputs
         % chans - which chans to conect. Must be supplied.
-        % TODO -- more docs
 
         connectUnclockedAO(obj)
         % connectUnclockedAO(obj)
         %
         % Create a task that is unclocked AO and can be used for sample setup.
-        % TODO -- more docs
 
         connectClockedAO(obj)
         % connectClockedAO(obj)
         %
         % Create a task that is clocked AO and can be used for running the experiment
-        % TODO -- more docs
 
         stopAndDeleteAOTask(obj)
         % stopAndDeleteAOTask(obj)

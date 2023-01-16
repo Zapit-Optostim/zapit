@@ -282,7 +282,6 @@ classdef stimConfig < handle
             digOut = ones(1,obj.numSamplesPerChannel) * digitalAmplitude;
 
             % allow 1 ms around halfcycle change to be 0 (in case scanners are not in the right spot
-            % TODO -- this should be based on empirical values
             MASK = ones(1,obj.numSamplesPerChannel);
             sampleInterval = 1/obj.parent.DAQ.samplesPerSecond;
             nSamplesInOneMS = 1E-3 / sampleInterval;

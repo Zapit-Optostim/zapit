@@ -25,7 +25,8 @@ function obj = plotChanSamples(obj)
     digOut = obj.chanSamples.light(:,3);
 
         
-    figure(22) % TODO -- improve figure ID. This can cause a bug
+    fig = zapit.utils.focusNamedFig(mfilename);
+
     clf
 
         

@@ -71,8 +71,6 @@ function [settings,settingsNonHardCoded] = readSettings
 
     allValid=true;
 
-    % TODO -- the following are not up to date
-
     if ~ischar(settings.NI.device_ID)
         fprintf('NI.device_ID should be a string. Setting it to "%s"\n', DEFAULT_SETTINGS.SYSTEM.ID)
         settings.NI.device_ID = DEFAULT_SETTINGS.SNI.device_ID;
@@ -142,7 +140,6 @@ function [settings,settingsNonHardCoded] = readSettings
        fprintf('Making backup of settings file at %s\n', backupFname)
        copyfile(settingsFile,backupFname)
 
-       % TODO -- Keep only the last N backups and/or no backups older than a certain time frame
        % Write the new file to the settings location
        fprintf('Replacing settings file with updated version\n')
        zapit.yaml.WriteYaml(settingsFile,settings);

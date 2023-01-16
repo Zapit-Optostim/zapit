@@ -14,9 +14,9 @@ classdef pointer < handle
 
     
     properties
-        % TODO -- The following properties need to be in a settings structure
+
         % 0/0 volts on DAQ corresponds to the middle of the image
-        invertX = true
+        invertX = true % TODO are these used?
         invertY = true
 
         %%
@@ -29,7 +29,6 @@ classdef pointer < handle
         % Properties related to where we stimulate
         settings % The settings read in from the YAML file
         stimConfig % Object of class zapit.stimConfig. This contains the locations to stimulate
-        %Laser stuff. TODO -- this might move to a separate class but for now it stays here
         laserFit  % laserfits. See generateLaserCalibrationCurve
         transform % The transform describing the relationship between scanners and camera
 
@@ -96,7 +95,7 @@ classdef pointer < handle
             end
             obj.cam.exposure = obj.settings.camera.default_exposure;
 
-            obj.cam.ROI = [300,100,1400,1000]; % TODO: hardcoded sensor crop
+            obj.cam.ROI = [300,100,1400,1000]; % TODO: hardcoded!
                                             % TODO : in future user will have ROI box to interactively
                                             %    crop and this will be saved in settings file
                                             %    the re-applied on startup each time.
@@ -176,9 +175,13 @@ classdef pointer < handle
     methods
 
         function zeroScanners(obj)
-            % TODO -- does it really make sense for galvo control methods to be in the DAQ class?
-            % TODO -- running this currently does not update the plot by there are properties
-            %         corresponding to these values that we can pick off from the DAQ class.
+            % Zero the beam
+            % 
+            % zapit.pointer.zeroScanners
+            %
+            % Purpose
+            % Sets beam to 0V/0V
+
             obj.DAQ.moveBeamXY([0,0]);
         end % zeroScanners
 
