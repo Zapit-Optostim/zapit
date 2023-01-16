@@ -17,19 +17,6 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
         end % Constructor
 
 
-        function connect(obj,connectionType)
-            % TODO -- I think we don't use this. 
-            switch connectionType
-                case 'unclocked'
-                    obj.connectUnlocked
-                case 'clocked'
-                    body
-                otherwise
-                    fprintf('Unknown connection type %s in zapit.hardware.DAQ.NI.vidriowrapper.connect\n', connectionType)
-            end % switch
-        end % connect
-
-
         function start(obj)
             % Definition of abstract class declared in zapit.hardware.DAQ
             if isempty(obj.hAO) || ~isvalid(obj.hAO)
