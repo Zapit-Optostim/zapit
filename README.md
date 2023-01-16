@@ -72,13 +72,12 @@ hZP.stopOptoStim
 Randomly stimulate each brain area once for 0.5 seconds before moving onto the next.
 ```
 newTrial.LaserOn = 1;
-newTrial.powerOption = 1;
 
 numAreasToStim = length(hZP.stimConfig.stimLocations);
 areas = randperm(numAreasToStim);
 
 for ii=1:numAreasToStim
-    newTrial.area = areas(ii);
+    newTrial.ConditionNum = areas(ii);
     hZP.sendSamples(newTrial,true) % True for verbose
     pause(0.5)
 

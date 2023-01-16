@@ -13,8 +13,8 @@ function varargout = sendSamples(obj, t_trial, verbose)
     % are the scanner waveforms. The last two are the laser power and masking light.
     %
     % Inputs
-    % t_trial - A structure withxs the following fields.
-    %         CoordNum - [int] The index for the brain area to stimulate
+    % t_trial - A structure with the following fields.
+    %         ConditionNum - [int] The index for the brain area to stimulate
     %         LaserOn - [int] If 1 the laser is turned on. If 0 the laser is off (control trial).
     %
     % verbose - [optional, false by default] If true print debug messages to screen.
@@ -31,13 +31,13 @@ function varargout = sendSamples(obj, t_trial, verbose)
     end
 
     if verbose
-        fprintf('Stimulating area %d\n', t_trial.area)
+        fprintf('Stimulating area %d\n', t_trial.ConditionNum)
     end
 
 
     % Make the waveforms to play
     waveforms = [];
-    waveforms(:,1:2) = obj.stimConfig.chanSamples.scan(:,:,t_trial.area);
+    waveforms(:,1:2) = obj.stimConfig.chanSamples.scan(:,:,t_trial.ConditionNum);
     waveforms(:,3:4) = obj.stimConfig.chanSamples.light(:,[1 2]);
 
     % Disable laser  if the user asked for this
