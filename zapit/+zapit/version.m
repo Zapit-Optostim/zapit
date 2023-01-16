@@ -28,7 +28,7 @@ function varargout = version
 
 %% EDIT THE FOLLOWING TO INCREMENT THE VERSION
 out.version.MAJOR = 0;
-out.version.MINOR = 6;
+out.version.MINOR = 7;
 out.version.PATCH = 0;
 
 %% UPDATE THIS IF NEEDED
@@ -37,7 +37,7 @@ out.version.preReleaseString = '-alpha'; % When heavy development phase is over 
 %%% UPDATE THE DATE
 out.date.year = 2023;
 out.date.month = 1;
-out.date.day = 12;
+out.date.day = 16;
 
 
 
