@@ -18,6 +18,7 @@ classdef DAQ < handle
         samplesPerSecond = 10E3
         AOrange = 10
         AOchans = 0:4
+        AIchans = 0;
         triggerChannel = 'PFI0'
 
     end %close public properties
@@ -39,6 +40,7 @@ classdef DAQ < handle
     methods
         function obj = DAQ()
             obj.settings = zapit.settings.readSettings;
+            obj.hAI.readAnalogData = @(x) rand(length(obj.AIchans),1); % assumes unclocked
         end % Constructor
 
         function  delete(obj)
@@ -49,6 +51,7 @@ classdef DAQ < handle
         end
 
         function connectUnclockedAI(obj,chans)
+            obj.AIchans = chans;
         end
         
         function connectUnclockedAO(obj,verbose)

@@ -43,3 +43,5 @@ function hZP = getObject(quiet)
 
 
     hZP=evalin('base',W(ind).name);
+
+end % getObject
