@@ -16,6 +16,12 @@ function installPath = getInstallPath
 
 
     installPath = which('start_zapit');
-    installPath = regexprep(installPath,['code','\',filesep,'start_zapit.m'],'');
+    installPath = regexprep(installPath,['zapit','\',filesep,'start_zapit.m'],'');
     
+    if ~exist(installPath,'dir')
+        fprintf(['Install location expected at %s but not found there\n'...
+            'Your Zapit install might be broken'],installPath)
+        installPath=[];
+    end
+
 end % getInstallPath

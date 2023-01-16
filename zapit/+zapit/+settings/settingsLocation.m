@@ -35,7 +35,7 @@ function settingsDirs = settingsLocation
 
     % In Zapit folder
     n = n+1;
-    installDir = zapit.settings.installLocation;
+    installDir = zapit.updater.getInstallPath;
     if ~isempty(installDir)
         settingsDirs(n).settingsLocation = fullfile(installDir,'SETTINGS');
         settingsDirs(n).backupSettingsLocation = fullfile(installDir,'BACKUPSETTINGS');
