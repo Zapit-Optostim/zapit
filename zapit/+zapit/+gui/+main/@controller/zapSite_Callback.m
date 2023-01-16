@@ -3,16 +3,13 @@ function zapSite_Callback(obj,~,~)
     %
     % zapit.gui.main.controller.zapSite_Callback
     %
-    
+    % Purpose
+    % This callback stimulates areas named in one condition.
 
     if obj.ZapSiteButton.Value == 1
         val = obj.TestSiteDropDown.Value;
         f = find(cellfun(@(x) strcmp(x,val), obj.TestSiteDropDown.Items));
-
-        newTrial.ConditionNum = f; % first brain area on the list
-        newTrial.LaserOn = 1;
-
-        obj.model.sendSamples(newTrial)
+        obj.model.sendSamples('conditionNumber',f, 'hardwareTriggered',false)
     else
         obj.model.stopOptoStim;
     end

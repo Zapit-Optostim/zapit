@@ -1,4 +1,4 @@
-function varargout = sendSamples(obj, t_trial, verbose)
+function varargout = sendSamples(obj, varargin)
     % Take X/Y coordinates of two points and cycle the laser between them.
     %
     % waveforms = zapit.pointer.sendSamples(obj,newTrial,verbose)
@@ -12,48 +12,76 @@ function varargout = sendSamples(obj, t_trial, verbose)
     % This function builds an n by 4 matrix of waveforms to send to the DAQ. The first two columns
     % are the scanner waveforms. The last two are the laser power and masking light.
     %
-    % Inputs
-    % t_trial - A structure with the following fields.
-    %         ConditionNum - [int] The index for the brain area to stimulate
-    %         LaserOn - [int] If 1 the laser is turned on. If 0 the laser is off (control trial).
+    % Inputs [param/value pairs]
+    % 'ConditionNum' - Integer but empty by default. This is the index of the condition number to
+    %                  present. If empty a random one is chosen.
+    % 'laserOn' - [bool, true by default] If true the laser is on. If false the galvos move but laser is off.
+    %              If empty, a random laser state is chosen.
+    % 'hardwareTriggered' [bool, true by default] If true the DAQ waits for a hardware trgger before 
+    %                   presenting the waveforms. 
+    % 'verbose' - [bool, false by default] If true print debug messages to screen.
     %
-    % verbose - [optional, false by default] If true print debug messages to screen.
     %
     % Outputs
     % waveforms - optionally return the waveforms for debug. 
     %
     %
-    % Maja Skretowska - SWC 2020-2022
-    % Rob Campbell - SWC 2022
+    % Examples
+    % .sendSamples('laserOn',[]) % Present random condition with random laser on/off state
+    % .sendSamples('hardwareTriggered', false) % Present random sample and do not wait for hardware trigger
+    % .sendSamples('conditionNumber',3) % Play condition 3 after receiving a hardware trigger
+    %
+    % Rob Campbell - SWC 2022 
+    % (from original by Maja Skretowska - SWC 2020-2022)
 
-    if nargin<3
-        verbose = false;
+
+    %Parse optional arguments
+    params = inputParser;
+    params.CaseSensitive = false;
+    params.addParameter('conditionNumber', [], @(x) isnumeric(x) && (isscalar(x) || isempty(x)));
+    params.addParameter('laserOn', true, @(x) isempty(x) || islogical(x) || x==0 || x==1);
+    params.addParameter('hardwareTriggered', true, @(x) islogical(x) || x==0 || x==1);
+    params.addParameter('verbose', false, @(x) islogical(x) || x==0 || x==1);
+
+    params.parse(varargin{:});
+    conditionNumber = params.Results.conditionNumber;
+    laserOn = params.Results.laserOn;
+    hardwareTriggered = params.Results.hardwareTriggered;
+    varbose = params.Results.verbose;    
+
+
+    % Choose a random condition if necessary
+    if isempty(conditionNumber)
+        r = randperm(length(obj.stimConfig.stimLocations));
+        conditionNumber = r(1);
+    end
+
+    % Choose random laser state if necessary
+    if isempty(laserOn)
+        r = randperm(2)-1;
+        laserOn = r(1);
     end
 
     if verbose
-        fprintf('Stimulating area %d\n', t_trial.ConditionNum)
+        fprintf('Stimulating area %d\n', conditionNumber)
     end
 
 
     % Make the waveforms to play
     waveforms = [];
-    waveforms(:,1:2) = obj.stimConfig.chanSamples.scan(:,:,t_trial.ConditionNum);
+    waveforms(:,1:2) = obj.stimConfig.chanSamples.scan(:,:,conditionNumber);
     waveforms(:,3:4) = obj.stimConfig.chanSamples.light(:,[1 2]);
 
     % Disable laser  if the user asked for this
-    if t_trial.LaserOn == 0
+    if laserOn == 0
         waveforms(:,3) = 0;
     end
 
 
     % TODO we need to set the triggering
-    if ~isvalid(obj.DAQ.hAO) || ~strcmp(obj.DAQ.hAO.taskName, 'clockedao'); % TODO-- maybe this check should be in the
-                                                % the createNewTask. So we don't make unless
-                                                % the task names don't match?
-        obj.DAQ.connectClockedAO('numSamplesPerChannel',size(waveforms,1));
-    end
-
-
+    obj.DAQ.connectClockedAO('numSamplesPerChannel',size(waveforms,1), ...
+                            'hardwareTriggered', hardwareTriggered);
+  
     
     % write voltage samples onto the task
     obj.DAQ.writeAnalogData(waveforms);

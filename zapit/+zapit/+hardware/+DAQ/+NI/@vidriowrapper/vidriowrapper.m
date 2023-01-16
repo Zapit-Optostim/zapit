@@ -103,7 +103,7 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
             %                   this will be about 1E6.
             % taskName - 'clockedao' by default
             % verbose - false by default
-            % makeTriggerable - false by default. If true, task waits for trigger (PFI0 by default
+            % hardwareTriggered - false by default. If true, task waits for trigger (PFI0 by default
             %            and this line can be changed in the settings YAML)
             %
             % The task writes to the default number of AO lines (likely all four).
@@ -116,7 +116,7 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
             params.addParameter('samplesPerSecond', obj.samplesPerSecond, @(x) isnumeric(x) && isscalar(x));
             params.addParameter('taskName', 'clockedAO', @(x) ischar(x));
             params.addParameter('verbose', false, @(x) islogical(x) || x==0 || x==1);
-            params.addParameter('makeTriggerable', false, @(x) islogical(x) || x==0 || x==1);
+            params.addParameter('hardwareTriggered', false, @(x) islogical(x) || x==0 || x==1);
 
             params.parse(varargin{:});
 
@@ -124,7 +124,7 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
             samplesPerSecond=params.Results.samplesPerSecond;
             taskName=params.Results.taskName;
             verbose=params.Results.verbose;
-            makeTriggerable=params.Results.makeTriggerable;
+            hardwareTriggered=params.Results.hardwareTriggered;
 
 
             obj.stopAndDeleteAOTask
@@ -153,8 +153,8 @@ classdef vidriowrapper < zapit.hardware.DAQ.NI.NI
             obj.hAO.set('writeRelativeTo','DAQmx_Val_FirstSample');
             
             % Configure the trigger
-            if makeTriggerable
-                obj.hAO.cfgDigEdgeStartTrig(obj.triggerChannel, 'DAQmx_Val_Rising');
+            if hardwareTriggered
+                obj.hAO.cfgDigEdgeStartTrig(obj.settings.NI.triggerChannel, 'DAQmx_Val_Rising');
             end
 
         end % connectClockedAO
