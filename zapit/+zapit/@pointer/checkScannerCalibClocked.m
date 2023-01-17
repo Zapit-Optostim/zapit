@@ -1,17 +1,25 @@
 function checkScannerCalibClocked(obj)
     % Run through the scanner calib locations using a clocked AO task.
     %
-    % Must run DAQ.stopAndDeleteAOTask manually to stop.
+    % zapit.pointer.checkScannerCalibClocked
     %
-    % Does no plotting. This method is called by checkScannerCalib_Callback
-    % in zapit.gui.main.controller
+    % Purpose
+    % Run the beam rapidly over all of the coordinates in the scanner calibration
+    % grid. This method starts the scanners but does not stop them. In order to
+    % stop you must execute DAQ.stopAndDeleteAOTask manually. This method is 
+    % called by zapit.gui.main.controller.checkScannerCalib and this takes care of
+    % these operations. Plotting is also taken care of by the GUI. This method
+    % does no plotting. 
+    %
+    % Rob Campbell - SWC 2023
+
     actualCoords = obj.returnScannerCalibTargetCoords;
 
-    % TODO -- should not have duplicates!
+
     % TODO - the power and exposure settings need to be set here. Currently
     % they are set in checkScannerCalib_Callback of the controller
 
-    actualCoords(:,3:4)=2; % LASER POWER HERE TODO
+    actualCoords(:,3:4)=2; %TODO -- should accept laser power value from elsewhere
 
     %Replace first two columns with voltage values
     [xVolt,yVolt] = obj.mmToVolt(actualCoords(:,1), actualCoords(:,2));
@@ -31,4 +39,4 @@ function checkScannerCalibClocked(obj)
 
     obj.DAQ.start;
 
-end
+end % checkScannerCalibClocked

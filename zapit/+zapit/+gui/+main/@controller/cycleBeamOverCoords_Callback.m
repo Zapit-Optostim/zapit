@@ -9,14 +9,14 @@ function cycleBeamOverCoords_Callback(obj,~,~)
     % an experiment, as it ignores the fact that points are stimulated in pairs (usually). 
     %
 
-    % TODO: checkScannerCalibClocked is located in zapit.pointer. So the presence of this function here is odd. [TODO there too]
+    % TODO: Low priority. checkScannerCalibClocked is located in zapit.pointer. So the presence of this function here is odd
+
     if isempty(obj.model.stimConfig)
         return
     end
 
     if obj.CycleBeamOverCoordsButton.Value == 1
-        % TODO - we will need to change this once we settle on a better format
-        % for the stimuli
+
         c = obj.model.stimConfig.calibratedPoints;
 
         calPoints = zeros(size(c,1), prod(size(c,2:3)))';
