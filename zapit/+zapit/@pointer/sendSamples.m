@@ -13,7 +13,7 @@ function varargout = sendSamples(obj, varargin)
     % are the scanner waveforms. The last two are the laser power and masking light.
     %
     % Inputs [param/value pairs]
-    % 'ConditionNum' - Integer but empty by default. This is the index of the condition number to
+    % 'conditionNum' - Integer but empty by default. This is the index of the condition number to
     %                  present. If empty a random one is chosen.
     % 'laserOn' - [bool, true by default] If true the laser is on. If false the galvos move but laser is off.
     %              If empty, a random laser state is chosen.
