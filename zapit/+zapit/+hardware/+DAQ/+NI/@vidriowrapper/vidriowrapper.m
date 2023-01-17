@@ -3,25 +3,28 @@ classdef vidriowrapper < handle
     %
     % zapit.hardware.DAQ.vidriowrapper
     %
-    % The NI abstract class is a software entity that is associated with an NI DAQ.
-    % This class does not assume any particular API for communicating with the DAQ.
+    % This class wraps Vidrio's NI DAQmx wrapper, allowing zapit.pointer to easily 
+    % set up clocked and unclocked AO scenarios as well as unclocked AI. No clocked
+    % AI is needed for Zapit.
+    %
     %
     % Instantiating:
-    % If called with no arguments regarding settings, the properties used 
-    % for connecting with the DAQ are obtained in this order:
+    % The properties used for connecting with the DAQ are obtained in this order:
     % 1. From param/value argument pairs on construction. 
     % 2. From the settings YAML file. 
     % 3. From the hard-coded properties in this object
     %
     % You can mix and match. e.g. if you supply the device name as a param/value 
-    % pair but nothing else, then the rest of the settings  are obtained from 
+    % pair but nothing else, then the rest of the settings are obtained from 
     % settings YAML (assuming it exists).
     %
     %
-    % Analog lines are:
-    % 0 -- Galvo X
-    % 1 -- Galvo Y
-    % 2 -- Laser control voltage signal
+    % * Note on AO lines:
+    % The assumption is that the AO lines drive the following hardware:
+    % 0 - Galvo X
+    % 1 - Galvo Y
+    % 2 - Laser control voltage signal
+    % 3 - Masking LED
     %
     %
     % Rob Campbell - SWC 2022
@@ -45,6 +48,7 @@ classdef vidriowrapper < handle
         parent  %A reference of the parent object (likely zapit.pointer) to which this component is attached
     end %close hidden properties
 
+
     % These properties may be used by the zapit.pointer API or its GUI.
     properties (Hidden, SetObservable, AbortSet)
         lastXgalvoVoltage  = 0
@@ -57,6 +61,13 @@ classdef vidriowrapper < handle
     methods
 
         function obj = vidriowrapper(varargin)
+            % Constructor
+            %
+            % function zapit.DAQ.vidriowrapper.vidriowrapper
+            %
+            % Purpose
+            % Tha main purpose of the constructor is to set up default parameters.
+            %
 
             obj.settings = zapit.settings.readSettings;
 
@@ -102,30 +113,55 @@ classdef vidriowrapper < handle
         end % Constructor
 
         function delete(obj)
+            % Destructor
+            %
+            % function zapit.DAQ.vidriowrapper.delete
+            %
+
             delete(obj.hAI)
             delete(obj.hAO)
-        end
+        end % delete
 
+
+        % TODO -- these stop and start methods are not obviously related to the AO task by their name
         function start(obj)
+            % Start the AO task
+            %
+            % function zapit.DAQ.vidriowrapper.start
+            % 
+            % Purpose
+            % Start the AO task
+
             if isempty(obj.hAO) || ~isvalid(obj.hAO)
                 return
             end
             obj.hAO.start
-        end
+        end % start
 
 
         function stop(obj)
+            % Stop the AO task
+            %
+            % function zapit.DAQ.vidriowrapper.stop
+            % 
+            % Purpose
+            % Stop the AO task
+
             if isempty(obj.hAO) || ~isvalid(obj.hAO)
                 return
             end
             obj.hAO.stop
-        end
+        end % stop
 
 
         function stopAndDeleteAOTask(obj)
-            % stopAndDeleteAOTask(obj)
+            % Stop and then delete the AO task
             %
+            % function zapit.DAQ.vidriowrapper.stopAndDeleteAOTask
+            %
+            % Purpose
             % Stop the task and then delete it, which will run DAQmxClearTask
+
             if isempty(obj.hAO) || ~isvalid(obj.hAO)
                 return
             end
@@ -135,6 +171,12 @@ classdef vidriowrapper < handle
 
 
         function stopAndDeleteAITask(obj)
+            % 
+            % function zapit.DAQ.vidriowrapper.stopAndDeleteAITask
+            %
+            % Purpose
+            % Stops the AI task and then deletes it. 
+
             if isempty(obj.hAI) || ~isvalid(obj.hAI)
                 return
             end
@@ -148,9 +190,11 @@ classdef vidriowrapper < handle
             %
             % Create a task that is unclocked AI and can be used for misc tasks.
             %
+            % function zapit.DAQ.vidriowrapper.connectUnclockedAI
+            %
             % Inputs
             % chans - which chans to conect. Must be supplied.
-            % verbose - 
+            % verbose - [optional, false by default]. Reports to screen what it is doing if true
 
             if nargin<3
                 verbose = false;
@@ -173,7 +217,14 @@ classdef vidriowrapper < handle
         function connectUnclockedAO(obj, verbose)
             % connectUnclockedAO(obj)
             %
+            % function zapit.DAQ.vidriowrapper.connectUnclockedAO
+            %
             % Create a task that is unclocked AO and can be used for sample setup.
+            % The connection options are set by proprties in the vidriowrapper
+            % class. see: .device_ID, .AOchans, .AOrange, 
+            %
+            % Inputs
+            % verbose - [optional, false by default]. Reports to screen what it is doing if true
 
             if nargin<2
                 verbose = false;
@@ -196,6 +247,13 @@ classdef vidriowrapper < handle
 
         function connectClockedAO(obj, varargin)
             % Start a clocked task. Optional input args:
+            %
+            % function zapit.DAQ.vidriowrapper.connectClockedAO
+            %
+            % Purpose
+            % Create a task that is clocked AO and can be used for sample setup.
+            % The connection options are set by proprties in the vidriowrapper
+            % class. see: .device_ID, .AOchans, .AOrange, .samplesPerSecond
             %
             % Inputs (optional)
             % numSamplesPerChannel - Size of the buffer
@@ -263,6 +321,8 @@ classdef vidriowrapper < handle
         function writeAnalogData(obj,waveforms)
             % Write analog data to the buffer
             %
+            % function zapit.DAQ.vidriowrapper.writeAnalogData
+            %
             % Purpose
             % Write analod data to the buffer and also log in a property the
             % data that were written.
@@ -273,6 +333,12 @@ classdef vidriowrapper < handle
 
 
         function setLaserPowerControlVoltage(obj,laserControlVoltage)
+            % Set the laser AO line to a specified voltage value
+            %
+            % function zapit.DAQ.vidriowrapper.setLaserPowerControlVoltage
+            %
+            % Purpose
+            % Set the laser voltage with an unlocked AO operation.
             if ~isvalid(obj.hAO) || ~strcmp(obj.hAO.taskName, 'unclockedao')
                 obj.connectUnclockedAO
             end
@@ -284,6 +350,13 @@ classdef vidriowrapper < handle
 
 
         function moveBeamXY(obj,beamXY)
+            % Set the two scanner AO lines to specified voltage value
+            %
+            % function zapit.DAQ.vidriowrapper.beamXY
+            %
+            % Purpose
+            % Set the two galvo control AO lines with an unlocked AO operation.
+
             if ~isvalid(obj.hAO) || ~strcmp(obj.hAO.taskName, 'unclockedao')
                 obj.connectUnclockedAO
             end
