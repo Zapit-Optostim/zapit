@@ -77,6 +77,13 @@ function settings = readSettings
 
 
 
+    if ~allValid
+        fprintf('\n ********************************************************************\n')
+        fprintf(' * YOU HAVE INVALID VALUES IN %s (see above). \n', settingsFile)
+        fprintf(' * They have been replaced with valid defaults. \n')
+        fprintf(' **********************************************************************\n')
+    end
+
     % If there are missing or invalid values we will replace these in the settings file as well as making
     % a backup copy of the original file.
     if ~allValid || addedDefaultValue
@@ -90,7 +97,6 @@ function settings = readSettings
        fprintf('Replacing settings file with updated version\n')
        zapit.yaml.WriteYaml(settingsFile,settings);
     end
-
 
 
     % Log current version info to the settings

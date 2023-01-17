@@ -3,18 +3,21 @@ function settings = default_settings
     %
     % settings = default_settings
 
+    settings.general.maxSettingsBackUpFiles = 20;
+
     settings.NI.device_ID = 'Dev1';
     settings.NI.samplesPerSecond = 10000;
     settings.NI.AOrange = 10;
-    settings.NI.AOchans = 0:2;
+    settings.NI.AOchans = 0:3;
     settings.NI.triggerChannel = 'PFI0';
 
     settings.scanners.voltsPerPixel = 2.2E-3;
 
+    settings.laser.name = 'obis';
     settings.laser.laserMinMaxControlVolts = [1.5,3.5];
     settings.laser.laserMinMax_mW = [0,100];
 
-    settings.camera.connection_index = 1;
+    settings.camera.beam_calib_exposure = 1;
     settings.camera.default_exposure = 0;
     settings.camera.beam_calib_exposure = 0;
     settings.camera.micronsPerPixel = 19.3;
@@ -25,7 +28,10 @@ function settings = default_settings
     settings.calibrateScanners.bufferPixels = 100;
     settings.calibrateScanners.pointSpacingInPixels = 200;
 
+    settings.calibrateSample.refAP = 3;
+
     settings.experiment.defaultLaserFrequencyHz = 40; 
     settings.experiment.defaultLaserPowerMW = 5;
     settings.experiment.maxStimPointsPerCondition = 2;
+
 end % default_settings
