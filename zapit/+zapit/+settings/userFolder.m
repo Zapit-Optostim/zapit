@@ -1,10 +1,18 @@
 function userDir = userFolder
-    % Return path to user's Windows folder
+    % Return path to user's home folder as a string
     %
     % function userDir = userFolder
     %
     % Purpose
-    % Return path to user's home folder
+    % Return path to user's home folder on Windows or Unix systems. Returns
+    % empty if it fails to find a home folder for som reason. 
+    %
+    % Inputs
+    % none
+    %
+    % Outputs
+    % userDir - string defining the path to the user's home folder.
+    %
     %
     % Rob Campbell - 2022 SWC
 
@@ -17,7 +25,6 @@ function userDir = userFolder
     else
         userDir = '~';
     end
-
 
     % Just in case
     if ~exist(userDir)

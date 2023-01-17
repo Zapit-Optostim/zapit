@@ -8,3 +8,5 @@
     % Rob Campbell - SWC 2022
 
     zapitSettingsFileName = 'zapitSystemSettings.yml';
+
+end % returnZapitSettingFileName

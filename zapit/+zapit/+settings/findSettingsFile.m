@@ -1,5 +1,5 @@
 function varargout = findSettingsFile
-    % Find the Zapit settings file
+    % Find the Zapit settings file and return as a string
     %
     % function settingsFile = findSettingsFile
     %
@@ -37,7 +37,7 @@ function varargout = findSettingsFile
     % Rob Campbell - SWC 2022
 
 
-    settingsDirs = zapit.settings.settingsLocation; % Potential loctions for the settings file
+    settingsDirs = zapit.settings.possibleSettingsLocations; % Potential loctions for the settings file
     settingsFname = zapit.settings.returnZapitSettingsFileName; % The name of the settings file
 
 

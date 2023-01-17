@@ -1,7 +1,7 @@
-function settingsDirs = settingsLocation
-    % Return user settings location of the Zapit optostim package
+function settingsDirs = possibleSettingsLocations
+    % Return all possible user settings locations of the Zapit optostim package
     %
-    % function settingsDirs = settingsLocation
+    % function settingsDirs = zapit.settings.possibleSettingsLocations
     %
     % Prurpose
     % Return all possible user settings directory locations for the Zapit optostim package.
