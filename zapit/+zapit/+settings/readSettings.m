@@ -25,7 +25,7 @@ function settings = readSettings
 
 
 
-    [settingsFile,backupSetingsDir] = zapit.settings.findSettingsFile;
+    [settingsFile,backupSettingsDir] = zapit.settings.findSettingsFile;
 
     settings = zapit.yaml.ReadYaml(settingsFile);
 
@@ -84,11 +84,12 @@ function settings = readSettings
         fprintf(' **********************************************************************\n')
     end
 
+
     % If there are missing or invalid values we will replace these in the settings file as well as making
     % a backup copy of the original file.
     if ~allValid || addedDefaultValue
        % Copy file
-       backupFname = fullfile(backupSetingsDir, ...
+       backupFname = fullfile(backupSettingsDir, ...
             [datestr(now, 'yyyy_mm_dd__HH_MM_SS_'),zapit.settings.returnZapitSettingsFileName]);
        fprintf('Making backup of settings file at %s\n', backupFname)
        copyfile(settingsFile,backupFname)
@@ -97,6 +98,19 @@ function settings = readSettings
        fprintf('Replacing settings file with updated version\n')
        zapit.yaml.WriteYaml(settingsFile,settings);
     end
+
+    % Ensure we don't have too many backup files
+    backupFiles = dir(fullfile(backupSettingsDir,'*.yml'));
+    if length(backupFiles) > settings.general.maxSettingsBackUpFiles
+        [~,ind]=sort([backupFiles.datenum],'descend');
+        backupFiles = backupFiles(ind); % make certain they are in date order
+        backupFiles = backupFiles(settings.general.maxSettingsBackUpFiles+1:end);
+        % Delete only these
+        for ii = length(backupFiles):-1:1
+            delete(fullfile(backupFiles(ii).folder,backupFiles(ii).name))
+        end
+    end
+
 
 
     % Log current version info to the settings
