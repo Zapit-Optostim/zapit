@@ -1,4 +1,4 @@
-function obj = plotChanSamples(obj)
+function obj = plotChanSamples(obj, conditionToPlot)
     % Plots the voltage waveforms that will be send to the DAQ
     %
     % zapit.stimConfig.plotChanSamples
@@ -15,49 +15,61 @@ function obj = plotChanSamples(obj)
     % Maja Skretowska - 2021
 
 
-    if isempty(obj.chanSamples)
+    if nargin<2
+        conditionToPlot = 1;
+    end
+
+
+    % Get the data
+    chanSamples = obj.chanSamples;
+    if isempty(chanSamples)
         return
     end
 
-    xAxis = [1:obj.numSamplesPerChannel];
+    % extract data of interest
+    anlgOut = chanSamples.light(:,1,conditionToPlot);
+    digOut =  chanSamples.light(:,2,conditionToPlot);
+    xGalvo =  chanSamples.scan(:,1,conditionToPlot);
+    yGalvo =  chanSamples.scan(:,2,conditionToPlot);
+    numHalfCycles = 4; % TODO -- should not be here like this. SETTINGS!
+    edgeSamples = ceil(linspace(1, obj.numSamplesPerChannel, numHalfCycles+1));
 
-    anlgOut = obj.chanSamples.light(:,1);
-    digOut = obj.chanSamples.light(:,3);
 
-        
+
+    % Make plot        
     fig = zapit.utils.focusNamedFig(mfilename);
 
     clf
-
-        
     subplot(3,1,1)
     % analog volt output for 1st area to 1st scanner mirror
-    plot(xAxis,obj.chanSamples.scan(:,1,1),'.','MarkerSize',10);
+    plot(xGalvo,'.k','MarkerSize',10);
     hold on
-    for ii = cycleEdges(1,:)
-        plot([ii ii],[min(obj.chanSamples.scan(:,1,1)) max(obj.chanSamples.scan(:,1,1))],'g-','LineWidth',1)
+    plot(yGalvo,'.r','MarkerSize',10);
+
+    for ii = edgeSamples
+        plot([ii ii],ylim,'g--','LineWidth',1)
     end
     title('analog output to scan mirrors')
     ylabel('area')
         
     subplot(3,1,2)
     % analog volt output to laser and masking light
-    plot(xAxis,anlgOut,'.','MarkerSize',10);
+    plot(anlgOut,'.','MarkerSize',10);
     hold on
-    for ii = cycleEdges(1,:)
-        plot([ii ii],laserPowerInMW*[0 2],'g-','LineWidth',1)
+    for ii = edgeSamples
+        plot([ii ii],ylim,'g--','LineWidth',1)
     end
     title('analog output to laser')
     ylabel('amplitude')
         
     subplot(3,1,3)
-    % digital volt output to laser
-    plot(xAxis, digOut,'.','MarkerSize',10);
+    % digital volt output to laser <--- TODO what is this?
+    plot(digOut,'.','MarkerSize',10);
     hold on
-    for ii = cycleEdges(1,:)
-        plot([ii ii],digitalAmplitude*[0 1],'g-','LineWidth',1)
+    for ii = edgeSamples
+        plot([ii ii],ylim,'g--','LineWidth',1)
     end
-    title('digital output to laser')
+    title('analog output to masking light')
     ylabel('on/off')
     xlabel('samples generated at 5000 Hz rate')
     

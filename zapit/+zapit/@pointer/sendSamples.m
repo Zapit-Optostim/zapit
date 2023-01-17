@@ -70,7 +70,7 @@ function varargout = sendSamples(obj, varargin)
     % Make the waveforms to play
     waveforms = [];
     waveforms(:,1:2) = obj.stimConfig.chanSamples.scan(:,:,conditionNumber);
-    waveforms(:,3:4) = obj.stimConfig.chanSamples.light(:,[1 2]);
+    waveforms(:,3:4) = obj.stimConfig.chanSamples.light(:,:,conditionNumber);
 
     % Disable laser  if the user asked for this
     if laserOn == 0
