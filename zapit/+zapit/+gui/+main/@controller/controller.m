@@ -297,7 +297,7 @@ classdef controller < zapit.gui.main.view
             if obj.CalibExposureSpinner.Value < 0
                 obj.CalibExposureSpinner.Value = 0;
             end
-            obj.model.settings.camera.beam_calib_exposure = obj.CalibExposureSpinner.Value;
+            obj.model.settings.calibrateScanners.beam_calib_exposure = obj.CalibExposureSpinner.Value;
         end % calibExposureSpinner_CallBack
 
 
