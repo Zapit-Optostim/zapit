@@ -14,7 +14,6 @@ classdef pointer < handle
 
     
     properties
-
         % 0/0 volts on DAQ corresponds to the middle of the image
         invertX = true % TODO are these used?
         invertY = true
@@ -27,7 +26,6 @@ classdef pointer < handle
         %%
         % The following properties relate to settings or other similar state parameters
         % Properties related to where we stimulate
-        settings % The settings read in from the YAML file
         stimConfig % Object of class zapit.stimConfig. This contains the locations to stimulate
         laserFit  % laserfits. See generateLaserCalibrationCurve
         transform % The transform describing the relationship between scanners and camera
@@ -43,6 +41,11 @@ classdef pointer < handle
         refPointsSample  % The two reference points in sample space. User provides these via calibrateSample
 
     end % properties
+
+
+    properties (SetObservable=true)
+        settings % The settings read in from the YAML file
+    end
 
 
     properties (Hidden)
@@ -61,7 +64,7 @@ classdef pointer < handle
 
 
     % read-only properties that are associated with getters
-    properties(SetAccess=protected, GetAccess=public)
+    properties (SetAccess=protected, GetAccess=public)
        imSize
     end
 
@@ -106,13 +109,15 @@ classdef pointer < handle
                 obj.cam.vid.FramesAcquiredFcn = @obj.storeLastFrame;
                 obj.cam.vid.FramesAcquiredFcnCount=1; %Run frame acq fun every N frames
             else
-               obj.listeners{end+1} = ...
-                    addlistener(obj.cam, 'lastAcquiredFrame', 'PostSet', @obj.storeLastFrame);
+               obj.listeners{end+1} = addlistener(obj.cam, 'lastAcquiredFrame', 'PostSet', @obj.storeLastFrame);
                % Make a listener instead of the FramesAcquiredFcn
                obj.cam.startVideo; pause(0.2), obj.cam.stopVideo; pause(0.2) % TODO -- for some reason we need to call this twice for it to start working properly
             end
             obj.cam.startVideo; 
 
+
+            % Save settings if they are changed
+            obj.listeners{end+1} = addlistener(obj, 'settings', 'PostSet', @obj.saveSettingsFile);
 
             if obj.simulated
                 obj.DAQ = zapit.simulated.DAQ;
@@ -174,6 +179,7 @@ classdef pointer < handle
     % Other short methods
     methods
 
+
         function zeroScanners(obj)
             % Zero the beam
             % 
@@ -220,6 +226,19 @@ classdef pointer < handle
             obj.lastAcquiredFrame = obj.cam.getLastFrame;
             obj.cam.flushdata
         end % storeLastFrame
+
+
+        function saveSettingsFile(obj,~,~)
+            % This callback is run every time the settings are altered to save them to disk
+            %
+            %  function zapit.pointer.saveSettingsFile(obj,~,~)
+            %
+            % Purpose
+            % Saves the settings to the YAML when they are changed
+    
+            settingsFile = zapit.settings.findSettingsFile;
+            zapit.yaml.WriteYaml(settingsFile,obj.settings);
+        end % saveSettingsFile
 
 
         function im = returnCurrentFrame(obj,nFrames)

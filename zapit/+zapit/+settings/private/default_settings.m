@@ -17,14 +17,12 @@ function settings = default_settings
     settings.laser.laserMinMaxControlVolts = [1.5,3.5];
     settings.laser.laserMinMax_mW = [0,100];
 
-    settings.camera.beam_calib_exposure = 1;
     settings.camera.default_exposure = 0;
-    settings.camera.beam_calib_exposure = 0;
     settings.camera.micronsPerPixel = 19.3;
 
     settings.calibrateScanners.areaThreshold = 500;
     settings.calibrateScanners.calibration_power_mW = 10;
-    settings.calibrateScanners.beam_calib_exposure = 0;
+    settings.calibrateScanners.beam_calib_exposure = 2;
     settings.calibrateScanners.bufferPixels = 100;
     settings.calibrateScanners.pointSpacingInPixels = 200;
 

@@ -146,14 +146,6 @@ function [settings,allValid] = checkSettingsAreValid(settings)
     end
 
 
-    if ~isnumeric(settings.camera.beam_calib_exposure)
-        fprintf('camera.beam_calib_exposure should be a number. Setting it to %d \n', ...
-            DEFAULT_SETTINGS.camera.beam_calib_exposure)
-        settings.camera.beam_calib_exposure = DEFAULT_SETTINGS.camera.beam_calib_exposure;
-        allValid=false;
-    end
-
-
     if ~isnumeric(settings.camera.micronsPerPixel)
         fprintf('camera.micronsPerPixel should be a number. Setting it to %0.3f \n', ...
             DEFAULT_SETTINGS.camera.micronsPerPixel)

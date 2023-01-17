@@ -20,7 +20,6 @@
             obj.pointButton_Callback
         end
 
-        % TODO -- read exposure from spinbox and update settings
         obj.model.cam.exposure = obj.model.settings.calibrateScanners.beam_calib_exposure;
 
         actualCoords = obj.model.returnScannerCalibTargetCoords;
@@ -37,7 +36,6 @@
         hold(obj.hImAx,'off')
 
         % Turn on laser and set to the calibration laser power
-        % TODO -- read power from spinbox and update settings
         obj.laserPowerBeforeCalib = obj.LaserPowerScannerCalibSlider.Value;
         obj.LaserPowerScannerCalibSlider.Value = obj.CalibPowerSpinner.Value;
         obj.setCalibLaserSwitch('On');
@@ -56,7 +54,6 @@
         obj.removeOverlays(mfilename)
 
         % change the illumination of the camera image to high value again
-        % TODO -- read exposure from spinbox and update settings
         obj.model.cam.exposure = obj.model.settings.camera.default_exposure;
     end
 
