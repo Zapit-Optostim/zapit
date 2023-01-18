@@ -38,12 +38,15 @@ function stressTest(doRampStop)
 
     keepRunning = true;
     hZP.cam.stopVideo;
+    successes = [];
     while keepRunning
         hZP.sendSamples('hardwareTrigger',false);
-        pause(0.5);
+        pause(0.25);
 
         if doRampStop
-            hZP.stopOptoStim(150);
+            t = hZP.stopOptoStim;
+            successes(end+1) = t;
+
         else
             hZP.DAQ.stop;
         end
@@ -53,6 +56,8 @@ function stressTest(doRampStop)
 
     end
 
+    fS = find(successes==false);
+    fprintf('Number of stop failures: %d\n',length(fS))
     close(f)
     hZP.DAQ.stop;
     hZP.cam.startVideo;
