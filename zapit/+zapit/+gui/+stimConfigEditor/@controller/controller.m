@@ -212,6 +212,11 @@ classdef controller < zapit.gui.stimConfigEditor.view
             % from the main GUI, then saving a file will cause it to be added to the 
             % recently loaded menu.  
 
+            % For some reason we need the video stopped or this locks up everything
+            if ~isempty(obj.mainGUI)
+                obj.mainGUI.model.cam.stopVideo;
+            end
+
             stimC = obj.returnStimConfigStructure;
             if isempty(stimC)
                 return
@@ -231,6 +236,9 @@ classdef controller < zapit.gui.stimConfigEditor.view
                 obj.mainGUI.addStimConfigToRecents(fname,fullPath)
             end
 
+            if ~isempty(obj.mainGUI)
+                obj.mainGUI.model.cam.startVideo;
+            end
         end %saveConfigYAML
 
 
@@ -241,6 +249,12 @@ classdef controller < zapit.gui.stimConfigEditor.view
             %
             % Purpose
             % Load a stimulus config YAML and display it. 
+
+
+            % For some reason we need the video stopped or this locks up everything
+            if ~isempty(obj.mainGUI)
+                obj.mainGUI.model.cam.stopVideo;
+            end
 
             [fname,fullPath] = uigetfile('*.yml;*.yaml');
             if fname == 0 | isempty(fname)
@@ -266,6 +280,11 @@ classdef controller < zapit.gui.stimConfigEditor.view
 
             obj.fname = fname;
             obj.updateBottomLabel
+
+            if ~isempty(obj.mainGUI)
+                obj.mainGUI.model.cam.startVideo;
+            end
+
         end %saveConfigYAML
 
 
