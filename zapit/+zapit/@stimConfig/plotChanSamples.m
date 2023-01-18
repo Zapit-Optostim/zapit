@@ -1,4 +1,4 @@
-function obj = plotChanSamples(obj, conditionToPlot)
+function plotChanSamples(obj, conditionToPlot)
     % Plots the voltage waveforms that will be send to the DAQ
     %
     % zapit.stimConfig.plotChanSamples
@@ -69,9 +69,10 @@ function obj = plotChanSamples(obj, conditionToPlot)
     for ii = edgeSamples
         plot([ii ii],ylim,'g--','LineWidth',1)
     end
+
     title('analog output to masking light')
     ylabel('on/off')
-    xlabel('samples generated at 5000 Hz rate')
+    xlabel(sprintf('samples (at %d Hz)', obj.parent.DAQ.samplesPerSecond))
     
 end % plotChanSamples
 
