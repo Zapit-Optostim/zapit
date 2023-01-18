@@ -221,6 +221,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
             if isempty(stimC)
                 return
             end
+
             [fname,fullPath] = uiputfile('*.yml');
             if fname == 0 | isempty(fname)
                 return

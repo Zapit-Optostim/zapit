@@ -31,5 +31,6 @@ function settings = default_settings
     settings.experiment.defaultLaserFrequencyHz = 40; 
     settings.experiment.defaultLaserPowerMW = 5;
     settings.experiment.maxStimPointsPerCondition = 2;
+    settings.experiment.offRampDownDuration_ms = 250;
 
 end % default_settings
