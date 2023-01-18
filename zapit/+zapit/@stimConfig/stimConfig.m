@@ -248,7 +248,7 @@ classdef stimConfig < handle
                 calibratedPointsInVolts = IN;
             end
 
-            numHalfCycles = 4; % The number of half cycles to buffer
+            numHalfCycles = 2; % The number of half cycles to buffer
                                % TODO -- see if 1 cycle works then we can get rid of this. 
 
             % TODO -- we need to make sure that the number of samples per second here is the right number
