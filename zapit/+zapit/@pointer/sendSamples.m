@@ -71,13 +71,11 @@ function varargout = sendSamples(obj, varargin)
     cs = obj.stimConfig.chanSamples;
     waveforms = [cs.scan(:,:,conditionNumber), cs.light(:,:,conditionNumber)];
 
-    % Disable laser  if the user asked for this
+    % Disable laser if requested
     if laserOn == 0
         waveforms(:,3) = 0;
     end
 
-
-    % TODO we need to set the triggering
     obj.DAQ.connectClockedAO('numSamplesPerChannel',size(waveforms,1), ...
                             'hardwareTriggered', hardwareTriggered);
   

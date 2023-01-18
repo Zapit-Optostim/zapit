@@ -246,7 +246,7 @@ classdef vidriowrapper < handle
 
 
         function connectClockedAO(obj, varargin)
-            % Start a clocked task. Optional input args:
+            % Start a clocked task.
             %
             % function zapit.DAQ.vidriowrapper.connectClockedAO
             %
