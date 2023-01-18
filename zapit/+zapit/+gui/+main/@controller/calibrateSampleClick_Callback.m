@@ -37,7 +37,7 @@ function calibrateSampleClick_Callback(obj,sr,evt)
     elseif obj.nInd==2
         if zapit.utils.isShiftPressed
             obj.nInd = 1;
-            refPoints(:,2) = 0;
+            obj.model.refPointsSample(:,2) = 0;
             obj.plotOverlayHandles.bregma.XData=nan;
             obj.plotOverlayHandles.bregma.YData=nan;
         else

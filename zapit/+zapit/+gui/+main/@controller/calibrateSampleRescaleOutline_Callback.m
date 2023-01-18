@@ -31,7 +31,8 @@ function calibrateSampleRescaleOutline_Callback(obj,~,evt)
     if obj.nInd==2
         % Rotate and scale only if mouse cursor is over 1 mm from bregma
         err = obj.model.refPointsSample(1,:)-[X,Y];
-        if sum(sqrt(err.^2))<1.5
+        rms_err = sum(sqrt(err.^2));
+        if rms_err<0.5
             return
         end
         obj.model.refPointsSample(obj.nInd,:) = [X,Y];
