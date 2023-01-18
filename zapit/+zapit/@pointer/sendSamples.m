@@ -47,7 +47,7 @@ function varargout = sendSamples(obj, varargin)
     conditionNumber = params.Results.conditionNumber;
     laserOn = params.Results.laserOn;
     hardwareTriggered = params.Results.hardwareTriggered;
-    varbose = params.Results.verbose;    
+    verbose = params.Results.verbose;
 
 
     % Choose a random condition if necessary

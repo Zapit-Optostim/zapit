@@ -17,22 +17,12 @@ function cycleBeamOverCoords_Callback(obj,~,~)
 
     if obj.CycleBeamOverCoordsButton.Value == 1
 
-        c = obj.model.stimConfig.calibratedPoints;
 
-        calPoints = zeros(size(c,1), prod(size(c,2:3)))';
+        waveforms = cat(1,obj.model.stimConfig.calibratedPointsInVolts{:});
+        waveforms(:,3) = 2; % laser power -- HARDCODED
 
-        tmp = squeeze(c(:,:,1));
-        calPoints(1:2:end,:) = tmp';
-        tmp = squeeze(c(:,:,2));
-        calPoints(2:2:end,:) = tmp';
+        obj.model.DAQ.moveBeamXY(waveforms(1,:)) % Go to first position
 
-        [xVolt,yVolt] = obj.model.mmToVolt(calPoints(:,1), calPoints(:,2));
-
-        % Build voltages to present
-        waveforms = [xVolt,yVolt];
-        waveforms(:,3) = 2; % laser power
-
-        obj.model.DAQ.moveBeamXY(waveforms(1,:))
         obj.model.DAQ.connectClockedAO('numSamplesPerChannel',size(waveforms,1), ...
                                 'samplesPerSecond',500, ...
                                 'taskName','samplecalib')
