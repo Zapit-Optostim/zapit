@@ -8,7 +8,13 @@ function loadStimConfig_Callback(obj,src,~)
     %
     %
     
-    obj.model.cam.stopVideo; % Stop video first as the video running seems to really slow down loading
+
+    % Stop video first as the video running seems to really slow down loading
+    isCamRunning = obj.model.cam.isrunning;
+    if isCamRunning
+        obj.model.cam.stopVideo;
+    end
+
 
     % We use this method to load from the recents menu or to interactively load or from the CLI
     if ischar(src)
@@ -48,6 +54,8 @@ function loadStimConfig_Callback(obj,src,~)
     % Update the drop-down that allows us to present the stimuli
     obj.updateTestSiteDropdown;
 
-    obj.model.cam.startVideo;
+    if isCamRunning
+        obj.model.cam.startVideo;
+    end
 
 end % loadStimConfig_Callback

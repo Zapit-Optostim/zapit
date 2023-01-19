@@ -9,7 +9,13 @@ function calibrateSample_Callback(obj,~,~)
     % to identify two reference points on skull surface. Typically this will be
     % bregma plus one more  point. The results are returned as two columns: first x then y coords
     %
-    obj.model.cam.stopVideo
+
+
+    isCamRunning = obj.model.cam.isrunning;
+    if isCamRunning
+        obj.model.cam.stopVideo;
+    end
+
     obj.model.sampleCalibrated = false;
     obj.model.refPointsSample(:) = 0;
     obj.model.calibratedBrainOutline = [];
@@ -65,7 +71,10 @@ function calibrateSample_Callback(obj,~,~)
         hold(obj.hImAx,'off')
     end
 
-    obj.model.cam.startVideo
+
+    if isCamRunning
+        obj.model.cam.startVideo;
+    end
 
 end % calibrateSample_Callback
 
