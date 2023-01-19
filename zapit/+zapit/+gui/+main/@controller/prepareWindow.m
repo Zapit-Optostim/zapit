@@ -70,8 +70,8 @@ function prepareWindow(obj)
     %obj.PaintareaButton.ValueChangedFcn = @(~,~) obj.paintArea_Callback;
 
     obj.ExportwaveformsButton.ButtonPushedFcn = @(~,~) obj.exportWaveforms_Callback;
-
-
+    obj.SetexperimentpathButton.ButtonPushedFcn = @(~,~) obj.setExperimentPath_Callback;
+    obj.ClearpathButton.ButtonPushedFcn = @(~,~) obj.clearExperimentPath_Callback;
 
 
 

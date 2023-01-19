@@ -1,7 +1,7 @@
 function exportWaveforms_Callback(obj,~,~)
     % Export all the DAQ waveforms for this stim config file as a .mat file
     %
-    % zapit.gui.main.controller..exportWaveforms_Callback
+    % zapit.gui.main.controller.exportWaveforms_Callback
     %
     % Purpose
     % Allows users to present stimuli in a piece of external softare and 
@@ -29,4 +29,4 @@ function exportWaveforms_Callback(obj,~,~)
         obj.model.cam.startVideo;
     end
 
-end
+end % exportWaveforms_Callback

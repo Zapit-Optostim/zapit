@@ -44,8 +44,10 @@ classdef pointer < handle
 
 
     properties (SetObservable=true)
+        experimentPath % The absolute path to an experiment folder. This is used to automatically write log data
+                       % when zapit.pointer.sendSamples is called.
         settings % The settings read in from the YAML file
-    end
+    end % observable properties
 
 
     properties (Hidden)
@@ -60,13 +62,13 @@ classdef pointer < handle
         calibrateScannersPosData % Used to plot data during scanner calibration
         scannersCalibrated = false % Gets set to true if the scanners are calibrated
         sampleCalibrated = false % Gets set to true if the sample is calibrated
-    end
+    end % hidden observable properties
 
 
     % read-only properties that are associated with getters
     properties (SetAccess=protected, GetAccess=public)
        imSize
-    end
+    end % getter properties
 
 
     % Constructor and destructor

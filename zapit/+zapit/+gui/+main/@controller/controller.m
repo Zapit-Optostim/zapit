@@ -314,6 +314,25 @@ classdef controller < zapit.gui.main.view
             obj.model.settings.calibrateScanners.calibration_power_mW = obj.CalibPowerSpinner.Value;
         end % calibPowerSpinner_CallBack
 
+
+        function updateExperimentPathTextArea(obj,~,~)
+            % Update the text in the experiment path message box when the zapit.pointer.experimentPath property changes
+            %
+            % zapit.gui.main.controller.updateExperimentPathTextArea
+
+            obj.ExperimentPathTextArea.Value = obj.model.experimentPath;
+        end % updateExperimentPathTextArea
+
+
+        function clearExperimentPath_Callback(obj,~,~)
+            % Clear the experiment path
+            %
+            % zapit.gui.main.controller.clearExperimentPath_Callback
+
+            obj.model.experimentPath = '';
+        end % clearExperimentPath_Callback
+
+
     end % methods
 
 
