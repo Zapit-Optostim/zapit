@@ -76,8 +76,12 @@ function varargout = sendSamples(obj, varargin)
         waveforms(:,3) = 0;
     end
 
-    obj.DAQ.connectClockedAO('numSamplesPerChannel',size(waveforms,1), ...
-                            'hardwareTriggered', hardwareTriggered);
+    % Connect only the first time this is called
+    if isempty(obj.DAQ.hAO) || ~strcmp(obj.DAQ.hAO.taskName,'sendSamples')
+        obj.DAQ.connectClockedAO('numSamplesPerChannel',size(waveforms,1), ...
+                                'hardwareTriggered', hardwareTriggered, ...
+                                'taskName','sendSamples');
+    end
   
     
     % write voltage samples onto the task
