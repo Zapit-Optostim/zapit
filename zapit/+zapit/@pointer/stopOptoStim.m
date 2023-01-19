@@ -45,8 +45,6 @@ function stopOptoStim(obj, rampDownInMS)
         rampDownInMS = msPerBuffer;
     end
 
-
-
     numBuffers = ceil(rampDownInMS / msPerBuffer);
 
     % The series of amplitudes over which we will loop
@@ -64,8 +62,6 @@ function stopOptoStim(obj, rampDownInMS)
     t(:) = 0;
     obj.DAQ.writeAnalogData(t);
 
-    % stop task and send to pre-generation stage, allowing to write
-    % next trial samples without conflicts
     obj.DAQ.hAO.stop
 
 end % stopOptoStim

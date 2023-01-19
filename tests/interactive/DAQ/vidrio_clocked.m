@@ -8,7 +8,7 @@ function varargout = vidrio_clocked(vNI)
     % played out on the scope.
     %
     % Inputs
-    % vNI - Optionally supply an instance of zapit.hardware.DAQ.NI.vidriowrapper.
+    % vNI - Optionally supply an instance of zapit.hardware.DAQ.vidriowrapper.
     %       If not supplied an instance is created.
     %
     % Outputs (optional)
@@ -19,7 +19,7 @@ function varargout = vidrio_clocked(vNI)
 
 
     if nargin<1
-        vNI = zapit.hardware.DAQ.NI.vidriowrapper;
+        vNI = zapit.hardware.DAQ.vidriowrapper;
     end
 
     % Create unclocked task

@@ -52,10 +52,11 @@ function prepareWindow(obj)
     obj.CatMouseButton.ValueChangedFcn = @(~,~) obj.catAndMouseButton_Callback;
     obj.LaserPowerScannerCalibSlider.ValueChangedFcn = @(src,evt) obj.setLaserPower_Callback(src,evt);
     obj.CalibLaserSwitch.ValueChangedFcn = @(~,~) obj.switchLaser_Callback;
+    obj.CalibPowerSpinner.ValueChangedFcn = @(~,~) obj.calibPowerSpinner_CallBack;
+    obj.CalibExposureSpinner.ValueChangedFcn = @(~,~) obj.calibExposureSpinner_CallBack;
     obj.PointSpacingSpinner.ValueChangedFcn = @(~,~) obj.pointSpacing_CallBack;
     obj.BorderBufferSpinner.ValueChangedFcn = @(~,~) obj.borderBuffer_CallBack;
     obj.SizeThreshSpinner.ValueChangedFcn = @(~,~) obj.sizeThreshSpinner_CallBack;
-    obj.CalibExposureSpinner.ValueChangedFcn = @(~,~) obj.calibExposureSpinner_CallBack;
     obj.CalibrateSampleButton.ButtonPushedFcn = @(~,~) obj.calibrateSample_Callback;
     obj.ShowstimcoordsButton.ValueChangedFcn = @(~,~) obj.showStimulusCoords_Callback;
     obj.CycleBeamOverCoordsButton.ValueChangedFcn = @(~,~) obj.cycleBeamOverCoords_Callback;

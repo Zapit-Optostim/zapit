@@ -300,6 +300,20 @@ classdef controller < zapit.gui.main.view
             obj.model.settings.calibrateScanners.beam_calib_exposure = obj.CalibExposureSpinner.Value;
         end % calibExposureSpinner_CallBack
 
+
+        function calibPowerSpinner_CallBack(obj,~,~)
+            %
+            % zapit.gui.main.controller.calibPowerSpinner_CallBack
+            %
+            % Purpose
+            % Changing the spinnerbox writes to the corresponding value in the settings structure. 
+
+            if obj.CalibPowerSpinner.Value < 0
+                obj.CalibPowerSpinner.Value = 0;
+            end
+            obj.model.settings.calibrateScanners.calibration_power_mW = obj.CalibPowerSpinner.Value;
+        end % calibPowerSpinner_CallBack
+
     end % methods
 
 

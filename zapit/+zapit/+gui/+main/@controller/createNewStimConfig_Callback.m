@@ -10,7 +10,7 @@ function createNewStimConfig_Callback(obj,~,~)
     %
     % Rob Campbell - SWC 2023
     
-    obj.hStimConfigEditor = zapit.gui.stimConfigEditor.controller(obj.model, obj);
+    obj.hStimConfigEditor = zapit.gui.stimConfigEditor.controller(obj);
 
 end % createNewStimConfig_Callback
 

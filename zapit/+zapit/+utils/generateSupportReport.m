@@ -12,7 +12,7 @@ function generateSupportReport(reportFname)
 %               UI is presented to the user for a location to be chosed. 
 % 
 %
-%
+% Rob Campbell - SWC 2023
 
 
     %Generate default save location
@@ -140,27 +140,28 @@ function generateSupportReport(reportFname)
     disp('Zapit report finished');
 
     delete(wb); % delete the waitbar
-end
+end % generateSupportReport
 
 
 
 
 function dumpToTXT(fname,data)
-fid = fopen(fname,'a');
-if isstruct(data)
-    f = fields(data);
-    for ii=1:length(f)
-        theseData = data.(f{ii});
-        fprintf(fid,'%s - ', f{ii});
-        if ischar(theseData)
-            fprintf(fid,'%s\n',theseData);
+    % Dump file to text file
+    fid = fopen(fname,'a');
+    if isstruct(data)
+        f = fields(data);
+        for ii=1:length(f)
+            theseData = data.(f{ii});
+            fprintf(fid,'%s - ', f{ii});
+            if ischar(theseData)
+                fprintf(fid,'%s\n',theseData);
+            end
+            if isnumeric(theseData)
+                fprintf(fid,'%0.2f\n',theseData);
+            end
         end
-        if isnumeric(theseData)
-            fprintf(fid,'%0.2f\n',theseData);
-        end
+    else
+        fprintf('Data are not a struct\n')
     end
-else
-    fprintf('Data are not a struct\n')
-end
-fclose(fid);
-end
+    fclose(fid);
+end % dumpToTXT

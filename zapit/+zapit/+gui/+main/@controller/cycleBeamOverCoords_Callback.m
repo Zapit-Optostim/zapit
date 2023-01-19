@@ -9,30 +9,20 @@ function cycleBeamOverCoords_Callback(obj,~,~)
     % an experiment, as it ignores the fact that points are stimulated in pairs (usually). 
     %
 
-    % TODO: checkScannerCalibClocked is located in zapit.pointer. So the presence of this function here is odd. [TODO there too]
+    % TODO: Low priority. checkScannerCalibClocked is located in zapit.pointer. So the presence of this function here is odd
+
     if isempty(obj.model.stimConfig)
         return
     end
 
     if obj.CycleBeamOverCoordsButton.Value == 1
-        % TODO - we will need to change this once we settle on a better format
-        % for the stimuli
-        c = obj.model.stimConfig.calibratedPoints;
 
-        calPoints = zeros(size(c,1), prod(size(c,2:3)))';
 
-        tmp = squeeze(c(:,:,1));
-        calPoints(1:2:end,:) = tmp';
-        tmp = squeeze(c(:,:,2));
-        calPoints(2:2:end,:) = tmp';
+        waveforms = cat(1,obj.model.stimConfig.calibratedPointsInVolts{:});
+        waveforms(:,3) = 2; % laser power -- HARDCODED
 
-        [xVolt,yVolt] = obj.model.mmToVolt(calPoints(:,1), calPoints(:,2));
+        obj.model.DAQ.moveBeamXY(waveforms(1,:)) % Go to first position
 
-        % Build voltages to present
-        waveforms = [xVolt,yVolt];
-        waveforms(:,3) = 2; % laser power
-
-        obj.model.DAQ.moveBeamXY(waveforms(1,:))
         obj.model.DAQ.connectClockedAO('numSamplesPerChannel',size(waveforms,1), ...
                                 'samplesPerSecond',500, ...
                                 'taskName','samplecalib')

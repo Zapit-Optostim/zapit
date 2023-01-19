@@ -71,21 +71,29 @@ hZP.stopOptoStim
 
 Randomly stimulate each brain area once for 0.5 seconds before moving onto the next.
 ```
-newTrial.LaserOn = 1;
-newTrial.powerOption = 1;
-
 numAreasToStim = length(hZP.stimConfig.stimLocations);
-areas = randperm(numAreasToStim);
 
 for ii=1:numAreasToStim
-    newTrial.area = areas(ii);
-    hZP.sendSamples(newTrial,true) % True for verbose
+    hZP.sendSamples('hardwareTriggered', false, 'verbose', true) % Present random stimulus
     pause(0.5)
-
     hZP.stopOptoStim
 end
 
 ```
+
+## Misc. Examples
+After loading a stim config, the locations can be displayed as follows:
+```
+>> hZP.stimConfig.print
+
+1. ML = +3.56 / AP = -1.24  <-->  ML = -3.56 / AP = -1.24  1' somatosensory barrel field
+2. ML = +3.95 / AP = -0.08  <-->  ML = -3.95 / AP = -0.08  1' somatosensory nose
+3. ML = +0.01 / AP = -0.91  Retrosplenial dorsal part
+4. ML = +2.73 / AP = +1.66  <-->  ML = +1.88 / AP = +0.94  1' motor 
+5. ML = -2.73 / AP = -2.98  <-->  ML = -2.73 / AP = -4.09  1' visual 
+```
+
+
 
 ## Contributing
 Contributions and collaborations are welcome.

@@ -36,7 +36,6 @@ function calibrateSample_Callback(obj,~,~)
     response = questdlg('Are you happy with the calibration?', ...
                         'All good?','Yes?','No','No');
 
-
     if isempty(response) || strcmp(response,'No')
         obj.removeOverlays('brainOutline')
         obj.removeOverlays('bregma')
@@ -52,8 +51,7 @@ function calibrateSample_Callback(obj,~,~)
         obj.model.sampleCalibrated = true;
     end
 
-
-    if sum(obj.model.refPointsSample(:))>0
+    if sum(abs(obj.model.refPointsSample(:)))>0
         b = obj.atlasData.whole_brain.boundaries_stereotax{1};
         calib = zapit.utils.rotateAndScaleCoords(fliplr(b)', ...
                  obj.model.refPointsStereotaxic, ...

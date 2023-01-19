@@ -14,6 +14,15 @@ The project will adhere to [semantic versioning](http://semver.org) guidelines, 
 * MINOR version when you add functionality in a backwards compatible manner
 * PATCH version when you make backwards compatible bug fixes
 
+
+2023/01/19 -- v0.8.0-beta
+ * Settings file updates with calibrate sample spinboxes
+ * Switch to 1E5 samples/s and one cycle buffered. In stress test this went 1000 trials without a hitch.
+ * Add settings and verify.
+ * Bugfixes, including GUI locking up when stim config saved or loaded by the new tool.
+ * Minimal DAQ examples with .NET and Vidrio.
+
+
 2023/01/16 -- v0.7.0-alpha
  * Substantial refactoring and renaming.
  * New format for stim config files.
@@ -21,6 +30,7 @@ The project will adhere to [semantic versioning](http://semver.org) guidelines, 
  * A lot of documentation changes.
  * Functions to monitor for new version (partially working)
  * Update README
+
 
 2023/01/12 -- v0.6.0-alpha
  * Move relevant methods into zapit.stimConfig

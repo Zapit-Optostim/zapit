@@ -33,15 +33,10 @@ function runThroughAllStimPoints(varargin)
     stimDuration = params.Results.stimDuration;
 
 
-    % TODO -- this structure will change or be replaced by something else
-    newTrial = struct('area', 1, 'LaserOn', 1, 'powerOption', 1);
-
-    for ii = 1:hZP.stimConfig.numStimLocations
-        newTrial.area = ii;
-        hZP.sendSamples(newTrial) % Starts right away
-
+    for ii = 1:length(hZP.stimConfig.stimLocations)
+        hZP.sendSamples('conditionNum',ii) % Starts right away
         pause(stimDuration)
         hZP.stopOptoStim
     end
 
-end
+end % runThroughAllStimPoints

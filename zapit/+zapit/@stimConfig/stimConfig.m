@@ -16,6 +16,7 @@ classdef stimConfig < handle
         laserPowerInMW
         stimFreqInHz
         stimLocations
+        offRampDownDuration_ms
 
     end % properties
 
@@ -53,63 +54,6 @@ classdef stimConfig < handle
         end % Destructor
 
 
-        function loadConfig(obj,fname)
-            % Load a YAML config file
-            %
-            % zaptit.stimConfig.loadConfig(fname)
-
-            if ~exist(fname)
-                fprintf('No config file found at "%s"\n', fname)
-                return
-            end
-
-            data = zapit.yaml.ReadYaml(fname);
-
-            obj.laserPowerInMW = data.laserPowerInMW;
-            obj.stimFreqInHz = data.stimFreqInHz;
-
-
-            % Loop through a import all stimLocations
-            obj.stimLocations = struct('ML',[],'AP',[]);
-            ind = 1;
-            while true
-                fieldName = sprintf('stimLocations%02d',ind);
-                if isfield(data,fieldName)
-                    tmp = data.(fieldName);
-                    if length(tmp.ML)>1
-                        tmp.ML = cell2mat(tmp.ML);
-                        tmp.AP = cell2mat(tmp.AP);
-                    end
-                    obj.stimLocations(ind) = tmp;
-                else
-                    break
-                end
-                ind = ind + 1;
-            end
-            obj.configFileName = fname;
-        end % loadConfig
-
-
-        function writeConfig(obj,fname)
-            % Write a YAML config file
-            %
-            % zapit.stimConfig.writeConfig(fname)
-            %
-            % Purpose
-            % Write properties into a stim config YAML file that can be re-read.
-
-            for ii = 1:length(obj.stimLocations)
-                fieldName = sprintf('stimLocations%02d',ii);
-                data.(fieldName) = obj.stimLocations(ii);
-            end
-
-            data.laserPowerInMW = obj.laserPowerInMW;
-            data.stimFreqInHz = obj.stimFreqInHz;
-
-            zapit.yaml.WriteYaml(fname,data);
-        end % writeConfig
-
-
         function cPoints = calibratedPoints(obj) 
             % The stimulation locations after they have been calibrated to the sample
             % 
@@ -133,6 +77,7 @@ classdef stimConfig < handle
             cPoints = {};
 
             if isempty(obj.parent.refPointsSample)
+                fprintf('Sample has not been calibrated! Returning empty data! \n')
                 return
             end
 
@@ -182,44 +127,6 @@ classdef stimConfig < handle
         end % calibratedPointsInVolts
 
 
-        function print(obj)
-            % Print to the command line the index, coordinates, and brain area of each condition
-            %
-            % zapit.stimConfig
-            %
-            % Purpose
-            % Provide a summary of the conditions in this stimulus configuration file
-            % by printing to the command line what is in each stimulus condition. Example
-            % output:
-            %
-            %  1. ML = +2.57 / AP = -3.58  <-->  ML = -2.57 / AP = -3.58  1' visual 
-            %  2. ML = +0.54 / AP = +0.17  <-->  ML = -0.54 / AP = +0.17  2' motor 
-            %  3. ML = +1.94 / AP = -1.18  <-->  ML = -1.94 / AP = -1.18  1' somatosensory trunk
-            %  4. ML = -0.04 / AP = -3.89  Superior colliculus zonal layer
-
-            fprintf('\n')
-            for ii=1:length(obj.stimLocations)
-                tStim = obj.stimLocations(ii);
-                areaNames = obj.getAreaNameFromCoords(tStim.ML, tStim.AP);
-
-                fprintf('%d. ', ii)
-                if length(tStim.ML)>1
-                    fprintf('ML = %+0.2f / AP = %+0.2f  <-->  ML = %+0.2f / AP = %+0.2f  ', ...
-                        tStim.ML(1), tStim.AP(1), tStim.ML(2), tStim.AP(2))
-
-                    areaNames = unique(areaNames);
-                    if length(areaNames) == 1
-                        fprintf('%s\n', areaNames{1})
-                    else
-                        fprintf('%s  <-->  %s\n', areaNames{:})
-                    end
-                else
-                    fprintf('ML = %+0.2f / AP = %+0.2f  %s\n', tStim.ML, tStim.AP, areaNames)
-                end
-            end % for
-        end % print
-
-
         function chanSamples = get.chanSamples(obj)
             % Prepares voltages for each photostimulation site
             %
@@ -247,42 +154,58 @@ classdef stimConfig < handle
                 calibratedPointsInVolts = IN;
             end
 
-            numHalfCycles = 4; % The number of half cycles to buffer
+            numHalfCycles = 2; % The number of half cycles to buffer
 
             % TODO -- we need to make sure that the number of samples per second here is the right number
             obj.numSamplesPerChannel = obj.parent.DAQ.samplesPerSecond/obj.stimFreqInHz*(numHalfCycles/2);
 
-            % find edges of half cycles
-            cycleEdges = linspace(1, obj.numSamplesPerChannel, numHalfCycles+1);
-            edgeSamples = ceil(cycleEdges(1,:));
-
             % make up samples for scanner channels (of course calibratedPointsInVolts is already in volt format)
+            % In scanChnl, 1st dim is samples, 2nd dim is channel, 3rd dim is conditions
             scanChnl = zeros(obj.numSamplesPerChannel,2,length(calibratedPointsInVolts)); % matrix for each channel
-            lghtChnl = zeros(obj.numSamplesPerChannel,2,2); % 1st dim is samples, 2nd dim is channel, 3rd dim is conditions
 
-            %% make up scanner volts to switch between two areas
-            for inactSite = 1:length(calibratedPointsInVolts)
+            % Fill in the matrices for the galvos
+            for inactSite = 1:length(calibratedPointsInVolts) % Loop over stim conditions
 
-                % inactSite gets column from the coordinates library
-                xVolts = calibratedPointsInVolts{inactSite}(:,1);
-                yVolts = calibratedPointsInVolts{inactSite}(:,2);
-                for cycleNum = 1:(length(edgeSamples)-1)
-                    segStart = edgeSamples(cycleNum);
-                    segStop = edgeSamples(cycleNum+1);
-                    siteIndx = rem(cycleNum+1,2)+1; % check whether it's an odd (rem = 1) or even (rem = 0) number and then add 1 to get an index
-                    scanChnl(segStart:segStop,1,inactSite) = xVolts(siteIndx);
-                    scanChnl(segStart:segStop,2,inactSite) = yVolts(siteIndx);
+                % If this position is a single point we duplicate it to spoof two points
+                if size(calibratedPointsInVolts{inactSite},1) == 1
+                    t_volts = repmat(calibratedPointsInVolts{inactSite},2,1);
+                else
+                    t_volts = calibratedPointsInVolts{inactSite};
                 end
 
+                % inactSite gets column from the coordinates library
+                xVolts = t_volts(:,1);
+                xVolts = repmat(xVolts', 1, numHalfCycles/2);
+
+                yVolts = t_volts(:,2);
+                yVolts = repmat(yVolts', 1, numHalfCycles/2);
+
+                % Repeat the above but vectorized
+                Y = repmat(yVolts,obj.numSamplesPerChannel/numHalfCycles,1);
+                X = repmat(xVolts,obj.numSamplesPerChannel/numHalfCycles,1);
+
+                scanChnl(:,1,inactSite) = X(:);
+                scanChnl(:,2,inactSite) = Y(:);
+
             end
+            
+
+
+            % fill in the matrices for the laser. Generally these will be the same for all 
+            % conditions, but situations with one position will be different so we have to 
+            % make them all (see repmat later)
+
+            % find edges of half cycles (the indexes at which the beam moves or laser changes state)
+            edgeSamples = ceil(linspace(1, obj.numSamplesPerChannel, numHalfCycles+1));
+            % CAN ALSO DO: edgeSamples = [1; find(abs(diff(scanChnl(:,2,inactSite)))>0)+1; obj.numSamplesPerChannel]';
+
+            laserControlVoltage = obj.parent.laser_mW_to_control(obj.laserPowerInMW);
 
             %% make up samples for laser and masking light channels
-            anlgOut = ones(1,obj.numSamplesPerChannel) * obj.parent.laser_mW_to_control(obj.laserPowerInMW); %Write the correct control voltage
-            digitalAmplitude = 4;
-            digOut = ones(1,obj.numSamplesPerChannel) * digitalAmplitude;
+            anlgOut = ones(1,obj.numSamplesPerChannel) * laserControlVoltage; %Write the correct control voltage
+            digOut = ones(1,obj.numSamplesPerChannel) * 5; % 5V TTL
 
             % allow 1 ms around halfcycle change to be 0 (in case scanners are not in the right spot
-            % TODO -- this should be based on empirical values
             MASK = ones(1,obj.numSamplesPerChannel);
             sampleInterval = 1/obj.parent.DAQ.samplesPerSecond;
             nSamplesInOneMS = 1E-3 / sampleInterval;
@@ -294,19 +217,40 @@ classdef stimConfig < handle
             anlgOut = anlgOut.*MASK;
             digOut = digOut.*MASK;
 
-            lghtChnl(:,1) = anlgOut;              % analog laser output
-            lghtChnl(:,2) = digOut*(5/digitalAmplitude);    % analog masking light output
-            lghtChnl(:,3) = digOut;               % digital laser gate
+            lghtChnl(:,1) = anlgOut;  % analog laser output
+            lghtChnl(:,2) = digOut;   % digital out for masking light
+
+            % Expand out to match scanners
+            lghtChnl = repmat(lghtChnl,[1,1,size(scanChnl,3)]);
+
+            % Finally, we loop through and turn off laser on the even cycles when it's a single position
+            % TODO -- I'm sure this can be vectorised
+            edgesToZero = edgeSamples(2:2:end);
+            distanceBetweenEdges = median(diff(edgeSamples));
+            for ii=1:size(lghtChnl,3)
+                if size(calibratedPointsInVolts{ii},1) >1
+                    continue
+                end
+
+                for kk=1:length(edgesToZero)
+                    s = edgesToZero(kk);
+                    e = s+distanceBetweenEdges;
+                    if e > size(lghtChnl,1)
+                        e = size(lghtChnl,1);
+                    end 
+                    lghtChnl(s:e,1,ii) = 0;
+                end
+            end
 
 
             %% save all samples in a structure to access as object property
             chanSamples.scan = scanChnl;
-            % x-by-2-by-6, where rows are samples, columns are channels, and 3rd dim
+            % x-by-2-by-nConditions, where rows are samples, columns are channels, and 3rd dim
             % is which area is selected
 
             chanSamples.light = lghtChnl;
-            % x-by-3-by-2, where rows are samples, columns are channels, and 3rd dim
-            % is whether laser is off or on
+            % x-by-3-by-nConditions, where rows are samples, columns are channels, and 3rd dim
+            % is which area is selected
 
         end % get.chanSamples
 
