@@ -44,6 +44,8 @@ function prepareWindow(obj)
 
 
     % Set up callback functions
+
+    % Calibrate Scanners Tab
     obj.ResetROIButton.ButtonPushedFcn = @(~,~) obj.resetROI_Callback;
     obj.ROIButton.ButtonPushedFcn = @(~,~) obj.drawROI_Callback;
     obj.RunScannerCalibrationButton.ButtonPushedFcn = @(~,~) obj.calibrateScanners_Callback;
@@ -57,14 +59,20 @@ function prepareWindow(obj)
     obj.PointSpacingSpinner.ValueChangedFcn = @(~,~) obj.pointSpacing_CallBack;
     obj.BorderBufferSpinner.ValueChangedFcn = @(~,~) obj.borderBuffer_CallBack;
     obj.SizeThreshSpinner.ValueChangedFcn = @(~,~) obj.sizeThreshSpinner_CallBack;
-    obj.CalibrateSampleButton.ButtonPushedFcn = @(~,~) obj.calibrateSample_Callback;
-    obj.ShowstimcoordsButton.ValueChangedFcn = @(~,~) obj.showStimulusCoords_Callback;
-    obj.CycleBeamOverCoordsButton.ValueChangedFcn = @(~,~) obj.cycleBeamOverCoords_Callback;
-    obj.ZapSiteButton.ValueChangedFcn = @(~,~) obj.zapSite_Callback;
 
+    % Calibrate Sample Tab
+    obj.CalibrateSampleButton.ButtonPushedFcn = @(~,~) obj.calibrateSample_Callback;
     obj.PaintbrainborderButton.ValueChangedFcn = @(~,~) obj.paintBrainBorder_Callback;
+    obj.OverlaystimsitesButton.ValueChangedFcn = @(~,~) obj.overlayStimSites_Callback;
+    obj.ZapallcoordsButton.ValueChangedFcn = @(~,~) obj.zapAllCoords_Callback;
+    obj.ZapSiteButton.ValueChangedFcn = @(~,~) obj.zapSite_Callback;
     obj.PaintareaButton.Enable = 'off'; % DISABLE UNTIL THIS WORKS
     %obj.PaintareaButton.ValueChangedFcn = @(~,~) obj.paintArea_Callback;
+
+    obj.ExportwaveformsButton.ButtonPushedFcn = @(~,~) obj.exportWaveforms_Callback;
+
+
+
 
 
     % This callback runs when the tab is changed. This is to ensure that the GUI is
@@ -89,7 +97,7 @@ function prepareWindow(obj)
         obj.PointModeButton.Enable = 'off';
         obj.CatMouseButton.Enable = 'off';
         obj.PaintbrainborderButton.Enable = 'off';
-        obj.CycleBeamOverCoordsButton.Enable = 'off';
+        obj.ZapallcoordsButton.Enable = 'off';
         obj.ZapSiteButton.Enable = 'off';
     end
 

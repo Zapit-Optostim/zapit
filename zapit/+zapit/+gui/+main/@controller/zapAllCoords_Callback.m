@@ -1,7 +1,7 @@
-function cycleBeamOverCoords_Callback(obj,~,~)
+function zapAllCoords_Callback(obj,~,~)
     % Cycle the beam over all the stimulus locations in no particular order
     %
-    % zapit.gui.main.controller.cycleBeamOverCoords_Callback
+    % zapit.gui.main.controller.zapAllCoords_Callback
     %
     % Purpose
     % Cycle the beam over all the stimulus locations rapidly. This just indicates whether
@@ -35,4 +35,4 @@ function cycleBeamOverCoords_Callback(obj,~,~)
         obj.model.setLaserInMW(0)
     end
 
-end % cycleBeamOverCoords_Callback
+end % zapAllCoords_Callback

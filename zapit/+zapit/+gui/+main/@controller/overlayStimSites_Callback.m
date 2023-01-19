@@ -1,7 +1,7 @@
-function showStimulusCoords_Callback(obj,~,~)
+function overlayStimSites_Callback(obj,~,~)
     % Plots the points to stimulate on the image
     %
-    % zapit.gui.main.controller.showStimulusCoords_Callback
+    % zapit.gui.main.controller.overlayStimSites_Callback
     %
     % Purpose
     % This callback runs on a button press and overlays (or removes) the 
@@ -32,4 +32,4 @@ function showStimulusCoords_Callback(obj,~,~)
         obj.removeOverlays('stimConfigLocations');
     end % if
 
-end % showStimulusCoords_Callback
+end % overlayStimSites_Callback

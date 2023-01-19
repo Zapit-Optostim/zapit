@@ -189,7 +189,6 @@ classdef stimConfig < handle
                 yVolts = t_volts(:,2);
                 yVolts = repmat(yVolts', 1, numHalfCycles/2); % TODO: Not needed if we definitely stick with 1 cycle
 
-                yVolts
                 % Make the full waveforms for X and Y
                 Y = repmat(yVolts,obj.numSamplesPerChannel/numHalfCycles,1);
                 X = repmat(xVolts,obj.numSamplesPerChannel/numHalfCycles,1);
