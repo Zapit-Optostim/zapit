@@ -49,12 +49,19 @@ function stopOptoStim(obj, rampDownInMS)
 
     % The series of amplitudes over which we will loop
     ampSequence = linspace(1,0,numBuffers+2);
-    ampSequence(1) = [];
     ampSequence(end) = [];
 
-    for amp = ampSequence
+    smoothRamp = false; % if true we ramp the waveform nicely and not in steps
+
+    for ii = 2:length(ampSequence)
         t = obj.DAQ.lastWaveform;
-        t(:,3) = t(:,3) * amp;
+        if smoothRamp
+            startVal = ampSequence(ii-1);
+            endVal = ampSequence(ii);
+            t(:,3) = t(:,3) .* linspace(startVal, endVal, size(obj.DAQ.lastWaveform,1))'
+        else
+            t(:,3) = t(:,3) * ampSequence(ii);
+        end
         obj.DAQ.writeAnalogData(t);
     end
 
