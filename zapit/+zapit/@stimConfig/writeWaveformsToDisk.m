@@ -22,6 +22,9 @@ function varargout = writeWaveformsToDisk(obj,filePath)
     % The order of the cells in the waveforms array corresponds to the order of the
     % stimulus locations in the stim config YAML file.
     %
+    % The .mat file also contains a variable called samplesPerSecond, which is necessary
+    % for downstream code to present the stimuli at the correct rate.
+    %
     % The .mat file is saved as version 6 for increased compatibility with with
     % other languages.
     %
@@ -65,14 +68,16 @@ function varargout = writeWaveformsToDisk(obj,filePath)
     cSamp = obj.chanSamples;
 
     for ii=1:size(cSamp.scan,3)
-        waveforms{ii} = [cSamp.scan(:,:,ii), cSamp.light(:,:,ii)];
+        % Single precision just to make the data smaller since we are saving uncompressed
+        waveforms{ii} = single([cSamp.scan(:,:,ii), cSamp.light(:,:,ii)]);
     end
 
+    samplesPerSecond = obj.parent.DAQ.samplesPerSecond;
 
     %%
     % Save waveforms
     fname = 'zapit_waveforms.mat';
-    save(fullfile(filePath,fname),'waveforms','-v6')
+    save(fullfile(filePath,fname),'waveforms', 'samplesPerSecond', '-v6')
 
 
     %%
