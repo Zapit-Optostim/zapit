@@ -23,7 +23,8 @@ classdef stimConfig < handle
     properties (Hidden)
         parent  % the zapit.pointer to which this is attached
         numSamplesPerChannel
-        atlasData
+        atlasData    % The atlas data from the loaded .mat file. Shows top-down ARA view in stereotaxic coords
+        edgeSamples  % Samples at which galvoes start to move. (see get.chanSamples) Here for plotChanSamples
     end
 
     % read-only properties that are associated with getters
@@ -163,6 +164,14 @@ classdef stimConfig < handle
             % In scanChnl, 1st dim is samples, 2nd dim is channel, 3rd dim is conditions
             scanChnl = zeros(obj.numSamplesPerChannel,2,length(calibratedPointsInVolts)); % matrix for each channel
 
+            
+            % Calculate some constants that we will need in multiple places below            
+            % find edges of half cycles (the indexes at which the beam moves or laser changes state)
+            obj.edgeSamples = ceil(linspace(1, obj.numSamplesPerChannel, numHalfCycles+1));
+            sampleInterval = 1/obj.parent.DAQ.samplesPerSecond; 
+            nSamplesInOneMS = 1E-3 / sampleInterval;  % Number of samples in 1 ms. % TODO -- probably should have this as a setting
+
+
             % Fill in the matrices for the galvos
             for inactSite = 1:length(calibratedPointsInVolts) % Loop over stim conditions
 
@@ -175,15 +184,24 @@ classdef stimConfig < handle
 
                 % inactSite gets column from the coordinates library
                 xVolts = t_volts(:,1);
-                xVolts = repmat(xVolts', 1, numHalfCycles/2);
+                xVolts = repmat(xVolts', 1, numHalfCycles/2); % TODO: Not needed if we definitely stick with 1 cycle
 
                 yVolts = t_volts(:,2);
-                yVolts = repmat(yVolts', 1, numHalfCycles/2);
+                yVolts = repmat(yVolts', 1, numHalfCycles/2); % TODO: Not needed if we definitely stick with 1 cycle
 
-                % Repeat the above but vectorized
+                yVolts
+                % Make the full waveforms for X and Y
                 Y = repmat(yVolts,obj.numSamplesPerChannel/numHalfCycles,1);
                 X = repmat(xVolts,obj.numSamplesPerChannel/numHalfCycles,1);
 
+                % apply the optional ramp to slow down the scanners and make the quieter.
+                if true 
+                    X(1:nSamplesInOneMS,1) = linspace(xVolts(1,2),xVolts(1,1),nSamplesInOneMS);
+                    Y(1:nSamplesInOneMS,1) = linspace(yVolts(1,2),yVolts(1,1),nSamplesInOneMS);
+
+                    X(1:nSamplesInOneMS,2) = linspace(xVolts(1,1),xVolts(1,2),nSamplesInOneMS);
+                    Y(1:nSamplesInOneMS,2) = linspace(yVolts(1,1),yVolts(1,2),nSamplesInOneMS);
+                end
                 scanChnl(:,1,inactSite) = X(:);
                 scanChnl(:,2,inactSite) = Y(:);
 
@@ -195,9 +213,6 @@ classdef stimConfig < handle
             % conditions, but situations with one position will be different so we have to 
             % make them all (see repmat later)
 
-            % find edges of half cycles (the indexes at which the beam moves or laser changes state)
-            edgeSamples = ceil(linspace(1, obj.numSamplesPerChannel, numHalfCycles+1));
-            % CAN ALSO DO: edgeSamples = [1; find(abs(diff(scanChnl(:,2,inactSite)))>0)+1; obj.numSamplesPerChannel]';
 
             laserControlVoltage = obj.parent.laser_mW_to_control(obj.laserPowerInMW);
 
@@ -207,26 +222,23 @@ classdef stimConfig < handle
 
             % allow 1 ms around halfcycle change to be 0 (in case scanners are not in the right spot
             MASK = ones(1,obj.numSamplesPerChannel);
-            sampleInterval = 1/obj.parent.DAQ.samplesPerSecond;
-            nSamplesInOneMS = 1E-3 / sampleInterval;
 
             for ii=1:nSamplesInOneMS
-                MASK(edgeSamples(1:end-1)+(ii-1))=0;
+                MASK(obj.edgeSamples(1:end-1)+(ii-1))=0;
             end
 
-            anlgOut = anlgOut.*MASK;
-            digOut = digOut.*MASK;
-
-            lghtChnl(:,1) = anlgOut;  % analog laser output
-            lghtChnl(:,2) = digOut;   % digital out for masking light
+            % Apply the mask
+            lghtChnl(:,1) = anlgOut.*MASK;  % analog laser output
+            lghtChnl(:,2) = digOut.*MASK;   % digital out for masking light
 
             % Expand out to match scanners
             lghtChnl = repmat(lghtChnl,[1,1,size(scanChnl,3)]);
 
+
             % Finally, we loop through and turn off laser on the even cycles when it's a single position
             % TODO -- I'm sure this can be vectorised
-            edgesToZero = edgeSamples(2:2:end);
-            distanceBetweenEdges = median(diff(edgeSamples));
+            edgesToZero = obj.edgeSamples(2:2:end);
+            distanceBetweenEdges = median(diff(obj.edgeSamples));
             for ii=1:size(lghtChnl,3)
                 if size(calibratedPointsInVolts{ii},1) >1
                     continue
@@ -241,6 +253,8 @@ classdef stimConfig < handle
                     lghtChnl(s:e,1,ii) = 0;
                 end
             end
+
+
 
 
             %% save all samples in a structure to access as object property
