@@ -68,7 +68,7 @@ function varargout = writeWaveformsToDisk(obj,filePath)
     cSamp = obj.chanSamples;
 
     for ii=1:size(cSamp.scan,3)
-        % Single precision just to make the data smaller since we are saving uncompressed
+        % Singles are adequate and we save space
         waveforms{ii} = single([cSamp.scan(:,:,ii), cSamp.light(:,:,ii)]);
     end
 

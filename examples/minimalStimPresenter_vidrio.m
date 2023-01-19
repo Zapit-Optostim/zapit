@@ -1,8 +1,8 @@
-classdef minimalStimPresenter < handle
+classdef minimalStimPresenter_vidrio < handle
 
     % Minimal code example showing how to present pre-calculated stimulus waveforms for optostim
     %
-    % minimalStimPresenter
+    % minimalStimPresenter_vidrio
     %
     %
     % * Purpose
@@ -36,10 +36,7 @@ classdef minimalStimPresenter < handle
     % NI hardware uses an API known as NI DAQmx. This is not available directly in MATLAB so 
     % Zapit uses a wrapper built by Vidrio Technologies to run ScanImage in order to talk to 
     % DAQmx. There are other ways to communicate with DAQmx, this one was chosen for historical
-    % reasons. This class uses a more direct approach: importing NI's .NET interface for DAQmx 
-    % into MATLAB. This approach is slightly lower level and so seems more appropriate given the
-    % purpose of this class. The code looks very similar with both approaches. * To run this class
-    % You will need to install NI DAQmx (see the main README) with .NET support enabled. 
+    % reasons. This class uses this same wrapper.
     %
     %
     % * Before Starting
@@ -52,12 +49,12 @@ classdef minimalStimPresenter < handle
     % d) You can write the waveforms to a directory with:
     %    hZP.stimConfig.writeWaveformsToDisk(DIR_PATH_AS_STRING)
     % e) Close Zapit so it does not hog the DAQ.
-    % f) Fire up an instance of this class: msp = minimalStimPresenter('zapit_waveforms.mat');
+    % f) Fire up an instance of this class: msp = minimalStimPresenter_vidrio('zapit_waveforms.mat');
     % You might find it easier to do the above steps with the examples directory added temporarily
     % to the MATLAB path.
     %
     % * Example usage
-    % msp = minimalStimPresenter('/path/to/zapit_waveforms.mat', 'Dev2');
+    % msp = minimalStimPresenter_vidrio('/path/to/zapit_waveforms.mat', 'Dev2');
     % msp.sendSamples(2) % waveforms start right away and continue until next command
     % msp.stopOptoStim
     % 
@@ -73,7 +70,6 @@ classdef minimalStimPresenter < handle
     properties
         waveforms % Cell array of waveforms loaded from the zapit_waveforms.mat file
         hAO % NI DAQ object
-        taskWriter % An object for writing
 
         rampDownInMS = 250  % Generally this is a good number. If the user has specified 
                             % something else it will be in the stimConfig file. 
@@ -94,7 +90,7 @@ classdef minimalStimPresenter < handle
 
     methods
 
-        function obj = minimalStimPresenter(fname,devID)
+        function obj = minimalStimPresenter_vidrio(fname,devID)
             % constructor
             %
             % Inputs
@@ -103,24 +99,19 @@ classdef minimalStimPresenter < handle
             %         alternatively, set the device_ID property manually before sending samples.
             %
             % Examples
-            % msp = minimalStimPresenter('./zapit_waveforms.mat','Dev3')
-
-            nidaqmx.add_DAQmx_Assembly
-            import NationalInstruments.DAQmx.*
-
+            % msp = minimalStimPresenter_vidrio('./zapit_waveforms.mat','Dev3')
 
             if nargin>1
                 obj.device_ID = devID;
             end
 
+            % Loads two variables: a cell array called "waveforms" and a scalar
+            % called "samplesPerSecond". We convert to doubles because they need to
+            % be double for DAQmx but we saved as single to produce a smaller file.
             load(fname)
             obj.waveforms = waveforms;
-            % USE ONE CYCLE
-            obj.waveforms = waveforms;
-            obj.samplesPerSecond = samplesPerSecond;
-
-            % Reset the device we will use
-            DaqSystem.Local.LoadDevice(obj.device_ID).Reset
+            obj.waveforms = cellfun(@(x) double(x), obj.waveforms,'uni',false);
+            obj.samplesPerSecond = samplesPerSecond/10;
 
             obj.connectClockedAO
         end % constructor
@@ -145,12 +136,14 @@ classdef minimalStimPresenter < handle
             if laserOn == false
                 obj.waveforms(:,3) = 0;
             end
-
-
             
             % Write voltage samples onto the task
-            obj.lastBufferedWaveform = obj.waveforms{indexToPresent};
-            obj.taskWriter.WriteMultiSample(true, obj.lastBufferedWaveform'); % writes and starts
+            waveforms = obj.waveforms{indexToPresent};
+            obj.lastBufferedWaveform = waveforms;
+            obj.hAO.writeAnalogData(waveforms);
+            
+            obj.hAO.start; % start the execution of the new task
+
         end % sendSamples
 
 
@@ -159,9 +152,9 @@ classdef minimalStimPresenter < handle
             %
             % This method corresponds to zapit.pointer.stopOptoStim
 
-            bufferSize = single(obj.hAO.Stream.Buffer.OutputBufferSize);
+            bufferSize = obj.hAO.sampQuantSampPerChan;
 
-            if obj.hAO.IsDone
+            if isempty(bufferSize) || obj.hAO.isTaskDone
                 return
             end
 
@@ -188,13 +181,13 @@ classdef minimalStimPresenter < handle
             for amp = ampSequence
                 t = obj.lastBufferedWaveform;
                 t(:,3) = t(:,3) * amp; % The third column is the laser amplitude
-                obj.taskWriter.WriteMultiSample(false, t')
+                obj.hAO.writeAnalogData(t); % Write these to the device buffer
             end
 
             % Zero everything (scanners and laser and masking light)
             t(:) = 0;
-            obj.taskWriter.WriteMultiSample(false, t')
-            obj.hAO.Stop  % stop task
+            obj.hAO.writeAnalogData(t);
+            obj.hAO.stop  % stop task
         end % stopOptoStim
 
 
@@ -206,53 +199,34 @@ classdef minimalStimPresenter < handle
             % Purpose
             % Create a task that is clocked AO and can be used for sample setup.
 
-            import NationalInstruments.DAQmx.*
 
-            numSamplesPerChannel=length(obj.waveforms{1});
+            numSamplesPerChannel=size(obj.waveforms{1},1);
 
-            hardwareTriggered = false; % set to true if you want to wait for a hardware trigger
-
-            % Just in case a task already exists (TODO: do we need this for this example)
+            % Delete the task if it already exists
             if ~isempty(obj.hAO)
-                obj.hAO.Stop;
+                obj.hAO.stop;
                 delete(obj.hAO);
             end
 
             %% Create the inactivation task
-            taskName = 'minimalao';
-            obj.hAO = NationalInstruments.DAQmx.Task;
+            obj.hAO = zapit.hardware.vidrio_daqmx.Task('clockedAO');
             
             % Set output channels
-            channelName = [obj.device_ID,'/ao0:3'];
-            obj.hAO.AOChannels.CreateVoltageChannel(channelName, taskName,-10, 10, AOVoltageUnits.Volts);
-
-
-
+            obj.hAO.createAOVoltageChan(obj.device_ID, 0:3, [], -10, 10);
             
             % Configure the task sample clock, the sample size and mode to be continuous and set the size of the output buffer
-            obj.hAO.Timing.ConfigureSampleClock('', ...
-                        obj.samplesPerSecond, ...
-                        SampleClockActiveEdge.Rising, ...
-                        SampleQuantityMode.ContinuousSamples, ... % And we set this to continuous
-                        numSamplesPerChannel)
-
-
-            %obj.hAO.cfgOutputBuffer(numSamplesPerChannel);
+            obj.hAO.cfgSampClkTiming(obj.samplesPerSecond, 'DAQmx_Val_ContSamps', numSamplesPerChannel, 'OnboardClock');
+            obj.hAO.cfgOutputBuffer(numSamplesPerChannel);
             
             % Allow sample regeneration
             % https://www.ni.com/en-gb/support/documentation/supplemental/06/analog-output-regeneration-in-ni-daqmx.html
-            obj.hAO.Stream.WriteRegenerationMode = WriteRegenerationMode.AllowRegeneration;
-            %obj.hAO.set('writeRelativeTo','DAQmx_Val_FirstSample');
+            obj.hAO.set('writeRegenMode', 'DAQmx_Val_AllowRegen'); 
+            obj.hAO.set('writeRelativeTo','DAQmx_Val_FirstSample');
             
-            obj.hAO.Control(TaskAction.Verify);
-
-            obj.taskWriter = AnalogMultiChannelWriter(obj.hAO.Stream);
-
             % Configure the trigger
             if obj.hardwareTriggered
                 % Wait for line PFI0 to go high before playing waveforms
-                % TODO -- set this up
-                %%obj.hAO.cfgDigEdgeStartTrig('PFI0', 'DAQmx_Val_Rising');
+                obj.hAO.cfgDigEdgeStartTrig('PFI0', 'DAQmx_Val_Rising');
             end
         end % connectClockedAO
 
