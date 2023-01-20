@@ -16,6 +16,7 @@ function settings = default_settings
     settings.laser.name = 'obis';
     settings.laser.laserMinMaxControlVolts = [1.5,3.5];
     settings.laser.laserMinMax_mW = [0,100];
+    settings.laser.maxValueInGUI = 20; %TODO not in validation scriptt
 
     settings.camera.default_exposure = 0;
     settings.camera.micronsPerPixel = 19.3;

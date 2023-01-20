@@ -32,6 +32,7 @@ function prepareWindow(obj)
     % TODO: changing the settings spin boxes should change the settings file
     obj.CalibPowerSpinner.Value = obj.model.settings.calibrateScanners.calibration_power_mW;
     obj.LaserPowerScannerCalibSlider.Value = obj.CalibPowerSpinner.Value;
+    obj.LaserPowerScannerCalibSlider.Limits = [0, obj.model.settings.laser.maxValueInGUI];
     obj.PointSpacingSpinner.Value = obj.model.settings.calibrateScanners.pointSpacingInPixels;
     obj.BorderBufferSpinner.Value = obj.model.settings.calibrateScanners.bufferPixels;
     obj.SizeThreshSpinner.Value = obj.model.settings.calibrateScanners.areaThreshold;

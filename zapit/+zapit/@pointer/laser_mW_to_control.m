@@ -51,6 +51,8 @@ function controlVal = laser_mW_to_control(obj,mW)
     contV = linspace(obj.laserFit.controlValues(1),obj.laserFit.controlValues(end),100);
     mwV = laserFit_ControlToMW(contV);
 
+    % TODO -- need to interpolate. We currently get quantization if calibration was
+    % against the full scale.
     [~,ind] = min(abs(mwV-mW));
 
     controlVal = contV(ind(1)); % take the first if there are multiple
