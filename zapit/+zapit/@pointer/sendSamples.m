@@ -1,7 +1,7 @@
 function varargout = sendSamples(obj, varargin)
     % Take X/Y coordinates of two points and cycle the laser between them.
     %
-    % waveforms = zapit.pointer.sendSamples(obj,newTrial,verbose)
+    % [conditionNum, laserOn, waveforms] = zapit.pointer.sendSamples(obj,newTrial,verbose)
     %
     %
     % Purpose
@@ -25,9 +25,11 @@ function varargout = sendSamples(obj, varargin)
     %
     %
     % Outputs
+    % conditionNum - optionally return the condition number (index of this stimulus)
+    % conditionNum - optionally return whether or not the laser was on.
     % waveforms - optionally return the waveforms for debug. 
     %
-    %
+    %   
     % Examples
     % .sendSamples('laserOn',[]) % Present random condition with random laser on/off state
     % .sendSamples('hardwareTriggered', false) % Present random sample and do not wait for hardware trigger
@@ -112,7 +114,15 @@ function varargout = sendSamples(obj, varargin)
     obj.DAQ.start;
 
     if nargout>0
-        varargout{1} = obj.waveforms;
+        varargout{1} = conditionNumber;
+    end
+
+    if nargout>1
+        varargout{2} = laserOn;
+    end
+
+    if nargout>2
+        varargout{3} = obj.waveforms;
     end
 
 end % sendSamples
