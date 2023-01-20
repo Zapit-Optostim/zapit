@@ -25,6 +25,7 @@ classdef stimConfig < handle
         numSamplesPerChannel
         atlasData    % The atlas data from the loaded .mat file. Shows top-down ARA view in stereotaxic coords
         edgeSamples  % Samples at which galvoes start to move. (see get.chanSamples) Here for plotChanSamples
+        logFileStem = 'zapit_log_' % The stem of the log file name. zapit.pointer will use this to search for the file
     end
 
     % read-only properties that are associated with getters

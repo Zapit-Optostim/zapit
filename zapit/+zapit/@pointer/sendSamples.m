@@ -50,6 +50,23 @@ function varargout = sendSamples(obj, varargin)
     verbose = params.Results.verbose;
 
 
+
+    % If the user has specified an experiment directory path, we check whether a stimulus parameter
+    % log file exists there and make one if not. 
+    if ~isempty(obj.experimentPath) && exist(obj.experimentPath,'dir')
+        d = dir(fullfile(obj.experimentPath,[obj.stimConfig.logFileStem,'*']));
+
+        if isempty(d)
+            % The user has defined an experiment directory and it does not contain a 
+            % stimulus parameter log file. We make one. 
+            logParamFname = obj.stimConfig.logStimulusParametersToFile(obj.experimentPath);
+            fprintf('Writing stimulus parameter log file to %s\n', ...
+                fullfile(obj.experimentPath,logParamFname))
+        end
+
+    end
+
+
     % Choose a random condition if necessary
     if isempty(conditionNumber)
         r = randperm(length(obj.stimConfig.stimLocations));
