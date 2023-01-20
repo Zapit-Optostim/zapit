@@ -194,18 +194,16 @@ classdef stimConfig < handle
                 Y = repmat(yVolts,obj.numSamplesPerChannel/numHalfCycles,1);
                 X = repmat(xVolts,obj.numSamplesPerChannel/numHalfCycles,1);
 
-                % apply the optional ramp to slow down the scanners and make the quieter.
-                if true 
-                    X(1:nSamplesInOneMS,1) = linspace(xVolts(1,2),xVolts(1,1),nSamplesInOneMS);
-                    Y(1:nSamplesInOneMS,1) = linspace(yVolts(1,2),yVolts(1,1),nSamplesInOneMS);
+                % apply a ramp to slow down the scanners and make the quieter.
+                X(1:nSamplesInOneMS,1) = linspace(xVolts(1,2),xVolts(1,1),nSamplesInOneMS);
+                Y(1:nSamplesInOneMS,1) = linspace(yVolts(1,2),yVolts(1,1),nSamplesInOneMS);
 
-                    X(1:nSamplesInOneMS,2) = linspace(xVolts(1,1),xVolts(1,2),nSamplesInOneMS);
-                    Y(1:nSamplesInOneMS,2) = linspace(yVolts(1,1),yVolts(1,2),nSamplesInOneMS);
-                end
+                X(1:nSamplesInOneMS,2) = linspace(xVolts(1,1),xVolts(1,2),nSamplesInOneMS);
+                Y(1:nSamplesInOneMS,2) = linspace(yVolts(1,1),yVolts(1,2),nSamplesInOneMS);
+
                 scanChnl(:,1,inactSite) = X(:);
                 scanChnl(:,2,inactSite) = Y(:);
-
-            end
+            end % for
             
 
 
