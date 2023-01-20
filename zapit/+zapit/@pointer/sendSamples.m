@@ -59,7 +59,7 @@ function varargout = sendSamples(obj, varargin)
 
     % If the user has specified an experiment directory path, we check whether a stimulus parameter
     % log file exists there and make one if not. 
-    if obj.logging && ~isempty(obj.experimentPath) && exist(obj.experimentPath,'dir')
+    if logging && ~isempty(obj.experimentPath) && exist(obj.experimentPath,'dir')
         d = dir(fullfile(obj.experimentPath,[obj.stimConfig.logFileStem,'*']));
 
         if isempty(d)

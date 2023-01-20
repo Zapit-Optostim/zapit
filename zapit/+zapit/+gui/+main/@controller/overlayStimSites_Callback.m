@@ -15,7 +15,7 @@ function overlayStimSites_Callback(obj,~,~)
         return
     end
 
-    if obj.ShowstimcoordsButton.Value == 1
+    if obj.OverlaystimsitesButton.Value == 1
         % Add the points
         calPoints = obj.model.stimConfig.calibratedPoints;
         calPoints = [calPoints{:}]; % Convert the cell array into a matrix. [ML;AP]
