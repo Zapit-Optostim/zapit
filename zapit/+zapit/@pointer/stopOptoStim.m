@@ -22,7 +22,7 @@ function stopOptoStim(obj, rampDownInMS)
     end
 
     samplesPerSecond = obj.DAQ.samplesPerSecond;
-    bufferSize = obj.DAQ.hAO.sampQuantSampPerChan;
+    bufferSize = obj.DAQ.numSamplesInBuffer;
 
     if isempty(bufferSize) || obj.DAQ.hAO.isTaskDone
         return
@@ -51,28 +51,58 @@ function stopOptoStim(obj, rampDownInMS)
     numBuffers = ceil(rampDownInMS / msPerBuffer);
 
     % The series of amplitudes over which we will loop
-    ampSequence = linspace(1,0,numBuffers+2);
-    ampSequence(end) = [];
+    smoothRamp = true; % if true we ramp the waveform nicely and not in steps
 
-    smoothRamp = false; % if true we ramp the waveform nicely and not in steps
+    if smoothRamp
+        ampSequence = linspace(1,0,numBuffers+1);
+        ampSequence(end) = [];
+        ind = 2:length(ampSequence)-1;
+    else
+        ampSequence = linspace(1,0,numBuffers+1);
+        ampSequence(end) = [];
+        ind = 2:length(ampSequence);
+    end
 
-    for ii = 2:length(ampSequence)
+
+    orig = obj.DAQ.lastWaveform;
+
+    if obj.simulated
+        data = [];
+    end
+
+    for ii = ind
+
         t = obj.DAQ.lastWaveform;
+
         if smoothRamp
-            startVal = ampSequence(ii-1);
             endVal = ampSequence(ii);
-            t(:,3) = t(:,3) .* linspace(startVal, endVal, size(obj.DAQ.lastWaveform,1))'
+            startVal = endVal - mean(diff(ampSequence));
+            t(:,3) = t(:,3) .* linspace(startVal, endVal, size(obj.DAQ.lastWaveform,1))';
         else
             t(:,3) = t(:,3) * ampSequence(ii);
         end
+
+        if obj.simulated
+            data = [data;t];
+        end
+
         obj.DAQ.writeAnalogData(t);
+
+    end
+
+    if obj.simulated
+        zapit.utils.focusNamedFig(mfilename)
+        clf
+        plot(data(:,3),'-k', 'LineWidth',2)
+        xlabel('Sample number')
+        ylabel('Voltage')
     end
 
     % Zero everything
     t(:) = 0;
     obj.DAQ.writeAnalogData(t);
 
-    obj.DAQ.hAO.stop
+    obj.DAQ.stop
 
 end % stopOptoStim
 

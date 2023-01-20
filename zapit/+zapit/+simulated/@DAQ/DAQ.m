@@ -20,7 +20,7 @@ classdef DAQ < handle
         AOchans = 0:4
         AIchans = 0;
         triggerChannel = 'PFI0'
-
+        lastWaveform
     end %close public properties
 
     properties (Hidden)
@@ -41,6 +41,8 @@ classdef DAQ < handle
         function obj = DAQ()
             obj.settings = zapit.settings.readSettings;
             obj.hAI.readAnalogData = @(x) rand(length(obj.AIchans),1); % assumes unclocked
+            obj.hAO.isTaskDone = true;
+            obj.hAO.taskName = '';
         end % Constructor
 
         function  delete(obj)
@@ -58,9 +60,12 @@ classdef DAQ < handle
         end
 
         function connectClockedAO(obj,varargin)
+            obj.hAO.isTaskDone = false;
         end
 
         function stopAndDeleteAOTask(obj)
+            obj.lastWaveform = [];
+            obj.hAO.isTaskDone = true;
         end
 
         function stopAndDeleteAITask(obj)
@@ -75,12 +80,40 @@ classdef DAQ < handle
             obj.lastLaserVoltage = laserVoltage;
         end
 
-
         function start(obj)
         end
 
         function stop(obj)
+            obj.hAO.isTaskDone = false;
         end
+
+        function writeAnalogData(obj,waveforms)
+            % Simulates write of analog data to the buffer
+            %
+            % function zapit.simulated.DAQ.writeAnalogData
+            %
+            % Purpose
+            % Write analod data to the buffer and also log in a property the
+            % data that were written.
+
+            obj.lastWaveform = waveforms;
+        end % writeAnalogData
+
+        function nSamples = numSamplesInBuffer(obj)
+            % Return the number of samples in the buffer
+            %
+            % function zapit.simulated.DAQ.numSamplesInBuffer
+            %
+            % Purpose
+            % Return the number of samples in the buffer
+
+            if isempty(obj.lastWaveform)
+                nSamples = 0;
+            else
+                nSamples = length(obj.lastWaveform);
+            end
+        end % numSamplesInBuffer
+
 
     end %close methods
 

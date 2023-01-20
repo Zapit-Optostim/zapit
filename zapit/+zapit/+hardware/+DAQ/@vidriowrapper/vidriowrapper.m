@@ -332,6 +332,23 @@ classdef vidriowrapper < handle
         end % writeAnalogData
 
 
+        function nSamples = numSamplesInBuffer(obj)
+            % Return the number of samples in the buffer
+            %
+            % function zapit.DAQ.vidriowrapper.numSamplesInBuffer
+            %
+            % Purpose
+            % Return the number of samples in the buffer
+
+            if isempty(obj.hAO)
+                nSamples = 0;
+            else
+                nSamples = obj.hAO.sampQuantSampPerChan;
+            end
+        end % numSamplesInBuffer
+
+
+        % TODO -- the following two should probably be placed into pointer
         function setLaserPowerControlVoltage(obj,laserControlVoltage)
             % Set the laser AO line to a specified voltage value
             %
