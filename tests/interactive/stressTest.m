@@ -40,7 +40,7 @@ function stressTest(doRampStop)
     hZP.cam.stopVideo;
 
     while keepRunning
-        hZP.sendSamples('hardwareTrigger',false);
+        hZP.sendSamples('hardwareTrigger',false, 'logging', false);
         pause(0.25);
 
         if doRampStop

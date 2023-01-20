@@ -9,7 +9,9 @@ function zapSite_Callback(obj,~,~)
     if obj.ZapSiteButton.Value == 1
         val = obj.TestSiteDropDown.Value;
         f = find(cellfun(@(x) strcmp(x,val), obj.TestSiteDropDown.Items));
-        obj.model.sendSamples('conditionNumber',f, 'hardwareTriggered',false)
+        obj.model.sendSamples('conditionNumber',f, ...
+                              'hardwareTriggered', false, ...
+                              'logging', false)
     else
         obj.model.stopOptoStim;
     end

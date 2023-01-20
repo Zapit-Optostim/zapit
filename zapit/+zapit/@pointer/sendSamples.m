@@ -19,6 +19,8 @@ function varargout = sendSamples(obj, varargin)
     %              If empty, a random laser state is chosen.
     % 'hardwareTriggered' [bool, true by default] If true the DAQ waits for a hardware trgger before 
     %                   presenting the waveforms. 
+    % 'logging' - [bool, true by default] If true we write log files automatically if the user has
+    %             defined a valid directory in zapit.pointer.experimentPath.
     % 'verbose' - [bool, false by default] If true print debug messages to screen.
     %
     %
@@ -41,19 +43,21 @@ function varargout = sendSamples(obj, varargin)
     params.addParameter('conditionNumber', [], @(x) isnumeric(x) && (isscalar(x) || isempty(x)));
     params.addParameter('laserOn', true, @(x) isempty(x) || islogical(x) || x==0 || x==1);
     params.addParameter('hardwareTriggered', true, @(x) islogical(x) || x==0 || x==1);
+    params.addParameter('logging', true, @(x) islogical(x) || x==0 || x==1);
     params.addParameter('verbose', false, @(x) islogical(x) || x==0 || x==1);
 
     params.parse(varargin{:});
     conditionNumber = params.Results.conditionNumber;
     laserOn = params.Results.laserOn;
     hardwareTriggered = params.Results.hardwareTriggered;
+    logging = params.Results.logging;
     verbose = params.Results.verbose;
 
 
 
     % If the user has specified an experiment directory path, we check whether a stimulus parameter
     % log file exists there and make one if not. 
-    if ~isempty(obj.experimentPath) && exist(obj.experimentPath,'dir')
+    if obj.logging && ~isempty(obj.experimentPath) && exist(obj.experimentPath,'dir')
         d = dir(fullfile(obj.experimentPath,[obj.stimConfig.logFileStem,'*']));
 
         if isempty(d)
