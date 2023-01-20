@@ -57,7 +57,7 @@ classdef DAQ < handle
         function connectUnclockedAO(obj,verbose)
         end
 
-        function connectClockedAO(obj)
+        function connectClockedAO(obj,varargin)
         end
 
         function stopAndDeleteAOTask(obj)

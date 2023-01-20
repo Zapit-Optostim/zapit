@@ -30,9 +30,12 @@ function varargout = runAffineTransform(obj, targetBeamLocation, actualBeamLocat
     end
 
     if diagnosticPlots
-        figure(1234)
+
+        fig = zapit.utils.focusNamedFigure('scannercalibration');
+        clf
+        hold(fig,'on')
+
         plot(targetBeamLocation(:,1),targetBeamLocation(:,2),'or')
-        hold on
         plot(actualBeamLocation(:,1),actualBeamLocation(:,2),'ok')
 
         for ii=1:size(actualBeamLocation)
@@ -40,12 +43,13 @@ function varargout = runAffineTransform(obj, targetBeamLocation, actualBeamLocat
             y = [targetBeamLocation(ii,2), actualBeamLocation(ii,2)];
             plot(x,y,'-k')
         end
-        hold off
+        hold(fig,'off')
 
     end
 
     % Check if there are duplicate entries in the actual beam positions
     tmp = unique(round(actualBeamLocation),'rows','first');
+
     if size(tmp,1) ~= size(actualBeamLocation,1)
         fprintf('There are %d duplicate values in the actual beam positions\n', ...
             size(actualBeamLocation,1) - size(tmp,1))
@@ -59,5 +63,5 @@ function varargout = runAffineTransform(obj, targetBeamLocation, actualBeamLocat
     if nargout>0
         varargout{1} = tform;
     end
-end % runAffineTransform
 
+end % runAffineTransform

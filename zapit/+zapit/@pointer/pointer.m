@@ -9,7 +9,7 @@ classdef pointer < handle
     %
     %
     % Maja Skretowska - SWC 2020-2022
-    % Rob Campbell - SWC 2020...
+    % Rob Campbell - SWC 2023
 
 
     

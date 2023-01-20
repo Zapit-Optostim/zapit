@@ -13,7 +13,11 @@ function [xVolts, yVolts] = mmToVolt(obj, pixelColumnInMM, pixelRowInMM)
     %
     %
     % Inputs
-    % Pixel row and column
+    % pixelColumnInMM - the x coordinate in mm
+    % pixelRowInMM - the y coordinate in mm
+    %
+    % Rob Campbell - SWC 2023
+
 
 
     if ~isempty(obj.transform)
@@ -38,4 +42,5 @@ function [xVolts, yVolts] = mmToVolt(obj, pixelColumnInMM, pixelRowInMM)
     if obj.invertY
         yVolts= yVolts*-1;
     end
+
 end % pixelToVolt
