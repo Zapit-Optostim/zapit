@@ -30,13 +30,17 @@ classdef controller < zapit.gui.stimConfigEditor.view
         % Handles of plot objects associated with stimulation points
         pCurrentPoint % The current point that we are about to add
         pAddedPoints = matlab.graphics.chart.primitive.Line.empty % A list of all added poits
-        pointCommonProps = {'ob', 'MarkerSize', 14, 'LineWidth', 2};
+
 
         fname % The name of the currently loaded file (if it has one)
     end
 
     properties(Hidden)
         settings % So the GUI relies less on being connected to zapit.pointer
+        % Plot defaults below
+        pointCommonProps = {'ob', 'MarkerSize', 14, 'LineWidth', 2};
+        standardMarkerSize = 14
+        enlargedMarkerSize = 20
     end
 
 
