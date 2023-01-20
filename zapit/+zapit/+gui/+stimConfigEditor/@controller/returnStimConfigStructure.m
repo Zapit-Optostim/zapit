@@ -17,9 +17,7 @@ function stimC = returnStimConfigStructure(obj)
 
     stimC.laserPowerInMW = obj.LaserPowermWSpinner.Value;
     stimC.stimFreqInHz = obj.StimFreqHzSpinner.Value;
-
-    % TODO -- this should be a spinner
-    stimC.offRampDownDuration_ms = obj.mainGUI.model.settings.experiment.offRampDownDuration_ms;
+    stimC.offRampDownDuration_ms = obj.RampdownmsSpinner.Value;
 
     for ii=1:length(obj.pAddedPoints)
         fieldName = sprintf('stimLocations%02d',ii);

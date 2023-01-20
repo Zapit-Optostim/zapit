@@ -61,7 +61,6 @@ function stressTest(doRampStop)
 
     function stopTest
         keepRunning = false;
-
     end
 
 end

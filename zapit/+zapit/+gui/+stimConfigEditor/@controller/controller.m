@@ -82,7 +82,9 @@ classdef controller < zapit.gui.stimConfigEditor.view
             % Apply default values to UI elements from settings
             obj.LaserPowermWSpinner.Value = obj.settings.experiment.defaultLaserPowerMW;
             obj.StimFreqHzSpinner.Value = obj.settings.experiment.defaultLaserFrequencyHz;
-            
+            obj.RampdownmsSpinner.Value = obj.settings.experiment.offRampDownDuration_ms;
+
+            obj.LaserPowermWSpinner.Limits(2) = obj.settings.laser.laserMinMax_mW(2);
 
             % Set up callback functions for interactivity
             obj.hFig.WindowButtonMotionFcn = @obj.highlightArea_Callback;
@@ -214,7 +216,10 @@ classdef controller < zapit.gui.stimConfigEditor.view
 
             % For some reason we need the video stopped or this locks up everything
             if ~isempty(obj.mainGUI)
-                obj.mainGUI.model.cam.stopVideo;
+                isCamRunning = obj.mainGUI.model.cam.isrunning;
+                if isCamRunning
+                    obj.mainGUI.model.cam.stopVideo;
+                end
             end
 
             stimC = obj.returnStimConfigStructure;
@@ -238,7 +243,10 @@ classdef controller < zapit.gui.stimConfigEditor.view
             end
 
             if ~isempty(obj.mainGUI)
-                obj.mainGUI.model.cam.startVideo;
+                isCamRunning = obj.mainGUI.model.cam.isrunning;
+                if isCamRunning
+                    obj.mainGUI.model.cam.startVideo;
+                end            
             end
         end %saveConfigYAML
 
@@ -254,7 +262,10 @@ classdef controller < zapit.gui.stimConfigEditor.view
 
             % For some reason we need the video stopped or this locks up everything
             if ~isempty(obj.mainGUI)
-                obj.mainGUI.model.cam.stopVideo;
+                isCamRunning = obj.mainGUI.model.cam.isrunning;
+                if isCamRunning
+                    obj.mainGUI.model.cam.stopVideo;
+                end
             end
 
             [fname,fullPath] = uigetfile('*.yml;*.yaml');
@@ -283,7 +294,10 @@ classdef controller < zapit.gui.stimConfigEditor.view
             obj.updateBottomLabel
 
             if ~isempty(obj.mainGUI)
-                obj.mainGUI.model.cam.startVideo;
+                isCamRunning = obj.mainGUI.model.cam.isrunning;
+                if isCamRunning
+                    obj.mainGUI.model.cam.startVideo;
+                end            
             end
 
         end %saveConfigYAML
