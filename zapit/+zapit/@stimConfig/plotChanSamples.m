@@ -61,7 +61,6 @@ function plotChanSamples(obj, conditionToPlot)
     ylabel('amplitude')
         
     subplot(3,1,3)
-    % digital volt output to laser <--- TODO what is this?
     plot(digOut,'.','MarkerSize',10);
     hold on
     for ii = obj.edgeSamples
