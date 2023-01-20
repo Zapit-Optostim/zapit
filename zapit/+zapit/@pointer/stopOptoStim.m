@@ -5,17 +5,20 @@ function stopOptoStim(obj, rampDownInMS)
     %
     % Purpose
     % Stop stimulation over a period of time specified by rampDownInMS.
-    % This is 250 ms by default.
+    % The value of rampDownInMS is obtained from the stimConfig file,
+    % which in turn gets a default values from the Zapit settings file. 
+    % It can, however, be over-ridden by supplying an input argiument
+    % to this function.
     %
     % Inputs
-    % rampDownInMS - 250 ms by default.
+    % rampDownInMS - Defaults to value in stimConfig.
     %
     %
     % Rob Campbell - SWC 2022
 
-    % Number of ms over which to ramp down. TODO -- set up as parameter
+
     if nargin<2
-        rampDownInMS = 250;
+        rampDownInMS = obj.stimConfig.offRampDownDuration_ms;
     end
 
     samplesPerSecond = obj.DAQ.samplesPerSecond;
