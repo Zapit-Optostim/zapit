@@ -3,7 +3,7 @@ function settings = default_settings
     %
     % settings = default_settings
 
-    settings.general.maxSettingsBackUpFiles = 20;
+    settings.general.maxSettingsBackUpFiles = 50;
 
     settings.NI.device_ID = 'Dev1';
     settings.NI.samplesPerSecond = 10000;
@@ -33,5 +33,7 @@ function settings = default_settings
     settings.experiment.defaultLaserPowerMW = 5;
     settings.experiment.maxStimPointsPerCondition = 2;
     settings.experiment.offRampDownDuration_ms = 250;
+
+    settings.cache.ROI = [];
 
 end % default_settings

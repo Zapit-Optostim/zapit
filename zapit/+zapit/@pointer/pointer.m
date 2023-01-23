@@ -100,11 +100,10 @@ classdef pointer < handle
             end
             obj.cam.exposure = obj.settings.camera.default_exposure;
 
-            obj.cam.ROI = [300,100,1400,1000]; % TODO: hardcoded!
-                                            % TODO : in future user will have ROI box to interactively
-                                            %    crop and this will be saved in settings file
-                                            %    the re-applied on startup each time.
-                                            %    see also obj.cam.resetROI
+            % Re-apply the last used ROI
+            if ~isempty(obj.settings.cache.ROI)
+                obj.cam.ROI = round(obj.settings.cache.ROI);
+            end
 
             % Log camera frames to lastAcquiredFrame and start camera
             if ~obj.simulated

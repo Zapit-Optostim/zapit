@@ -63,6 +63,9 @@ function drawROI_Callback(obj,~,~)
 
     obj.refreshImage % Re-draw everything so axes display the correct units in mm
 
+    % Cache this value to the settings file
+    obj.model.settings.cache.ROI = obj.model.cam.ROI;
+
     obj.ROIButton.Enable='on';
     obj.model.cam.startVideo
 

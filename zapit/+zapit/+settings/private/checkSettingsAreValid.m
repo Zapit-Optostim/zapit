@@ -286,3 +286,9 @@ function [settings,allValid] = checkSettingsAreValid(settings)
         allValid=false;
     end
 
+    %%
+    %
+    % cache
+    if iscell(settings.cache.ROI)
+        settings.cache.ROI = cell2mat(settings.cache.ROI);
+    end
