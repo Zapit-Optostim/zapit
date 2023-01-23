@@ -1,4 +1,4 @@
-function calibrateSampleClick_Callback(obj,sr,evt)
+function calibrateSampleClick_Callback(obj,~,~)
     % Responds to mouse clicks during sample calibration
     %
     % zapit.gui.main.controller.calibrateSampleClick_Callback

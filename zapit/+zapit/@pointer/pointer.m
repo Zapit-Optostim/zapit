@@ -207,6 +207,7 @@ classdef pointer < handle
 
             if isempty(obj.calibrateScannersPosData)
                 actualCoords = [];
+                return
             end
 
             actualCoords = cat(1,obj.calibrateScannersPosData(:).actualCoords);

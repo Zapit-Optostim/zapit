@@ -15,11 +15,11 @@ function zapAllCoords_Callback(obj,~,~)
         return
     end
 
-    if obj.CycleBeamOverCoordsButton.Value == 1
+    if obj.ZapallcoordsButton.Value == 1
 
 
         waveforms = cat(1,obj.model.stimConfig.calibratedPointsInVolts{:});
-        waveforms(:,3) = 2; % laser power -- HARDCODED
+        waveforms(:,3) =  obj.model.laser_mW_to_control(obj.model.settings.calibrateScanners.calibration_power_mW);
 
         obj.model.DAQ.moveBeamXY(waveforms(1,:)) % Go to first position
 

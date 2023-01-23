@@ -19,7 +19,7 @@ function checkScannerCalibClocked(obj)
     % TODO - the power and exposure settings need to be set here. Currently
     % they are set in checkScannerCalib_Callback of the controller
 
-    actualCoords(:,3) = obj.settings.calibrateScanners.calibration_power_mW;
+    actualCoords(:,3) = obj.laser_mW_to_control(obj.settings.calibrateScanners.calibration_power_mW);
 
     %Replace first two columns with voltage values
     [xVolt,yVolt] = obj.mmToVolt(actualCoords(:,1), actualCoords(:,2));
