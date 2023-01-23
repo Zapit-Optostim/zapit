@@ -327,6 +327,13 @@ classdef vidriowrapper < handle
             % Write analod data to the buffer and also log in a property the
             % data that were written.
 
+            % The Vidrio DAQmx wrapper reports values out of range even
+            % when these do not exist. This happend during the rampdown.
+            % The following line is just an additional chack.
+            if any(abs(max(waveforms,[],1))>10)
+                fprintf(' ** There are waveform data that exceed the +/- 10V range **\n')
+            end
+
             obj.lastWaveform = waveforms;
             obj.hAO.writeAnalogData(waveforms);
         end % writeAnalogData
@@ -374,7 +381,7 @@ classdef vidriowrapper < handle
             % Purpose
             % Set the two galvo control AO lines with an unlocked AO operation.
 
-            if ~isvalid(obj.hAO) || ~strcmp(obj.hAO.taskName, 'unclockedao')
+            if isempty(obj.hAO) || ~isvalid(obj.hAO) || ~strcmp(obj.hAO.taskName, 'unclockedao')
                 obj.connectUnclockedAO
             end
             beamXY = beamXY(:)'; % Ensure column vector

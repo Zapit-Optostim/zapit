@@ -130,8 +130,7 @@ classdef pointer < handle
 
             obj.DAQ.parent = obj;
 
-            obj.DAQ.connectUnclockedAO(true) % TODO -- In principle this should not be needed here. 
-            obj.zeroScanners % TODO ... as this will do the connection. Try it.            
+            obj.zeroScanners
 
             obj.loadLaserFit
 
