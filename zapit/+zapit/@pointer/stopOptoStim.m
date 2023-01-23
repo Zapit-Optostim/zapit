@@ -69,17 +69,19 @@ function stopOptoStim(obj, rampDownInMS)
     if obj.simulated
         data = [];
     end
-    verbose = false; % For debugging the rampdown
+    verbose = true; % For debugging the rampdown
     if verbose
         fprintf('There are %d steps in the rampdown\n', length(ind))
     end
+
+    t = obj.DAQ.lastWaveform;
+    wave = {};
+    n=1;
+    % calculate the waveforms to play
     for ii = ind
-
-        t = obj.DAQ.lastWaveform;
-
         if smoothRamp
             endVal = ampSequence(ii);
-            startVal = endVal - mean(diff(ampSequence))*1.5;
+            startVal = endVal - mean(diff(ampSequence));
             t(:,3) = t(:,3) .* linspace(startVal, endVal, size(obj.DAQ.lastWaveform,1))';
             if verbose
                 fprintf('START: %0.3f END: %0.3f\n',startVal,endVal)
@@ -92,7 +94,13 @@ function stopOptoStim(obj, rampDownInMS)
             data = [data;t]; %#ok<AGROW> 
         end
 
-        obj.DAQ.writeAnalogData(t);
+        wave{n} = t;
+        n = n+1;
+    end
+
+    % Dump all the waveforms to the DAQ
+    for ii=1:length(wave)
+        obj.DAQ.writeAnalogData(wave{ii});
     end
 
     if obj.simulated
