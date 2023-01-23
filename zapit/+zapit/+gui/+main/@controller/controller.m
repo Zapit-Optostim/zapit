@@ -140,6 +140,19 @@ classdef controller < zapit.gui.main.view
         end % resetROI_Callback
 
 
+        function updateResetZoomButtonState(obj,~,~)
+            % The listener callback that greys out reset button if a full FOV is being acquired
+            %
+            % zapit.gui.main.controller.updateResetZoomButtonState
+            %
+            if obj.model.cam.isFullFrame
+                obj.ResetROIButton.Enable = 'off';
+            else
+                obj.ResetROIButton.Enable = 'on';
+            end
+        end % updateResetZoomButtonState
+
+
         function scannersCalibrateCallback(obj,~,~)
             % Perform any actions needed upon change in scanner calibration state
             %

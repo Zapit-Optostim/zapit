@@ -229,13 +229,14 @@ classdef view < matlab.apps.AppBase
             % Create ROIButton
             app.ROIButton = uibutton(app.CameraPanel, 'push');
             app.ROIButton.Icon = fullfile(pathToMLAPP, 'Icons', 'icon-mat-zoom-in.png');
-            app.ROIButton.Tooltip = {'Draw a ROI and '};
+            app.ROIButton.Tooltip = {'Draw a ROI and zoom in.'};
             app.ROIButton.Position = [8 54 73 41];
             app.ROIButton.Text = 'ROI';
 
             % Create ResetROIButton
             app.ResetROIButton = uibutton(app.CameraPanel, 'push');
             app.ResetROIButton.Icon = fullfile(pathToMLAPP, 'Icons', 'icon-mat-zoom-out-map.png');
+            app.ResetROIButton.Tooltip = {'Reset to full FoV.'};
             app.ResetROIButton.Position = [8 6 73 41];
             app.ResetROIButton.Text = 'Reset';
 
