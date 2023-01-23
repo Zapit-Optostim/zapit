@@ -45,7 +45,7 @@ classdef DAQ < handle
             obj.hAO.taskName = '';
         end % Constructor
 
-        function  delete(obj)
+        function delete(obj)
         end
 
         function  success = connect(obj)

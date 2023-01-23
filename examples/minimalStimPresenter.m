@@ -210,7 +210,7 @@ classdef minimalStimPresenter < handle
 
             numSamplesPerChannel=length(obj.waveforms{1});
 
-            hardwareTriggered = false; % set to true if you want to wait for a hardware trigger
+            obj.hardwareTriggered = false; % set to true if you want to wait for a hardware trigger
 
             % Just in case a task already exists (TODO: do we need this for this example)
             if ~isempty(obj.hAO)
@@ -252,6 +252,7 @@ classdef minimalStimPresenter < handle
             if obj.hardwareTriggered
                 % Wait for line PFI0 to go high before playing waveforms
                 % TODO -- set this up
+                obj.hAO.Triggers.StartTrigger.ConfigureDigitalEdgeTrigger('PFI0', DigitalEdgeStartTriggerEdge.Rising);
                 %%obj.hAO.cfgDigEdgeStartTrig('PFI0', 'DAQmx_Val_Rising');
             end
         end % connectClockedAO
