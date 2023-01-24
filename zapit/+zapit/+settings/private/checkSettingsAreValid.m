@@ -202,28 +202,28 @@ function [settings,allValid] = checkSettingsAreValid(settings)
     end
 
 
-    if ~isnumeric(settings.calibrateScanners.bufferPixels)
-        fprintf('calibrateScanners.bufferPixels should be a number. Setting it to %d \n', ...
-            DEFAULT_SETTINGS.calibrateScanners.bufferPixels)
-        settings.calibrateScanners.bufferPixels = DEFAULT_SETTINGS.calibrateScanners.bufferPixels;
+    if ~isnumeric(settings.calibrateScanners.bufferMM)
+        fprintf('calibrateScanners.bufferMM should be a number. Setting it to %d \n', ...
+            DEFAULT_SETTINGS.calibrateScanners.bufferMM)
+        settings.calibrateScanners.bufferMM = DEFAULT_SETTINGS.calibrateScanners.bufferMM;
         allValid=false;
-    elseif settings.calibrateScanners.bufferPixels<=0
-        fprintf('calibrateScanners.bufferPixels should be >0. Setting it to %d \n', ...
-            DEFAULT_SETTINGS.calibrateScanners.bufferPixels)
-        settings.calibrateScanners.bufferPixels = DEFAULT_SETTINGS.calibrateScanners.bufferPixels;
+    elseif settings.calibrateScanners.bufferMM<=0
+        fprintf('calibrateScanners.bufferMM should be >0. Setting it to %d \n', ...
+            DEFAULT_SETTINGS.calibrateScanners.bufferMM)
+        settings.calibrateScanners.bufferMM = DEFAULT_SETTINGS.calibrateScanners.bufferMM;
         allValid=false;
     end
 
 
-    if ~isnumeric(settings.calibrateScanners.pointSpacingInPixels)
-        fprintf('calibrateScanners.pointSpacingInPixels should be a number. Setting it to %d \n', ...
-            DEFAULT_SETTINGS.calibrateScanners.pointSpacingInPixels)
-        settings.calibrateScanners.pointSpacingInPixels = DEFAULT_SETTINGS.calibrateScanners.pointSpacingInPixels;
+    if ~isnumeric(settings.calibrateScanners.pointSpacingInMM)
+        fprintf('calibrateScanners.pointSpacingInMM should be a number. Setting it to %d \n', ...
+            DEFAULT_SETTINGS.calibrateScanners.pointSpacingInMM)
+        settings.calibrateScanners.pointSpacingInMM = DEFAULT_SETTINGS.calibrateScanners.pointSpacingInMM;
         allValid=false;
-    elseif settings.calibrateScanners.pointSpacingInPixels<=0
-        fprintf('calibrateScanners.pointSpacingInPixels should be >0. Setting it to %d \n', ...
-            DEFAULT_SETTINGS.calibrateScanners.pointSpacingInPixels)
-        settings.calibrateScanners.pointSpacingInPixels = DEFAULT_SETTINGS.calibrateScanners.pointSpacingInPixels;
+    elseif settings.calibrateScanners.pointSpacingInMM<=0
+        fprintf('calibrateScanners.pointSpacingInMM should be >0. Setting it to %d \n', ...
+            DEFAULT_SETTINGS.calibrateScanners.pointSpacingInMM)
+        settings.calibrateScanners.pointSpacingInMM = DEFAULT_SETTINGS.calibrateScanners.pointSpacingInMM;
         allValid=false;
     end
 

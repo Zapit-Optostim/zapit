@@ -24,8 +24,8 @@ function settings = default_settings
     settings.calibrateScanners.areaThreshold = 500;
     settings.calibrateScanners.calibration_power_mW = 10;
     settings.calibrateScanners.beam_calib_exposure = 2;
-    settings.calibrateScanners.bufferPixels = 100;
-    settings.calibrateScanners.pointSpacingInPixels = 200;
+    settings.calibrateScanners.bufferMM = 2;
+    settings.calibrateScanners.pointSpacingInMM = 3;
 
     settings.calibrateSample.refAP = 3;
 

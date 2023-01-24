@@ -33,34 +33,8 @@ function varargout = calibrateScanners(obj)
     obj.scannersCalibrated = false;
 
 
-    % TODO -- this works but I don't know exactly why. I don't follow what the dimensions mean
-    % Generate points that will sample the imaged area.
-    % User should have cropped the FOV so we shouldn't be stimulating silly large positions
+    [R,C] = obj.generateScannerCalibrationPoints;
 
-
-    % Unique row and column values to sample
-    pointSpacingInPixels = obj.settings.calibrateScanners.pointSpacingInPixels;
-    bufferPixels = obj.settings.calibrateScanners.bufferPixels; % So we don't stimulate very close to the edges
-
-
-    pixel_rows = bufferPixels:pointSpacingInPixels:obj.imSize(1)-bufferPixels;
-    pixel_cols = bufferPixels:pointSpacingInPixels:obj.imSize(2)-bufferPixels;
-
-    % Get mm per pixel
-    mixPix = obj.settings.camera.micronsPerPixel;
-    mmPix = mixPix * 1E-3;
-
-    pixel_rowsMM = (pixel_rows * mmPix);
-    pixel_rowsMM = pixel_rowsMM - mean(pixel_rowsMM);
-    pixel_colsMM = pixel_cols * mmPix;
-    pixel_colsMM = pixel_colsMM - mean(pixel_colsMM);
-
-    % Calculate a set product to go to all combinations
-    [R,C] = meshgrid(pixel_rowsMM,pixel_colsMM);
-
-    %TODO -- are R and C correct?
-    R = R(:);
-    C = C(:);
 
     % change mm coords into voltage 
     [rVolts(:,1), rVolts(:,2)] = obj.mmToVolt(R,C);
@@ -100,8 +74,8 @@ function varargout = calibrateScanners(obj)
     end
 
 
-    if ind<3
-        fprintf('Failed to record sufficient points!\n')
+    if ind<4
+        fprintf('Failed to record sufficient points to run the transform!\n')
         tidyUp()
         return
     end

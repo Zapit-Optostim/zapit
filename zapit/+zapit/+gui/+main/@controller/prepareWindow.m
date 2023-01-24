@@ -33,8 +33,8 @@ function prepareWindow(obj)
     obj.CalibPowerSpinner.Value = obj.model.settings.calibrateScanners.calibration_power_mW;
     obj.LaserPowerScannerCalibSlider.Value = obj.CalibPowerSpinner.Value;
     obj.LaserPowerScannerCalibSlider.Limits = [0, obj.model.settings.laser.maxValueInGUI];
-    obj.PointSpacingSpinner.Value = obj.model.settings.calibrateScanners.pointSpacingInPixels;
-    obj.BorderBufferSpinner.Value = obj.model.settings.calibrateScanners.bufferPixels;
+    obj.PointSpacingSpinner.Value = obj.model.settings.calibrateScanners.pointSpacingInMM;
+    obj.BorderBufferSpinner.Value = obj.model.settings.calibrateScanners.bufferMM;
     obj.SizeThreshSpinner.Value = obj.model.settings.calibrateScanners.areaThreshold;
     obj.CalibExposureSpinner.Value = obj.model.settings.calibrateScanners.beam_calib_exposure;
 
@@ -48,7 +48,7 @@ function prepareWindow(obj)
     obj.TestSiteDropDown.Items={}; % Nothing loaded yet...
 
 
-    % Set up callback functions
+    % Set up callback functions and other settings
 
     % Calibrate Scanners Tab
     obj.ResetROIButton.ButtonPushedFcn = @(~,~) obj.resetROI_Callback;
@@ -60,6 +60,7 @@ function prepareWindow(obj)
     obj.LaserPowerScannerCalibSlider.ValueChangedFcn = @(src,evt) obj.setLaserPower_Callback(src,evt);
     obj.CalibLaserSwitch.ValueChangedFcn = @(~,~) obj.switchLaser_Callback;
     obj.CalibPowerSpinner.ValueChangedFcn = @(~,~) obj.calibPowerSpinner_CallBack;
+    obj.CalibPowerSpinner.Limits = [0, obj.model.settings.laser.maxValueInGUI];
     obj.CalibExposureSpinner.ValueChangedFcn = @(~,~) obj.calibExposureSpinner_CallBack;
     obj.PointSpacingSpinner.ValueChangedFcn = @(~,~) obj.pointSpacing_CallBack;
     obj.BorderBufferSpinner.ValueChangedFcn = @(~,~) obj.borderBuffer_CallBack;

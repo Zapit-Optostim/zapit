@@ -271,7 +271,7 @@ classdef controller < zapit.gui.main.view
             % Purpose
             % Changing the spinnerbox writes to the corresponding value in the settings structure. 
 
-            obj.model.settings.calibrateScanners.pointSpacingInPixels = obj.PointSpacingSpinner.Value;
+            obj.model.settings.calibrateScanners.pointSpacingInMM = obj.PointSpacingSpinner.Value;
         end % pointSpacing_CallBack
 
 
@@ -282,7 +282,7 @@ classdef controller < zapit.gui.main.view
             % Purpose
             % Changing the spinnerbox writes to the corresponding value in the settings structure. 
 
-            obj.model.settings.calibrateScanners.bufferPixels = obj.BorderBufferSpinner.Value;
+            obj.model.settings.calibrateScanners.bufferMM = obj.BorderBufferSpinner.Value;
         end % borderBuffer_CallBack
 
 
