@@ -60,8 +60,7 @@ This is an API (Application Programming Interface) that allows controlling of al
 The following code, for example, will send samples to the DAQ to stimulate one condition (e.g. one brain area bilaterally).
 
 ```
-newTrial = struct('area', 1, 'LaserOn', 1); % first brain area on the list
-hZP.sendSamples(newTrial)
+hZP.sendSamples('conditionNum', 1, 'LaserOn', 1);  % first brain area on the list
 ```
 It is now stimulating.
 To stop it gracefully run:

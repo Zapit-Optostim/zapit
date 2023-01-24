@@ -15,6 +15,14 @@ The project will adhere to [semantic versioning](http://semver.org) guidelines, 
 * PATCH version when you make backwards compatible bug fixes
 
 
+2023/01/XX -- v0.9.0
+ * Galvo waveforms are shaped to make them quieter: they are no almost inaudible even with the the galvo enclosure open.
+ * Reset ROI disabled if field is full. Last ROI is re-applied on startup.
+ * Laser rampdown time appears as a spinner in the stim config editor.
+ * Update GUI with more buttons and tool-tips. Tidied it.
+ * Validated that Zapit can correctly set laser power in mW. Tweaks so this works a little better. More work needed for calibration to be optimized and easy.
+
+
 2023/01/19 -- v0.8.0-beta
  * Settings file updates with calibrate sample spinboxes
  * Switch to 1E5 samples/s and one cycle buffered. In stress test this went 1000 trials without a hitch.

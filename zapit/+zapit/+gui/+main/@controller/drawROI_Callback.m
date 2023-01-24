@@ -6,6 +6,8 @@ function drawROI_Callback(obj,~,~)
 
     % Disable button until ROI has been drawn
     obj.ROIButton.Enable='off';
+    obj.ResetROIButton.Enable='off'; %There is a callback on ROI size that will cause this to re-enable automatically as needed
+
     obj.model.cam.stopVideo
 
     % Draw box and get coords

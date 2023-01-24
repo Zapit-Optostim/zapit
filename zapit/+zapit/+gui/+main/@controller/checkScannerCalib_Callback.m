@@ -37,7 +37,6 @@
 
         % Turn on laser and set to the calibration laser power. Ditto for camera exposure
         % TODO -- this should maybe be done in zapit.pointer.checkScannerCalibClocked (TODO there)
-        % We need to make sure we respect that values are read from settings structure.
         obj.model.cam.exposure = obj.model.settings.calibrateScanners.beam_calib_exposure;
         obj.laserPowerBeforeCalib = obj.LaserPowerScannerCalibSlider.Value;
         obj.LaserPowerScannerCalibSlider.Value = obj.CalibPowerSpinner.Value;
