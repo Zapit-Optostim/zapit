@@ -23,7 +23,7 @@ function drawBrainOutlineOnSample(obj)
 
 
     % Set sample rate so we are drawing at about 60 cycles per second.
-    n = length(coords) * 60;
+    n = length(coords) * 100;
     sRate = 10^round(log10(n),1) ;
     obj.DAQ.connectClockedAO('numSamplesPerChannel',size(coords,1), ...
                             'samplesPerSecond',sRate, ...

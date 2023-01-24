@@ -237,7 +237,7 @@ function [settings,allValid] = checkSettingsAreValid(settings)
             DEFAULT_SETTINGS.calibrateSample.refAP)
         settings.calibrateSample.refAP = DEFAULT_SETTINGS.calibrateSample.refAP;
         allValid=false;
-    elseif settings.calibrateSample.refAP<=0
+    elseif settings.calibrateSample.refAP<-8 || settings.calibrateSample.refAP>5
         fprintf('calibrateSample.refAP should be >0. Setting it to %d \n', ...
             DEFAULT_SETTINGS.calibrateSample.refAP)
         settings.calibrateSample.refAP = DEFAULT_SETTINGS.calibrateSample.refAP;

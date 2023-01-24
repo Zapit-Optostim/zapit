@@ -36,10 +36,8 @@ classdef pointer < handle
         % as they are independent of it. i.e. a new config can be loaded and the the data in the
         % following properties does not alter
         calibratedBrainOutline % The outline of the brain calibrated to the sample
-        refPointsStereotaxic = [0,0;0,3]  % Two reference points in stereotaxic space. By default bregma
-                                          % (first line [ML,AP] and a point 3 mm in front (second line)
         refPointsSample  % The two reference points in sample space. User provides these via calibrateSample
-
+        % -> see also refPointsStereotaxic, below under the getters section
     end % properties
 
 
@@ -68,6 +66,8 @@ classdef pointer < handle
     % read-only properties that are associated with getters
     properties (SetAccess=protected, GetAccess=public)
        imSize
+       refPointsStereotaxic  % Two reference points in stereotaxic space. By default bregma
+                              % (first line [ML,AP] and a point 3 mm in front (second line)
     end % getter properties
 
 
@@ -172,6 +172,19 @@ classdef pointer < handle
             imSize = obj.cam.ROI;
             imSize = imSize(3:4);
         end % get.imsize
+
+        function refPointsStereotaxic = get.refPointsStereotaxic(obj)
+            % Return the stereoatxic reference points
+            %
+            % refPointsStereotaxic = get.refPointsStereotaxic(obj)
+            %
+            % Purpose
+            % Return the stereotaxic reference coords by pulling the AP
+            % position from the settings
+
+            refPointsStereotaxic = zeros(2,2);
+            refPointsStereotaxic(2,2) = obj.settings.calibrateSample.refAP;
+        end % refPointsStereotaxic
 
     end % getters and setters
 

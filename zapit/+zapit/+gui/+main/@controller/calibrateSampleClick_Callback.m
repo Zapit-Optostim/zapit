@@ -8,6 +8,11 @@ function calibrateSampleClick_Callback(obj,~,~)
     % during sample calibration. 
     %
     % Rob Campbell - SWC 2023
+    %
+    % See also
+    % zapit.gui.main.controller.calibrateSampleRescaleOutline_Callback
+    % zapit.gui.main.controller.calibrateSampleClick_Callback
+
 
     if strcmp(obj.hFig.SelectionType,'alt')
         return

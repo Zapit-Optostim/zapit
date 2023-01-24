@@ -285,10 +285,10 @@ classdef view < matlab.apps.AppBase
 
             % Create RefAPDropDown
             app.RefAPDropDown = uidropdown(app.CalibrationPanel);
-            app.RefAPDropDown.Items = {'1 mm', '2 mm', '3 mm', '4 mm', '5 mm', '6 mm'};
+            app.RefAPDropDown.Items = {'+1 mm', '+2 mm', '+3 mm', '+4 mm', '+5 mm', '+6 mm'};
             app.RefAPDropDown.Tooltip = {'Which reference point to use after bregma.'};
-            app.RefAPDropDown.Position = [69 69 64 22];
-            app.RefAPDropDown.Value = '3 mm';
+            app.RefAPDropDown.Position = [64 69 72 22];
+            app.RefAPDropDown.Value = '+1 mm';
 
             % Create CalibrateSampleButton
             app.CalibrateSampleButton = uibutton(app.CalibrationPanel, 'push');

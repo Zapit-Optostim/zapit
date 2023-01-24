@@ -40,7 +40,11 @@ function prepareWindow(obj)
 
 
     % Disable the reference AP dropdown
-    obj.RefAPDropDown.Enable='off';
+    AP = [5:-1:2, -2:-1:-8];
+    obj.RefAPDropDown.Items = arrayfun(@(x) sprintf('%+d mm',x),AP,'UniformOutput',false);
+    obj.RefAPDropDown.Value = sprintf('%+d mm',round(obj.model.settings.calibrateSample.refAP));
+    obj.RefAPDropDown.ValueChangedFcn = @(~,~) obj.refAPDropDown_Callback;
+
     obj.TestSiteDropDown.Items={}; % Nothing loaded yet...
 
 
