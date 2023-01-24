@@ -14,7 +14,7 @@
         end
 
         % TODO-- this code appears elsewhere in similar buttons on first tab.
-        % Can we refactor it?
+        % Can we refactor it? See also paintArea_Callback, amongst others.
         if obj.CatMouseButton.Value == 1
             obj.CatMouseButton.Value = 0; % Both can not be activate at the the same time
             obj.catAndMouseButton_Callback;
@@ -24,9 +24,9 @@
             obj.PointModeButton.Value = 0;
             obj.pointButton_Callback
         end
-
-
         obj.setCalibLaserSwitch('On');
+
+
 
         % Begin to run through the calibration coords
         obj.model.drawBrainOutlineOnSample
@@ -40,4 +40,4 @@
 
     end
 
-end
+end % paintBrainBorder_Callback

@@ -15,6 +15,10 @@ function exportWaveforms_Callback(obj,~,~)
     %
     % Rob Campbell - SWC 2023
 
+    if isempty(obj.model.stimConfig)
+        return
+    end
+
     isCamRunning = obj.model.cam.isrunning;
 
     if isCamRunning

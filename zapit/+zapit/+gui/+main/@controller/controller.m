@@ -180,6 +180,25 @@ classdef controller < zapit.gui.main.view
             % Set the sample calibration light.
 
             obj.set_sampleLampCalibrated(obj.model.sampleCalibrated)
+
+            if obj.model.sampleCalibrated
+                obj.PaintbrainborderButton.Enable = 'on';
+                obj.OverlaystimsitesButton.Enable = 'on';
+                obj.ZapallcoordsButton.Enable = 'on';
+                obj.PlotstimcoordsButton.Enable = 'on';
+                obj.ZapSiteButton.Enable = 'on';
+                obj.PaintareaButton.Enable = 'on';
+                obj.ExportwaveformsButton.Enable = 'on';
+            else
+                obj.PaintbrainborderButton.Enable = 'off';
+                obj.OverlaystimsitesButton.Enable = 'off';
+                obj.ZapallcoordsButton.Enable = 'off';
+                obj.PlotstimcoordsButton.Enable = 'off';
+                obj.ZapSiteButton.Enable = 'off';
+                obj.PaintareaButton.Enable = 'off';
+                obj.ExportwaveformsButton.Enable = 'off';
+            end
+
         end % sampleCalibrateCallback
 
 

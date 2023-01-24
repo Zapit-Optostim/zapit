@@ -6,6 +6,11 @@ function zapSite_Callback(obj,~,~)
     % Purpose
     % This callback stimulates areas named in one condition.
 
+    if isempty(obj.model.stimConfig)
+        obj.ZapSiteButton.Value = 0;
+        return
+    end
+
     if obj.ZapSiteButton.Value == 1
         val = obj.TestSiteDropDown.Value;
         f = find(cellfun(@(x) strcmp(x,val), obj.TestSiteDropDown.Items));

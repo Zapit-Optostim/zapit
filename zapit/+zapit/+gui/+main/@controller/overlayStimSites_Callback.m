@@ -12,6 +12,7 @@ function overlayStimSites_Callback(obj,~,~)
     % 
 
     if isempty(obj.model.stimConfig)
+        obj.OverlaystimsitesButton.Value = 0;
         return
     end
 

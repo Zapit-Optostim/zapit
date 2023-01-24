@@ -72,8 +72,7 @@ function prepareWindow(obj)
     obj.OverlaystimsitesButton.ValueChangedFcn = @(~,~) obj.overlayStimSites_Callback;
     obj.ZapallcoordsButton.ValueChangedFcn = @(~,~) obj.zapAllCoords_Callback;
     obj.ZapSiteButton.ValueChangedFcn = @(~,~) obj.zapSite_Callback;
-    obj.PaintareaButton.Enable = 'off'; % DISABLE UNTIL THIS WORKS
-    %obj.PaintareaButton.ValueChangedFcn = @(~,~) obj.paintArea_Callback;
+    obj.PaintareaButton.ValueChangedFcn = @(~,~) obj.paintArea_Callback;
 
     obj.ExportwaveformsButton.ButtonPushedFcn = @(~,~) obj.exportWaveforms_Callback;
     obj.SetexperimentpathButton.ButtonPushedFcn = @(~,~) obj.setExperimentPath_Callback;
