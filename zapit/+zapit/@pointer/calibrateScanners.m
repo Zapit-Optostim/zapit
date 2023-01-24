@@ -37,7 +37,7 @@ function varargout = calibrateScanners(obj)
 
 
     % change mm coords into voltage 
-    [rVolts(:,1), rVolts(:,2)] = obj.mmToVolt(R,C);
+    [rVolts(:,1), rVolts(:,2)] = obj.mmToVolt(C,R);
     obj.DAQ.moveBeamXY(rVolts(1,:)); % Move to first position
 
     pause(0.05)
@@ -55,10 +55,9 @@ function varargout = calibrateScanners(obj)
         % without smudges and take position in pixels
         obj.DAQ.moveBeamXY(rVolts(ii,:));
         pause(0.1)
-        %obj.getLaserPosAccuracy([R(ii), C(ii)]);
 
         % Attempt to get laser position and append to list if the position was found
-        out = obj.getLaserPosAccuracy([R(ii), C(ii)], backgroundFrame, true);
+        out = obj.getLaserPosAccuracy([C(ii), R(ii)], backgroundFrame, true);
         if ~isempty(out)
             if verbose
                 fprintf('Target: %d/%d Actual: %d/%d\n',  ...

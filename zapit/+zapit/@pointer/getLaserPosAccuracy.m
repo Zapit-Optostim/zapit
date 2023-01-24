@@ -9,7 +9,7 @@ function varargout = getLaserPosAccuracy(obj, XYdata, backgroundImage, verbose)
     % to screen.
     %
     % Inputs
-    % XYdata - The target pixel coordinates. 
+    % XYdata - The target laser coordinates in mm. [columnMM, rowMM]
     % backgroundImage - [optional] if provided this image is subtracted before analysis.
     % verbose - [optional] False by default. If true print to console debug information.
     %

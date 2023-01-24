@@ -29,10 +29,8 @@ function [R,C] = generateScannerCalibrationPoints(obj, doPlot)
 
     imSizeRangeMM = (obj.imSize * mmPix)/2
 
-    % TODO: these are actially swapped (rows are columns). For clarity should work through the
-    % code and fix this, but it works...
-    pixel_rowsMM = (-imSizeRangeMM(1)+bufferMM) : pointSpacingInMM : (imSizeRangeMM(1)-bufferMM)
-    pixel_colsMM = (-imSizeRangeMM(2)+bufferMM) : pointSpacingInMM : (imSizeRangeMM(2)-bufferMM)
+    pixel_colsMM = (-imSizeRangeMM(1)+bufferMM) : pointSpacingInMM : (imSizeRangeMM(1)-bufferMM)
+    pixel_rowsMM = (-imSizeRangeMM(2)+bufferMM) : pointSpacingInMM : (imSizeRangeMM(2)-bufferMM)
 
 
     % Calculate a set product to go to all combinations
@@ -47,7 +45,7 @@ function [R,C] = generateScannerCalibrationPoints(obj, doPlot)
 
     zapit.utils.focusNamedFig(mfilename)
 
-    plot(R,C, 'ok', 'MarkerFaceColor', [1,1,1]*0.5)
+    plot(C, R, 'ok', 'MarkerFaceColor', [1,1,1]*0.5)
 
     xlim([-imSizeRangeMM(1),imSizeRangeMM(1)])
     ylim([-imSizeRangeMM(2),imSizeRangeMM(2)])
