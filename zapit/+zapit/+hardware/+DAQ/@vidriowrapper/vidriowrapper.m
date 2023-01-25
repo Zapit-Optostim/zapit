@@ -55,6 +55,7 @@ classdef vidriowrapper < handle
         lastYgalvoVoltage  = 0
         lastLaserVoltage = 0
         lastWaveform = [] % The last waveform sent to the DAQ for AO
+        doingClockedAcquisition = false; % Set to true if we are doing a clocked acquisition
     end %close GUI-related properties
 
 
@@ -135,6 +136,7 @@ classdef vidriowrapper < handle
             if isempty(obj.hAO) || ~isvalid(obj.hAO)
                 return
             end
+            obj.doingClockedAcquisition = true;
             obj.hAO.start
         end % start
 
@@ -165,6 +167,7 @@ classdef vidriowrapper < handle
             if isempty(obj.hAO) || ~isvalid(obj.hAO)
                 return
             end
+            obj.doingClockedAcquisition = false;
             obj.hAO.stop;    % Calls DAQmxStopTask
             delete(obj.hAO);
         end % stopAndDeleteAOTask
@@ -246,7 +249,7 @@ classdef vidriowrapper < handle
 
 
         function connectClockedAO(obj, varargin)
-            % Start a clocked task.
+            % Set up a clocked AO task
             %
             % function zapit.DAQ.vidriowrapper.connectClockedAO
             %

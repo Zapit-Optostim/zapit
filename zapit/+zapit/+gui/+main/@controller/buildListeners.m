@@ -7,6 +7,11 @@ function buildListeners(obj)
     % The listeners coordinate things like updating the displayed image from the camera,
     % and updating the list of recently loaded files.
 
+
+    % Disables select GUI elements during a clocked acquisition
+    obj.listeners{end+1} = ...
+        addlistener(obj.model.DAQ, 'doingClockedAcquisition', 'PostSet', @obj.updateClockedAcquisition);
+
     % So that reset zoom button is disabled if FOV is maxed
     obj.listeners{end+1} = ...
         addlistener(obj.model.cam,'ROI', 'PostSet', @obj.updateResetZoomButtonState);

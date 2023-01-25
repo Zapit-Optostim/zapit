@@ -250,6 +250,18 @@ classdef controller < zapit.gui.main.view
         end % setLaserPower_Callback
 
 
+        function updateClockedAcquisition(obj,~,~)
+            % Listener callback to disable select GUI elements during a locked acquisition
+
+            if obj.model.DAQ.doingClockedAcquisition
+                obj.CalibLaserSwitch.Enable = 'off';
+                obj.LaserPowerScannerCalibSlider.Enable = 'off';
+            else
+                obj.CalibLaserSwitch.Enable = 'on';
+                obj.LaserPowerScannerCalibSlider.Enable = 'on';
+            end
+        end % updateClockedAcquisition
+
         function switchLaser_Callback(obj,~,~)
             % Turn on the laser when the switch is turned on
             %
