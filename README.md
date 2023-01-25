@@ -39,5 +39,5 @@ Thanks to Vidrio Technologies for allowing the inclusion of their DAQmx wrapper 
 
 
 ## Related Projects
-* [AllenAtlasTopDown](https://github.com/raacampbell/AllenAtlasTopDown)
+* [AllenAtlasTopDown](https://github.com/Zapit-Optostim/AllenAtlasTopDown)
 
