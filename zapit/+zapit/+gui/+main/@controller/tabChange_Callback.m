@@ -21,7 +21,11 @@ function tabChange_Callback(obj,src,~)
 
     function toggleOverlay(overlayName,state)
         if isfield(obj.plotOverlayHandles, overlayName)
-            obj.plotOverlayHandles.(overlayName).Visible = state;
+            if ~isvalid(obj.plotOverlayHandles.(overlayName))
+                obj.removeOverlays(overlayName)
+            else
+                obj.plotOverlayHandles.(overlayName).Visible = state;
+            end
         end
     end
 
