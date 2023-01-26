@@ -148,7 +148,7 @@ classdef view < matlab.apps.AppBase
             app.CalibrationgridsettingsPanel = uipanel(app.CalibrateScannersTab);
             app.CalibrationgridsettingsPanel.BorderType = 'none';
             app.CalibrationgridsettingsPanel.Title = 'Calibration grid settings';
-            app.CalibrationgridsettingsPanel.Position = [592 16 151 108];
+            app.CalibrationgridsettingsPanel.Position = [592 15 151 108];
 
             % Create PointSpacingLabel
             app.PointSpacingLabel = uilabel(app.CalibrationgridsettingsPanel);
@@ -184,7 +184,7 @@ classdef view < matlab.apps.AppBase
             app.CameraexposurePanel = uipanel(app.CalibrateScannersTab);
             app.CameraexposurePanel.BorderType = 'none';
             app.CameraexposurePanel.Title = 'Camera exposure';
-            app.CameraexposurePanel.Position = [301 67 281 57];
+            app.CameraexposurePanel.Position = [301 66 281 57];
 
             % Create CalibLabel
             app.CalibLabel = uilabel(app.CameraexposurePanel);
@@ -226,7 +226,7 @@ classdef view < matlab.apps.AppBase
             app.CameraPanel = uipanel(app.CalibrateScannersTab);
             app.CameraPanel.BorderType = 'none';
             app.CameraPanel.Title = 'Camera';
-            app.CameraPanel.Position = [6 4 100 120];
+            app.CameraPanel.Position = [6 3 100 120];
 
             % Create ROIButton
             app.ROIButton = uibutton(app.CameraPanel, 'push');
@@ -246,7 +246,7 @@ classdef view < matlab.apps.AppBase
             app.CalibratePanel = uipanel(app.CalibrateScannersTab);
             app.CalibratePanel.BorderType = 'none';
             app.CalibratePanel.Title = 'Calibrate';
-            app.CalibratePanel.Position = [114 4 176 120];
+            app.CalibratePanel.Position = [114 3 176 120];
 
             % Create PointModeButton
             app.PointModeButton = uibutton(app.CalibratePanel, 'state');
