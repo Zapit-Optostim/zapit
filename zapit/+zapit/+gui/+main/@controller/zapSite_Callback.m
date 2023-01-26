@@ -1,4 +1,4 @@
-function zapSite_Callback(obj)
+function zapSite_Callback(obj,~,~)
     % Stimulate the areas selected by the test site drop-down
     %
     % zapit.gui.main.controller.zapSite_Callback

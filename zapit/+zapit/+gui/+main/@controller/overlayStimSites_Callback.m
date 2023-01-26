@@ -1,4 +1,4 @@
-function overlayStimSites_Callback(obj)
+function overlayStimSites_Callback(obj,~,~)
     % Plots the points to stimulate on the image
     %
     % zapit.gui.main.controller.overlayStimSites_Callback

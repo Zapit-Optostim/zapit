@@ -1,4 +1,4 @@
-function createNewStimConfig_Callback(obj)
+function createNewStimConfig_Callback(obj,~,~)
     % Load the stim config editor GUI
     % 
     % zapit.gui.main.controller.createNewStimConfig_Callback

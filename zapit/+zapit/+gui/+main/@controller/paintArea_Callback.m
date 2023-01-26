@@ -1,4 +1,4 @@
-function paintArea_Callback(obj)
+function paintArea_Callback(obj,~,~)
     % Paint brain area
     %
     % zapit.gui.main.controller.paintArea_Callback

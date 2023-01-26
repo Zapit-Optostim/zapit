@@ -1,4 +1,4 @@
-function calibrateSample_Callback(obj)
+function calibrateSample_Callback(obj,~,~)
     % Initiates the process of calibrating the sample
     %
     % zapit.gui.main.controller.calibrateSample_Callback

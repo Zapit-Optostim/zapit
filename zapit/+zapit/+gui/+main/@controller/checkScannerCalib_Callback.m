@@ -1,4 +1,4 @@
-    function checkScannerCalib_Callback(obj)
+    function checkScannerCalib_Callback(obj,~,~)
     % Sweep beam over calibration positions to visually check it worked
     %
     % function zapit.gui.main.controller.checkScannerCalib(obj)
