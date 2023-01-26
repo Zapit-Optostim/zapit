@@ -18,9 +18,16 @@ function paintArea_Callback(obj,~,~)
         obj.GUIstate = mfilename;
     end
 
+
     if obj.PaintareaButton.Value == 1
 
+        % Get stimulus index and from that the locations we will be stimulating
+        stimIndex = find(cellfun(@(x) strcmp(x, obj.TestSiteDropDown.Value), obj.TestSiteDropDown.Items));
+        locs = obj.model.stimConfig.stimLocations(stimIndex);
+        [~,areaIndex] = obj.model.stimConfig.getAreaNameFromCoords(locs.ML,locs.AP);
+        areaIndex = unique(areaIndex);
         obj.setCalibLaserSwitch('On');
+        obj.model.drawBrainAreasOnSample(areaIndex);
 
     else
         obj.model.DAQ.stopAndDeleteAOTask; %Stop

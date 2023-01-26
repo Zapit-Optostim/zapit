@@ -42,8 +42,6 @@
         obj.model.DAQ.stopAndDeleteAOTask; %Stop
         obj.setCalibLaserSwitch('Off');
 
-
-
     end
 
 end % paintBrainBorder_Callback

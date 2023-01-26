@@ -31,7 +31,6 @@ function catAndMouseButton_Callback(obj,~,~)
     end
 
 
-
     function mouseMove (~, ~)
         C = get (obj.hImAx, 'CurrentPoint');
         X = C(1,1);

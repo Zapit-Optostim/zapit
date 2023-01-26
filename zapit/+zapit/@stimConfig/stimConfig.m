@@ -266,9 +266,7 @@ classdef stimConfig < handle
 
         end % get.chanSamples
 
-    end % methods
 
-    methods(Hidden)
         function [areaName,areaIndex] = getAreaNameFromCoords(obj,ML,AP)
             % Return brain area name from stereotaxic ML/AP coordinates
             %
@@ -311,7 +309,7 @@ classdef stimConfig < handle
         end % getAreaNameFromCoords
 
 
-    end % hidden methods
+    end % methods
 
 
 end % config
