@@ -50,6 +50,7 @@ classdef pointer < handle
 
     properties (Hidden)
         buildFailed = true % Used during boostrap by start_zapit
+        breakScannerCalibLoop = false; % Used so GUI can break out of the scanner calibration loop.
         simulated = false % Tag to indicate whether it is in simulated mode
         listeners = {} % Cell array that holds listeners so they can be easily cleaned up in the destructor
     end % hidden properties

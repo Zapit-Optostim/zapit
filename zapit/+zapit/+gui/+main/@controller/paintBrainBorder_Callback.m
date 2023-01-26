@@ -6,6 +6,12 @@
 
     % This is a callback from a state button so it will run the scanners until unchecked
 
+    if nargin>1
+        % Only set GUI state if the *user* clicked the button
+        % rather than than harmonizeGUIstate calling it.
+        obj.GUIstate = mfilename;
+    end
+
     if obj.PaintbrainborderButton.Value == 1
 
         if isempty(obj.model.calibratedBrainOutline)

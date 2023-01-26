@@ -7,20 +7,13 @@
     % This is a callback from a state button so it will run the calibration
     % check continually when depressed and stop when un-pressed
 
+    if nargin>1
+        % Only set GUI state if the *user* clicked the button
+        % rather than than harmonizeGUIstate calling it.
+        obj.GUIstate = mfilename;
+    end
 
     if obj.CheckCalibrationButton.Value == 1
-
-        if obj.CatMouseButton.Value == 1
-            obj.CatMouseButton.Value = 0; % Both can not be activate at the the same time
-            obj.catAndMouseButton_Callback;
-        end
-
-        if obj.PointModeButton.Value == 1
-            obj.PointModeButton.Value = 0;
-            obj.pointButton_Callback
-        end
-
-
 
         actualCoords = obj.model.returnScannerCalibTargetCoords;
 

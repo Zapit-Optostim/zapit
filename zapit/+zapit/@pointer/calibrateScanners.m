@@ -49,8 +49,14 @@ function varargout = calibrateScanners(obj)
     backgroundFrame = cast(mean(backgroundFrame,3),class(backgroundFrame));
 
     ind=1;
+    obj.breakScannerCalibLoop = false; % If an external entity (like the GUI) sets this to
+                                       % true then we will break out of the loop.
     verbose=false;
     for ii=1:length(R)
+
+        if obj.breakScannerCalibLoop
+            break
+        end
         % feed volts into scan mirrors, wait for precise image
         % without smudges and take position in pixels
         obj.DAQ.moveBeamXY(rVolts(ii,:));

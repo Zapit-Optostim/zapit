@@ -51,13 +51,15 @@ function prepareWindow(obj)
     % Set up callback functions and other settings
 
     % Calibrate Scanners Tab
+    % Note: @(~,~) means the src and evt are never passed to the callback.
+    % Note: see zapit.gui.main.controller.harmonizeGUIstate to understand how callbacks interact.
     obj.ResetROIButton.ButtonPushedFcn = @(~,~) obj.resetROI_Callback;
     obj.ROIButton.ButtonPushedFcn = @(~,~) obj.drawROI_Callback;
-    obj.RunScannerCalibrationButton.ButtonPushedFcn = @(~,~) obj.calibrateScanners_Callback;
-    obj.CheckCalibrationButton.ValueChangedFcn = @(~,~) obj.checkScannerCalib_Callback;
-    obj.PointModeButton.ValueChangedFcn = @(~,~) obj.pointButton_Callback;
-    obj.CatMouseButton.ValueChangedFcn = @(~,~) obj.catAndMouseButton_Callback;
-    obj.LaserPowerScannerCalibSlider.ValueChangedFcn = @(src,evt) obj.setLaserPower_Callback(src,evt);
+    obj.RunScannerCalibrationButton.ValueChangedFcn = @obj.calibrateScanners_Callback;
+    obj.CheckCalibrationButton.ValueChangedFcn = @obj.checkScannerCalib_Callback;
+    obj.PointModeButton.ValueChangedFcn = @obj.pointButton_Callback;
+    obj.CatMouseButton.ValueChangedFcn = @obj.catAndMouseButton_Callback;
+    obj.LaserPowerScannerCalibSlider.ValueChangedFcn = @obj.setLaserPower_Callback;
     obj.CalibLaserSwitch.ValueChangedFcn = @(~,~) obj.switchLaser_Callback;
     obj.CalibPowerSpinner.ValueChangedFcn = @(~,~) obj.calibPowerSpinner_CallBack;
     obj.CalibPowerSpinner.Limits = [0, obj.model.settings.laser.maxValueInGUI];
@@ -68,11 +70,11 @@ function prepareWindow(obj)
 
     % Calibrate Sample Tab
     obj.CalibrateSampleButton.ButtonPushedFcn = @(~,~) obj.calibrateSample_Callback;
-    obj.PaintbrainborderButton.ValueChangedFcn = @(~,~) obj.paintBrainBorder_Callback;
+    obj.PaintbrainborderButton.ValueChangedFcn = @obj.paintBrainBorder_Callback;
     obj.OverlaystimsitesButton.ValueChangedFcn = @(~,~) obj.overlayStimSites_Callback;
-    obj.ZapallcoordsButton.ValueChangedFcn = @(~,~) obj.zapAllCoords_Callback;
-    obj.ZapSiteButton.ValueChangedFcn = @(~,~) obj.zapSite_Callback;
-    obj.PaintareaButton.ValueChangedFcn = @(~,~) obj.paintArea_Callback;
+    obj.ZapallcoordsButton.ValueChangedFcn = @obj.zapAllCoords_Callback;
+    obj.ZapSiteButton.ValueChangedFcn = @obj.zapSite_Callback;
+    obj.PaintareaButton.ValueChangedFcn = @obj.paintArea_Callback;
 
     obj.ExportwaveformsButton.ButtonPushedFcn = @(~,~) obj.exportWaveforms_Callback;
     obj.SetexperimentpathButton.ButtonPushedFcn = @(~,~) obj.setExperimentPath_Callback;

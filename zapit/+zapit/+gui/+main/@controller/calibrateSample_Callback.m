@@ -11,6 +11,12 @@ function calibrateSample_Callback(obj,~,~)
     %
 
 
+    if nargin>1
+        % Only set GUI state if the *user* clicked the button
+        % rather than than harmonizeGUIstate calling it.
+        obj.GUIstate = mfilename;
+    end
+
     isCamRunning = obj.model.cam.isrunning;
     if isCamRunning
         obj.model.cam.stopVideo;
@@ -56,6 +62,7 @@ function calibrateSample_Callback(obj,~,~)
         obj.hFig.WindowButtonMotionFcn = [];
         obj.model.sampleCalibrated = true;
     end
+
 
     if sum(abs(obj.model.refPointsSample(:)))>0
         b = obj.atlasData.whole_brain.boundaries_stereotax{1};

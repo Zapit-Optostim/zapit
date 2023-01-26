@@ -7,8 +7,24 @@ function calibrateScanners_Callback(obj,~,~)
     % The scanners and camera must be calibrated with respect to each other. This
     % method does this. 
 
+    if nargin>1
+        % Only set GUI state if the *user* clicked the button
+        % rather than than harmonizeGUIstate calling it.
+        obj.GUIstate = mfilename;
+    end
+
+    if obj.RunScannerCalibrationButton.Value == 1
+        obj.RunScannerCalibrationButton.Text = 'CANCEL';
+    elseif obj.RunScannerCalibrationButton.Value == 0
+
+        obj.model.breakScannerCalibLoop=true;
+        %obj.RunScannerCalibrationButton.Text = {'Run';'Calibration'};
+        tidy
+        return
+
+    end
+
     % Prep figure window
-    obj.PointModeButton.Value = 0;
     obj.removeOverlays % removes all overlays
     hold(obj.hImAx,'on')
 
@@ -19,13 +35,12 @@ function calibrateScanners_Callback(obj,~,~)
 
     hold(obj.hImAx,'off')
 
-    updatePlotListener = addlistener(obj.model, 'calibrateScannersPosData', 'PostSet', @myUpdatePlot);
+    obj.updatePlotListener = addlistener(obj.model, 'calibrateScannersPosData', 'PostSet', @myUpdatePlot);
     % Run calibration method in model
 
 
     % Turn on laser and set to the calibration laser power
-    origLaserPower = obj.LaserPowerScannerCalibSlider.Value;
-    obj.LaserPowerScannerCalibSlider.Value = obj.CalibPowerSpinner.Value;
+    obj.LaserPowerScannerCalibSlider.Value = obj.LaserPowerScannerCalibSlider.Value;
     obj.setCalibLaserSwitch('On');
 
     try
@@ -43,10 +58,11 @@ function calibrateScanners_Callback(obj,~,~)
 
     function tidy
         obj.removeOverlays(mfilename)
-        delete(updatePlotListener)
+        delete(obj.updatePlotListener)
         % Return power to orginal value
         obj.setCalibLaserSwitch('Off');
-        obj.LaserPowerScannerCalibSlider.Value = origLaserPower;
+        obj.RunScannerCalibrationButton.Value = 0;
+        obj.RunScannerCalibrationButton.Text = {'Run';'Calibration'};
     end
 
     function myUpdatePlot(~,~)

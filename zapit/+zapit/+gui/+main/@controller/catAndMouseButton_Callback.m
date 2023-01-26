@@ -8,6 +8,11 @@ function catAndMouseButton_Callback(obj,~,~)
     %
     % Rob Campbell - SWC 2022
 
+    if nargin>1
+        % Only set GUI state if the *user* clicked the button
+        % rather than than harmonizeGUIstate calling it.
+        obj.GUIstate = mfilename;
+    end
 
     if obj.CatMouseButton.Value == 0
         obj.hFig.WindowButtonMotionFcn = [];
@@ -19,17 +24,6 @@ function catAndMouseButton_Callback(obj,~,~)
 
 
     if obj.CatMouseButton.Value == 1
-        % Pointer is a hand
-        if  obj.CheckCalibrationButton.Value == 1
-            obj.CheckCalibrationButton.Value = 0;
-            obj.checkScannerCalib_Callback
-        end
-
-        if obj.PointModeButton.Value == 1
-            obj.PointModeButton.Value = 0;
-            obj.pointButton_Callback
-        end
-
         obj.hFig.Pointer = 'hand';
         obj.setCalibLaserSwitch('On');
         obj.addLastPointLocationMarker % adds hLastPoint
@@ -42,7 +36,6 @@ function catAndMouseButton_Callback(obj,~,~)
         C = get (obj.hImAx, 'CurrentPoint');
         X = C(1,1);
         Y = C(1,2);
-
 
         % Do not go go to locations outside of the axes
         if X<obj.hImAx.XLim(1) && X>obj.hImAx.XLim(2) || ...

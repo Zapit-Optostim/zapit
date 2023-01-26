@@ -16,6 +16,12 @@ function overlayStimSites_Callback(obj,~,~)
         return
     end
 
+    if nargin>1
+        % Only set GUI state if the *user* clicked the button
+        % rather than than harmonizeGUIstate calling it.
+        obj.GUIstate = mfilename;
+    end
+
     if obj.OverlaystimsitesButton.Value == 1
         % Add the points
         calPoints = obj.model.stimConfig.calibratedPoints;

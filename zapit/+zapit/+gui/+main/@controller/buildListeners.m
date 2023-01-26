@@ -6,7 +6,19 @@ function buildListeners(obj)
     % Purpose
     % The listeners coordinate things like updating the displayed image from the camera,
     % and updating the list of recently loaded files.
+    %
+    % Inputs
+    % none
+    %
+    % Outputs
+    % none
+    %
+    %
+    % Rob Campbell - SWC 2022
 
+
+    % To ensure button clicks respect the current state of the GUI
+    obj.listeners{end+1} = addlistener(obj, 'GUIstate', 'PostSet', @obj.harmonizeGUIstate);
 
     % Disables select GUI elements during a clocked acquisition
     obj.listeners{end+1} = ...

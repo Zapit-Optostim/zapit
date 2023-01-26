@@ -11,6 +11,12 @@ function zapSite_Callback(obj,~,~)
         return
     end
 
+    if nargin>1
+        % Only set GUI state if the *user* clicked the button
+        % rather than than harmonizeGUIstate calling it.
+        obj.GUIstate = mfilename;
+    end
+
     if obj.ZapSiteButton.Value == 1
         val = obj.TestSiteDropDown.Value;
         f = find(cellfun(@(x) strcmp(x,val), obj.TestSiteDropDown.Items));

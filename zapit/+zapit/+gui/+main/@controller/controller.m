@@ -41,6 +41,13 @@ classdef controller < zapit.gui.main.view
         % A structure that contains names and paths to recently loaded stim config files.
         previouslyLoadedStimConfigs = struct('fname', '', 'pathToFname', '', 'timeAdded', []);
         maxPreviouslyLoadedStimConfigs = 10 % Max number to display. 
+
+        % The following represents the GUI state and is used to allow for seamless transitions
+        % between different states. e.g. to switch between Point and Cat & Mouse
+        % When a callback function that modifies this property is being run, the value changes
+        % to the file name of the callback.
+        GUIstate = 'idle'
+
     end
 
 

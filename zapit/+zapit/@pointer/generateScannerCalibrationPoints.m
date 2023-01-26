@@ -27,10 +27,10 @@ function [R,C] = generateScannerCalibrationPoints(obj, doPlot)
     mixPix = obj.settings.camera.micronsPerPixel;
     mmPix = mixPix * 1E-3;
 
-    imSizeRangeMM = (obj.imSize * mmPix)/2
+    imSizeRangeMM = (obj.imSize * mmPix)/2;
 
-    pixel_colsMM = (-imSizeRangeMM(1)+bufferMM) : pointSpacingInMM : (imSizeRangeMM(1)-bufferMM)
-    pixel_rowsMM = (-imSizeRangeMM(2)+bufferMM) : pointSpacingInMM : (imSizeRangeMM(2)-bufferMM)
+    pixel_colsMM = (-imSizeRangeMM(1)+bufferMM) : pointSpacingInMM : (imSizeRangeMM(1)-bufferMM);
+    pixel_rowsMM = (-imSizeRangeMM(2)+bufferMM) : pointSpacingInMM : (imSizeRangeMM(2)-bufferMM);
 
 
     % Calculate a set product to go to all combinations

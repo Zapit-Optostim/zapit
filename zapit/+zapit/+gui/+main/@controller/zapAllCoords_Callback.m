@@ -11,10 +11,15 @@ function zapAllCoords_Callback(obj,~,~)
 
     % TODO: Low priority. checkScannerCalibClocked is located in zapit.pointer. So the presence of this function here is odd
 
-
     if isempty(obj.model.stimConfig)
         obj.ZapallcoordsButton.Value = 0;
         return
+    end
+
+    if nargin>1
+        % Only set GUI state if the *user* clicked the button
+        % rather than than harmonizeGUIstate calling it.
+        obj.GUIstate = mfilename;
     end
 
     if obj.ZapallcoordsButton.Value == 1

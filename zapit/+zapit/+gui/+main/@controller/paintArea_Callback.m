@@ -1,4 +1,4 @@
-function obj.paintArea_Callback(obj,~,~)
+function paintArea_Callback(obj,~,~)
     % Paint brain area
     %
     % zapit.gui.main.controller.paintArea_Callback
@@ -6,24 +6,20 @@ function obj.paintArea_Callback(obj,~,~)
     % Purpose
     % Paint brain area onto sample
 
+
     if isempty(obj.model.stimConfig)
         obj.PaintareaButton.Value = 0;
         return
     end
 
+    if nargin>1
+        % Only set GUI state if the *user* clicked the button
+        % rather than than harmonizeGUIstate calling it.
+        obj.GUIstate = mfilename;
+    end
+
     if obj.PaintareaButton.Value == 1
 
-        % TODO-- this code appears elsewhere in similar buttons on first tab.
-        % Can we refactor it? See also paintBrainBorder_Callback, amongst others.
-        if obj.CatMouseButton.Value == 1
-            obj.CatMouseButton.Value = 0; % Both can not be activate at the the same time
-            obj.catAndMouseButton_Callback;
-        end
-
-        if obj.PointModeButton.Value == 1
-            obj.PointModeButton.Value = 0;
-            obj.pointButton_Callback
-        end
         obj.setCalibLaserSwitch('On');
 
     else
