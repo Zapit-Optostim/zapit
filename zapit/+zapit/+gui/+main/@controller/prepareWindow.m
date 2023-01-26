@@ -30,14 +30,15 @@ function prepareWindow(obj)
 
     % Update elements from settings file
     % TODO: changing the settings spin boxes should change the settings file
-    obj.CalibPowerSpinner.Value = obj.model.settings.calibrateScanners.calibration_power_mW;
-    obj.LaserPowerScannerCalibSlider.Value = obj.CalibPowerSpinner.Value;
+    obj.LaserPowerScannerCalibSlider.Value = obj.model.settings.calibrateScanners.calibration_power_mW;
     obj.LaserPowerScannerCalibSlider.Limits = [0, obj.model.settings.laser.maxValueInGUI];
     obj.PointSpacingSpinner.Value = obj.model.settings.calibrateScanners.pointSpacingInMM;
     obj.BorderBufferSpinner.Value = obj.model.settings.calibrateScanners.bufferMM;
     obj.SizeThreshSpinner.Value = obj.model.settings.calibrateScanners.areaThreshold;
+    obj.StandardExposure.Value = obj.model.settings.camera.default_exposure;
+    obj.StandardExposure.Limits = [0,inf];
     obj.CalibExposureSpinner.Value = obj.model.settings.calibrateScanners.beam_calib_exposure;
-
+    obj.CalibExposureSpinner.Limits = [0,inf];
 
     % Disable the reference AP dropdown
     AP = [5:-1:2, -2:-1:-8];
@@ -53,6 +54,7 @@ function prepareWindow(obj)
     % Calibrate Scanners Tab
     % Note: @(~,~) means the src and evt are never passed to the callback.
     % Note: see zapit.gui.main.controller.harmonizeGUIstate to understand how callbacks interact.
+    obj.StandardExposure.ValueChangedFcn = @(~,~) obj.setCamExposure_Callback;
     obj.ResetROIButton.ButtonPushedFcn = @(~,~) obj.resetROI_Callback;
     obj.ROIButton.ButtonPushedFcn = @(~,~) obj.drawROI_Callback;
     obj.RunScannerCalibrationButton.ValueChangedFcn = @obj.calibrateScanners_Callback;
@@ -61,8 +63,6 @@ function prepareWindow(obj)
     obj.CatMouseButton.ValueChangedFcn = @obj.catAndMouseButton_Callback;
     obj.LaserPowerScannerCalibSlider.ValueChangedFcn = @obj.setLaserPower_Callback;
     obj.CalibLaserSwitch.ValueChangedFcn = @(~,~) obj.switchLaser_Callback;
-    obj.CalibPowerSpinner.ValueChangedFcn = @(~,~) obj.calibPowerSpinner_CallBack;
-    obj.CalibPowerSpinner.Limits = [0, obj.model.settings.laser.maxValueInGUI];
     obj.CalibExposureSpinner.ValueChangedFcn = @(~,~) obj.calibExposureSpinner_CallBack;
     obj.PointSpacingSpinner.ValueChangedFcn = @(~,~) obj.pointSpacing_CallBack;
     obj.BorderBufferSpinner.ValueChangedFcn = @(~,~) obj.borderBuffer_CallBack;

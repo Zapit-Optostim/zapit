@@ -23,21 +23,21 @@ classdef view < matlab.apps.AppBase
         TabGroup                       matlab.ui.container.TabGroup
         CalibrateScannersTab           matlab.ui.container.Tab
         CalibratePanel                 matlab.ui.container.Panel
+        RunScannerCalibrationButton    matlab.ui.control.StateButton
         CheckCalibrationButton         matlab.ui.control.StateButton
         CatMouseButton                 matlab.ui.control.StateButton
         PointModeButton                matlab.ui.control.StateButton
-        RunScannerCalibrationButton    matlab.ui.control.Button
         CameraPanel                    matlab.ui.container.Panel
         ResetROIButton                 matlab.ui.control.Button
         ROIButton                      matlab.ui.control.Button
         LaserpowerPanel                matlab.ui.container.Panel
         CalibLaserSwitch               matlab.ui.control.Switch
         LaserPowerScannerCalibSlider   matlab.ui.control.Slider
-        CalibrationpowerexposurePanel  matlab.ui.container.Panel
+        CameraexposurePanel            matlab.ui.container.Panel
+        StandardExposure               matlab.ui.control.Spinner
+        ExposureSpinnerLabel_2         matlab.ui.control.Label
         CalibExposureSpinner           matlab.ui.control.Spinner
-        ExposureSpinnerLabel           matlab.ui.control.Label
-        CalibPowerSpinner              matlab.ui.control.Spinner
-        CalibPowerLabel                matlab.ui.control.Label
+        CalibLabel                     matlab.ui.control.Label
         CalibrationgridsettingsPanel   matlab.ui.container.Panel
         SizeThreshSpinner              matlab.ui.control.Spinner
         SizeThreshSpinnerLabel         matlab.ui.control.Label
@@ -180,31 +180,33 @@ classdef view < matlab.apps.AppBase
             app.SizeThreshSpinner = uispinner(app.CalibrationgridsettingsPanel);
             app.SizeThreshSpinner.Position = [88 3 62 22];
 
-            % Create CalibrationpowerexposurePanel
-            app.CalibrationpowerexposurePanel = uipanel(app.CalibrateScannersTab);
-            app.CalibrationpowerexposurePanel.BorderType = 'none';
-            app.CalibrationpowerexposurePanel.Title = 'Calibration power & exposure';
-            app.CalibrationpowerexposurePanel.Position = [301 67 281 57];
+            % Create CameraexposurePanel
+            app.CameraexposurePanel = uipanel(app.CalibrateScannersTab);
+            app.CameraexposurePanel.BorderType = 'none';
+            app.CameraexposurePanel.Title = 'Camera exposure';
+            app.CameraexposurePanel.Position = [301 67 281 57];
 
-            % Create CalibPowerLabel
-            app.CalibPowerLabel = uilabel(app.CalibrationpowerexposurePanel);
-            app.CalibPowerLabel.HorizontalAlignment = 'right';
-            app.CalibPowerLabel.Position = [14 10 39 22];
-            app.CalibPowerLabel.Text = 'Power';
-
-            % Create CalibPowerSpinner
-            app.CalibPowerSpinner = uispinner(app.CalibrationpowerexposurePanel);
-            app.CalibPowerSpinner.Position = [61 10 49 22];
-
-            % Create ExposureSpinnerLabel
-            app.ExposureSpinnerLabel = uilabel(app.CalibrationpowerexposurePanel);
-            app.ExposureSpinnerLabel.HorizontalAlignment = 'right';
-            app.ExposureSpinnerLabel.Position = [125 11 56 22];
-            app.ExposureSpinnerLabel.Text = 'Exposure';
+            % Create CalibLabel
+            app.CalibLabel = uilabel(app.CameraexposurePanel);
+            app.CalibLabel.HorizontalAlignment = 'right';
+            app.CalibLabel.Position = [127 12 87 22];
+            app.CalibLabel.Text = 'Calib Exposure';
 
             % Create CalibExposureSpinner
-            app.CalibExposureSpinner = uispinner(app.CalibrationpowerexposurePanel);
-            app.CalibExposureSpinner.Position = [186 10 76 22];
+            app.CalibExposureSpinner = uispinner(app.CameraexposurePanel);
+            app.CalibExposureSpinner.Tooltip = {'Exposure setting of the camera during scanner calibration.'};
+            app.CalibExposureSpinner.Position = [219 12 62 22];
+
+            % Create ExposureSpinnerLabel_2
+            app.ExposureSpinnerLabel_2 = uilabel(app.CameraexposurePanel);
+            app.ExposureSpinnerLabel_2.HorizontalAlignment = 'right';
+            app.ExposureSpinnerLabel_2.Position = [2 12 56 22];
+            app.ExposureSpinnerLabel_2.Text = 'Exposure';
+
+            % Create StandardExposure
+            app.StandardExposure = uispinner(app.CameraexposurePanel);
+            app.StandardExposure.Tooltip = {'Exposure setting of the camera.'};
+            app.StandardExposure.Position = [62 11 65 22];
 
             % Create LaserpowerPanel
             app.LaserpowerPanel = uipanel(app.CalibrateScannersTab);
@@ -246,11 +248,6 @@ classdef view < matlab.apps.AppBase
             app.CalibratePanel.Title = 'Calibrate';
             app.CalibratePanel.Position = [114 4 176 120];
 
-            % Create RunScannerCalibrationButton
-            app.RunScannerCalibrationButton = uibutton(app.CalibratePanel, 'push');
-            app.RunScannerCalibrationButton.Position = [13 53 73 41];
-            app.RunScannerCalibrationButton.Text = {'Run'; 'Calibration'};
-
             % Create PointModeButton
             app.PointModeButton = uibutton(app.CalibratePanel, 'state');
             app.PointModeButton.Text = {'Point'; 'Mode'};
@@ -265,6 +262,12 @@ classdef view < matlab.apps.AppBase
             app.CheckCalibrationButton = uibutton(app.CalibratePanel, 'state');
             app.CheckCalibrationButton.Text = {'Check'; 'Calibration'};
             app.CheckCalibrationButton.Position = [13 2 73 41];
+
+            % Create RunScannerCalibrationButton
+            app.RunScannerCalibrationButton = uibutton(app.CalibratePanel, 'state');
+            app.RunScannerCalibrationButton.Tooltip = {'Run scanner calibration'};
+            app.RunScannerCalibrationButton.Text = {'Run'; 'Calibration'};
+            app.RunScannerCalibrationButton.Position = [13 53 73 41];
 
             % Create CalibrateSampleTab
             app.CalibrateSampleTab = uitab(app.TabGroup);

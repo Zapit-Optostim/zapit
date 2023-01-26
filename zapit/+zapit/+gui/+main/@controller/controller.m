@@ -29,8 +29,8 @@ classdef controller < zapit.gui.main.view
 
 
     properties(Hidden)
-        laserPowerBeforeCalib % Used to reset the laser power to the value it had before calibration
         nInd                  % A counter used by calibrateSample_Callback
+        updatePlotListener    % used in calibrateScanners_Callback and here so we can implement the canceling easily
         hStimConfigEditor     % The stim config editor (for making new stim config files)
         hLaserPowerGUI        % GUI for calibrating laser power
     end
@@ -249,15 +249,23 @@ classdef controller < zapit.gui.main.view
             % Purpose
             % Runs when the laser power slider is changed. If the laser calibration 
             % switch is On, the laser power is set to the power level listed in the 
-            % laser slideer.
+            % laser slider. Updates associated setting in file.
 
             if strcmp(obj.CalibLaserSwitch.Value,'On')
                 obj.model.setLaserInMW(event.Value)
             end
+            obj.model.settings.calibrateScanners.calibration_power_mW = round(obj.LaserPowerScannerCalibSlider.Value,1);
         end % setLaserPower_Callback
 
 
-        function updateClockedAcquisition(obj,~,~)
+        function setCamExposure_Callback(obj)
+            % Set exposiure of the camera
+            obj.model.cam.exposure = obj.StandardExposure.Value;
+            obj.model.settings.camera.default_exposure = obj.StandardExposure.Value;
+        end % setCamExposure
+
+
+        function updateClockedAcquisition(obj)
             % Listener callback to disable select GUI elements during a locked acquisition
 
             if obj.model.DAQ.doingClockedAcquisition
@@ -350,20 +358,6 @@ classdef controller < zapit.gui.main.view
             end
             obj.model.settings.calibrateScanners.beam_calib_exposure = obj.CalibExposureSpinner.Value;
         end % calibExposureSpinner_CallBack
-
-
-        function calibPowerSpinner_CallBack(obj,~,~)
-            %
-            % zapit.gui.main.controller.calibPowerSpinner_CallBack
-            %
-            % Purpose
-            % Changing the spinnerbox writes to the corresponding value in the settings structure. 
-
-            if obj.CalibPowerSpinner.Value < 0
-                obj.CalibPowerSpinner.Value = 0;
-            end
-            obj.model.settings.calibrateScanners.calibration_power_mW = obj.CalibPowerSpinner.Value;
-        end % calibPowerSpinner_CallBack
 
 
         function updateExperimentPathTextArea(obj,~,~)

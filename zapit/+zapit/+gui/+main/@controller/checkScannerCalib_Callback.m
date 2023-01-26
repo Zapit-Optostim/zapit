@@ -31,8 +31,6 @@
         % Turn on laser and set to the calibration laser power. Ditto for camera exposure
         % TODO -- this should maybe be done in zapit.pointer.checkScannerCalibClocked (TODO there)
         obj.model.cam.exposure = obj.model.settings.calibrateScanners.beam_calib_exposure;
-        obj.laserPowerBeforeCalib = obj.LaserPowerScannerCalibSlider.Value;
-        obj.LaserPowerScannerCalibSlider.Value = obj.CalibPowerSpinner.Value;
         obj.setCalibLaserSwitch('On');
 
         % Begin to run through the calibration coords
@@ -43,7 +41,6 @@
         obj.model.DAQ.stopAndDeleteAOTask; %Stop
 
         obj.setCalibLaserSwitch('Off');
-        obj.LaserPowerScannerCalibSlider.Value = obj.laserPowerBeforeCalib;
 
         % Tidy up
         obj.removeOverlays(mfilename)
