@@ -1,19 +1,18 @@
 # Change Log
 Code was initially written by Maja Skretowska and Rob Campbell at the Sainsbury Wellcome Centre (UCL) in 2021/2022.
-Early work was not well version controlled.
-Proof of principle work was done by RC (e.g. 33b2f092ab0da50f6d4320a7a07c64ac436765a7) and this was developed into a functioning piece of code capable of running experiments by MS (45e81e44b49a24efbe6d30964430a3c8221712ec)
-In Q3 2022 it became obvious the project worked well and a mature package was needed. 
-RC started work on this (68b502c6ff718496d2ae618ffb2c623a5e06c1b7) and by Q4 2022 a fairly clear structure had emerged for the core package (2f760e4651e6e8c98661a5974a217fc0414a2539) although the form of the GUI is not clear yet. 
+Early work was not version controlled.
+Proof of principle was done by RC and this was developed into a functioning piece of code capable of running experiments by MS.
+This in turn was converted into a polished project with a GUI by RC.
 
 This document describes significant code changes. 
-During early development (versions tagged with alpha in zapit.version) there will be little documentation here. 
-Once the system matures this document will be strictly updated and the versioning will be incremented properly.
-The project will adhere to [semantic versioning](http://semver.org) guidelines, meaning it has a version number denoted as `MAJOR.MINOR.PATCH`
+The project largely adheres to [semantic versioning](http://semver.org) guidelines, meaning it has a version number denoted as `MAJOR.MINOR.PATCH`
 
-* MAJOR version when you make incompatible API changes
-* MINOR version when you add functionality in a backwards compatible manner
-* PATCH version when you make backwards compatible bug fixes
+* The MAJOR version is incremented when there are incompatible API changes, or changes in functionality which might carry important caveats. You should review the nature of a MAJOR verison change before upgrading a production system. An example of a MAJOR change might be that the API commands running the experiments change. 
+* The MINOR version is incremented when functionality is added in a backwards compatible manner. This might mean significant new features that do not break existing functionality, or it might mean existing features are significantly improved. For example, addition of a rat atlas, or improviments in the way stimulus conditions are overlaid in the main GUI. 
+* The PATCH version is incremented when there are backwards compatible bug fixes. It may also be incremented by the addition of new example code snippets, or by code changes which result in no functionality change. 
 
+
+## Beta Versions
 
 2023/01/XX -- v0.9.0
  * Galvo waveforms are shaped to make them quieter: they are no almost inaudible even with the the galvo enclosure open.
@@ -21,6 +20,11 @@ The project will adhere to [semantic versioning](http://semver.org) guidelines, 
  * Laser rampdown time appears as a spinner in the stim config editor.
  * Update GUI with more buttons and tool-tips. Tidied it.
  * Validated that Zapit can correctly set laser power in mW. Tweaks so this works a little better. More work needed for calibration to be optimized and easy.
+ * Button states are now linked via a listener.
+ * Laser power calibration spinner removed. We use just the slider.
+ * Add a current exposure setting for the camera.
+ * Paint brain area onto brain.
+ * Write trial log file if user has defined an experiment directory
 
 
 2023/01/19 -- v0.8.0-beta
@@ -30,6 +34,8 @@ The project will adhere to [semantic versioning](http://semver.org) guidelines, 
  * Bugfixes, including GUI locking up when stim config saved or loaded by the new tool.
  * Minimal DAQ examples with .NET and Vidrio.
 
+
+## Alpha Versions
 
 2023/01/16 -- v0.7.0-alpha
  * Substantial refactoring and renaming.

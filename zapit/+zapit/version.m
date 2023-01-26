@@ -62,6 +62,5 @@ if nargout>0
     varargout{1} = out;
 else
     fprintf('%s\n', out.message)
-    disp('Zapit uses <a href="https://semver.org/">Semantic versioning</a>.')
 end
 
