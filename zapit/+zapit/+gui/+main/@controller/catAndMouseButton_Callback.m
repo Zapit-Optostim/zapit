@@ -43,9 +43,8 @@ function catAndMouseButton_Callback(obj,~,~)
             return
         end
 
+        % Send the beam to the last point the cursor was at
         [xVolts, yVolts] = obj.model.mmToVolt(X,Y);
-
-        % Update the last clicked position
         obj.plotOverlayHandles.hLastPoint.XData = X;
         obj.plotOverlayHandles.hLastPoint.YData = Y;
         obj.model.DAQ.moveBeamXY([xVolts, yVolts]);
