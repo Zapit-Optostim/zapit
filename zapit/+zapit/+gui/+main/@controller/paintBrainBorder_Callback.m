@@ -1,4 +1,4 @@
-    function paintBrainBorder_Callback(obj,~,~)
+    function paintBrainBorder_Callback(obj)
     % Use the laser to draw the brain outline onto the sample
     %
     %    function zapit.gui.main.controller.checkScannerCalib(obj)

@@ -1,4 +1,4 @@
-function exportWaveforms_Callback(obj,~,~)
+function exportWaveforms_Callback(obj)
     % Export all the DAQ waveforms for this stim config file as a .mat file
     %
     % zapit.gui.main.controller.exportWaveforms_Callback

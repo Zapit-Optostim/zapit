@@ -1,4 +1,4 @@
-function zapAllCoords_Callback(obj,~,~)
+function zapAllCoords_Callback(obj)
     % Cycle the beam over all the stimulus locations in no particular order
     %
     % zapit.gui.main.controller.zapAllCoords_Callback

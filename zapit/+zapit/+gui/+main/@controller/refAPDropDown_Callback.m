@@ -1,4 +1,4 @@
-function refAPDropDown_Callback(obj, ~, ~)
+function refAPDropDown_Callback(obj)
     % Callback that runs when the value of RefAPDropDown is changed
     %
     % function zapit.gui.main.controller.refAPDropDown_Callback

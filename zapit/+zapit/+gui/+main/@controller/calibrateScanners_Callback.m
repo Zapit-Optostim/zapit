@@ -1,4 +1,4 @@
-function calibrateScanners_Callback(obj,~,~)
+function calibrateScanners_Callback(obj)
     % Initiate the proces of calibrating the scanners with the camera
     %
     % zapit.gui.main.controller.calibrateScanners_Callback

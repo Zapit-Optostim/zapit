@@ -1,4 +1,4 @@
-function setExperimentPath_Callback(obj,~,~)
+function setExperimentPath_Callback(obj)
     % Set the experimentPath property in zapit.pointer
     %
     % zapit.gui.main.controller.setExperimentPath_Callback

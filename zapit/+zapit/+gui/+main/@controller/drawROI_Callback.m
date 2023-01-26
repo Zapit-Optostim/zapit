@@ -1,4 +1,4 @@
-function drawROI_Callback(obj,~,~)
+function drawROI_Callback(obj)
     % Draw a ROI to image a sub-set of the full FOV
     %
     % Purpose

@@ -1,4 +1,4 @@
-function catAndMouseButton_Callback(obj,~,~)
+function catAndMouseButton_Callback(obj)
     % Causes the laser beam to follow the mouse cursor around the screen
     %
     % zapit.gui.main.controller.catAndMouseButton_Callback

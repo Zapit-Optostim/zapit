@@ -241,7 +241,7 @@ classdef controller < zapit.gui.main.view
         end % set_sampleLampCalibrated
 
 
-        function setLaserPower_Callback(obj,src,event)
+        function setLaserPower_Callback(obj,~,event)
             % Set laser to listed power when switch is set to On
             %
             % zapit.gui.main.controller.setLaserPower_Callback
@@ -277,7 +277,7 @@ classdef controller < zapit.gui.main.view
             end
         end % updateClockedAcquisition
 
-        function switchLaser_Callback(obj,~,~)
+        function switchLaser_Callback(obj)
             % Turn on the laser when the switch is turned on
             %
             % zapit.gui.main.controller.switchLaser_Callback
@@ -321,7 +321,7 @@ classdef controller < zapit.gui.main.view
         end % pointSpacing_CallBack
 
 
-        function borderBuffer_CallBack(obj,~,~)
+        function borderBuffer_CallBack(obj)
             %
             % zapit.gui.main.controller.borderBuffer_CallBack
             %
@@ -332,7 +332,7 @@ classdef controller < zapit.gui.main.view
         end % borderBuffer_CallBack
 
 
-        function sizeThreshSpinner_CallBack(obj,~,~)
+        function sizeThreshSpinner_CallBack(obj)
             %
             % zapit.gui.main.controller.sizeThreshSpinner_CallBack
             %
@@ -346,7 +346,7 @@ classdef controller < zapit.gui.main.view
         end % sizeThreshSpinner_CallBack
 
 
-        function calibExposureSpinner_CallBack(obj,~,~)
+        function calibExposureSpinner_CallBack(obj)
             %
             % zapit.gui.main.controller.calibExposureSpinner_CallBack
             %
@@ -360,7 +360,7 @@ classdef controller < zapit.gui.main.view
         end % calibExposureSpinner_CallBack
 
 
-        function updateExperimentPathTextArea(obj,~,~)
+        function updateExperimentPathTextArea(obj)
             % Update the text in the experiment path message box when the zapit.pointer.experimentPath property changes
             %
             % zapit.gui.main.controller.updateExperimentPathTextArea
@@ -369,7 +369,7 @@ classdef controller < zapit.gui.main.view
         end % updateExperimentPathTextArea
 
 
-        function clearExperimentPath_Callback(obj,~,~)
+        function clearExperimentPath_Callback(obj)
             % Clear the experiment path
             %
             % zapit.gui.main.controller.clearExperimentPath_Callback
