@@ -1,7 +1,7 @@
 function varargout = logStimulusParametersToFile(obj, filePath)
     % Write all relevant data associated with this set of stimuli to a YAML file
     %
-    % function fname = logStimulusParametersToFile(obj, filePath)
+    % function fname = zapit.stimConfig.logStimulusParametersToFile(obj, filePath)
     %
     % Purpose
     % Create a log file so we know exactly under what conditions stimuli were

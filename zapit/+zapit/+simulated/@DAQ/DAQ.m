@@ -34,6 +34,7 @@ classdef DAQ < handle
         lastXgalvoVoltage  = 0
         lastYgalvoVoltage  = 0
         lastLaserVoltage = 0
+        doingClockedAcquisition = false; % Set to true if we are doing a clocked acquisition
     end %close GUI-related properties
 
 
@@ -65,6 +66,7 @@ classdef DAQ < handle
 
         function stopAndDeleteAOTask(obj)
             obj.lastWaveform = [];
+            obj.doingClockedAcquisition = false;
             obj.hAO.isTaskDone = true;
         end
 
@@ -81,10 +83,12 @@ classdef DAQ < handle
         end
 
         function start(obj)
+            obj.doingClockedAcquisition = true;
         end
 
         function stop(obj)
             obj.hAO.isTaskDone = false;
+            obj.doingClockedAcquisition = false;
         end
 
         function writeAnalogData(obj,waveforms)

@@ -16,9 +16,11 @@ classdef camera < handle
 
     properties
         exposure
-        ROI
     end
 
+    properties(SetObservable=true)
+        ROI
+    end
 
     properties(Hidden)
         isCamRunning=false
