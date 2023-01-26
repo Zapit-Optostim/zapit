@@ -70,6 +70,10 @@ function varargout = sendSamples(obj, varargin)
                 fullfile(obj.experimentPath,logParamFname))
         end
 
+        % By this point there must be a parameter log file and, since we are logging, we write 
+        % a trial log file also. 
+        obj.stimConfig.logTrialToFile(obj.experimentPath, conditionNumber, laserOn, hardwareTriggered)
+
     end
 
 
