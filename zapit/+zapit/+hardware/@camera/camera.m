@@ -114,6 +114,9 @@ classdef camera < handle
 
         function startVideo(obj)
             if isa(obj.vid,'videoinput')
+                if obj.isrunning % Do not try to start if we already running
+                    return
+                end
                 start(obj.vid)
                 trigger(obj.vid)
             end
@@ -122,6 +125,9 @@ classdef camera < handle
 
         function stopVideo(obj)
             if isa(obj.vid,'videoinput')
+                if ~obj.isrunning % Do not try to stop if we already running
+                    return
+                end
                 stop(obj.vid)
                 flushdata(obj.vid)
             end

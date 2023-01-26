@@ -41,6 +41,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
         pointCommonProps = {'ob', 'MarkerSize', 14, 'LineWidth', 2};
         standardMarkerSize = 14
         enlargedMarkerSize = 20
+        isCamRunning % Used to disable camera if the main GUI is running
     end
 
 
@@ -106,6 +107,15 @@ classdef controller < zapit.gui.stimConfigEditor.view
             hold(obj.hAx,'on')
             obj.pCurrentPoint = plot(nan,nan, obj.pointCommonProps{:},'Color','r','Parent',obj.hAx);
             hold(obj.hAx,'off')
+
+            % Disable camera if called from main GUI. The GUI may perform better if that is done.
+            if ~isempty(obj.mainGUI)
+                obj.isCamRunning = obj.mainGUI.model.cam.isrunning;
+                if obj.isCamRunning
+                    obj.mainGUI.model.cam.stopVideo;
+                end
+            end
+
         end %close constructor
 
 
@@ -114,6 +124,11 @@ classdef controller < zapit.gui.stimConfigEditor.view
             %
             % function zapit.gui.stimConfig.controller.delete
             %
+
+            % re-enable camera if needed
+            if ~isempty(obj.mainGUI) && obj.isCamRunning
+                obj.mainGUI.model.cam.startVideo;
+            end
 
             delete(obj.hFig);
         end %close destructor
