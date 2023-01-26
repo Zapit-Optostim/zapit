@@ -258,14 +258,14 @@ classdef controller < zapit.gui.main.view
         end % setLaserPower_Callback
 
 
-        function setCamExposure_Callback(obj)
+        function setCamExposure_Callback(obj,~,~)
             % Set exposiure of the camera
             obj.model.cam.exposure = obj.StandardExposure.Value;
             obj.model.settings.camera.default_exposure = obj.StandardExposure.Value;
         end % setCamExposure
 
 
-        function updateClockedAcquisition(obj)
+        function updateClockedAcquisition(obj,~,~)
             % Listener callback to disable select GUI elements during a locked acquisition
 
             if obj.model.DAQ.doingClockedAcquisition
