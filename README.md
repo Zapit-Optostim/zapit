@@ -5,6 +5,7 @@ This software runs a scanning opto-stim system used to automatically point a bea
 Code was initially written by Maja Skretowska and Rob Campbell at the Sainsbury Wellcome Centre (UCL) in 2021/2022.
 The [Change Log](CHANGELOG.md) describes the project history and recent changes.
 
+
 ## How it works
 A narrow collimated beam enters the scan head and is focused on the sample using a single scan lens.
 The scan lens doubles as an objective and the sample is imaged onto a camera in order to visualise where the beam is pointing.
@@ -27,6 +28,9 @@ If you run into errors when setting up with a driver other than GenICam, please 
 
 ## Install & Usage
 For install and user instructions please see the [documentation pages](https://zapit.gitbook.io/user-guide/).
+If you have a problem or feature request, it is preferred that you use the Issue Tracker in the appropriate repository. 
+For instance, all software issues should be filed in [Zapit Issue Tracker](https://github.com/Zapit-Optostim/zapit/issues).
+Please see the [list of known obvious bugs and issues](https://github.com/Zapit-Optostim/zapit/issues?q=is%3Aissue+is%3Aopen+label%3A%22Known+obvious+issue%22).
 
 
 ## Contributing
