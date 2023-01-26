@@ -1,18 +1,19 @@
 # zapit
 [![View zapit on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://uk.mathworks.com/matlabcentral/fileexchange/122142-zapit)
 
-This software runs a scanning opto-stim system used to automatically point a beam at a series of brain areas.
+Zapit is software that runs a scanning opto-stim system for head-fixed mouse behavior.
 Code was initially written by Maja Skretowska and Rob Campbell at the Sainsbury Wellcome Centre (UCL) in 2021/2022.
 The [Change Log](CHANGELOG.md) describes the project history and recent changes.
 
 
 ## How it works
-A narrow collimated beam enters the scan head and is focused on the sample using a single scan lens.
-The scan lens doubles as an objective and the sample is imaged onto a camera in order to visualise where the beam is pointing.
-The software registered the scanners to the camera, allowing the user to place the beam in any desired location by clicking there on the live image feed.
-The software also registers stereotaxic coordinates into the camera space, allowing the user to point the beam to coordinates defined with respect to bregma. 
-A tool for building coordinate files for stimulation is provided. 
-A simple API for integrating the stimulation into existing behavioral code is provided.
+A pair of scan mirrors deflect an incoming laser beam, which is focused onto the exposed skull with a lens.
+This lens is also used to images the sample onto a camera in order to visualise where the beam is pointing.
+Zapit registers the scanners to the camera, allowing the user to place the beam in any desired location by clicking there on a live image feed.
+Zapit then registers stereotaxic coordinates into the camera space, allowing the user to point the beam to coordinates defined with respect to bregma. 
+A graphical tool builds experiment coordinate files using a top-down view of the Allen Atlas.
+A flexible, general purpose, MATLAB API for integrating stimulation into existing behavioral code is provided.
+For further details see the [documentation pages](https://zapit.gitbook.io/user-guide/).
 
 
 ## Requirements

@@ -4,15 +4,20 @@ Early work was not version controlled.
 Proof of principle was done by RC and this was developed into a functioning piece of code capable of running experiments by MS.
 This in turn was converted into a polished project with a GUI by RC.
 
-This document describes significant code changes. 
+### Versioning Approach
 The project largely adheres to [semantic versioning](http://semver.org) guidelines, meaning it has a version number denoted as `MAJOR.MINOR.PATCH`
 
 * The MAJOR version is incremented when there are incompatible API changes, or changes in functionality which might carry important caveats. You should review the nature of a MAJOR verison change before upgrading a production system. An example of a MAJOR change might be that the API commands running the experiments change. 
 * The MINOR version is incremented when functionality is added in a backwards compatible manner. This might mean significant new features that do not break existing functionality, or it might mean existing features are significantly improved. For example, addition of a rat atlas, or improviments in the way stimulus conditions are overlaid in the main GUI. 
 * The PATCH version is incremented when there are backwards compatible bug fixes. It may also be incremented by the addition of new example code snippets, or by code changes which result in no functionality change. 
 
+### Upgrade Notifications
+The Zapit main window will print a notification in the title bar when a new version is available.
 
-## Beta Versions
+
+## Version History
+
+### Beta Versions
 
 2023/01/XX -- v0.9.0
  * Galvo waveforms are shaped to make them quieter: they are no almost inaudible even with the the galvo enclosure open.
@@ -35,7 +40,7 @@ The project largely adheres to [semantic versioning](http://semver.org) guidelin
  * Minimal DAQ examples with .NET and Vidrio.
 
 
-## Alpha Versions
+### Alpha Versions
 
 2023/01/16 -- v0.7.0-alpha
  * Substantial refactoring and renaming.
