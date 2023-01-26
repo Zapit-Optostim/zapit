@@ -72,9 +72,9 @@ classdef controller < zapit.gui.stimConfigEditor.view
             obj.settings = zapit.settings.readSettings;
 
             % Button callbacks
-            obj.NewButton.ButtonPushedFcn = @(~,~) obj.resetPoints_Callback;
-            obj.LoadButton.ButtonPushedFcn = @(~,~) obj.loadConfigYAML;
-            obj.SaveButton.ButtonPushedFcn = @(~,~) obj.saveConfigYAML;
+            obj.NewButton.ButtonPushedFcn = @obj.resetPoints_Callback;
+            obj.LoadButton.ButtonPushedFcn = @obj.loadConfigYAML;
+            obj.SaveButton.ButtonPushedFcn = @obj.saveConfigYAML;
 
             % Set figure properties
             obj.hFig.Color = 'w';
@@ -223,7 +223,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
         end % resetPoints_Callback
 
 
-        function saveConfigYAML(obj)
+        function saveConfigYAML(obj,~,~)
             % Save config to a YAML
             %
             % function zapit.gui.stimConfig.controller.saveConfigYAML
@@ -270,7 +270,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
         end %saveConfigYAML
 
 
-        function loadConfigYAML(obj)
+        function loadConfigYAML(obj,~,~)
             % Load a YAML containing a stimulus config
             %
             % function zapit.gui.stimConfig.controller.loadConfigYAML
