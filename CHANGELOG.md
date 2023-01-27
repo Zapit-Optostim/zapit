@@ -29,7 +29,8 @@ The Zapit main window will print a notification in the title bar when a new vers
  * Laser power calibration spinner removed. We use just the slider.
  * Add a current exposure setting for the camera.
  * Paint brain area onto brain.
- * Write trial log file if user has defined an experiment directory
+ * Write trial log file if user has defined an experiment directory.
+ * Standalone start of the stim config editor with zapit.stimConfigEditor
 
 
 2023/01/19 -- v0.8.0-beta
