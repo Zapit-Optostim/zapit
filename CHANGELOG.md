@@ -7,8 +7,8 @@ This in turn was converted into a polished project with a GUI by RC.
 ### Versioning Approach
 The project largely adheres to [semantic versioning](http://semver.org) guidelines, meaning it has a version number denoted as `MAJOR.MINOR.PATCH`
 
-* The MAJOR version is incremented when there are incompatible API changes, or changes in functionality which might carry important caveats. You should review the nature of a MAJOR verison change before upgrading a production system. An example of a MAJOR change might be that the API commands running the experiments change. 
-* The MINOR version is incremented when functionality is added in a backwards compatible manner. This might mean significant new features that do not break existing functionality, or it might mean existing features are significantly improved. For example, addition of a rat atlas, or improviments in the way stimulus conditions are overlaid in the main GUI. 
+* The MAJOR version is incremented when there are incompatible API changes, or changes in functionality which might carry important caveats. You should review the nature of a MAJOR version change before upgrading a production system. An example of a MAJOR change might be that the API commands running the experiments change. 
+* The MINOR version is incremented when functionality is added in a backwards compatible manner. This might mean significant new features that do not break existing functionality, or it might mean existing features are significantly improved. For example, addition of a rat atlas, or improvements in the way stimulus conditions are overlaid in the main GUI. 
 * The PATCH version is incremented when there are backwards compatible bug fixes. It may also be incremented by the addition of new example code snippets, or by code changes which result in no functionality change. 
 
 ### Upgrade Notifications
@@ -31,7 +31,7 @@ The Zapit main window will print a notification in the title bar when a new vers
  * Paint brain area onto brain.
  * Write trial log file if user has defined an experiment directory.
  * Standalone start of the stim config editor with zapit.stimConfigEditor
-
+ * Add button that plots the currently loaded stim config so the user knows which stim index is where.
 
 2023/01/19 -- v0.8.0-beta
  * Settings file updates with calibrate sample spinboxes
@@ -56,7 +56,7 @@ The Zapit main window will print a notification in the title bar when a new vers
  * Move relevant methods into zapit.stimConfig
  * zapit.stimConfig.makeChanSamples is now turned into a getter of chanSamples
  * Recent files updates when files are missing. The list is cached and re-appears on reload.
- * Move vidrio wrapper into the project (thanks to Vidrio for granting permission).
+ * Move Vidrio wrapper into the project (thanks to Vidrio for granting permission).
  * Make a GUI to build stim config files. This is the last version that will use the existing stim config format!
 
 

@@ -73,6 +73,7 @@ function prepareWindow(obj)
     obj.OverlaystimsitesButton.ValueChangedFcn = @obj.overlayStimSites_Callback;
     obj.ZapallcoordsButton.ValueChangedFcn = @obj.zapAllCoords_Callback;
     obj.ZapSiteButton.ValueChangedFcn = @obj.zapSite_Callback;
+    obj.PlotstimcoordsButton.ButtonPushedFcn = @(~,~) zapit.utils.plotStimuli(obj.model.stimConfig);
     obj.PaintareaButton.ValueChangedFcn = @obj.paintArea_Callback;
 
     obj.ExportwaveformsButton.ButtonPushedFcn = @obj.exportWaveforms_Callback;

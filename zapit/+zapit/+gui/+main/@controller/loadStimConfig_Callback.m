@@ -24,7 +24,6 @@ function loadStimConfig_Callback(obj,src,~)
     elseif ~isempty(src.UserData) % It came from the recents menu
         [fpath,pointsFile,ext] = fileparts(src.UserData);
         pointsFile = [pointsFile,ext];
-        disp('LOADING')
     elseif isempty(src.UserData) % It's the load menu
         % UI file getter
         [pointsFile,fpath] = uigetfile({'*.yml','*.yaml'},'Pick a config file');

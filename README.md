@@ -8,7 +8,7 @@ The [Change Log](CHANGELOG.md) describes the project history and recent changes.
 
 ## How it works
 A pair of scan mirrors deflect an incoming laser beam, which is focused onto the exposed skull with a lens.
-This lens is also used to images the sample onto a camera in order to visualise where the beam is pointing.
+This lens is also used to image the sample onto a camera in order to visualise where the beam is pointing.
 Zapit registers the scanners to the camera, allowing the user to place the beam in any desired location by clicking there on a live image feed.
 Zapit then registers stereotaxic coordinates into the camera space, allowing the user to point the beam to coordinates defined with respect to bregma. 
 A graphical tool builds experiment coordinate files using a top-down view of the Allen Atlas.
