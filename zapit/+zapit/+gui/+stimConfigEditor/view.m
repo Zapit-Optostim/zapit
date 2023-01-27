@@ -2,23 +2,23 @@ classdef view < matlab.apps.AppBase
 
     % Properties that correspond to app components
     properties (Access = public)
-        hFig                      matlab.ui.Figure
-        GridLayout                matlab.ui.container.GridLayout
-        Panel                     matlab.ui.container.Panel
-        RampdownmsSpinner         matlab.ui.control.Spinner
-        RampdownmsSpinnerLabel    matlab.ui.control.Label
-        StimFreqHzSpinner         matlab.ui.control.Spinner
-        StimFreqHzSpinnerLabel    matlab.ui.control.Label
-        LaserPowermWSpinner       matlab.ui.control.Spinner
-        LaserPowermWSpinnerLabel  matlab.ui.control.Label
-        AddPointButtonGroup       matlab.ui.container.ButtonGroup
-        BilateralButton           matlab.ui.control.RadioButton
-        UnilateralButton          matlab.ui.control.RadioButton
-        BottomLabel               matlab.ui.control.Label
-        SaveButton                matlab.ui.control.Button
-        LoadButton                matlab.ui.control.Button
-        NewButton                 matlab.ui.control.Button
-        hAx                       matlab.ui.control.UIAxes
+        hFig                    matlab.ui.Figure
+        GridLayout              matlab.ui.container.GridLayout
+        Panel                   matlab.ui.container.Panel
+        RampdownmsSpinner       matlab.ui.control.Spinner
+        RampdownmsLabel         matlab.ui.control.Label
+        StimFreqHzSpinner       matlab.ui.control.Spinner
+        StimFreqHzSpinnerLabel  matlab.ui.control.Label
+        LaserPowermWSpinner     matlab.ui.control.Spinner
+        LaserPowermWLabel       matlab.ui.control.Label
+        AddPointButtonGroup     matlab.ui.container.ButtonGroup
+        BilateralButton         matlab.ui.control.RadioButton
+        UnilateralButton        matlab.ui.control.RadioButton
+        BottomLabel             matlab.ui.control.Label
+        SaveButton              matlab.ui.control.Button
+        LoadButton              matlab.ui.control.Button
+        NewButton               matlab.ui.control.Button
+        hAx                     matlab.ui.control.UIAxes
     end
 
     % Component initialization
@@ -93,11 +93,11 @@ classdef view < matlab.apps.AppBase
             app.BilateralButton.Position = [84 0 66 22];
             app.BilateralButton.Value = true;
 
-            % Create LaserPowermWSpinnerLabel
-            app.LaserPowermWSpinnerLabel = uilabel(app.Panel);
-            app.LaserPowermWSpinnerLabel.HorizontalAlignment = 'right';
-            app.LaserPowermWSpinnerLabel.Position = [404 58 107 22];
-            app.LaserPowermWSpinnerLabel.Text = 'Laser  Power (mW)';
+            % Create LaserPowermWLabel
+            app.LaserPowermWLabel = uilabel(app.Panel);
+            app.LaserPowermWLabel.HorizontalAlignment = 'right';
+            app.LaserPowermWLabel.Position = [408 58 103 22];
+            app.LaserPowermWLabel.Text = 'Laser Power (mW)';
 
             % Create LaserPowermWSpinner
             app.LaserPowermWSpinner = uispinner(app.Panel);
@@ -119,11 +119,11 @@ classdef view < matlab.apps.AppBase
             app.StimFreqHzSpinner.Position = [517 29 56 22];
             app.StimFreqHzSpinner.Value = 40;
 
-            % Create RampdownmsSpinnerLabel
-            app.RampdownmsSpinnerLabel = uilabel(app.Panel);
-            app.RampdownmsSpinnerLabel.HorizontalAlignment = 'right';
-            app.RampdownmsSpinnerLabel.Position = [241 29 96 22];
-            app.RampdownmsSpinnerLabel.Text = 'Ramp down (ms)';
+            % Create RampdownmsLabel
+            app.RampdownmsLabel = uilabel(app.Panel);
+            app.RampdownmsLabel.HorizontalAlignment = 'right';
+            app.RampdownmsLabel.Position = [244 29 93 22];
+            app.RampdownmsLabel.Text = 'Rampdown (ms)';
 
             % Create RampdownmsSpinner
             app.RampdownmsSpinner = uispinner(app.Panel);
