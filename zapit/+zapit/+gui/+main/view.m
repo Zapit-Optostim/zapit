@@ -9,7 +9,6 @@ classdef view < matlab.apps.AppBase
         LoadrecentMenu                 matlab.ui.container.Menu
         ToolsMenu                      matlab.ui.container.Menu
         CalibratelaserMenu             matlab.ui.container.Menu
-        ReloadsettingsMenu             matlab.ui.container.Menu
         HelpMenu                       matlab.ui.container.Menu
         FileGitHubissueMenu            matlab.ui.container.Menu
         GeneratesupportreportMenu      matlab.ui.container.Menu
@@ -105,10 +104,6 @@ classdef view < matlab.apps.AppBase
             % Create CalibratelaserMenu
             app.CalibratelaserMenu = uimenu(app.ToolsMenu);
             app.CalibratelaserMenu.Text = 'Calibrate laser';
-
-            % Create ReloadsettingsMenu
-            app.ReloadsettingsMenu = uimenu(app.ToolsMenu);
-            app.ReloadsettingsMenu.Text = 'Reload settings';
 
             % Create HelpMenu
             app.HelpMenu = uimenu(app.hFig);
@@ -211,7 +206,7 @@ classdef view < matlab.apps.AppBase
             % Create LaserpowerPanel
             app.LaserpowerPanel = uipanel(app.CalibrateScannersTab);
             app.LaserpowerPanel.BorderType = 'none';
-            app.LaserpowerPanel.Title = 'Laser power';
+            app.LaserpowerPanel.Title = 'Laser power (mW)';
             app.LaserpowerPanel.Position = [301 1 281 66];
 
             % Create LaserPowerScannerCalibSlider

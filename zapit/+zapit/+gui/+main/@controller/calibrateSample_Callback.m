@@ -28,7 +28,7 @@ function calibrateSample_Callback(obj,~,~)
 
     hold(obj.hImAx,'on')
     obj.plotOverlayHandles.brainOutline = plot(nan,nan,'c-','linewidth', 2, 'parent', obj.hImAx);
-    obj.plotOverlayHandles.bregma = plot(nan,nan,'or','markerfacecolor','r','parent',obj.hImAx);
+    obj.plotOverlayHandles.bregma = plot(nan,nan,'or','markerfacecolor','none','parent',obj.hImAx);
     hold(obj.hImAx,'off')
 
     obj.removeOverlays('brainOutlineCalibrated');

@@ -52,8 +52,8 @@ function mouseClick_Callback(obj,~,~)
                 obj.pAddedPoints(end).XData(end+1) = obj.pCurrentPoint.XData;
                 obj.pAddedPoints(end).YData(end+1) = obj.pCurrentPoint.YData;
             else
-                fprintf(['Maximum number of allowed points per stimulus condition is %d. ', ...
-                    'You can change this in the settings file.\n'], maxPointsPerCondition)
+                fprintf('Maximum number of allowed points per stimulus condition is %d.\n', ...
+                        maxPointsPerCondition)
             end
         end
         hold(obj.hAx,'on')
