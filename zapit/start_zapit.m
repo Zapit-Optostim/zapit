@@ -46,6 +46,19 @@ function start_zapit(varargin)
     hZP = zapit.utils.getObject(true);
 
     if isempty(hZP)
+
+
+        % If the user has requested the Python bridge we attempt to connect and bail
+        % out if this fails. A message will be produced by the connection function.
+        settings = zapit.settings.readSettings;
+        if settings.general.openPythonBridgeOnStartup
+            if ~zapit.utils.openPythonBridge
+                return
+            else
+                fprintf('Opened Python Bridge\n')
+            end
+        end
+
         %If not, we build hZP and place it in the base workspace
         try
             if simulated

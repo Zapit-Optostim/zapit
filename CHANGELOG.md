@@ -19,7 +19,7 @@ The Zapit main window will print a notification in the title bar when a new vers
 
 ### Beta Versions
 
-2023/01/XX -- v0.9.0
+2023/01/29 -- v0.9.0-beta
  * Galvo waveforms are shaped to make them quieter: they are no almost inaudible even with the the galvo enclosure open.
  * Reset ROI disabled if field is full. Last ROI is re-applied on startup.
  * Laser rampdown time appears as a spinner in the stim config editor.

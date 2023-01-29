@@ -12,8 +12,7 @@ This lens is also used to image the sample onto a camera in order to visualise w
 Zapit registers the scanners to the camera, allowing the user to place the beam in any desired location by clicking there on a live image feed.
 Zapit then registers stereotaxic coordinates into the camera space, allowing the user to point the beam to coordinates defined with respect to bregma. 
 A graphical tool builds experiment coordinate files using a top-down view of the Allen Atlas.
-A flexible, general purpose, MATLAB API for integrating stimulation into existing behavioral code is provided.
-For further details see the [documentation pages](https://zapit.gitbook.io/user-guide/).
+A flexible, general purpose, MATLAB API for integrating stimulation into existing behavioral code [is provided](https://github.com/Zapit-Optostim/zapit-Python-Bridge).
 
 
 ## Requirements
@@ -28,7 +27,7 @@ If you run into errors when setting up with a driver other than GenICam, please 
 
 
 ## Install & Usage
-For install and user instructions please see the [documentation pages](https://zapit.gitbook.io/user-guide/).
+A detailed installation and user guide is coming soon. 
 If you have a problem or feature request, it is preferred that you use the Issue Tracker in the appropriate repository. 
 For instance, all software issues should be filed in [Zapit Issue Tracker](https://github.com/Zapit-Optostim/zapit/issues).
 Please see the [list of known obvious bugs and issues](https://github.com/Zapit-Optostim/zapit/issues?q=is%3Aissue+is%3Aopen+label%3A%22Known+obvious+issue%22).

@@ -4,6 +4,7 @@ function settings = default_settings
     % settings = default_settings
 
     settings.general.maxSettingsBackUpFiles = 50;
+    settings.general.openPythonBridgeOnStartup = 0;
 
     settings.NI.device_ID = 'Dev1';
     settings.NI.samplesPerSecond = 10000;

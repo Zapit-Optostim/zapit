@@ -33,6 +33,14 @@ function [settings,allValid] = checkSettingsAreValid(settings)
         allValid=false;
     end
 
+    if ~isnumeric(settings.general.openPythonBridgeOnStartup) ...
+        || ~isscalar(settings.general.openPythonBridgeOnStartup)
+        fprintf('general.openPythonBridgeOnStartup should be a logical scalar. Setting it to %d \n', ...
+            DEFAULT_SETTINGS.general.openPythonBridgeOnStartup)
+        settings.general.openPythonBridgeOnStartup = DEFAULT_SETTINGS.general.openPythonBridgeOnStartup;
+        allValid=false;
+    end
+
 
     %% 
     %
