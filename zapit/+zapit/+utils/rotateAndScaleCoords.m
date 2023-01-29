@@ -1,7 +1,7 @@
 function [calibratedPoints,rotMat] = rotateAndScaleCoords(template, refPointsStereotaxic, refPointsSample)
     % Calculate rotation and displacement of sample with respect to stereotaxic coords and apply to data
     %
-    % function [calibratedPoints,rotMat] = rotateAndScaleCoords(template, refPointsStereotaxic, refPointsSample)
+    % function [calibratedPoints,rotMat] = zapit.utils.rotateAndScaleCoords(template, refPointsStereotaxic, refPointsSample)
     %
     % Purpose
     % Calculates scale and rotation between the sample coords (refPointsSample) and standard

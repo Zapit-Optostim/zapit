@@ -42,8 +42,8 @@ classdef pointer < handle
 
 
     properties (SetObservable=true)
-        experimentPath % The absolute path to an experiment folder. This is used to automatically write log data
-                       % when zapit.pointer.sendSamples is called.
+        experimentPath = '' % The absolute path to an experiment folder. This is used to automatically write log data
+                            % when zapit.pointer.sendSamples is called.
         settings % The settings read in from the YAML file
     end % observable properties
 
@@ -254,6 +254,19 @@ classdef pointer < handle
             settingsFile = zapit.settings.findSettingsFile;
             zapit.yaml.WriteYaml(settingsFile,obj.settings);
         end % saveSettingsFile
+
+
+        function clearExperimentPath(obj)
+            % Set experimet path to an empty string
+            %
+            % function zapit.pointer.clearExperimentPath(obj)
+            %
+            % Purpose
+            % Set the experiment path to be an empty string so we do not log
+            % stimulus information when calling zapit.pointer.sendSamples
+
+            obj.experimentPath = '';
+        end % clearExperimentPath
 
 
         function im = returnCurrentFrame(obj,nFrames)

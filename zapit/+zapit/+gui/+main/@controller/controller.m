@@ -374,7 +374,7 @@ classdef controller < zapit.gui.main.view
             %
             % zapit.gui.main.controller.clearExperimentPath_Callback
 
-            obj.model.experimentPath = '';
+            obj.model.clearExperimentPath;
         end % clearExperimentPath_Callback
 
 
