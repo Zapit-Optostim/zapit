@@ -56,6 +56,25 @@ classdef stimConfig < handle
         end % Destructor
 
 
+        function n = numConditions(obj)
+            % Return the number of stimulus conditions.
+            %
+            % zapit.stimConfig.numConditions
+            %
+            % Purpose
+            % Return the number of stimulus conditions
+            % 
+            % Inputs
+            % none
+            % 
+            % Outputs
+            % n - scalar defining the number of conditions
+
+            n = length(obj.stimLocations);
+
+        end % numConditions
+
+
         function cPoints = calibratedPoints(obj) 
             % The stimulation locations after they have been calibrated to the sample
             % 
@@ -83,7 +102,7 @@ classdef stimConfig < handle
                 return
             end
 
-            for ii = 1:length(obj.stimLocations)
+            for ii = 1:obj.numConditions
                 tmpMat = [obj.stimLocations(ii).ML; obj.stimLocations(ii).AP];
                 cPoints{ii} = zapit.utils.rotateAndScaleCoords(...
                             tmpMat, ...

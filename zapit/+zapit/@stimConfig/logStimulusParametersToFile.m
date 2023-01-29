@@ -30,7 +30,7 @@ function varargout = logStimulusParametersToFile(obj, filePath)
     data.stimFreqInHz = obj.stimFreqInHz;
     data.offRampDownDuration_ms = obj.offRampDownDuration_ms;
 
-    for ii = 1:length(obj.stimLocations)
+    for ii = 1:obj.numConditions
         fieldName = sprintf('stimLocations%02d',ii);
         data.(fieldName) = obj.stimLocations(ii);
     end

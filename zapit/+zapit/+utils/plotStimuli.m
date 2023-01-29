@@ -14,6 +14,14 @@ function varargout = plotStimuli(stim)
     % Outputs
     % None
     %
+    % Examples
+    %
+    % - To plot the currently loaded stim config in the GUI
+    % >> zapit.utils.plotStimuli(hZP.stimConfig)
+    %
+    % - To plot a stim config file in the current directory
+    % >> zapit.utils.plotStimuli('myStimuli.yml')
+    %
     %
     % Rob Campbell - SWC, 2023
 

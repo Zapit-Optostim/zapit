@@ -79,7 +79,7 @@ function varargout = sendSamples(obj, varargin)
 
     % Choose a random condition if necessary
     if isempty(conditionNumber)
-        r = randperm(length(obj.stimConfig.stimLocations));
+        r = randperm(obj.stimConfig.numConditions);
         conditionNumber = r(1);
     end
 

@@ -14,7 +14,8 @@ function print(obj)
     %  4. ML = -0.04 / AP = -3.89  Superior colliculus zonal layer
 
     fprintf('\n')
-    for ii=1:length(obj.stimLocations)
+
+    for ii = 1:obj.numConditions
         tStim = obj.stimLocations(ii);
         areaNames = obj.getAreaNameFromCoords(tStim.ML, tStim.AP);
 
