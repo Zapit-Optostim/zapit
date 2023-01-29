@@ -31,8 +31,6 @@ function plotChanSamples(obj, conditionToPlot)
     digOut =  chanSamples.light(:,2,conditionToPlot);
     xGalvo =  chanSamples.scan(:,1,conditionToPlot);
     yGalvo =  chanSamples.scan(:,2,conditionToPlot);
-    numHalfCycles = 4; % TODO -- should not be here like this. SETTINGS!
-    edgeSamples = ceil(linspace(1, obj.numSamplesPerChannel, numHalfCycles+1));
 
 
 
@@ -46,32 +44,31 @@ function plotChanSamples(obj, conditionToPlot)
     hold on
     plot(yGalvo,'.r','MarkerSize',10);
 
-    for ii = edgeSamples
+    for ii = obj.edgeSamples
         plot([ii ii],ylim,'g--','LineWidth',1)
     end
     title('analog output to scan mirrors')
-    ylabel('area')
+    ylabel('Galvo voltage')
         
     subplot(3,1,2)
     % analog volt output to laser and masking light
     plot(anlgOut,'.','MarkerSize',10);
     hold on
-    for ii = edgeSamples
+    for ii = obj.edgeSamples
         plot([ii ii],ylim,'g--','LineWidth',1)
     end
     title('analog output to laser')
     ylabel('amplitude')
         
     subplot(3,1,3)
-    % digital volt output to laser <--- TODO what is this?
     plot(digOut,'.','MarkerSize',10);
     hold on
-    for ii = edgeSamples
+    for ii = obj.edgeSamples
         plot([ii ii],ylim,'g--','LineWidth',1)
     end
 
     title('analog output to masking light')
-    ylabel('on/off')
+    ylabel('amplitude')
     xlabel(sprintf('samples (at %d Hz)', obj.parent.DAQ.samplesPerSecond))
     
 end % plotChanSamples

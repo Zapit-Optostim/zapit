@@ -5,7 +5,12 @@ function mouseClick_Callback(obj,~,~)
     %
     % Rob Campbell - SWC 2023
 
+    verbose = false;
 
+    if verbose
+        fprintf('mouseClick_Callback executed\n')
+    end
+    
     C = get(obj.hAx, 'CurrentPoint');
     X = C(1,1);
     Y = C(1,2);
@@ -16,7 +21,7 @@ function mouseClick_Callback(obj,~,~)
     if X<xl(1) || X>xl(2) || Y<yl(1) || Y>yl(2)
         return
     end
-
+    
     % TODO -- should we make it impossible to place points outside of the brain?
 
     % Each time the user clicks we will add a new data point color and symbol.
@@ -47,8 +52,8 @@ function mouseClick_Callback(obj,~,~)
                 obj.pAddedPoints(end).XData(end+1) = obj.pCurrentPoint.XData;
                 obj.pAddedPoints(end).YData(end+1) = obj.pCurrentPoint.YData;
             else
-                fprintf(['Maximum number of allowed points per stimulus condition is %d. ', ...
-                    'You can change this in the settings file.\n'], maxPointsPerCondition)
+                fprintf('Maximum number of allowed points per stimulus condition is %d.\n', ...
+                        maxPointsPerCondition)
             end
         end
         hold(obj.hAx,'on')
@@ -57,8 +62,5 @@ function mouseClick_Callback(obj,~,~)
 
     % Update the text along the bottom
     obj.updateBottomLabel
-
-
-
 
 end

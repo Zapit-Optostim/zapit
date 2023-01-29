@@ -1,13 +1,21 @@
-function logStimulusParametersToFile(obj, filePath)
+function varargout = logStimulusParametersToFile(obj, filePath)
     % Write all relevant data associated with this set of stimuli to a YAML file
     %
-    % function logStimulusParametersToFile(obj, filePath)
+    % function fname = zapit.stimConfig.logStimulusParametersToFile(obj, filePath)
     %
     % Purpose
     % Create a log file so we know exactly under what conditions stimuli were
     % presented in an experiment. This includes not only stimulus locations and
     % parameters but also software version. It is critical to generate this file
     % or it may not be possible to analyse data afterwards.
+    %
+    % Inputs
+    % filePath - the path to the file to write.
+    %
+    % Outputs
+    % fname - the fname of the file that was written.
+    %
+    % Rob Campbell - SWC 2023
      
     v = zapit.version;
     data.zapitVersion = v.message;
@@ -22,12 +30,16 @@ function logStimulusParametersToFile(obj, filePath)
     data.stimFreqInHz = obj.stimFreqInHz;
     data.offRampDownDuration_ms = obj.offRampDownDuration_ms;
 
-    for ii = 1:length(obj.stimLocations)
+    for ii = 1:obj.numConditions
         fieldName = sprintf('stimLocations%02d',ii);
         data.(fieldName) = obj.stimLocations(ii);
     end
 
-    fname = sprintf('zapit_log_%s.yml', datestr(now,'yyyy_mm_dd__HH-MM'));
-
+    fname = sprintf('%s%s.yml', obj.logFileStem, datestr(now,'yyyy_mm_dd__HH-MM'));
     zapit.yaml.WriteYaml(fullfile(filePath,fname), data);
+
+    if nargout>0
+        varargout{1}=fname;
+    end
+
 end % logStimulusParametersToFile

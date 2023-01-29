@@ -78,7 +78,7 @@ classdef minimalStimPresenter < handle
         rampDownInMS = 250  % Generally this is a good number. If the user has specified 
                             % something else it will be in the stimConfig file. 
 
-        samplesPerSecond = 1E6 % This must match  the number used to build the waveforms                                % performance.
+        samplesPerSecond = 1E6 % This must match the number used to build the waveforms
 
         device_ID = 'Dev1' % Must be set to the name of your device. This can be done
                           % optionally at instantiation (see constructor)
@@ -210,7 +210,7 @@ classdef minimalStimPresenter < handle
 
             numSamplesPerChannel=length(obj.waveforms{1});
 
-            hardwareTriggered = false; % set to true if you want to wait for a hardware trigger
+            obj.hardwareTriggered = false; % set to true if you want to wait for a hardware trigger
 
             % Just in case a task already exists (TODO: do we need this for this example)
             if ~isempty(obj.hAO)
@@ -251,8 +251,7 @@ classdef minimalStimPresenter < handle
             % Configure the trigger
             if obj.hardwareTriggered
                 % Wait for line PFI0 to go high before playing waveforms
-                % TODO -- set this up
-                %%obj.hAO.cfgDigEdgeStartTrig('PFI0', 'DAQmx_Val_Rising');
+                obj.hAO.Triggers.StartTrigger.ConfigureDigitalEdgeTrigger('PFI0', DigitalEdgeStartTriggerEdge.Rising);
             end
         end % connectClockedAO
 

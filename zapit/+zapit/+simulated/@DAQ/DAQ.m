@@ -20,7 +20,7 @@ classdef DAQ < handle
         AOchans = 0:4
         AIchans = 0;
         triggerChannel = 'PFI0'
-
+        lastWaveform
     end %close public properties
 
     properties (Hidden)
@@ -34,6 +34,7 @@ classdef DAQ < handle
         lastXgalvoVoltage  = 0
         lastYgalvoVoltage  = 0
         lastLaserVoltage = 0
+        doingClockedAcquisition = false; % Set to true if we are doing a clocked acquisition
     end %close GUI-related properties
 
 
@@ -41,9 +42,11 @@ classdef DAQ < handle
         function obj = DAQ()
             obj.settings = zapit.settings.readSettings;
             obj.hAI.readAnalogData = @(x) rand(length(obj.AIchans),1); % assumes unclocked
+            obj.hAO.isTaskDone = true;
+            obj.hAO.taskName = '';
         end % Constructor
 
-        function  delete(obj)
+        function delete(obj)
         end
 
         function  success = connect(obj)
@@ -57,10 +60,14 @@ classdef DAQ < handle
         function connectUnclockedAO(obj,verbose)
         end
 
-        function connectClockedAO(obj)
+        function connectClockedAO(obj,varargin)
+            obj.hAO.isTaskDone = false;
         end
 
         function stopAndDeleteAOTask(obj)
+            obj.lastWaveform = [];
+            obj.doingClockedAcquisition = false;
+            obj.hAO.isTaskDone = true;
         end
 
         function stopAndDeleteAITask(obj)
@@ -75,12 +82,42 @@ classdef DAQ < handle
             obj.lastLaserVoltage = laserVoltage;
         end
 
-
         function start(obj)
+            obj.doingClockedAcquisition = true;
         end
 
         function stop(obj)
+            obj.hAO.isTaskDone = false;
+            obj.doingClockedAcquisition = false;
         end
+
+        function writeAnalogData(obj,waveforms)
+            % Simulates write of analog data to the buffer
+            %
+            % function zapit.simulated.DAQ.writeAnalogData
+            %
+            % Purpose
+            % Write analod data to the buffer and also log in a property the
+            % data that were written.
+
+            obj.lastWaveform = waveforms;
+        end % writeAnalogData
+
+        function nSamples = numSamplesInBuffer(obj)
+            % Return the number of samples in the buffer
+            %
+            % function zapit.simulated.DAQ.numSamplesInBuffer
+            %
+            % Purpose
+            % Return the number of samples in the buffer
+
+            if isempty(obj.lastWaveform)
+                nSamples = 0;
+            else
+                nSamples = length(obj.lastWaveform);
+            end
+        end % numSamplesInBuffer
+
 
     end %close methods
 

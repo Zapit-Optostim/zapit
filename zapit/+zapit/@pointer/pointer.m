@@ -9,7 +9,7 @@ classdef pointer < handle
     %
     %
     % Maja Skretowska - SWC 2020-2022
-    % Rob Campbell - SWC 2020...
+    % Rob Campbell - SWC 2023
 
 
     
@@ -36,20 +36,21 @@ classdef pointer < handle
         % as they are independent of it. i.e. a new config can be loaded and the the data in the
         % following properties does not alter
         calibratedBrainOutline % The outline of the brain calibrated to the sample
-        refPointsStereotaxic = [0,0;0,3]  % Two reference points in stereotaxic space. By default bregma
-                                          % (first line [ML,AP] and a point 3 mm in front (second line)
         refPointsSample  % The two reference points in sample space. User provides these via calibrateSample
-
+        % -> see also refPointsStereotaxic, below under the getters section
     end % properties
 
 
     properties (SetObservable=true)
+        experimentPath = '' % The absolute path to an experiment folder. This is used to automatically write log data
+                            % when zapit.pointer.sendSamples is called.
         settings % The settings read in from the YAML file
-    end
+    end % observable properties
 
 
     properties (Hidden)
         buildFailed = true % Used during boostrap by start_zapit
+        breakScannerCalibLoop = false; % Used so GUI can break out of the scanner calibration loop.
         simulated = false % Tag to indicate whether it is in simulated mode
         listeners = {} % Cell array that holds listeners so they can be easily cleaned up in the destructor
     end % hidden properties
@@ -60,13 +61,15 @@ classdef pointer < handle
         calibrateScannersPosData % Used to plot data during scanner calibration
         scannersCalibrated = false % Gets set to true if the scanners are calibrated
         sampleCalibrated = false % Gets set to true if the sample is calibrated
-    end
+    end % hidden observable properties
 
 
     % read-only properties that are associated with getters
     properties (SetAccess=protected, GetAccess=public)
        imSize
-    end
+       refPointsStereotaxic  % Two reference points in stereotaxic space. By default bregma
+                              % (first line [ML,AP] and a point 3 mm in front (second line)
+    end % getter properties
 
 
     % Constructor and destructor
@@ -98,11 +101,10 @@ classdef pointer < handle
             end
             obj.cam.exposure = obj.settings.camera.default_exposure;
 
-            obj.cam.ROI = [300,100,1400,1000]; % TODO: hardcoded!
-                                            % TODO : in future user will have ROI box to interactively
-                                            %    crop and this will be saved in settings file
-                                            %    the re-applied on startup each time.
-                                            %    see also obj.cam.resetROI
+            % Re-apply the last used ROI
+            if ~isempty(obj.settings.cache.ROI)
+                obj.cam.ROI = round(obj.settings.cache.ROI);
+            end
 
             % Log camera frames to lastAcquiredFrame and start camera
             if ~obj.simulated
@@ -128,8 +130,7 @@ classdef pointer < handle
 
             obj.DAQ.parent = obj;
 
-            obj.DAQ.connectUnclockedAO(true) % TODO -- In principle this should not be needed here. 
-            obj.zeroScanners % TODO ... as this will do the connection. Try it.            
+            obj.zeroScanners
 
             obj.loadLaserFit
 
@@ -173,6 +174,19 @@ classdef pointer < handle
             imSize = imSize(3:4);
         end % get.imsize
 
+        function refPointsStereotaxic = get.refPointsStereotaxic(obj)
+            % Return the stereoatxic reference points
+            %
+            % refPointsStereotaxic = get.refPointsStereotaxic(obj)
+            %
+            % Purpose
+            % Return the stereotaxic reference coords by pulling the AP
+            % position from the settings
+
+            refPointsStereotaxic = zeros(2,2);
+            refPointsStereotaxic(2,2) = obj.settings.calibrateSample.refAP;
+        end % refPointsStereotaxic
+
     end % getters and setters
 
 
@@ -205,6 +219,7 @@ classdef pointer < handle
 
             if isempty(obj.calibrateScannersPosData)
                 actualCoords = [];
+                return
             end
 
             actualCoords = cat(1,obj.calibrateScannersPosData(:).actualCoords);
@@ -239,6 +254,19 @@ classdef pointer < handle
             settingsFile = zapit.settings.findSettingsFile;
             zapit.yaml.WriteYaml(settingsFile,obj.settings);
         end % saveSettingsFile
+
+
+        function clearExperimentPath(obj)
+            % Set experimet path to an empty string
+            %
+            % function zapit.pointer.clearExperimentPath(obj)
+            %
+            % Purpose
+            % Set the experiment path to be an empty string so we do not log
+            % stimulus information when calling zapit.pointer.sendSamples
+
+            obj.experimentPath = '';
+        end % clearExperimentPath
 
 
         function im = returnCurrentFrame(obj,nFrames)

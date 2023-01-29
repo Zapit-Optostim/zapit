@@ -7,20 +7,13 @@
     % This is a callback from a state button so it will run the calibration
     % check continually when depressed and stop when un-pressed
 
+    if nargin>1
+        % Only set GUI state if the *user* clicked the button
+        % rather than than harmonizeGUIstate calling it.
+        obj.GUIstate = mfilename;
+    end
 
     if obj.CheckCalibrationButton.Value == 1
-
-        if obj.CatMouseButton.Value == 1
-            obj.CatMouseButton.Value = 0; % Both can not be activate at the the same time
-            obj.catAndMouseButton_Callback;
-        end
-
-        if obj.PointModeButton.Value == 1
-            obj.PointModeButton.Value = 0;
-            obj.pointButton_Callback
-        end
-
-        obj.model.cam.exposure = obj.model.settings.calibrateScanners.beam_calib_exposure;
 
         actualCoords = obj.model.returnScannerCalibTargetCoords;
 
@@ -35,9 +28,9 @@
 
         hold(obj.hImAx,'off')
 
-        % Turn on laser and set to the calibration laser power
-        obj.laserPowerBeforeCalib = obj.LaserPowerScannerCalibSlider.Value;
-        obj.LaserPowerScannerCalibSlider.Value = obj.CalibPowerSpinner.Value;
+        % Turn on laser and set to the calibration laser power. Ditto for camera exposure
+        % TODO -- this should maybe be done in zapit.pointer.checkScannerCalibClocked (TODO there)
+        obj.model.cam.exposure = obj.model.settings.calibrateScanners.beam_calib_exposure;
         obj.setCalibLaserSwitch('On');
 
         % Begin to run through the calibration coords
@@ -48,7 +41,6 @@
         obj.model.DAQ.stopAndDeleteAOTask; %Stop
 
         obj.setCalibLaserSwitch('Off');
-        obj.LaserPowerScannerCalibSlider.Value = obj.laserPowerBeforeCalib;
 
         % Tidy up
         obj.removeOverlays(mfilename)

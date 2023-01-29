@@ -29,8 +29,8 @@ classdef controller < zapit.gui.main.view
 
 
     properties(Hidden)
-        laserPowerBeforeCalib % Used to reset the laser power to the value it had before calibration
         nInd                  % A counter used by calibrateSample_Callback
+        updatePlotListener    % used in calibrateScanners_Callback and here so we can implement the canceling easily
         hStimConfigEditor     % The stim config editor (for making new stim config files)
         hLaserPowerGUI        % GUI for calibrating laser power
     end
@@ -41,6 +41,13 @@ classdef controller < zapit.gui.main.view
         % A structure that contains names and paths to recently loaded stim config files.
         previouslyLoadedStimConfigs = struct('fname', '', 'pathToFname', '', 'timeAdded', []);
         maxPreviouslyLoadedStimConfigs = 10 % Max number to display. 
+
+        % The following represents the GUI state and is used to allow for seamless transitions
+        % between different states. e.g. to switch between Point and Cat & Mouse
+        % When a callback function that modifies this property is being run, the value changes
+        % to the file name of the callback.
+        GUIstate = 'idle'
+
     end
 
 
@@ -140,6 +147,19 @@ classdef controller < zapit.gui.main.view
         end % resetROI_Callback
 
 
+        function updateResetZoomButtonState(obj,~,~)
+            % The listener callback that greys out reset button if a full FOV is being acquired
+            %
+            % zapit.gui.main.controller.updateResetZoomButtonState
+            %
+            if obj.model.cam.isFullFrame
+                obj.ResetROIButton.Enable = 'off';
+            else
+                obj.ResetROIButton.Enable = 'on';
+            end
+        end % updateResetZoomButtonState
+
+
         function scannersCalibrateCallback(obj,~,~)
             % Perform any actions needed upon change in scanner calibration state
             %
@@ -167,6 +187,25 @@ classdef controller < zapit.gui.main.view
             % Set the sample calibration light.
 
             obj.set_sampleLampCalibrated(obj.model.sampleCalibrated)
+
+            if obj.model.sampleCalibrated
+                obj.PaintbrainborderButton.Enable = 'on';
+                obj.OverlaystimsitesButton.Enable = 'on';
+                obj.ZapallcoordsButton.Enable = 'on';
+                obj.PlotstimcoordsButton.Enable = 'on';
+                obj.ZapSiteButton.Enable = 'on';
+                obj.PaintareaButton.Enable = 'on';
+                obj.ExportwaveformsButton.Enable = 'on';
+            else
+                obj.PaintbrainborderButton.Enable = 'off';
+                obj.OverlaystimsitesButton.Enable = 'off';
+                obj.ZapallcoordsButton.Enable = 'off';
+                obj.PlotstimcoordsButton.Enable = 'off';
+                obj.ZapSiteButton.Enable = 'off';
+                obj.PaintareaButton.Enable = 'off';
+                obj.ExportwaveformsButton.Enable = 'off';
+            end
+
         end % sampleCalibrateCallback
 
 
@@ -210,13 +249,33 @@ classdef controller < zapit.gui.main.view
             % Purpose
             % Runs when the laser power slider is changed. If the laser calibration 
             % switch is On, the laser power is set to the power level listed in the 
-            % laser slideer.
+            % laser slider. Updates associated setting in file.
 
             if strcmp(obj.CalibLaserSwitch.Value,'On')
                 obj.model.setLaserInMW(event.Value)
             end
+            obj.model.settings.calibrateScanners.calibration_power_mW = round(obj.LaserPowerScannerCalibSlider.Value,1);
         end % setLaserPower_Callback
 
+
+        function setCamExposure_Callback(obj,~,~)
+            % Set exposiure of the camera
+            obj.model.cam.exposure = obj.StandardExposure.Value;
+            obj.model.settings.camera.default_exposure = obj.StandardExposure.Value;
+        end % setCamExposure
+
+
+        function updateClockedAcquisition(obj,~,~)
+            % Listener callback to disable select GUI elements during a locked acquisition
+
+            if obj.model.DAQ.doingClockedAcquisition
+                obj.CalibLaserSwitch.Enable = 'off';
+                obj.LaserPowerScannerCalibSlider.Enable = 'off';
+            else
+                obj.CalibLaserSwitch.Enable = 'on';
+                obj.LaserPowerScannerCalibSlider.Enable = 'on';
+            end
+        end % updateClockedAcquisition
 
         function switchLaser_Callback(obj,~,~)
             % Turn on the laser when the switch is turned on
@@ -258,7 +317,7 @@ classdef controller < zapit.gui.main.view
             % Purpose
             % Changing the spinnerbox writes to the corresponding value in the settings structure. 
 
-            obj.model.settings.calibrateScanners.pointSpacingInPixels = obj.PointSpacingSpinner.Value;
+            obj.model.settings.calibrateScanners.pointSpacingInMM = obj.PointSpacingSpinner.Value;
         end % pointSpacing_CallBack
 
 
@@ -269,7 +328,7 @@ classdef controller < zapit.gui.main.view
             % Purpose
             % Changing the spinnerbox writes to the corresponding value in the settings structure. 
 
-            obj.model.settings.calibrateScanners.bufferPixels = obj.BorderBufferSpinner.Value;
+            obj.model.settings.calibrateScanners.bufferMM = obj.BorderBufferSpinner.Value;
         end % borderBuffer_CallBack
 
 
@@ -301,18 +360,23 @@ classdef controller < zapit.gui.main.view
         end % calibExposureSpinner_CallBack
 
 
-        function calibPowerSpinner_CallBack(obj,~,~)
+        function updateExperimentPathTextArea(obj,~,~)
+            % Update the text in the experiment path message box when the zapit.pointer.experimentPath property changes
             %
-            % zapit.gui.main.controller.calibPowerSpinner_CallBack
-            %
-            % Purpose
-            % Changing the spinnerbox writes to the corresponding value in the settings structure. 
+            % zapit.gui.main.controller.updateExperimentPathTextArea
 
-            if obj.CalibPowerSpinner.Value < 0
-                obj.CalibPowerSpinner.Value = 0;
-            end
-            obj.model.settings.calibrateScanners.calibration_power_mW = obj.CalibPowerSpinner.Value;
-        end % calibPowerSpinner_CallBack
+            obj.ExperimentPathTextArea.Value = obj.model.experimentPath;
+        end % updateExperimentPathTextArea
+
+
+        function clearExperimentPath_Callback(obj,~,~)
+            % Clear the experiment path
+            %
+            % zapit.gui.main.controller.clearExperimentPath_Callback
+
+            obj.model.clearExperimentPath;
+        end % clearExperimentPath_Callback
+
 
     end % methods
 

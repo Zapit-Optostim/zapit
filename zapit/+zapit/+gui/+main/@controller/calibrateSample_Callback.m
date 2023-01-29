@@ -9,14 +9,26 @@ function calibrateSample_Callback(obj,~,~)
     % to identify two reference points on skull surface. Typically this will be
     % bregma plus one more  point. The results are returned as two columns: first x then y coords
     %
-    obj.model.cam.stopVideo
+
+
+    if nargin>1
+        % Only set GUI state if the *user* clicked the button
+        % rather than than harmonizeGUIstate calling it.
+        obj.GUIstate = mfilename;
+    end
+
+    isCamRunning = obj.model.cam.isrunning;
+    if isCamRunning
+        obj.model.cam.stopVideo;
+    end
+
     obj.model.sampleCalibrated = false;
     obj.model.refPointsSample(:) = 0;
     obj.model.calibratedBrainOutline = [];
 
     hold(obj.hImAx,'on')
     obj.plotOverlayHandles.brainOutline = plot(nan,nan,'c-','linewidth', 2, 'parent', obj.hImAx);
-    obj.plotOverlayHandles.bregma = plot(nan,nan,'or','markerfacecolor','r','parent',obj.hImAx);
+    obj.plotOverlayHandles.bregma = plot(nan,nan,'or','markerfacecolor','none','parent',obj.hImAx);
     hold(obj.hImAx,'off')
 
     obj.removeOverlays('brainOutlineCalibrated');
@@ -51,6 +63,7 @@ function calibrateSample_Callback(obj,~,~)
         obj.model.sampleCalibrated = true;
     end
 
+
     if sum(abs(obj.model.refPointsSample(:)))>0
         b = obj.atlasData.whole_brain.boundaries_stereotax{1};
         calib = zapit.utils.rotateAndScaleCoords(fliplr(b)', ...
@@ -65,7 +78,10 @@ function calibrateSample_Callback(obj,~,~)
         hold(obj.hImAx,'off')
     end
 
-    obj.model.cam.startVideo
+
+    if isCamRunning
+        obj.model.cam.startVideo;
+    end
 
 end % calibrateSample_Callback
 

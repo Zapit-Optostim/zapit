@@ -16,6 +16,6 @@ function gURL = returnProjectGitHubURL
     %
     % See also zapit.updater.getGitHubReleaseHistory
 
-    gURL = 'github.com/BaselLaserMouse/zapit';
+    gURL = 'github.com/Zapit-Optostim/zapit';
 
 end %returnProjectGitHubURL

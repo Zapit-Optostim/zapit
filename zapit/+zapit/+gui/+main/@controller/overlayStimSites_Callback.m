@@ -1,7 +1,7 @@
-function showStimulusCoords_Callback(obj,~,~)
+function overlayStimSites_Callback(obj,~,~)
     % Plots the points to stimulate on the image
     %
-    % zapit.gui.main.controller.showStimulusCoords_Callback
+    % zapit.gui.main.controller.overlayStimSites_Callback
     %
     % Purpose
     % This callback runs on a button press and overlays (or removes) the 
@@ -12,10 +12,17 @@ function showStimulusCoords_Callback(obj,~,~)
     % 
 
     if isempty(obj.model.stimConfig)
+        obj.OverlaystimsitesButton.Value = 0;
         return
     end
 
-    if obj.ShowstimcoordsButton.Value == 1
+    if nargin>1
+        % Only set GUI state if the *user* clicked the button
+        % rather than than harmonizeGUIstate calling it.
+        obj.GUIstate = mfilename;
+    end
+
+    if obj.OverlaystimsitesButton.Value == 1
         % Add the points
         calPoints = obj.model.stimConfig.calibratedPoints;
         calPoints = [calPoints{:}]; % Convert the cell array into a matrix. [ML;AP]
@@ -32,4 +39,4 @@ function showStimulusCoords_Callback(obj,~,~)
         obj.removeOverlays('stimConfigLocations');
     end % if
 
-end % showStimulusCoords_Callback
+end % overlayStimSites_Callback

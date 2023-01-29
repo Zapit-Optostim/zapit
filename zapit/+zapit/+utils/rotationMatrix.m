@@ -1,7 +1,7 @@
 function rotMat = rotationMatrix(theta)
     % Return the affine rotation matrix corresponding to the angle theta
     %
-    % function rotMat = rotationMatrix(theta)
+    % function rotMat = zapit.utils.rotationMatrix(theta)
     %
     % Purpose
     % Return the affine rotation matrix corresponding to the angle theta

@@ -28,7 +28,7 @@ function varargout = version
 
 %% EDIT THE FOLLOWING TO INCREMENT THE VERSION
 out.version.MAJOR = 0;
-out.version.MINOR = 8;
+out.version.MINOR = 9;
 out.version.PATCH = 0;
 
 %% UPDATE THIS IF NEEDED
@@ -37,7 +37,7 @@ out.version.preReleaseString = '-beta'; % When heavy development phase is over t
 %%% UPDATE THE DATE
 out.date.year = 2023;
 out.date.month = 1;
-out.date.day = 19;
+out.date.day = 29;
 
 
 
@@ -62,6 +62,5 @@ if nargout>0
     varargout{1} = out;
 else
     fprintf('%s\n', out.message)
-    disp('Zapit uses <a href="https://semver.org/">Semantic versioning</a>.')
 end
 

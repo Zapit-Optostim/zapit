@@ -43,8 +43,8 @@ function removeOverlays(obj,overlayToRemove)
         if ~isempty(overlayToRemove) && ~strcmp(f{ii},overlayToRemove)
             continue
         end
-
         t_Handles = obj.plotOverlayHandles.(f{ii});
+
         if iscell(t_Handles)
             cellfun(@(x) delete(x), t_Handles)
         elseif isstruct(t_Handles)

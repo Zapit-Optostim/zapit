@@ -3,6 +3,12 @@ function pointButton_Callback(obj,~,~)
     %
     % zapit.gui.main.controller.pointButton_Callback
 
+    if nargin>1
+        % Only set GUI state if the *user* clicked the button
+        % rather than than harmonizeGUIstate calling it.
+        obj.GUIstate = mfilename;
+    end
+
     % Switch back and forth between click and point mode
     if obj.PointModeButton.Value == 1
         % Entering point mode
@@ -10,11 +16,6 @@ function pointButton_Callback(obj,~,~)
         if  obj.CheckCalibrationButton.Value == 1
             obj.CheckCalibrationButton.Value = 0;
             obj.checkScannerCalib_Callback
-        end
-
-        if obj.CatMouseButton.Value == 1
-            obj.CatMouseButton.Value = 0; % Both can not be activate at the the same time
-            obj.catAndMouseButton_Callback;
         end
 
         % Pointer is a hand

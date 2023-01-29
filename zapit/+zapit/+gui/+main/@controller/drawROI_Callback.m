@@ -6,6 +6,8 @@ function drawROI_Callback(obj,~,~)
 
     % Disable button until ROI has been drawn
     obj.ROIButton.Enable='off';
+    obj.ResetROIButton.Enable='off'; %There is a callback on ROI size that will cause this to re-enable automatically as needed
+
     obj.model.cam.stopVideo
 
     % Draw box and get coords
@@ -62,6 +64,9 @@ function drawROI_Callback(obj,~,~)
     obj.model.cam.ROI = round(newROI);
 
     obj.refreshImage % Re-draw everything so axes display the correct units in mm
+
+    % Cache this value to the settings file
+    obj.model.settings.cache.ROI = obj.model.cam.ROI;
 
     obj.ROIButton.Enable='on';
     obj.model.cam.startVideo

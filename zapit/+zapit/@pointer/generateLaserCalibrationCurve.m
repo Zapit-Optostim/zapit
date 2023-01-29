@@ -16,6 +16,9 @@ function generateLaserCalibrationCurve(obj,minMax)
     % * Run this function and get a curve.
     % * Data are stored in the laserFit property
     %
+    % Saturation in the curve may be due to the sensor! You may well need to put an ND
+    % filter of some sort over the sensor.
+    %
     % The zapit.pointer.laserFit property is updated and, optionally, the data are 
     % saved to a laserFit.mat file in the user settings directory.
     %

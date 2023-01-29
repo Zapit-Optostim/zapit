@@ -15,7 +15,11 @@ function [xVolts, yVolts] = pixelToVolt(obj, pixelColumn, pixelRow)
     %
     %
     % Inputs
-    % Pixel row and column
+    % pixelColumn - the column of the pixel in the image
+    % pixelRow - the row of the pixel in the image
+    %
+    %
+    % Rob Campbell - SWC 2023
 
 
     if ~isempty(obj.transform)

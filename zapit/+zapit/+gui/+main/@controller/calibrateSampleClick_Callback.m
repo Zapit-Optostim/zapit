@@ -1,4 +1,4 @@
-function calibrateSampleClick_Callback(obj,sr,evt)
+function calibrateSampleClick_Callback(obj,~,~)
     % Responds to mouse clicks during sample calibration
     %
     % zapit.gui.main.controller.calibrateSampleClick_Callback
@@ -8,6 +8,11 @@ function calibrateSampleClick_Callback(obj,sr,evt)
     % during sample calibration. 
     %
     % Rob Campbell - SWC 2023
+    %
+    % See also
+    % zapit.gui.main.controller.calibrateSampleRescaleOutline_Callback
+    % zapit.gui.main.controller.calibrateSampleClick_Callback
+
 
     if strcmp(obj.hFig.SelectionType,'alt')
         return

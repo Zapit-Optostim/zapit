@@ -25,14 +25,14 @@ function highlightArea_Callback(obj,~,~)
 
 
     % If shift is pressed we highlight points nearest the cursor and alter the current point shape
-    set([obj.pAddedPoints],'MarkerSize', 14)
+    set([obj.pAddedPoints],'MarkerSize', obj.standardMarkerSize)
     if obj.isCtrlPressed && length(obj.pAddedPoints)>0
         % We are in delete mode
-        obj.pCurrentPoint.MarkerSize = 20;
+        obj.pCurrentPoint.MarkerSize = obj.enlargedMarkerSize;
         obj.pCurrentPoint.Marker = 'x';
         obj.pCurrentPoint.Color = 'r';
         ind = obj.findIndexOfAddedPointNearestCursor;
-        obj.pAddedPoints(ind).MarkerSize=20;
+        obj.pAddedPoints(ind).MarkerSize = obj.enlargedMarkerSize;
         % If this point is a single, we will make the point following the cursor a single too if needed
         if obj.BilateralButton.Value == 1 && length(obj.pAddedPoints(ind).XData)~=2
             obj.pCurrentPoint.XData = X;
@@ -45,12 +45,12 @@ function highlightArea_Callback(obj,~,~)
         if obj.isShiftPressed
             obj.pCurrentPoint.Marker = obj.pAddedPoints(end).Marker;
             obj.pCurrentPoint.Color = obj.pAddedPoints(end).Color;
-            obj.pCurrentPoint.MarkerSize = 14; % TODO -- hardcoded
+            obj.pCurrentPoint.MarkerSize = obj.standardMarkerSize;
         else
             % Next symbol and color
             obj.pCurrentPoint.Marker = obj.currentSymbol;
             obj.pCurrentPoint.Color = obj.currentColor;
-            obj.pCurrentPoint.MarkerSize = 14; % TODO -- hardcoded
+            obj.pCurrentPoint.MarkerSize = obj.standardMarkerSize;
         end
     end
 

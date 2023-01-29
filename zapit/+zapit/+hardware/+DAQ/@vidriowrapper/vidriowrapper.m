@@ -55,6 +55,7 @@ classdef vidriowrapper < handle
         lastYgalvoVoltage  = 0
         lastLaserVoltage = 0
         lastWaveform = [] % The last waveform sent to the DAQ for AO
+        doingClockedAcquisition = false; % Set to true if we are doing a clocked acquisition
     end %close GUI-related properties
 
 
@@ -135,6 +136,7 @@ classdef vidriowrapper < handle
             if isempty(obj.hAO) || ~isvalid(obj.hAO)
                 return
             end
+            obj.doingClockedAcquisition = true;
             obj.hAO.start
         end % start
 
@@ -165,6 +167,7 @@ classdef vidriowrapper < handle
             if isempty(obj.hAO) || ~isvalid(obj.hAO)
                 return
             end
+            obj.doingClockedAcquisition = false;
             obj.hAO.stop;    % Calls DAQmxStopTask
             delete(obj.hAO);
         end % stopAndDeleteAOTask
@@ -246,7 +249,7 @@ classdef vidriowrapper < handle
 
 
         function connectClockedAO(obj, varargin)
-            % Start a clocked task.
+            % Set up a clocked AO task
             %
             % function zapit.DAQ.vidriowrapper.connectClockedAO
             %
@@ -327,11 +330,35 @@ classdef vidriowrapper < handle
             % Write analod data to the buffer and also log in a property the
             % data that were written.
 
+            % The Vidrio DAQmx wrapper reports values out of range even
+            % when these do not exist. This happend during the rampdown.
+            % The following line is just an additional chack.
+            if any(abs(max(waveforms,[],1))>10)
+                fprintf(' ** There are waveform data that exceed the +/- 10V range **\n')
+            end
+
             obj.lastWaveform = waveforms;
             obj.hAO.writeAnalogData(waveforms);
         end % writeAnalogData
 
 
+        function nSamples = numSamplesInBuffer(obj)
+            % Return the number of samples in the buffer
+            %
+            % function zapit.DAQ.vidriowrapper.numSamplesInBuffer
+            %
+            % Purpose
+            % Return the number of samples in the buffer
+
+            if isempty(obj.hAO)
+                nSamples = 0;
+            else
+                nSamples = obj.hAO.sampQuantSampPerChan;
+            end
+        end % numSamplesInBuffer
+
+
+        % TODO -- the following two should probably be placed into pointer
         function setLaserPowerControlVoltage(obj,laserControlVoltage)
             % Set the laser AO line to a specified voltage value
             %
@@ -357,7 +384,7 @@ classdef vidriowrapper < handle
             % Purpose
             % Set the two galvo control AO lines with an unlocked AO operation.
 
-            if ~isvalid(obj.hAO) || ~strcmp(obj.hAO.taskName, 'unclockedao')
+            if isempty(obj.hAO) || ~isvalid(obj.hAO) || ~strcmp(obj.hAO.taskName, 'unclockedao')
                 obj.connectUnclockedAO
             end
             beamXY = beamXY(:)'; % Ensure column vector

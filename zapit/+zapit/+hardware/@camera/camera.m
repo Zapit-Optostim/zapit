@@ -18,7 +18,7 @@ classdef camera < handle
 
     % The following properties are used for getters and setters to interface
     % with camera properties that could change between drivers.
-    properties
+    properties (SetObservable=true)
         exposure
         ROI
     end
@@ -114,6 +114,9 @@ classdef camera < handle
 
         function startVideo(obj)
             if isa(obj.vid,'videoinput')
+                if obj.isrunning % Do not try to start if we already running
+                    return
+                end
                 start(obj.vid)
                 trigger(obj.vid)
             end
@@ -122,6 +125,9 @@ classdef camera < handle
 
         function stopVideo(obj)
             if isa(obj.vid,'videoinput')
+                if ~obj.isrunning % Do not try to stop if we already running
+                    return
+                end
                 stop(obj.vid)
                 flushdata(obj.vid)
             end
@@ -163,7 +169,7 @@ classdef camera < handle
         function resetROI(obj,~,~)
             % reset ROI to full sensor size
             %
-            % function resetROI(obj)
+            % function  zapit.hardware.camera.resetROI(obj)
             %
             % Inputs
             % none
@@ -173,6 +179,19 @@ classdef camera < handle
             obj.ROI = [0,0,obj.vid.VideoResolution];
         end % resetROI
 
+
+        function fullFrame = isFullFrame(obj)
+            % Return true if the current frame size is full-frame
+            %
+            %  function fullFrame = zapit.hardware.camera.isFullFrame
+            %
+            % Purpose
+            % The camera can run with a subset of the FOV only. If this is the
+            % case, then this method will return false. If the FOV is full, the
+            % method returns true.
+            fullFrame = isequal(obj.ROI(3:4),obj.vid.VideoResolution);
+
+        end % isFullFrame
     end % video feed methods
 
 

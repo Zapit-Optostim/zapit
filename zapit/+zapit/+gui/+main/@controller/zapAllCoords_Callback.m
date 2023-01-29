@@ -1,7 +1,7 @@
-function cycleBeamOverCoords_Callback(obj,~,~)
+function zapAllCoords_Callback(obj,~,~)
     % Cycle the beam over all the stimulus locations in no particular order
     %
-    % zapit.gui.main.controller.cycleBeamOverCoords_Callback
+    % zapit.gui.main.controller.zapAllCoords_Callback
     %
     % Purpose
     % Cycle the beam over all the stimulus locations rapidly. This just indicates whether
@@ -12,14 +12,21 @@ function cycleBeamOverCoords_Callback(obj,~,~)
     % TODO: Low priority. checkScannerCalibClocked is located in zapit.pointer. So the presence of this function here is odd
 
     if isempty(obj.model.stimConfig)
+        obj.ZapallcoordsButton.Value = 0;
         return
     end
 
-    if obj.CycleBeamOverCoordsButton.Value == 1
+    if nargin>1
+        % Only set GUI state if the *user* clicked the button
+        % rather than than harmonizeGUIstate calling it.
+        obj.GUIstate = mfilename;
+    end
+
+    if obj.ZapallcoordsButton.Value == 1
 
 
         waveforms = cat(1,obj.model.stimConfig.calibratedPointsInVolts{:});
-        waveforms(:,3) = 2; % laser power -- HARDCODED
+        waveforms(:,3) =  obj.model.laser_mW_to_control(obj.model.settings.calibrateScanners.calibration_power_mW);
 
         obj.model.DAQ.moveBeamXY(waveforms(1,:)) % Go to first position
 
@@ -35,4 +42,4 @@ function cycleBeamOverCoords_Callback(obj,~,~)
         obj.model.setLaserInMW(0)
     end
 
-end % cycleBeamOverCoords_Callback
+end % zapAllCoords_Callback

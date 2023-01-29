@@ -18,7 +18,7 @@ function installType = findInstallType
 
 
 
-    gitInfo = zapit.updater.getGitInfo
+    gitInfo = zapit.updater.getGitInfo;
     addons = zapit.updater.getAddonDetails;
     v = zapit.version;
 

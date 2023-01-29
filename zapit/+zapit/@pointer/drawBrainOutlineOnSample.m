@@ -9,8 +9,7 @@ function drawBrainOutlineOnSample(obj)
 
     % First place beam in the centre of the area we want to stimulate
     obj.DAQ.moveBeamXY(mean(coords));
-
-    coords(:,3:4)=2; % TODO -- LASER POWER HERE TODO
+    coords(:,3) = obj.laser_mW_to_control(obj.settings.calibrateScanners.calibration_power_mW);
 
     %Replace first two columns with voltage values
     [xVolt,yVolt] = obj.mmToVolt(coords(:,1), coords(:,2));
@@ -24,7 +23,7 @@ function drawBrainOutlineOnSample(obj)
 
 
     % Set sample rate so we are drawing at about 60 cycles per second.
-    n = length(coords) * 60;
+    n = length(coords) * 100;
     sRate = 10^round(log10(n),1) ;
     obj.DAQ.connectClockedAO('numSamplesPerChannel',size(coords,1), ...
                             'samplesPerSecond',sRate, ...

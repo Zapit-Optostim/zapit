@@ -9,6 +9,11 @@ function pointBeamToLocationInImage(obj,~,~)
     %
     % Maja Skretowska - SWC 2021
     
+    if ~isfield(obj.plotOverlayHandles,'hLastPoint')
+        % If the point is not present we bail out
+        return
+    end
+
     % Get the current mouse position (at the clicked location) and use it
     % to place a point there and display coords to the axes title.
     pos = obj.hImAx.CurrentPoint;
@@ -20,6 +25,7 @@ function pointBeamToLocationInImage(obj,~,~)
     
     obj.plotOverlayHandles.hLastPoint.XData = xPos;
     obj.plotOverlayHandles.hLastPoint.YData = yPos;
+
 
     obj.model.DAQ.moveBeamXY([xVolts, yVolts]); % send beam to this location
 

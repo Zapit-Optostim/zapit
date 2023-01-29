@@ -30,13 +30,18 @@ classdef controller < zapit.gui.stimConfigEditor.view
         % Handles of plot objects associated with stimulation points
         pCurrentPoint % The current point that we are about to add
         pAddedPoints = matlab.graphics.chart.primitive.Line.empty % A list of all added poits
-        pointCommonProps = {'ob', 'MarkerSize', 14, 'LineWidth', 2};
+
 
         fname % The name of the currently loaded file (if it has one)
     end
 
     properties(Hidden)
         settings % So the GUI relies less on being connected to zapit.pointer
+        % Plot defaults below
+        pointCommonProps = {'ob', 'MarkerSize', 14, 'LineWidth', 2};
+        standardMarkerSize = 14
+        enlargedMarkerSize = 20
+        isCamRunning % Used to disable camera if the main GUI is running
     end
 
 
@@ -67,9 +72,9 @@ classdef controller < zapit.gui.stimConfigEditor.view
             obj.settings = zapit.settings.readSettings;
 
             % Button callbacks
-            obj.NewButton.ButtonPushedFcn = @(~,~) obj.resetPoints_Callback;
-            obj.LoadButton.ButtonPushedFcn = @(~,~) obj.loadConfigYAML;
-            obj.SaveButton.ButtonPushedFcn = @(~,~) obj.saveConfigYAML;
+            obj.NewButton.ButtonPushedFcn = @obj.resetPoints_Callback;
+            obj.LoadButton.ButtonPushedFcn = @obj.loadConfigYAML;
+            obj.SaveButton.ButtonPushedFcn = @obj.saveConfigYAML;
 
             % Set figure properties
             obj.hFig.Color = 'w';
@@ -82,7 +87,9 @@ classdef controller < zapit.gui.stimConfigEditor.view
             % Apply default values to UI elements from settings
             obj.LaserPowermWSpinner.Value = obj.settings.experiment.defaultLaserPowerMW;
             obj.StimFreqHzSpinner.Value = obj.settings.experiment.defaultLaserFrequencyHz;
-            
+            obj.RampdownmsSpinner.Value = obj.settings.experiment.offRampDownDuration_ms;
+
+            obj.LaserPowermWSpinner.Limits(2) = obj.settings.laser.laserMinMax_mW(2);
 
             % Set up callback functions for interactivity
             obj.hFig.WindowButtonMotionFcn = @obj.highlightArea_Callback;
@@ -100,6 +107,15 @@ classdef controller < zapit.gui.stimConfigEditor.view
             hold(obj.hAx,'on')
             obj.pCurrentPoint = plot(nan,nan, obj.pointCommonProps{:},'Color','r','Parent',obj.hAx);
             hold(obj.hAx,'off')
+
+            % Disable camera if called from main GUI. The GUI may perform better if that is done.
+            if ~isempty(obj.mainGUI)
+                obj.isCamRunning = obj.mainGUI.model.cam.isrunning;
+                if obj.isCamRunning
+                    obj.mainGUI.model.cam.stopVideo;
+                end
+            end
+
         end %close constructor
 
 
@@ -108,6 +124,11 @@ classdef controller < zapit.gui.stimConfigEditor.view
             %
             % function zapit.gui.stimConfig.controller.delete
             %
+
+            % re-enable camera if needed
+            if ~isempty(obj.mainGUI) && obj.isCamRunning
+                obj.mainGUI.model.cam.startVideo;
+            end
 
             delete(obj.hFig);
         end %close destructor
@@ -202,7 +223,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
         end % resetPoints_Callback
 
 
-        function saveConfigYAML(obj)
+        function saveConfigYAML(obj,~,~)
             % Save config to a YAML
             %
             % function zapit.gui.stimConfig.controller.saveConfigYAML
@@ -214,7 +235,10 @@ classdef controller < zapit.gui.stimConfigEditor.view
 
             % For some reason we need the video stopped or this locks up everything
             if ~isempty(obj.mainGUI)
-                obj.mainGUI.model.cam.stopVideo;
+                isCamRunning = obj.mainGUI.model.cam.isrunning;
+                if isCamRunning
+                    obj.mainGUI.model.cam.stopVideo;
+                end
             end
 
             stimC = obj.returnStimConfigStructure;
@@ -238,12 +262,15 @@ classdef controller < zapit.gui.stimConfigEditor.view
             end
 
             if ~isempty(obj.mainGUI)
-                obj.mainGUI.model.cam.startVideo;
+                isCamRunning = obj.mainGUI.model.cam.isrunning;
+                if isCamRunning
+                    obj.mainGUI.model.cam.startVideo;
+                end            
             end
         end %saveConfigYAML
 
 
-        function loadConfigYAML(obj)
+        function loadConfigYAML(obj,~,~)
             % Load a YAML containing a stimulus config
             %
             % function zapit.gui.stimConfig.controller.loadConfigYAML
@@ -254,7 +281,10 @@ classdef controller < zapit.gui.stimConfigEditor.view
 
             % For some reason we need the video stopped or this locks up everything
             if ~isempty(obj.mainGUI)
-                obj.mainGUI.model.cam.stopVideo;
+                isCamRunning = obj.mainGUI.model.cam.isrunning;
+                if isCamRunning
+                    obj.mainGUI.model.cam.stopVideo;
+                end
             end
 
             [fname,fullPath] = uigetfile('*.yml;*.yaml');
@@ -269,7 +299,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
             obj.BottomLabel.Text = '';
 
             hold(obj.hAx,'on')
-            for ii=1:length(stimC.stimLocations)
+            for ii = 1:stimC.numConditions
                 obj.pAddedPoints(ii) = plot(stimC.stimLocations(ii).ML, ...
                                             stimC.stimLocations(ii).AP, ...
                                             obj.pointCommonProps{:}, ...
@@ -283,7 +313,10 @@ classdef controller < zapit.gui.stimConfigEditor.view
             obj.updateBottomLabel
 
             if ~isempty(obj.mainGUI)
-                obj.mainGUI.model.cam.startVideo;
+                isCamRunning = obj.mainGUI.model.cam.isrunning;
+                if isCamRunning
+                    obj.mainGUI.model.cam.startVideo;
+                end            
             end
 
         end %saveConfigYAML
