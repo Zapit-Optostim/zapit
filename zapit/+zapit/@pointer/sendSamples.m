@@ -14,9 +14,9 @@ function varargout = sendSamples(obj, varargin)
     %
     % Inputs [param/value pairs]
     % 'conditionNum' - Integer but empty by default. This is the index of the condition number to
-    %                  present. If empty a random one is chosen.
+    %                  present. If empty or -1 a random one is chosen.
     % 'laserOn' - [bool, true by default] If true the laser is on. If false the galvos move but laser is off.
-    %              If empty, a random laser state is chosen.
+    %              If empty or -1 a random laser state is chosen.
     % 'hardwareTriggered' [bool, true by default] If true the DAQ waits for a hardware trgger before 
     %                   presenting the waveforms. 
     % 'logging' - [bool, true by default] If true we write log files automatically if the user has
@@ -26,7 +26,7 @@ function varargout = sendSamples(obj, varargin)
     %
     % Outputs
     % conditionNum - optionally return the condition number (index of this stimulus)
-    % conditionNum - optionally return whether or not the laser was on.
+    % laserOn - optionally return whether or not the laser was on.
     % waveforms - optionally return the waveforms for debug. 
     %
     %   
@@ -42,8 +42,8 @@ function varargout = sendSamples(obj, varargin)
     %Parse optional arguments
     params = inputParser;
     params.CaseSensitive = false;
-    params.addParameter('conditionNumber', [], @(x) isnumeric(x) && (isscalar(x) || isempty(x)));
-    params.addParameter('laserOn', true, @(x) isempty(x) || islogical(x) || x==0 || x==1);
+    params.addParameter('conditionNumber', [], @(x) isnumeric(x) && (isscalar(x) || isempty(x) || x == -1));
+    params.addParameter('laserOn', true, @(x) isempty(x) || islogical(x) || x == 0 || x == 1 || x == -1);
     params.addParameter('hardwareTriggered', true, @(x) islogical(x) || x==0 || x==1);
     params.addParameter('logging', true, @(x) islogical(x) || x==0 || x==1);
     params.addParameter('verbose', false, @(x) islogical(x) || x==0 || x==1);
@@ -78,13 +78,13 @@ function varargout = sendSamples(obj, varargin)
 
 
     % Choose a random condition if necessary
-    if isempty(conditionNumber)
+    if isempty(conditionNumber) || conditionNumber == -1
         r = randperm(obj.stimConfig.numConditions);
         conditionNumber = r(1);
     end
 
     % Choose random laser state if necessary
-    if isempty(laserOn)
+    if isempty(laserOn) || laserOn == -1
         r = randperm(2)-1;
         laserOn = r(1);
     end
