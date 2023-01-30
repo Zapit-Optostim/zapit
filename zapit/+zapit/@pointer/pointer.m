@@ -295,7 +295,7 @@ classdef pointer < handle
             % zapit.pointer.zeroScanners
             %
             % Purpose
-            % Sets beam to 0V/0V
+            % Sets beam to 0V/0V (center of image).
 
             obj.moveBeamXY([0,0]);
         end % zeroScanners

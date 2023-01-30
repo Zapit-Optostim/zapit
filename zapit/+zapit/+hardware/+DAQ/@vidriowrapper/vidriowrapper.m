@@ -44,6 +44,7 @@ classdef vidriowrapper < zapit.hardware.DAQ
 
         end % Constructor
 
+        % TODO -- can the destructor go to the superclass?
         function delete(obj)
             % Destructor
             %
@@ -95,11 +96,8 @@ classdef vidriowrapper < zapit.hardware.DAQ
             % Purpose
             % Stop the task and then delete it, which will run DAQmxClearTask
 
-            if isempty(obj.hAO) || ~isvalid(obj.hAO)
-                return
-            end
+            obj.stop
             obj.doingClockedAcquisition = false;
-            obj.hAO.stop;    % Calls DAQmxStopTask
             delete(obj.hAO);
         end % stopAndDeleteAOTask
 
