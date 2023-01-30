@@ -233,6 +233,11 @@ classdef vidriowrapper < handle
                 verbose = false;
             end
 
+            % If we are already connected we don't proceed
+            if ~isempty(obj.hAO) && isvalid(obj.hAO) && strcmp(obj.hAO.taskName, 'unclockedao')
+                return
+            end
+
             obj.stopAndDeleteAOTask
 
             obj.hAO = zapit.hardware.vidrio_daqmx.Task('unclockedao');
@@ -365,9 +370,8 @@ classdef vidriowrapper < handle
             %
             % Purpose
             % Set the laser voltage with an unlocked AO operation.
-            if ~isvalid(obj.hAO) || ~strcmp(obj.hAO.taskName, 'unclockedao')
-                obj.connectUnclockedAO
-            end
+
+            obj.connectUnclockedAO % will not re-connect if currently connectes                obj.connectUnclockedAO
             obj.hAO.writeAnalogData([obj.lastXgalvoVoltage, obj.lastYgalvoVoltage, laserControlVoltage])
 
             % update cached values
@@ -383,9 +387,8 @@ classdef vidriowrapper < handle
             % Purpose
             % Set the two galvo control AO lines with an unlocked AO operation.
 
-            if isempty(obj.hAO) || ~isvalid(obj.hAO) || ~strcmp(obj.hAO.taskName, 'unclockedao')
-                obj.connectUnclockedAO
-            end
+            obj.connectUnclockedAO % will not re-connect if currently connectes
+
             beamXY = beamXY(:)'; % Ensure column vector
             obj.hAO.writeAnalogData([beamXY, obj.lastLaserVoltage])
 
