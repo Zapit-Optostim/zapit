@@ -46,6 +46,8 @@ classdef pointer < handle
 
 
     properties (Hidden)
+        lastXgalvoVoltage  = 0 % Cached value indicating last X scanner voltage 
+        lastYgalvoVoltage  = 0 % Cached value indicating last Y scanner voltage 
         buildFailed = true % Used during boostrap by start_zapit
         breakScannerCalibLoop = false; % Used so GUI can break out of the scanner calibration loop.
         simulated = false % Tag to indicate whether it is in simulated mode
@@ -65,7 +67,7 @@ classdef pointer < handle
     properties (SetAccess=protected, GetAccess=public)
        imSize
        refPointsStereotaxic  % Two reference points in stereotaxic space. By default bregma
-                              % (first line [ML,AP] and a point 3 mm in front (second line)
+                             % (first line [ML,AP] and a point 3 mm in front (second line)
     end % getter properties
 
 
@@ -191,18 +193,6 @@ classdef pointer < handle
     methods
 
 
-        function zeroScanners(obj)
-            % Zero the beam
-            % 
-            % zapit.pointer.zeroScanners
-            %
-            % Purpose
-            % Sets beam to 0V/0V
-
-            obj.DAQ.moveBeamXY([0,0]);
-        end % zeroScanners
-
-
         function wipeScannerCalib(obj)
             % Wipe the current scanner calibration
             %
@@ -215,6 +205,7 @@ classdef pointer < handle
             obj.transform = [];
             obj.scannersCalibrated = false;
         end % wipeScannerCalib
+
 
         function actualCoords = returnScannerCalibTargetCoords(obj)
             % Return target coords of the beam during calibration
@@ -234,33 +225,6 @@ classdef pointer < handle
 
             actualCoords = cat(1,obj.calibrateScannersPosData(:).actualCoords);
         end
-
-
-        function storeLastFrame(obj,~,~)
-            % This callback is run every time a frame has been acquired
-            %
-            %  function zapit.pointer.storeLastFrame(obj,~,~)
-            %
-            % Purpose
-            % Stores the last acquired frame in an observable property
-
-            if obj.cam.vid.FramesAvailable==0
-                return
-            end
-
-
-            tmp = obj.cam.getLastFrame;
-            if obj.settings.camera.flipImageUD == 1
-                tmp = flipud(tmp);
-            end
-
-            if obj.settings.camera.flipImageLR == 1
-                tmp = fliplr(tmp);
-            end
-
-            obj.lastAcquiredFrame = tmp;
-            obj.cam.flushdata
-        end % storeLastFrame
 
 
         function saveSettingsFile(obj,~,~)
@@ -289,49 +253,52 @@ classdef pointer < handle
         end % clearExperimentPath
 
 
-        function im = returnCurrentFrame(obj,nFrames)
-            % Return the last recorded camera image and optionally the last n frames
+        function setLaserPowerControlVoltage(obj,laserControlVoltage)
+            % Set the laser AO line to a specified voltage value
             %
-            % function im = zapit.pointer.returnCurrentFrame(obj,nFrames)
+            % function zapit.pointer.setLaserPowerControlVoltage
             %
             % Purpose
-            % Return the last frame and, if requested, the last n frames.
+            % Set the laser voltage with an unlocked AO operation.
+
+            obj.DAQ.connectUnclockedAO % will not re-connect if currently connected
+            obj.DAQ.writeAnalogData([obj.lastXgalvoVoltage, obj.lastYgalvoVoltage, laserControlVoltage])
+        end % setLaserPowerControlVoltage
+
+
+        function moveBeamXY(obj,beamXY)
+            % Set the two scanner AO lines to specified voltage value
             %
-            % Inputs
-            % nFrames - [optional] 1 by default. If >1 this many frames are returned.
+            % function zapit.pointer.moveBeamXY
             %
-            % Outputs
-            % im - the image
+            % Purpose
+            % Set the two galvo control AO lines with an unlocked AO operation.
+            % This property was moved from the DAQ class to here because there 
+            % are now two DAQ classes and leaving it there led to repetition. 
+
+            obj.DAQ.connectUnclockedAO % will not re-connect if currently connected
+
+            beamXY = beamXY(:)'; % Ensure column vector
+            obj.DAQ.writeAnalogData(beamXY) %TODO -- I have removed the cached last laser voltage
+                                            % check whether this matters. If it does, return this
+                                            % property to pointer.
+
+            % update cached values
+            obj.lastXgalvoVoltage = beamXY(1);
+            obj.lastYgalvoVoltage = beamXY(2);
+        end % moveBeamXY
+
+
+        function zeroScanners(obj)
+            % Zero the beam
+            % 
+            % zapit.pointer.zeroScanners
             %
-            %
+            % Purpose
+            % Sets beam to 0V/0V
 
-            % TODO -- this is really slow right now if nFrames > 1 (since refactoring 21/12/2022)
-            if nargin<2
-                nFrames = 1;
-            end
-
-            im = obj.lastAcquiredFrame;
-
-            if nFrames==1
-                return
-            end
-
-            im = repmat(im,[1,1,nFrames]);
-            lastFrameAcquired = obj.cam.vid.FramesAcquired; % The frame number
-
-            indexToInsertFrameInto = 2;
-            while indexToInsertFrameInto < nFrames
-                % If statment adds a new frame once the counter of number of frames
-                % has incrememted
-                currentFramesAcquired = obj.cam.vid.FramesAcquired;
-                if currentFramesAcquired > lastFrameAcquired
-                    im(:,:,indexToInsertFrameInto) = obj.lastAcquiredFrame;
-                    lastFrameAcquired = currentFramesAcquired;
-                    indexToInsertFrameInto = indexToInsertFrameInto +1;
-                end
-            end
-        end % returnCurrentFrame
-
+            obj.moveBeamXY([0,0]);
+        end % zeroScanners
 
     end % methods
 

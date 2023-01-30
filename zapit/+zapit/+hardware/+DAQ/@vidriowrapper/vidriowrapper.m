@@ -1,4 +1,4 @@
-classdef vidriowrapper < handle
+classdef vidriowrapper < zapit.hardware.DAQ
     % Zapit NI DAQ class using Vidrio's wrapper for NI DAQmx
     %
     % zapit.hardware.DAQ.vidriowrapper
@@ -30,35 +30,6 @@ classdef vidriowrapper < handle
     % Rob Campbell - SWC 2022
 
 
-    properties 
-        hAO  % A reference to an object that provides access to the DAQ's API for the AO task
-        hAI  % A reference to an object that provides access to the DAQ's API for the AI task
-
-        % The following are default parameters for the class (see above)
-        device_ID = 'Dev1'
-        samplesPerSecond = 10E3
-        AOrange = 10
-        AOchans = 0:4
-        triggerChannel = 'PFI0'
-    end %close public properties
-
-
-    properties (Hidden)
-        settings % Settings read from file
-        parent  %A reference of the parent object (likely zapit.pointer) to which this component is attached
-    end %close hidden properties
-
-
-    % These properties may be used by the zapit.pointer API or its GUI.
-    properties (Hidden, SetObservable, AbortSet)
-        lastXgalvoVoltage  = 0
-        lastYgalvoVoltage  = 0
-        lastLaserVoltage = 0
-        lastWaveform = [] % The last waveform sent to the DAQ for AO
-        doingClockedAcquisition = false; % Set to true if we are doing a clocked acquisition
-    end %close GUI-related properties
-
-
     methods
 
         function obj = vidriowrapper(varargin)
@@ -67,49 +38,9 @@ classdef vidriowrapper < handle
             % function zapit.DAQ.vidriowrapper.vidriowrapper
             %
             % Purpose
-            % Tha main purpose of the constructor is to set up default parameters.
+            % The main purpose of the constructor is to set up default parameters.
             %
-
-            obj.settings = zapit.settings.readSettings;
-
-            % Settings are read from YAML in zapit.hardware.DAQ.DAQ
-
-            % If there are valid settings in a parameter file, then we replace the hard-coded values with these
-            if isfield(obj.settings.NI,'device_ID')
-                obj.device_ID = obj.settings.NI.device_ID;
-            end
-            if isfield(obj.settings.NI,'samplesPerSecond')
-                obj.samplesPerSecond = obj.settings.NI.samplesPerSecond;
-            end
-            if isfield(obj.settings.NI,'AOrange')
-                obj.AOrange = obj.settings.NI.AOrange;
-            end
-            if isfield(obj.settings.NI,'AOchans')
-                obj.AOchans = obj.settings.NI.AOchans;
-            end
-            if isfield(obj.settings.NI,'triggerChannel')
-                obj.triggerChannel = obj.settings.NI.triggerChannel;
-            end
-
-            % Now we run the parameter parser. We use as defaults the properties above
-            params = inputParser;
-            params.CaseSensitive = false;
-            
-            params.addParameter('device_ID', obj.device_ID, @(x) ischar(x));
-            params.addParameter('samplesPerSecond', obj.samplesPerSecond, @(x) isnumeric(x));
-            params.addParameter('AOrange', obj.AOrange, @(x) isnumeric(x));
-            params.addParameter('AOchans', obj.AOchans, @(x) isnumeric(x));
-            params.addParameter('triggerChannel', obj.triggerChannel, @(x) ischar(x));
-            params.parse(varargin{:});
-
-            % Then replace the properties with the results of the parser. This will
-            % mean that anything specified as an input arg will take precedence
-            obj.device_ID= params.Results.device_ID;
-            obj.samplesPerSecond = params.Results.samplesPerSecond;
-            obj.AOrange = params.Results.AOrange;
-            obj.AOchans = params.Results.AOchans;
-            obj.triggerChannel = params.Results.triggerChannel;
-            %(seems circular, but works nicely)
+            obj = obj@zapit.hardware.DAQ(varargin{:});
 
         end % Constructor
 
@@ -341,7 +272,10 @@ classdef vidriowrapper < handle
                 fprintf(' ** There are waveform data that exceed the +/- 10V range **\n')
             end
 
-            obj.lastWaveform = waveforms;
+            % If this is a long waveform we cache it
+            if size(waveforms,1)>1
+                obj.lastWaveform = waveforms;
+            end
             obj.hAO.writeAnalogData(waveforms);
         end % writeAnalogData
 
@@ -362,40 +296,7 @@ classdef vidriowrapper < handle
         end % numSamplesInBuffer
 
 
-        % TODO -- the following two should probably be placed into pointer
-        function setLaserPowerControlVoltage(obj,laserControlVoltage)
-            % Set the laser AO line to a specified voltage value
-            %
-            % function zapit.DAQ.vidriowrapper.setLaserPowerControlVoltage
-            %
-            % Purpose
-            % Set the laser voltage with an unlocked AO operation.
 
-            obj.connectUnclockedAO % will not re-connect if currently connectes                obj.connectUnclockedAO
-            obj.hAO.writeAnalogData([obj.lastXgalvoVoltage, obj.lastYgalvoVoltage, laserControlVoltage])
-
-            % update cached values
-            obj.lastLaserVoltage = laserControlVoltage; 
-        end % setLaserPowerControlVoltage
-
-
-        function moveBeamXY(obj,beamXY)
-            % Set the two scanner AO lines to specified voltage value
-            %
-            % function zapit.DAQ.vidriowrapper.moveBeamXY
-            %
-            % Purpose
-            % Set the two galvo control AO lines with an unlocked AO operation.
-
-            obj.connectUnclockedAO % will not re-connect if currently connectes
-
-            beamXY = beamXY(:)'; % Ensure column vector
-            obj.hAO.writeAnalogData([beamXY, obj.lastLaserVoltage])
-
-            % update cached values
-            obj.lastXgalvoVoltage = beamXY(1);
-            obj.lastYgalvoVoltage = beamXY(2);
-        end % moveBeamXY
 
     end % methods
 
