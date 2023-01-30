@@ -56,27 +56,6 @@ function varargout = sendSamples(obj, varargin)
     verbose = params.Results.verbose;
 
 
-
-    % If the user has specified an experiment directory path, we check whether a stimulus parameter
-    % log file exists there and make one if not. 
-    if logging && ~isempty(obj.experimentPath) && exist(obj.experimentPath,'dir')
-        d = dir(fullfile(obj.experimentPath,[obj.stimConfig.logFileStem,'*']));
-
-        if isempty(d)
-            % The user has defined an experiment directory and it does not contain a 
-            % stimulus parameter log file. We make one. 
-            logParamFname = obj.stimConfig.logStimulusParametersToFile(obj.experimentPath);
-            fprintf('Writing stimulus parameter log file to %s\n', ...
-                fullfile(obj.experimentPath,logParamFname))
-        end
-
-        % By this point there must be a parameter log file and, since we are logging, we write 
-        % a trial log file also. 
-        obj.stimConfig.logTrialToFile(obj.experimentPath, conditionNumber, laserOn, hardwareTriggered)
-
-    end
-
-
     % Choose a random condition if necessary
     if isempty(conditionNumber) || conditionNumber == -1
         r = randperm(obj.stimConfig.numConditions);
@@ -88,6 +67,27 @@ function varargout = sendSamples(obj, varargin)
         r = randperm(2)-1;
         laserOn = r(1);
     end
+
+
+    % If the user has specified an experiment directory path, we check whether a stimulus parameter
+    % log file exists there and make one if not.
+    if logging && ~isempty(obj.experimentPath) && exist(obj.experimentPath,'dir')
+        d = dir(fullfile(obj.experimentPath,[obj.stimConfig.logFileStem,'*']));
+
+        if isempty(d)
+            % The user has defined an experiment directory and it does not contain a
+            % stimulus parameter log file. We make one.
+            logParamFname = obj.stimConfig.logStimulusParametersToFile(obj.experimentPath);
+            fprintf('Writing stimulus parameter log file to %s\n', ...
+                fullfile(obj.experimentPath,logParamFname))
+        end
+
+        % By this point there must be a parameter log file and, since we are logging, we write
+        % a trial log file also.
+        obj.stimConfig.logTrialToFile(obj.experimentPath, conditionNumber, laserOn, hardwareTriggered)
+
+    end
+
 
     if verbose
         fprintf('Stimulating area %d\n', conditionNumber)

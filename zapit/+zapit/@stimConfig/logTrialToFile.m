@@ -40,11 +40,11 @@ function varargout = logTrialToFile(obj, filePath, stimIndex, laserState, hardwa
     end
 
     % Make the trial fname
-    trial_fname = strrep(d(end).name, '_log', '_trials');
-    trial_fname_path = fullfile(filePath, trial_fname);
+    trial_fname = strrep(d(end).name, '_log', '_trials')
+    trial_fname_path = fullfile(filePath, trial_fname)
 
     % Create header line if the file does not exist
-    if exist(trial_fname)
+    if exist(trial_fname_path,'file')
         lineToWrite = '';
     else
         lineToWrite = sprintf('Timestamp,Stim_Index,Laser_state,hardware_triggered\n');
