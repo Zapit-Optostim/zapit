@@ -30,11 +30,11 @@ function [xVolts, yVolts] = pixelToVolt(obj, pixelColumn, pixelRow)
     xVolts = (pixelColumn - (obj.imSize(1)/2)) * obj.settings.scanners.voltsPerPixel;
     yVolts = (pixelRow    - (obj.imSize(2)/2)) * obj.settings.scanners.voltsPerPixel;
     
-    if obj.invertX
+    if obj.settings.scanners.invertXscanner==1
         xVolts = xVolts*-1;
     end
 
-    if obj.invertY
+    if obj.settings.scanners.invertYscanner==1
         yVolts= yVolts*-1;
     end
 end % pixelToVolt

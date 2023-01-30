@@ -14,9 +14,6 @@ classdef pointer < handle
 
     
     properties
-        % 0/0 volts on DAQ corresponds to the middle of the image
-        invertX = true % TODO are these used?
-        invertY = true
 
         %%
         % The following are associated with hardware components
@@ -251,7 +248,17 @@ classdef pointer < handle
                 return
             end
 
-            obj.lastAcquiredFrame = obj.cam.getLastFrame;
+
+            tmp = obj.cam.getLastFrame;
+            if obj.settings.camera.flipImageUD == 1
+                tmp = flipud(tmp);
+            end
+
+            if obj.settings.camera.flipImageLR == 1
+                tmp = fliplr(tmp);
+            end
+
+            obj.lastAcquiredFrame = tmp;
             obj.cam.flushdata
         end % storeLastFrame
 

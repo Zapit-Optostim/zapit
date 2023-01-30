@@ -13,6 +13,8 @@ function settings = default_settings
     settings.NI.triggerChannel = 'PFI0';
 
     settings.scanners.voltsPerPixel = 2.2E-3;
+    settings.scanners.invertXscanner = 0;
+    settings.scanners.invertYscanner = 0;
 
     settings.laser.name = 'obis';
     settings.laser.laserMinMaxControlVolts = [1.5,3.5];
@@ -21,6 +23,8 @@ function settings = default_settings
 
     settings.camera.default_exposure = 2000;
     settings.camera.micronsPerPixel = 19.3;
+    settings.camera.flipImageUD = 0;
+    settings.camera.flipImageLR = 0;
 
     settings.calibrateScanners.areaThreshold = 500;
     settings.calibrateScanners.calibration_power_mW = 10;
