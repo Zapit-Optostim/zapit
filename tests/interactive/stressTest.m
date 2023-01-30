@@ -21,6 +21,11 @@ function stressTest(doRampStop)
     if isempty(hZP)
         return
     end
+    
+    if isempty(hZP.stimConfig)
+        fprintf('No stimuli loaded\n')
+        return
+    end
 
     if nargin<1
         doRampStop = true;
@@ -31,10 +36,10 @@ function stressTest(doRampStop)
     % hZP.cam.stopVideo;
     f = figure;
     %f.ToolBar='off';
-    ButtonH = uicontrol('Parent',f,'Style','pushbutton', ...
-                        'String','STOP','Units','normalized',...
-                        'Position',[0.3 0.5 0.4 0.2],'Visible','on',...
-                        'Callback', @(~,~) stopTest);
+    uicontrol('Parent',f,'Style','pushbutton', ...
+              'String','STOP','Units','normalized',...
+              'Position',[0.3 0.5 0.4 0.2],'Visible','on',...
+              'Callback', @(~,~) stopTest);
 
     keepRunning = true;
     hZP.cam.stopVideo;
