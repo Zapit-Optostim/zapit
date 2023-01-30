@@ -144,6 +144,7 @@ classdef controller < zapit.gui.main.view
 
             obj.model.cam.resetROI;
             obj.refreshImage;
+            obj.model.wipeScannerCalib %Existing calib will no longer hold
         end % resetROI_Callback
 
 

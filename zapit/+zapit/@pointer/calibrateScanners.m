@@ -27,12 +27,7 @@ function varargout = calibrateScanners(obj)
 
     obj.cam.exposure = obj.settings.calibrateScanners.beam_calib_exposure;
 
-
-    % Wipe the previous transform
-    obj.transform = [];
-    obj.scannersCalibrated = false;
-
-
+    obj.wipeScannerCalib
     [R,C] = obj.generateScannerCalibrationPoints;
 
 

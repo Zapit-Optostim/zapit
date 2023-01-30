@@ -206,6 +206,19 @@ classdef pointer < handle
         end % zeroScanners
 
 
+        function wipeScannerCalib(obj)
+            % Wipe the current scanner calibration
+            %
+            % function zapit.pointer.wipeScannerCalib
+            %
+            % Purpose
+            % Used when a new calibration is initiated or if there is a reason to
+            % wipe the existing transform. e.g. the user changes camera ROI.
+
+            obj.transform = [];
+            obj.scannersCalibrated = false;
+        end % wipeScannerCalib
+
         function actualCoords = returnScannerCalibTargetCoords(obj)
             % Return target coords of the beam during calibration
             %
