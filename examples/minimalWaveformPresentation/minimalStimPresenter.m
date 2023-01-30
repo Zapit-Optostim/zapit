@@ -242,7 +242,6 @@ classdef minimalStimPresenter < handle
             % Allow sample regeneration
             % https://www.ni.com/en-gb/support/documentation/supplemental/06/analog-output-regeneration-in-ni-daqmx.html
             obj.hAO.Stream.WriteRegenerationMode = WriteRegenerationMode.AllowRegeneration;
-            %obj.hAO.set('writeRelativeTo','DAQmx_Val_FirstSample');
             
             obj.hAO.Control(TaskAction.Verify);
 
@@ -251,9 +250,7 @@ classdef minimalStimPresenter < handle
             % Configure the trigger
             if obj.hardwareTriggered
                 % Wait for line PFI0 to go high before playing waveforms
-                % TODO -- set this up
                 obj.hAO.Triggers.StartTrigger.ConfigureDigitalEdgeTrigger('PFI0', DigitalEdgeStartTriggerEdge.Rising);
-                %%obj.hAO.cfgDigEdgeStartTrig('PFI0', 'DAQmx_Val_Rising');
             end
         end % connectClockedAO
 
