@@ -11,6 +11,7 @@ function settings = default_settings
     settings.NI.AOrange = 10;
     settings.NI.AOchans = 0:3;
     settings.NI.triggerChannel = 'PFI0';
+    settings.NI.wrapper = 'vidrio'; % or 'dotnet'
 
     settings.scanners.voltsPerPixel = 2.2E-3;
     settings.scanners.invertXscanner = 0;
@@ -36,8 +37,8 @@ function settings = default_settings
 
     settings.experiment.defaultLaserFrequencyHz = 40; 
     settings.experiment.defaultLaserPowerMW = 5;
-    settings.experiment.maxStimPointsPerCondition = 2;
     settings.experiment.offRampDownDuration_ms = 250;
+    settings.experiment.maxStimPointsPerCondition = 2;
 
     settings.cache.ROI = [];
 
