@@ -193,7 +193,6 @@ classdef controller < zapit.gui.main.view
                 obj.PaintbrainborderButton.Enable = 'on';
                 obj.OverlaystimsitesButton.Enable = 'on';
                 obj.ZapallcoordsButton.Enable = 'on';
-                obj.PlotstimcoordsButton.Enable = 'on';
                 obj.ZapSiteButton.Enable = 'on';
                 obj.PaintareaButton.Enable = 'on';
                 obj.ExportwaveformsButton.Enable = 'on';
@@ -201,7 +200,6 @@ classdef controller < zapit.gui.main.view
                 obj.PaintbrainborderButton.Enable = 'off';
                 obj.OverlaystimsitesButton.Enable = 'off';
                 obj.ZapallcoordsButton.Enable = 'off';
-                obj.PlotstimcoordsButton.Enable = 'off';
                 obj.ZapSiteButton.Enable = 'off';
                 obj.PaintareaButton.Enable = 'off';
                 obj.ExportwaveformsButton.Enable = 'off';
