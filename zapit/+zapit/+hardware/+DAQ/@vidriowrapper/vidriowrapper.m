@@ -188,7 +188,7 @@ classdef vidriowrapper < handle
         end % stopAndDeleteAITask
 
 
-        function connectUnclockedAI(obj, chans, verbose)
+        function connectUnclockedAI(obj, chan, verbose)
             % connectUnclockedAO(obj)
             %
             % Create a task that is unclocked AI and can be used for misc tasks.
@@ -196,7 +196,7 @@ classdef vidriowrapper < handle
             % function zapit.DAQ.vidriowrapper.connectUnclockedAI
             %
             % Inputs
-            % chans - which chans to conect. Must be supplied.
+            % chan - which channel to connect. Must be supplied as an integer.
             % verbose - [optional, false by default]. Reports to screen what it is doing if true
 
             if nargin<3
@@ -211,7 +211,7 @@ classdef vidriowrapper < handle
                 fprintf('Creating unclocked AI task on %s\n', obj.device_ID)
             end
             obj.hAI.createAIVoltageChan(obj.device_ID, ...
-                                        chans, ...
+                                        chan, ...
                                         [], ...
                                         -obj.AOrange, ...
                                         obj.AOrange);
@@ -294,7 +294,6 @@ classdef vidriowrapper < handle
                 fprintf('Creating clocked AO task on %s\n', obj.device_ID)
             end
             
-            %% Create the inactivation task
             obj.hAO = zapit.hardware.vidrio_daqmx.Task(taskName);
             
             % Set output channels
@@ -379,7 +378,7 @@ classdef vidriowrapper < handle
         function moveBeamXY(obj,beamXY)
             % Set the two scanner AO lines to specified voltage value
             %
-            % function zapit.DAQ.vidriowrapper.beamXY
+            % function zapit.DAQ.vidriowrapper.moveBeamXY
             %
             % Purpose
             % Set the two galvo control AO lines with an unlocked AO operation.
