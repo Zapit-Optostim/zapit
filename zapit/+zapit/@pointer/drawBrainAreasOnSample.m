@@ -35,7 +35,7 @@ function drawBrainAreasOnSample(obj,areaCoords)
     coords = cat(1,coords{:});
 
     % First place beam in the centre of the area we want to stimulate
-    obj.DAQ.moveBeamXY(mean(coords));
+    obj.moveBeamXY(mean(coords));
     coords(:,3) = obj.laser_mW_to_control(obj.settings.calibrateScanners.calibration_power_mW);
 
     %Replace first two columns with voltage values
