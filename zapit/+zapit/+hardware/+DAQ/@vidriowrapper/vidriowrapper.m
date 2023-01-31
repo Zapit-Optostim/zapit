@@ -96,6 +96,10 @@ classdef vidriowrapper < zapit.hardware.DAQ
             % Purpose
             % Stop the task and then delete it, which will run DAQmxClearTask
 
+            if isempty(obj.hAO) || ~isvalid(obj.hAO)
+                return
+            end
+
             obj.stop
             obj.doingClockedAcquisition = false;
             delete(obj.hAO);
@@ -221,6 +225,11 @@ classdef vidriowrapper < zapit.hardware.DAQ
             verbose=params.Results.verbose;
             hardwareTriggered=params.Results.hardwareTriggered;
 
+
+            % If we are already connected we don't proceed
+            if ~isempty(obj.hAO) && isvalid(obj.hAO) && strcmp(obj.hAO.taskName, taskName)
+                return
+            end
 
             obj.stopAndDeleteAOTask
 

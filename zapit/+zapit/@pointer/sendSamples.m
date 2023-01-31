@@ -103,14 +103,10 @@ function varargout = sendSamples(obj, varargin)
         waveforms(:,3) = 0;
     end
 
-    % Connect only the first time this is called
-    % TODO -- this if statment should be in the connectClockedAO method
-    % i.e. it will not proceed if the requested task name is what it currenly has
-    if isempty(obj.DAQ.hAO) || ~strcmp(obj.DAQ.hAO.taskName,'sendSamples')
-        obj.DAQ.connectClockedAO('numSamplesPerChannel',size(waveforms,1), ...
-                                'hardwareTriggered', hardwareTriggered, ...
-                                'taskName','sendSamples');
-    end
+    % It will only connect if the existing task name is different
+    obj.DAQ.connectClockedAO('numSamplesPerChannel',size(waveforms,1), ...
+                            'hardwareTriggered', hardwareTriggered, ...
+                            'taskName','sendSamples');
   
     
     % write voltage samples onto the task
