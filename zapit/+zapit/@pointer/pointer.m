@@ -265,7 +265,7 @@ classdef pointer < handle
             % Set the laser voltage with an unlocked AO operation.
 
             obj.DAQ.connectUnclockedAO % will not re-connect if currently connected
-            obj.DAQ.writeAnalogData([obj.lastXgalvoVoltage, obj.lastYgalvoVoltage, laserControlVoltage])
+            obj.DAQ.writeAnalogData([obj.lastXgalvoVoltage, obj.lastYgalvoVoltage, laserControlVoltage, 0])
             obj.lastLaserValue = laserControlVoltage;
         end % setLaserPowerControlVoltage
 
@@ -283,7 +283,7 @@ classdef pointer < handle
             obj.DAQ.connectUnclockedAO % will not re-connect if currently connected
 
             beamXY = beamXY(:)'; % Ensure column vector
-            obj.DAQ.writeAnalogData([beamXY,obj.lastLaserValue])
+            obj.DAQ.writeAnalogData([beamXY,obj.lastLaserValue,0])
 
             % update cached values
             obj.lastXgalvoVoltage = beamXY(1);

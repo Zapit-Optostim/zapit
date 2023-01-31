@@ -202,8 +202,6 @@ classdef dotNETwrapper < zapit.hardware.DAQ
                 return
             end
 
-            disp('CONNECTING TO UNCLOCKED (TODO --REMOVE THIS WHEN WE KNOW IT WORKS)')
-
             obj.stopAndDeleteAOTask
 
             if verbose
@@ -212,7 +210,7 @@ classdef dotNETwrapper < zapit.hardware.DAQ
 
             taskName = 'unclockedao';
             obj.hAO = NationalInstruments.DAQmx.Task(taskName);
-            channelName = [obj.device_ID,'/ao0:2']; % TODO -- this is hard-coded!
+            channelName = obj.genChanString(obj.AOchans);
 
             obj.hAO.AOChannels.CreateVoltageChannel(channelName, taskName, ...
                             -obj.AOrange, obj.AOrange, AOVoltageUnits.Volts);
@@ -279,7 +277,7 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             obj.hAO = NationalInstruments.DAQmx.Task(taskName);
 
             % Set output channels
-            channelName = [obj.device_ID,'/ao0:2']; % TODO -- this is hard-coded!
+            channelName = obj.genChanString(obj.AOchans);
 
             obj.hAO.AOChannels.CreateVoltageChannel(channelName, taskName, ...
                             -obj.AOrange, obj.AOrange, AOVoltageUnits.Volts);
@@ -341,7 +339,6 @@ classdef dotNETwrapper < zapit.hardware.DAQ
                 if verbose
                     fprintf('Writing to buffer: clocked\n')
                 end
-                waveforms = waveforms(:,1:3);
                 obj.hAOtaskWriter.WriteMultiSample(false,waveforms');
             end
         end % writeAnalogData
@@ -358,10 +355,43 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             if isempty(obj.hAO)
                 nSamples = 0;
             else
-                nSamples = length(obj.lastWaveform); %TODO --- NOT DONE
+                %TODO - This is indirect. I can not as yet find which property in the
+                % class contains the buffer size. The approach here won't produce errors,
+                % I don't think, so let's stay with this for now.
+                nSamples = length(obj.lastWaveform);
             end
         end % numSamplesInBuffer
 
+
+        function chanString = genChanString(obj,chans)
+            % Generate a channel string for connecting to the DAQ
+            %
+            % function zapit.DAQ.dotNETwrapper.genChanString(chans)
+            %
+            % Purpose
+            % Turns a vector, like [0,3], into a string that the wrapper will
+            % accept as a channel name.
+            %
+            % Inputs
+            % chans - scalar or vector of channels names.
+            %
+            % Outputs
+            % chanString - a string that the .NET wrapper will accept. e.g. 'Dev1/ao1,Dev1/ao3'
+
+            C = arrayfun(@(x) sprintf('%s/ao%d', obj.device_ID,x), chans, ...
+                    'UniformOutput',false);
+
+            if length(C) == 1
+                chanString = C{1};
+                return
+            end
+
+            C = strcat(C{:});
+            C = strrep(C,'D',',D');
+            C(1) = [];
+
+            chanString = C;
+        end % genChanString
 
     end % methods
 
