@@ -41,7 +41,7 @@ classdef vidriowrapper < zapit.hardware.DAQ
             % The main purpose of the constructor is to set up default parameters.
             %
             obj = obj@zapit.hardware.DAQ(varargin{:});
-
+            fprintf('Connecting to NI hardware with Vidrio''s DAQmx wrapper\n')
         end % Constructor
 
         % TODO -- can the destructor go to the superclass?

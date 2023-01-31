@@ -125,15 +125,17 @@ classdef pointer < handle
                 obj.DAQ = zapit.simulated.DAQ;
             else
                 fprintf('Connecting to DAQ\n')
-                obj.DAQ = zapit.hardware.DAQ.vidriowrapper;
+                switch lower(obj.settings.NI.wrapper)
+                case 'vidrio'
+                    obj.DAQ = zapit.hardware.DAQ.vidriowrapper;
+                case 'dotnet'
+                    obj.DAQ = zapit.hardware.DAQ.dotNETwrapper;
+                end
             end
 
             obj.DAQ.parent = obj;
-
             obj.zeroScanners
-
             obj.loadLaserFit
-
             obj.buildFailed = false; % signal to start_zapit that all went well
 
         end % Constructor
