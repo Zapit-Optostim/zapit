@@ -31,6 +31,15 @@ classdef camera < handle
                 camToStart=[];
             end
 
+            % Before proceeding, make sure there are no instances of the class hanging around.
+            v = imaqfind;
+            for ii=1:length(v)
+                if strcmp(v(ii).Tag, 'zapit_vid')
+                    delete(v(ii))
+                end
+            end
+
+
             % Find which adapters are installed
             cams=imaqhwinfo;
             if isempty(cams.InstalledAdaptors)
@@ -88,7 +97,8 @@ classdef camera < handle
             % Set up the camera so that it is manually triggerable an 
             % unlimited number of times. 
             triggerconfig(obj.vid,'manual')
-            vid.TriggerRepeat=inf;
+            obj.vid.TriggerRepeat=inf;
+            obj.vid.Tag = 'zapit_vid';
             obj.vid.FramesPerTrigger = inf;
             obj.vid.FramesAcquiredFcnCount=1; %Run frame acq fun every frame
             
