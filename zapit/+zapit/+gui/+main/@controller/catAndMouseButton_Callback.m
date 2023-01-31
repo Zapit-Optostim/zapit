@@ -46,7 +46,7 @@ function catAndMouseButton_Callback(obj,~,~)
         [xVolts, yVolts] = obj.model.mmToVolt(X,Y);
         obj.plotOverlayHandles.hLastPoint.XData = X;
         obj.plotOverlayHandles.hLastPoint.YData = Y;
-        obj.model.DAQ.moveBeamXY([xVolts, yVolts]);
+        obj.model.moveBeamXY([xVolts, yVolts]);
     end % mouseMove
 
 end % catAndMouseButton_Callback

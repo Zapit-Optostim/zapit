@@ -28,7 +28,7 @@ function zapAllCoords_Callback(obj,~,~)
         waveforms = cat(1,obj.model.stimConfig.calibratedPointsInVolts{:});
         waveforms(:,3) =  obj.model.laser_mW_to_control(obj.model.settings.calibrateScanners.calibration_power_mW);
 
-        obj.model.DAQ.moveBeamXY(waveforms(1,:)) % Go to first position
+        obj.model.moveBeamXY(waveforms(1,:)) % Go to first position
 
         obj.model.DAQ.connectClockedAO('numSamplesPerChannel',size(waveforms,1), ...
                                 'samplesPerSecond',500, ...

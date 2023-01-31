@@ -48,6 +48,7 @@ classdef pointer < handle
     properties (Hidden)
         lastXgalvoVoltage  = 0 % Cached value indicating last X scanner voltage 
         lastYgalvoVoltage  = 0 % Cached value indicating last Y scanner voltage 
+        lastLaserValue = 0 % Cached value indicating what the laser was last set to
         buildFailed = true % Used during boostrap by start_zapit
         breakScannerCalibLoop = false; % Used so GUI can break out of the scanner calibration loop.
         simulated = false % Tag to indicate whether it is in simulated mode
@@ -263,6 +264,7 @@ classdef pointer < handle
 
             obj.DAQ.connectUnclockedAO % will not re-connect if currently connected
             obj.DAQ.writeAnalogData([obj.lastXgalvoVoltage, obj.lastYgalvoVoltage, laserControlVoltage])
+            obj.lastLaserValue = laserControlVoltage;
         end % setLaserPowerControlVoltage
 
 
@@ -279,9 +281,7 @@ classdef pointer < handle
             obj.DAQ.connectUnclockedAO % will not re-connect if currently connected
 
             beamXY = beamXY(:)'; % Ensure column vector
-            obj.DAQ.writeAnalogData(beamXY) %TODO -- I have removed the cached last laser voltage
-                                            % check whether this matters. If it does, return this
-                                            % property to pointer.
+            obj.DAQ.writeAnalogData([beamXY,obj.lastLaserValue])
 
             % update cached values
             obj.lastXgalvoVoltage = beamXY(1);

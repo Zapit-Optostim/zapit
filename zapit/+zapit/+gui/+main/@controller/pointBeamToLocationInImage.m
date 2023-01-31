@@ -27,7 +27,7 @@ function pointBeamToLocationInImage(obj,~,~)
     obj.plotOverlayHandles.hLastPoint.YData = yPos;
 
 
-    obj.model.DAQ.moveBeamXY([xVolts, yVolts]); % send beam to this location
+    obj.model.moveBeamXY([xVolts, yVolts]); % send beam to this location
 
 
     % Update figure title    
