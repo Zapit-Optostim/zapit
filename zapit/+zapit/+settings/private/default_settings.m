@@ -11,7 +11,7 @@ function settings = default_settings
     settings.NI.AOrange = 10;
     settings.NI.AOchans = 0:3;
     settings.NI.triggerChannel = 'PFI0';
-    settings.NI.wrapper = 'vidrio'; % or 'dotnet'
+    settings.NI.wrapper = 'dotnet'; % 'vidrio' or 'dotnet'
 
     settings.scanners.voltsPerPixel = 2.2E-3;
     settings.scanners.invertXscanner = 0;
@@ -20,7 +20,7 @@ function settings = default_settings
     settings.laser.name = 'obis';
     settings.laser.laserMinMaxControlVolts = [1.5,3.5];
     settings.laser.laserMinMax_mW = [0,100];
-    settings.laser.maxValueInGUI = 20; %TODO not in validation scriptt
+    settings.laser.maxValueInGUI = 20; %TODO not in validation script
 
     settings.camera.default_exposure = 2000;
     settings.camera.micronsPerPixel = 19.3;
