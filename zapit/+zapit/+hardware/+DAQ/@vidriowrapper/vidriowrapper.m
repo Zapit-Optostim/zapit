@@ -164,7 +164,7 @@ classdef vidriowrapper < zapit.hardware.DAQ
             % function zapit.DAQ.vidriowrapper.connectUnclockedAO
             %
             % Create a task that is unclocked AO and can be used for sample setup.
-            % The connection options are set by proprties in the vidriowrapper
+            % The connection options are set by properties in the vidriowrapper
             % class. see: .device_ID, .AOchans, .AOrange, 
             %
             % Inputs

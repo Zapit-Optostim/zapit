@@ -185,7 +185,7 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             % function zapit.DAQ.dotNETwrapper.connectUnclockedAO
             %
             % Create a task that is unclocked AO and can be used for sample setup.
-            % The connection options are set by proprties in the dotNETwrapper
+            % The connection options are set by properties in the dotNETwrapper
             % class. see: .device_ID, .AOchans, .AOrange,
             %
             % Inputs

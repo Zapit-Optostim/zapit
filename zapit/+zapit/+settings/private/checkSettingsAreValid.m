@@ -78,12 +78,6 @@ function [settings,allValid] = checkSettingsAreValid(settings)
         allValid=false;
     end
 
-
-    if iscell(settings.NI.AOchans)
-        settings.NI.AOchans = cell2mat(settings.NI.AOchans);
-    end
-
-
     if ~ischar(settings.NI.triggerChannel)
         fprintf('NI.triggerChannel should be a string. Setting it to "%s"\n', DEFAULT_SETTINGS.NI.triggerChannel)
         settings.NI.triggerChannel = DEFAULT_SETTINGS.NI.triggerChannel;

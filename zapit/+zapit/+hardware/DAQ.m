@@ -6,9 +6,9 @@ classdef (Abstract) DAQ < handle
 
         % The following are default parameters for the class (see above)
         device_ID = 'Dev1'
-        samplesPerSecond = 10E3
+        samplesPerSecond = 10E5
         AOrange = 10
-        AOchans = 0:4
+        AOchans = 0:3
         triggerChannel = 'PFI0'
     end %close public properties
 
@@ -45,9 +45,6 @@ classdef (Abstract) DAQ < handle
             if isfield(obj.settings.NI,'AOrange')
                 obj.AOrange = obj.settings.NI.AOrange;
             end
-            if isfield(obj.settings.NI,'AOchans')
-                obj.AOchans = obj.settings.NI.AOchans;
-            end
             if isfield(obj.settings.NI,'triggerChannel')
                 obj.triggerChannel = obj.settings.NI.triggerChannel;
             end
@@ -59,7 +56,6 @@ classdef (Abstract) DAQ < handle
             params.addParameter('device_ID', obj.device_ID, @(x) ischar(x));
             params.addParameter('samplesPerSecond', obj.samplesPerSecond, @(x) isnumeric(x));
             params.addParameter('AOrange', obj.AOrange, @(x) isnumeric(x));
-            params.addParameter('AOchans', obj.AOchans, @(x) isnumeric(x));
             params.addParameter('triggerChannel', obj.triggerChannel, @(x) ischar(x));
             params.parse(varargin{:});
 
@@ -68,7 +64,6 @@ classdef (Abstract) DAQ < handle
             obj.device_ID= params.Results.device_ID;
             obj.samplesPerSecond = params.Results.samplesPerSecond;
             obj.AOrange = params.Results.AOrange;
-            obj.AOchans = params.Results.AOchans;
             obj.triggerChannel = params.Results.triggerChannel;
             %(seems circular, but works nicely)
 

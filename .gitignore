@@ -4,3 +4,4 @@ python_link_notes.txt
 convert2UnixEndings.sh
 *.asv
 zapit/+zapit/+gui/+stimConfigEditor/@controller/.DS_Store
+zapit/+zapit/@pointer/.DS_Store
