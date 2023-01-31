@@ -24,7 +24,7 @@ function stopOptoStim(obj, rampDownInMS)
     samplesPerSecond = obj.DAQ.samplesPerSecond;
     bufferSize = obj.DAQ.numSamplesInBuffer;
 
-    if isempty(bufferSize) || obj.DAQ.hAO.isTaskDone
+    if isempty(bufferSize) || obj.DAQ.isAOTaskDone
         return
     end
 
@@ -69,7 +69,7 @@ function stopOptoStim(obj, rampDownInMS)
     if obj.simulated
         data = [];
     end
-    verbose = true; % For debugging the rampdown
+    verbose = false; % For debugging the rampdown
     if verbose
         fprintf('There are %d steps in the rampdown\n', length(ind))
     end
