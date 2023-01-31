@@ -41,5 +41,6 @@ function settings = default_settings
     settings.experiment.maxStimPointsPerCondition = 2;
 
     settings.cache.ROI = [];
+    settings.cache.previouslyLoadedFiles = [];
 
 end % default_settings

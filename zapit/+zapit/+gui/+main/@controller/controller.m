@@ -75,8 +75,18 @@ classdef controller < zapit.gui.main.view
             obj.buildListeners
 
             % Load the cache file so the GUI returns to its previous state
-            obj.loadGUIcache
+            if iscell(obj.model.settings.cache.previouslyLoadedFiles)
+                for ii=1:length(obj.model.settings.cache.previouslyLoadedFiles)
+                    pl = obj.model.settings.cache.previouslyLoadedFiles{ii};
+                    [pt,fn,ext] = fileparts(pl{1});
+             
+                    obj.previouslyLoadedStimConfigs(ii) = ...
+                            struct('fname', [fn,ext], ...
+                                    'pathToFname', pt, ...
+                                    'timeAdded', pl{2});
+                end
 
+            end
             % Attempt to report when figure is open
             %getframe(obj.hImAx)
             %fprintf('DONE\n')
