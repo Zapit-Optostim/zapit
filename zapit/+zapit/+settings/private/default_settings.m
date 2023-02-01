@@ -20,6 +20,7 @@ function settings = default_settings
     settings.laser.laserMinMax_mW = [0,100];
     settings.laser.maxValueInGUI = 20; %TODO not in validation script
 
+    settings.camera.connectionIndex = 1;
     settings.camera.default_exposure = 2000;
     settings.camera.micronsPerPixel = 19.3;
     settings.camera.flipImageUD = 0;

@@ -97,7 +97,7 @@ classdef pointer < handle
             if obj.simulated
                 obj.cam = zapit.simulated.camera;
             else
-                obj.cam = zapit.hardware.camera(obj.settings.camera.connection_index);
+                obj.cam = zapit.hardware.camera(obj.settings.camera.connectionIndex);
             end
             obj.cam.exposure = obj.settings.camera.default_exposure;
 

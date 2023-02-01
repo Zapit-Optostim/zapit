@@ -16,7 +16,6 @@ function [settings,allValid] = checkSettingsAreValid(settings)
     DEFAULT_SETTINGS = default_settings;
     allValid=true;
 
-
     %% 
     %
     % general settings
@@ -128,15 +127,15 @@ function [settings,allValid] = checkSettingsAreValid(settings)
     %
     % camera
 
-    if ~isnumeric(settings.camera.connection_index)
-        fprintf('camera.connection_index should be a number. Setting it to %d \n', ...
-            DEFAULT_SETTINGS.camera.connection_index)
-        settings.camera.connection_index = DEFAULT_SETTINGS.camera.connection_index;
+    if ~isnumeric(settings.camera.connectionIndex)
+        fprintf('camera.connectionIndex should be a number. Setting it to %d \n', ...
+            DEFAULT_SETTINGS.camera.connectionIndex)
+        settings.camera.connectionIndex = DEFAULT_SETTINGS.camera.connectionIndex;
         allValid=false;
-    elseif settings.camera.connection_index<=0
-        fprintf('camera.connection_index should be >0. Setting it to %d \n', ...
-            DEFAULT_SETTINGS.camera.connection_index)
-        settings.camera.connection_index = DEFAULT_SETTINGS.camera.connection_index;
+    elseif settings.camera.connectionIndex<=0
+        fprintf('camera.connectionIndex should be >0. Setting it to %d \n', ...
+            DEFAULT_SETTINGS.camera.connectionIndex)
+        settings.camera.connectionIndex = DEFAULT_SETTINGS.camera.connectionIndex;
         allValid=false;
     end
 
