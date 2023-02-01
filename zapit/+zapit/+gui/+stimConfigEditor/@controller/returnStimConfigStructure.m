@@ -14,9 +14,13 @@ function stimC = returnStimConfigStructure(obj)
     if length(obj.pAddedPoints)<1
         return 
     end
-    stimC.stimFreqInHz = obj.StimFreqHzSpinner.Value;
+
+    % All will share the same values right now but this can be changed in the file.
+    % NOTE (TODO) the rep rate will always be whatever the first stim loc is:
+    %  https://github.com/Zapit-Optostim/zapit/issues/9
 
     pointAttributes.laserPowerInMW = obj.LaserPowermWSpinner.Value;
+    pointAttributes.stimFreqInHz = obj.StimFreqHzSpinner.Value;
     pointAttributes.offRampDownDuration_ms = obj.RampdownmsSpinner.Value;
 
     for ii=1:length(obj.pAddedPoints)
