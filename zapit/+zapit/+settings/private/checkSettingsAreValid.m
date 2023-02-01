@@ -66,23 +66,12 @@ function [settings,allValid] = checkSettingsAreValid(settings)
     end
 
 
-    if ~isnumeric(settings.NI.AOrange)
-        fprintf('NI.AOrange should be a number. Setting it to %d \n', ...
-            DEFAULT_SETTINGS.NI.AOrange)
-        settings.NI.AOrange = DEFAULT_SETTINGS.NI.AOrange;
-        allValid=false;
-    elseif settings.NI.AOrange <= 0 
-        fprintf('NI.AOrange should be >0. Setting it to %d \n', ...
-            DEFAULT_SETTINGS.NI.AOrange)
-        settings.NI.AOrange = DEFAULT_SETTINGS.NI.AOrange;
-        allValid=false;
-    end
-
     if ~ischar(settings.NI.triggerChannel)
         fprintf('NI.triggerChannel should be a string. Setting it to "%s"\n', DEFAULT_SETTINGS.NI.triggerChannel)
         settings.NI.triggerChannel = DEFAULT_SETTINGS.NI.triggerChannel;
         allValid=false;
     end
+
 
     if ~ischar(settings.NI.wrapper)
         fprintf('NI.wrapper should be a string. Setting it to "%s"\n', DEFAULT_SETTINGS.NI.wrapper)

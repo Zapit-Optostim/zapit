@@ -8,7 +8,6 @@ function settings = default_settings
 
     settings.NI.device_ID = 'Dev1';
     settings.NI.samplesPerSecond = 10000;
-    settings.NI.AOrange = 10;
     settings.NI.triggerChannel = 'PFI0';
     settings.NI.wrapper = 'dotnet'; % 'vidrio' or 'dotnet'
 
