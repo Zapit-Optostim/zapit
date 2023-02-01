@@ -78,17 +78,23 @@ function [settings,allValid] = checkSettingsAreValid(settings)
         allValid=false;
     end
 
-
-    if iscell(settings.NI.AOchans)
-        settings.NI.AOchans = cell2mat(settings.NI.AOchans);
-    end
-
-
     if ~ischar(settings.NI.triggerChannel)
         fprintf('NI.triggerChannel should be a string. Setting it to "%s"\n', DEFAULT_SETTINGS.NI.triggerChannel)
         settings.NI.triggerChannel = DEFAULT_SETTINGS.NI.triggerChannel;
         allValid=false;
     end
+
+    if ~ischar(settings.NI.wrapper)
+        fprintf('NI.wrapper should be a string. Setting it to "%s"\n', DEFAULT_SETTINGS.NI.wrapper)
+        settings.NI.wrapper = DEFAULT_SETTINGS.NI.wrapper;
+        allValid=false;
+    end
+    if ~strcmp(settings.NI.wrapper,'vidrio') && ~strcmp(settings.NI.wrapper,'dotnet')
+        fprintf('NI.wrapper should be either "dotnet" or "vidrio". Setting it to "%s"\n', DEFAULT_SETTINGS.NI.wrapper)
+        settings.NI.wrapper = DEFAULT_SETTINGS.NI.wrapper;
+        allValid=false;
+    end
+
 
 
     %%

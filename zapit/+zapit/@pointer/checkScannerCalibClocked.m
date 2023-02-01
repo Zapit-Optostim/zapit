@@ -20,7 +20,8 @@ function checkScannerCalibClocked(obj)
     % they are set in checkScannerCalib_Callback of the controller
 
     actualCoords(:,3) = obj.laser_mW_to_control(obj.settings.calibrateScanners.calibration_power_mW);
-
+    actualCoords(:,4) = 0;
+    
     %Replace first two columns with voltage values
     [xVolt,yVolt] = obj.mmToVolt(actualCoords(:,1), actualCoords(:,2));
 

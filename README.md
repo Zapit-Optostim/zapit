@@ -38,10 +38,6 @@ Contributions and collaborations are welcome.
 Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
 
 
-## Acknowledgements
-Thanks to Vidrio Technologies for allowing the inclusion of their DAQmx wrapper in this project.
-
-
 ## Related Projects
 * [AllenAtlasTopDown](https://github.com/Zapit-Optostim/AllenAtlasTopDown)
 

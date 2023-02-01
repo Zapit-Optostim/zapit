@@ -17,6 +17,18 @@ The Zapit main window will print a notification in the title bar when a new vers
 
 ## Version History
 
+2023/02/01 -- v0.10.0
+ * Wipe scanner calib if user applies a ROI or resets image zoom.
+ * Do not disable plotStimCoords when sample calib not done
+ * Fix bug in camera class that sometimes blocked startup of Zapit.
+ * Refactor some of the DAQ routines.
+ * Switch to .NET for NI DAQmx.
+ * Get the fourth channel working for the masking light.
+ * Recently loaded files now saved in settings file not a separate .mat file.
+ * Make stim config YML format more flexible with extra field names and allow stim-specific settings
+   for the rep rate, laser power, rampdown. Confirm that we can have different powers and
+   different ranpdowns on different trials. Have not tried different rep rates.
+
 ### Beta Versions
 
 2023/01/29 -- v0.9.0-beta

@@ -59,6 +59,20 @@ function mouseClick_Callback(obj,~,~)
         hold(obj.hAx,'on')
     end
 
+    % Note if this was a bilateral or a unilateral condition and singular or plural number
+    if  obj.BilateralButton.Value
+        uniBi = 'bilateral';
+    else
+        uniBi = 'unilateral';
+    end
+
+    typeString = [uniBi,'_point'];
+    if length(obj.pAddedPoints(end).XData)>1
+        typeString = [typeString,'s'];
+    end
+
+    obj.pAddedPoints(end).UserData = struct('type',typeString);
+
 
     % Update the text along the bottom
     obj.updateBottomLabel

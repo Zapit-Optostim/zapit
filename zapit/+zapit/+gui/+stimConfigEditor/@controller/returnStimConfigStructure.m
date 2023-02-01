@@ -15,15 +15,26 @@ function stimC = returnStimConfigStructure(obj)
         return 
     end
 
-    stimC.laserPowerInMW = obj.LaserPowermWSpinner.Value;
-    stimC.stimFreqInHz = obj.StimFreqHzSpinner.Value;
-    stimC.offRampDownDuration_ms = obj.RampdownmsSpinner.Value;
+    % All will share the same values right now but this can be changed in the file.
+    % NOTE (TODO) the rep rate will always be whatever the first stim loc is:
+    %  https://github.com/Zapit-Optostim/zapit/issues/9
+
+    pointAttributes.laserPowerInMW = obj.LaserPowermWSpinner.Value;
+    pointAttributes.stimFreqInHz = obj.StimFreqHzSpinner.Value;
+    pointAttributes.offRampDownDuration_ms = obj.RampdownmsSpinner.Value;
 
     for ii=1:length(obj.pAddedPoints)
         fieldName = sprintf('stimLocations%02d',ii);
+        stimC.(fieldName) = zapit.stimConfig.stimLocations; %create a template
         stimC.(fieldName).ML = round(obj.pAddedPoints(ii).XData,2);
         stimC.(fieldName).AP = round(obj.pAddedPoints(ii).YData,2);
+        stimC.(fieldName).Type = obj.pAddedPoints(ii).UserData.type;
+
+        % The attributes for each point can be different in theory even if at
+        % the moment we make them all the same.
+        stimC.(fieldName).Attributes = pointAttributes;
+
+
     end
-    
 
 end % returnStimConfigStructure

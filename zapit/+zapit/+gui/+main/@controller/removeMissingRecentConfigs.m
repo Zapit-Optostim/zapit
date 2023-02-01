@@ -20,6 +20,6 @@ function removeMissingRecentConfigs(obj,~,~)
 
     % Update the saved cache if files were removed
     if removedFiles
-        obj.saveGUIcache
+        obj.saveFileListCache
     end
 end

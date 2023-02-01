@@ -4,11 +4,14 @@ function runThroughAllStimPoints(varargin)
     % function runThroughAllStimPoints(varargin)
     %
     % Purpose
-    % Demo showing how to present stim at each location for a short time
+    % Demo showing how to present stim at each location for a short time. Does not make
+    % any log files. Absolute minimal example.
     %
     % Inputs (optional)
     % stimDuration - number of seconds for which to present the stimuli. 0.5 by default.
     %
+    % Outputs
+    % none
     %
     % Rob Campbell - SWC 2023
 
@@ -34,7 +37,7 @@ function runThroughAllStimPoints(varargin)
 
 
     for ii = 1:length(hZP.stimConfig.stimLocations)
-        hZP.sendSamples('conditionNum',ii) % Starts right away
+        hZP.sendSamples('conditionNum',ii, 'hardwareTriggered', false) % Starts right away
         pause(stimDuration)
         hZP.stopOptoStim
     end

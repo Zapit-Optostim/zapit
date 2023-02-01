@@ -34,6 +34,5 @@ function addStimConfigToRecents(obj,fname,pathToFname)
     end
 
     % Save the cache when a file is loaded
-    obj.saveGUIcache
-
+    obj.saveFileListCache
 end % addStimConfigToRecents

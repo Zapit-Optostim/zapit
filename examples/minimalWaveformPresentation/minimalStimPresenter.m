@@ -68,7 +68,7 @@ classdef minimalStimPresenter < handle
     % * Further Reading
     % https://github.com/tenss/MATLAB_DAQmx_examples -- lots of DAQmx examples in MATLAB
     % https://github.com/danionella/lsmaq/ -- simple MATLAB laser scanning with .NET & DAQmx
-
+    % https://www.ni.com/docs/en-US/bundle/ni-daqmx-net-framework-45-api-ref
 
     properties
         waveforms % Cell array of waveforms loaded from the zapit_waveforms.mat file
@@ -128,6 +128,11 @@ classdef minimalStimPresenter < handle
 
         function delete(obj)
             % Destructor 
+
+            if isa(obj.hAO, 'NationalInstruments.DAQmx.Task')
+                obj.hAO.Dispose
+            end
+
             delete(obj.hAO)
         end % destructor
 
@@ -220,11 +225,12 @@ classdef minimalStimPresenter < handle
 
             %% Create the inactivation task
             taskName = 'minimalao';
-            obj.hAO = NationalInstruments.DAQmx.Task;
+            obj.hAO = NationalInstruments.DAQmx.Task(taskName);
             
             % Set output channels
             channelName = [obj.device_ID,'/ao0:3'];
-            obj.hAO.AOChannels.CreateVoltageChannel(channelName, taskName,-10, 10, AOVoltageUnits.Volts);
+            channelName = ''; %Can be anything (you might want it to be task name, if that helps)
+            obj.hAO.AOChannels.CreateVoltageChannel(channelName, '',-10, 10, AOVoltageUnits.Volts);
 
 
 
@@ -242,7 +248,6 @@ classdef minimalStimPresenter < handle
             % Allow sample regeneration
             % https://www.ni.com/en-gb/support/documentation/supplemental/06/analog-output-regeneration-in-ni-daqmx.html
             obj.hAO.Stream.WriteRegenerationMode = WriteRegenerationMode.AllowRegeneration;
-            %obj.hAO.set('writeRelativeTo','DAQmx_Val_FirstSample');
             
             obj.hAO.Control(TaskAction.Verify);
 

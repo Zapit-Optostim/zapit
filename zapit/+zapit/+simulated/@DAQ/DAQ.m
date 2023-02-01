@@ -15,9 +15,9 @@ classdef DAQ < handle
         hAI
 
         device_ID = 'Dev1'
-        samplesPerSecond = 10E3
+        samplesPerSecond = 10E5
         AOrange = 10
-        AOchans = 0:4
+        AOchans = 0:3
         AIchans = 0;
         triggerChannel = 'PFI0'
         lastWaveform

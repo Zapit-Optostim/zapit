@@ -75,8 +75,18 @@ classdef controller < zapit.gui.main.view
             obj.buildListeners
 
             % Load the cache file so the GUI returns to its previous state
-            obj.loadGUIcache
+            if iscell(obj.model.settings.cache.previouslyLoadedFiles)
+                for ii=1:length(obj.model.settings.cache.previouslyLoadedFiles)
+                    pl = obj.model.settings.cache.previouslyLoadedFiles{ii};
+                    [pt,fn,ext] = fileparts(pl{1});
+             
+                    obj.previouslyLoadedStimConfigs(ii) = ...
+                            struct('fname', [fn,ext], ...
+                                    'pathToFname', pt, ...
+                                    'timeAdded', pl{2});
+                end
 
+            end
             % Attempt to report when figure is open
             %getframe(obj.hImAx)
             %fprintf('DONE\n')
@@ -144,6 +154,7 @@ classdef controller < zapit.gui.main.view
 
             obj.model.cam.resetROI;
             obj.refreshImage;
+            obj.model.wipeScannerCalib %Existing calib will no longer hold
         end % resetROI_Callback
 
 
@@ -192,7 +203,6 @@ classdef controller < zapit.gui.main.view
                 obj.PaintbrainborderButton.Enable = 'on';
                 obj.OverlaystimsitesButton.Enable = 'on';
                 obj.ZapallcoordsButton.Enable = 'on';
-                obj.PlotstimcoordsButton.Enable = 'on';
                 obj.ZapSiteButton.Enable = 'on';
                 obj.PaintareaButton.Enable = 'on';
                 obj.ExportwaveformsButton.Enable = 'on';
@@ -200,7 +210,6 @@ classdef controller < zapit.gui.main.view
                 obj.PaintbrainborderButton.Enable = 'off';
                 obj.OverlaystimsitesButton.Enable = 'off';
                 obj.ZapallcoordsButton.Enable = 'off';
-                obj.PlotstimcoordsButton.Enable = 'off';
                 obj.ZapSiteButton.Enable = 'off';
                 obj.PaintareaButton.Enable = 'off';
                 obj.ExportwaveformsButton.Enable = 'off';

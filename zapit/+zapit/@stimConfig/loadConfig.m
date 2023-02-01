@@ -10,13 +10,15 @@ function loadConfig(obj,fname)
 
     data = zapit.yaml.ReadYaml(fname);
 
-    obj.laserPowerInMW = data.laserPowerInMW;
-    obj.stimFreqInHz = data.stimFreqInHz;
-    obj.offRampDownDuration_ms = data.offRampDownDuration_ms;
-
-    % Loop through a import all stimLocations
-    obj.stimLocations = struct('ML',[],'AP',[]);
     ind = 1;
+
+    obj.stimLocations = struct(...
+                        'ML', [], ...
+                        'AP', [], ...
+                        'Class', [], ...
+                        'Type', [], ...
+                        'Attributes',[]);
+
     while true
         fieldName = sprintf('stimLocations%02d',ind);
         if isfield(data,fieldName)
@@ -31,5 +33,15 @@ function loadConfig(obj,fname)
         end
         ind = ind + 1;
     end
+
+    % Fill in these values with whatever is in the first condition for now.
+    % TODO -- might change this in future but for some things, like stim freq,
+    % changing on a trial by trial basis might be a little more work so we
+    % do not implement for now. SO HIDE FROM USER THAT THIS CAN BE DONE!
+    obj.laserPowerInMW = obj.stimLocations(1).Attributes.laserPowerInMW;
+    obj.stimFreqInHz = obj.stimLocations(1).Attributes.stimFreqInHz;
+    obj.offRampDownDuration_ms = obj.stimLocations(1).Attributes.offRampDownDuration_ms;
+
+
     obj.configFileName = fname;
 end % loadConfig

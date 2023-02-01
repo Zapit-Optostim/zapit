@@ -70,6 +70,7 @@ function drawROI_Callback(obj,~,~)
 
     obj.ROIButton.Enable='on';
     obj.model.cam.startVideo
+    obj.model.wipeScannerCalib % Because any existing scanner calib will no longer hold
 
 end % drawROI
 

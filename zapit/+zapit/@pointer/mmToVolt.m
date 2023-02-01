@@ -35,11 +35,11 @@ function [xVolts, yVolts] = mmToVolt(obj, pixelColumnInMM, pixelRowInMM)
     yVolts = pixelRowInMM * scaling;
 
     
-    if obj.invertX
+    if obj.settings.scanners.invertXscanner==1
         xVolts = xVolts*-1;
     end
 
-    if obj.invertY
+    if obj.settings.scanners.invertYscanner==1
         yVolts= yVolts*-1;
     end
 

@@ -27,18 +27,13 @@ function varargout = calibrateScanners(obj)
 
     obj.cam.exposure = obj.settings.calibrateScanners.beam_calib_exposure;
 
-
-    % Wipe the previous transform
-    obj.transform = [];
-    obj.scannersCalibrated = false;
-
-
+    obj.wipeScannerCalib
     [R,C] = obj.generateScannerCalibrationPoints;
 
 
     % change mm coords into voltage 
     [rVolts(:,1), rVolts(:,2)] = obj.mmToVolt(C,R);
-    obj.DAQ.moveBeamXY(rVolts(1,:)); % Move to first position
+    obj.moveBeamXY(rVolts(1,:)); % Move to first position
 
     pause(0.05)
 
@@ -59,7 +54,7 @@ function varargout = calibrateScanners(obj)
         end
         % feed volts into scan mirrors, wait for precise image
         % without smudges and take position in pixels
-        obj.DAQ.moveBeamXY(rVolts(ii,:));
+        obj.moveBeamXY(rVolts(ii,:));
         pause(0.1)
 
         % Attempt to get laser position and append to list if the position was found
