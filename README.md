@@ -3,8 +3,7 @@
 
 Zapit is software that runs a scanning opto-stim system for head-fixed mouse behavior.
 Code was initially written by Maja Skretowska and Rob Campbell at the Sainsbury Wellcome Centre (UCL) in 2021/2022.
-The [Change Log](CHANGELOG.md) describes the project history and recent changes.
-
+There is an [Installation & User Manual(https://zapit.gitbook.io/user-guide/) and a [Change Log](CHANGELOG.md).
 
 ## How it works
 A pair of scan mirrors deflect an incoming laser beam, which is focused onto the exposed skull with a lens.
@@ -19,19 +18,13 @@ A flexible, general purpose, MATLAB API for integrating stimulation into existin
 * [Image Processing Toolbox](https://www.mathworks.com/help/images/index.html)
 * [Image Acquisition Toolbox](https://www.mathworks.com/products/image-acquisition.html)
 * [Curve Fittting Toolbox](https://www.mathworks.com/help/curvefit/)
-* [DAQmx](https://www.ni.com/en-gb/support/downloads/drivers/download.ni-daqmx.html). Supported versions: 19.0 to 21.8
-* To communicate with the camera you will need to install [Basler's instructions for the GenICam interface](https://www.baslerweb.com/en/downloads/document-downloads/using-pylon-gentl-producers-for-basler-cameras-with-matlab/).
-Although the Zapit system is tested against this, the goal is that it is able to handle other drivers and cameras also.
-If you can not get the above to work, try installing the `Image Acquisition Toolbox Support Package for OS Generic Video Interface`.
-If you run into errors when setting up with a driver other than GenICam, please file an Issue.
+* [DAQmx](https://www.ni.com/en-gb/support/downloads/drivers/download.ni-daqmx.html) installed with .NET support (tested versions: 19.0 to 21.8).
+* Currently only Basler cameras are supported but in principle others can be incorporated. File an Issue if you need this. 
 
 
 ## Install & Usage
-A detailed installation and user guide is coming soon. 
-If you have a problem or feature request, it is preferred that you use the Issue Tracker in the appropriate repository. 
-For instance, all software issues should be filed in [Zapit Issue Tracker](https://github.com/Zapit-Optostim/zapit/issues).
+See the [Installation & User Manual(https://zapit.gitbook.io/user-guide/).
 Please see the [list of known obvious bugs and issues](https://github.com/Zapit-Optostim/zapit/issues?q=is%3Aissue+is%3Aopen+label%3A%22Known+obvious+issue%22).
-
 
 ## Contributing
 Contributions and collaborations are welcome.
@@ -39,5 +32,8 @@ Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
 
 
 ## Related Projects
-* [AllenAtlasTopDown](https://github.com/Zapit-Optostim/AllenAtlasTopDown)
+* [laserGalvoControl](https://github.com/BrainCOGS/laserGalvoControl)
+
+## Inspiration
+This project was inspired by studies from the [Svoboda](https://www.cell.com/neuron/fulltext/S0896-6273(13)00924-0) and [Tank and Brody](https://elifesciences.org/articles/70263). 
 
