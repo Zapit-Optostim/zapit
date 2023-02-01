@@ -86,8 +86,8 @@ function stopOptoStim(obj, rampDownInMS)
     t = obj.DAQ.lastWaveform;
     wave = {};
     n=1;
+
     % calculate the waveforms to play
-    ampSequence
     for ii = ind
         if smoothRamp
             endVal = ampSequence(ii);

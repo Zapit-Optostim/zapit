@@ -8,7 +8,6 @@ function settings = default_settings
 
     settings.NI.device_ID = 'Dev1';
     settings.NI.samplesPerSecond = 10000;
-    settings.NI.AOrange = 10;
     settings.NI.triggerChannel = 'PFI0';
     settings.NI.wrapper = 'dotnet'; % 'vidrio' or 'dotnet'
 
@@ -21,6 +20,7 @@ function settings = default_settings
     settings.laser.laserMinMax_mW = [0,100];
     settings.laser.maxValueInGUI = 20; %TODO not in validation script
 
+    settings.camera.connectionIndex = 1;
     settings.camera.default_exposure = 2000;
     settings.camera.micronsPerPixel = 19.3;
     settings.camera.flipImageUD = 0;
