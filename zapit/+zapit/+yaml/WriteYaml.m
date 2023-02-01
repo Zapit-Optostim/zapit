@@ -74,6 +74,8 @@ function result = scan(r)
         result = scan_logical(r);
     elseif isa(r,'DateTime')
         result = scan_datetime(r);
+    elseif isa(r,'zapit.stimConfig.stimLocations') %Added for Zapit RAAC 01/02/2023
+        result = scan_struct(r);
     else
         error(['Cannot handle type: ' class(r)]);
     end

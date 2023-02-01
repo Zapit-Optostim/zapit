@@ -14,16 +14,23 @@ function stimC = returnStimConfigStructure(obj)
     if length(obj.pAddedPoints)<1
         return 
     end
-
-    stimC.laserPowerInMW = obj.LaserPowermWSpinner.Value;
     stimC.stimFreqInHz = obj.StimFreqHzSpinner.Value;
-    stimC.offRampDownDuration_ms = obj.RampdownmsSpinner.Value;
+
+    pointAttributes.laserPowerInMW = obj.LaserPowermWSpinner.Value;
+    pointAttributes.offRampDownDuration_ms = obj.RampdownmsSpinner.Value;
 
     for ii=1:length(obj.pAddedPoints)
         fieldName = sprintf('stimLocations%02d',ii);
+        stimC.(fieldName) = zapit.stimConfig.stimLocations; %create a template
         stimC.(fieldName).ML = round(obj.pAddedPoints(ii).XData,2);
         stimC.(fieldName).AP = round(obj.pAddedPoints(ii).YData,2);
+        stimC.(fieldName).Type = obj.pAddedPoints(ii).UserData.type;
+
+        % The attributes for each point can be different in theory even if at
+        % the moment we make them all the same.
+        stimC.(fieldName).Attributes = pointAttributes;
+
+
     end
-    
 
 end % returnStimConfigStructure

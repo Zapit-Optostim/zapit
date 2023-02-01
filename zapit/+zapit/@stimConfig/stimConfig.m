@@ -169,11 +169,8 @@ classdef stimConfig < handle
             % Maja Skretowska - SWC 2021
             % Updated by Rob Campbell - SWC 2023 to cope with new stimulus structure
 
-            if nargin<2
-                calibratedPointsInVolts = obj.calibratedPointsInVolts;
-            else
-                calibratedPointsInVolts = IN;
-            end
+            % Pull in data from method
+            calibratedPointsInVolts = obj.calibratedPointsInVolts;
 
             numHalfCycles = 2; % The number of half cycles to buffer
 
@@ -181,8 +178,8 @@ classdef stimConfig < handle
             obj.numSamplesPerChannel = obj.parent.DAQ.samplesPerSecond/obj.stimFreqInHz*(numHalfCycles/2);
 
             % make up samples for scanner channels (of course calibratedPointsInVolts is already in volt format)
-            % In scanChnl, 1st dim is samples, 2nd dim is channel, 3rd dim is conditions
-            scanChnl = zeros(obj.numSamplesPerChannel,2,length(calibratedPointsInVolts)); % matrix for each channel
+            % pre-allocate the waveforms array: 1st dim is samples, 2nd dim is channel, 3rd dim is conditions
+            waveforms = zeros(obj.numSamplesPerChannel,4,length(calibratedPointsInVolts)); % matrix for each channel
 
             
             % Calculate some constants that we will need in multiple places below            
@@ -193,16 +190,15 @@ classdef stimConfig < handle
 
 
             % Fill in the matrices for the galvos
-            for inactSite = 1:length(calibratedPointsInVolts) % Loop over stim conditions
+            for ii = 1:length(calibratedPointsInVolts) % Loop over stim conditions
 
                 % If this position is a single point we duplicate it to spoof two points
-                if size(calibratedPointsInVolts{inactSite},1) == 1
-                    t_volts = repmat(calibratedPointsInVolts{inactSite},2,1);
+                if size(calibratedPointsInVolts{ii},1) == 1
+                    t_volts = repmat(calibratedPointsInVolts{ii},2,1);
                 else
-                    t_volts = calibratedPointsInVolts{inactSite};
+                    t_volts = calibratedPointsInVolts{ii};
                 end
 
-                % inactSite gets column from the coordinates library
                 xVolts = t_volts(:,1);
                 xVolts = repmat(xVolts', 1, numHalfCycles/2); % TODO: Not needed if we definitely stick with 1 cycle
 
@@ -220,43 +216,37 @@ classdef stimConfig < handle
                 X(1:nSamplesInOneMS,2) = linspace(xVolts(1,1),xVolts(1,2),nSamplesInOneMS);
                 Y(1:nSamplesInOneMS,2) = linspace(yVolts(1,1),yVolts(1,2),nSamplesInOneMS);
 
-                scanChnl(:,1,inactSite) = X(:);
-                scanChnl(:,2,inactSite) = Y(:);
+                waveforms(:,1,ii) = X(:);
+                waveforms(:,2,ii) = Y(:);
+
+                % Fill in the laser analog values based on laser power defined for this
+                % trial specifically. The shapes of these waveforms will vary depending on
+                % whether we have one or two positions in this trial. This will be dealt
+                % with later.
+                t_mW = obj.stimLocations(ii).Attributes.laserPowerInMW;
+                laserControlVoltage = obj.parent.laser_mW_to_control(t_mW);
+                waveforms(:,3,ii) = ones(1,obj.numSamplesPerChannel) * laserControlVoltage;
+
+                % The masking light
+                waveforms(:,4,ii) = ones(1,obj.numSamplesPerChannel) * 5; % 5V TTL
             end % for
-            
 
 
-            % fill in the matrices for the laser. Generally these will be the same for all 
-            % conditions, but situations with one position will be different so we have to 
-            % make them all (see repmat later)
-
-
-            laserControlVoltage = obj.parent.laser_mW_to_control(obj.laserPowerInMW);
-
-            %% make up samples for laser and masking light channels
-            anlgOut = ones(1,obj.numSamplesPerChannel) * laserControlVoltage; %Write the correct control voltage
-            digOut = ones(1,obj.numSamplesPerChannel) * 5; % 5V TTL
-
-            % allow 1 ms around halfcycle change to be 0 (in case scanners are not in the right spot
-            MASK = ones(1,obj.numSamplesPerChannel);
+            % Handling masking for periods beam is moving and one vs two locations
+            MASK = ones(obj.numSamplesPerChannel,1);
 
             for ii=1:nSamplesInOneMS
                 MASK(obj.edgeSamples(1:end-1)+(ii-1))=0;
             end
 
             % Apply the mask
-            lghtChnl(:,1) = anlgOut.*MASK;  % analog laser output
-            lghtChnl(:,2) = digOut.*MASK;   % digital out for masking light
-
-            % Expand out to match scanners
-            lghtChnl = repmat(lghtChnl,[1,1,size(scanChnl,3)]);
-
-
+            waveforms(:,3:4,:) = bsxfun(@times, waveforms(:,3:4,:), MASK);
+            
             % Finally, we loop through and turn off laser on the even cycles when it's a single position
             % TODO -- I'm sure this can be vectorised
             edgesToZero = obj.edgeSamples(2:2:end);
             distanceBetweenEdges = median(diff(obj.edgeSamples));
-            for ii=1:size(lghtChnl,3)
+            for ii=1:size(waveforms,3)
                 if size(calibratedPointsInVolts{ii},1) >1
                     continue
                 end
@@ -264,24 +254,16 @@ classdef stimConfig < handle
                 for kk=1:length(edgesToZero)
                     s = edgesToZero(kk);
                     e = s+distanceBetweenEdges;
-                    if e > size(lghtChnl,1)
-                        e = size(lghtChnl,1);
+                    if e > size(waveforms,1)
+                        e = size(waveforms,1);
                     end 
-                    lghtChnl(s:e,1,ii) = 0;
+                    waveforms(s:e,3,ii) = 0; % The laser AO line
                 end
             end
 
 
-
-
-            %% save all samples in a structure to access as object property
-            chanSamples.scan = scanChnl;
-            % x-by-2-by-nConditions, where rows are samples, columns are channels, and 3rd dim
-            % is which area is selected
-
-            chanSamples.light = lghtChnl;
-            % x-by-3-by-nConditions, where rows are samples, columns are channels, and 3rd dim
-            % is which area is selected
+            % Output
+            chanSamples = waveforms;
 
         end % get.chanSamples
 

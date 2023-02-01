@@ -29,15 +29,7 @@ function stopOptoStim(obj, rampDownInMS)
     end
 
 
-    % If the user requests no ramp-down then we simply stop the task
-    if rampDownInMS ==0
-    % Zero everything
-        t = obj.DAQ.lastWaveform;
-        t(:) = 0;
-        obj.DAQ.writeAnalogData(t);
-        obj.DAQ.stop
-    end
-
+    % If the user requests no ramp-down or their ramp down duration is too short then we simply stop the task
 
     % Otherwise we do a ramp-down
     msPerBuffer = (bufferSize/samplesPerSecond) * 1E3;
@@ -49,6 +41,23 @@ function stopOptoStim(obj, rampDownInMS)
     end
 
     numBuffers = ceil(rampDownInMS / msPerBuffer);
+
+    if rampDownInMS == 0 || numBuffers == 1
+    % Zero everything
+         t = obj.DAQ.lastWaveform;
+        t(:) = 0;
+
+        % This loop is run three times to ensure we get the lines zeroed. This was determined by
+        % trial an error on an NI USB-6363. A PCIe might be different (TODO).
+        for ii=1:3
+            obj.DAQ.writeAnalogData(t);
+        end
+
+        obj.DAQ.stop
+        return
+    end
+
+
 
     % The series of amplitudes over which we will loop
     smoothRamp = false; % if true we ramp the waveform nicely and not in steps
@@ -78,6 +87,7 @@ function stopOptoStim(obj, rampDownInMS)
     wave = {};
     n=1;
     % calculate the waveforms to play
+    ampSequence
     for ii = ind
         if smoothRamp
             endVal = ampSequence(ii);
@@ -119,9 +129,14 @@ function stopOptoStim(obj, rampDownInMS)
         ylabel('Voltage')
     end
 
-    % Zero everything
+    % Zero everything. We might have to send the buffer more than once to get the laser to zero
+    % depending on the number of passes through the above loop. This was determined by
+    % trial an error on an NI USB-6363. A PCIe might be different (TODO).
+    minBuffers = 6;
     t(:) = 0;
-    obj.DAQ.writeAnalogData(t);
+    for ii = 1: (1+minBuffers-numBuffers)
+        obj.DAQ.writeAnalogData(t);
+    end
 
     obj.DAQ.stop
 

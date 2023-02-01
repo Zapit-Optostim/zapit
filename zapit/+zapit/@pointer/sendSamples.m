@@ -96,7 +96,7 @@ function varargout = sendSamples(obj, varargin)
 
     % Make the waveforms to play
     cs = obj.stimConfig.chanSamples;
-    waveforms = [cs.scan(:,:,conditionNumber), cs.light(:,:,conditionNumber)];
+    waveforms = cs(:,:,conditionNumber);
 
     % Disable laser if requested
     if laserOn == 0
@@ -109,6 +109,11 @@ function varargout = sendSamples(obj, varargin)
                             'taskName','sendSamples');
   
     
+    % The current rampdown should be what is requested by this trial
+    obj.stimConfig.offRampDownDuration_ms = ...
+            obj.stimConfig.stimLocations(conditionNumber).Attributes.offRampDownDuration_ms;
+
+
     % write voltage samples onto the task
     obj.DAQ.writeAnalogData(waveforms);
 
