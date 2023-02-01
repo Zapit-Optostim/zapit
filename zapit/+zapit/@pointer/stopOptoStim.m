@@ -94,8 +94,16 @@ function stopOptoStim(obj, rampDownInMS)
             data = [data;t]; %#ok<AGROW> 
         end
 
+        % Disable the masking light when we are on the last cycle.
+        % Unless this is done here there is a tendency for the masking
+        % light to remain on at the end.
+        if n <= length(ampSequence)
+            t(:,4) = 0;
+        end
+
         wave{n} = t;
         n = n+1;
+
     end
 
     % Dump all the waveforms to the DAQ
