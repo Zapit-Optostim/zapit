@@ -16,19 +16,19 @@ function settings = default_settings
     settings.scanners.invertYscanner = 0;
 
     settings.laser.name = 'obis';
-    settings.laser.laserMinMaxControlVolts = [1.5,3.5];
-    settings.laser.laserMinMax_mW = [0,100];
-    settings.laser.maxValueInGUI = 20; %TODO not in validation script
+    settings.laser.laserMinMaxControlVolts = [0,5];
+    settings.laser.laserMinMax_mW = [0,75];
+    settings.laser.maxValueInGUI = 30; %TODO not in validation script
 
     settings.camera.connectionIndex = 1;
-    settings.camera.default_exposure = 2000;
+    settings.camera.default_exposure = 400;
     settings.camera.micronsPerPixel = 19.3;
     settings.camera.flipImageUD = 0;
     settings.camera.flipImageLR = 0;
 
     settings.calibrateScanners.areaThreshold = 500;
     settings.calibrateScanners.calibration_power_mW = 10;
-    settings.calibrateScanners.beam_calib_exposure = 2000;
+    settings.calibrateScanners.beam_calib_exposure = 200;
     settings.calibrateScanners.bufferMM = 2;
     settings.calibrateScanners.pointSpacingInMM = 3;
 

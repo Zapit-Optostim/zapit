@@ -103,7 +103,7 @@ classdef camera < handle
             obj.vid.FramesAcquiredFcnCount=1; %Run frame acq fun every frame
             
             % set gain to maximum
-            obj.src.Gain = 10; % TODO - this is hardcoded based on a Basler camera
+            obj.src.Gain = 2; % TODO - this is hardcoded based on a Basler camera
 
         end % close constructor
 
