@@ -17,9 +17,10 @@ The Zapit main window will print a notification in the title bar when a new vers
 
 ## Version History
 
-2023/02/01 -- v0.10.1
+2023/02/01 -- v0.10.2
  * Remove AOrange from settings
  * Bugfix: missing setting from camera
+
 
 2023/02/01 -- v0.10.0
  * Wipe scanner calib if user applies a ROI or resets image zoom.
