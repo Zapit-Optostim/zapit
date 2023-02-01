@@ -1,9 +1,10 @@
-# zapit
+# Zapit
 [![View zapit on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://uk.mathworks.com/matlabcentral/fileexchange/122142-zapit)
 
 Zapit is software that runs a scanning opto-stim system for head-fixed mouse behavior.
 Code was initially written by Maja Skretowska and Rob Campbell at the Sainsbury Wellcome Centre (UCL) in 2021/2022.
 There is an [Installation & User Manual](https://zapit.gitbook.io/user-guide/) and a [Change Log](CHANGELOG.md).
+
 
 ## How it works
 A pair of scan mirrors deflect an incoming laser beam, which is focused onto the exposed skull with a lens.
@@ -26,6 +27,7 @@ A flexible, general purpose, MATLAB API for integrating stimulation into existin
 See the [Installation & User Manual](https://zapit.gitbook.io/user-guide/).
 Please see the [list of known obvious bugs and issues](https://github.com/Zapit-Optostim/zapit/issues?q=is%3Aissue+is%3Aopen+label%3A%22Known+obvious+issue%22).
 
+
 ## Contributing
 Contributions and collaborations are welcome.
 Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
@@ -34,6 +36,7 @@ Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
 ## Related Projects
 * [laserGalvoControl](https://github.com/BrainCOGS/laserGalvoControl)
 
+
 ## Inspiration
-This project was inspired by studies from the [Svoboda](https://www.cell.com/neuron/fulltext/S0896-6273(13)00924-0) and [Tank and Brody](https://elifesciences.org/articles/70263). 
+This project was inspired by studies from [Svoboda](https://www.cell.com/neuron/fulltext/S0896-6273(13)00924-0) and [Tank and Brody](https://elifesciences.org/articles/70263). 
 
