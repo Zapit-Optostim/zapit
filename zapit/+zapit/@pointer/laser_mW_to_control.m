@@ -27,10 +27,13 @@ function controlVal = laser_mW_to_control(obj,mW)
     % zapit.pointer.generateLaserCalibrationCurve
 
 
+    % The laser fit is only needed if the laser is not linear. Since so far only very cheap
+    % lasers have been found to be non-linear we can not make a fuss if the fit is missing and
+    % just assume it is linear.
     if isempty(obj.laserFit)
-        fprintf('** No laser fit. Making linear conversion as a guess! ** \n')
-        laserFit_mWToControl = fit(obj.settings.laser.laserMinMax_mW', obj.settings.laser.laserMinMaxControlVolts','linear');
-        controlVal = laserFit_mWToControl(mW);
+        maxPower = obj.settings.laser.laserMinMax_mW(2);
+        maxCV = obj.settings.laser.laserMinMaxControlVolts(2);
+        controlVal = (mW/maxPower) * maxCV;
         return
     end
 
