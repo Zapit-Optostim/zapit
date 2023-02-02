@@ -63,21 +63,34 @@ function varargout = writeWaveformsToDisk(obj,filePath)
     end
 
 
+    if isempty(obj.parent)
+        fprintf('%s can not write waveforms without model attached\n', mfilename)
+        return
+    end
+
     %%
     % Make a cell array containing the waveforms
     cSamp = obj.chanSamples;
 
-    for ii=1:size(cSamp.scan,3)
+    for ii=1:size(cSamp,3)
         % Singles are adequate and we save space
-        waveforms{ii} = single([cSamp.scan(:,:,ii), cSamp.light(:,:,ii)]);
+        waveforms{ii} = single(cSamp(:,:,ii));
     end
 
-    samplesPerSecond = obj.parent.DAQ.samplesPerSecond;
+
+    % Assemble data associated with this
+    saveDir = tempdir;
+    fn=obj.logStimulusParametersToFile(saveDir);
+    fn = fullfile(saveDir,fn);
+    stimData = zapit.yaml.ReadYaml(fn);
+    stimData.samplesPerSecond = obj.parent.DAQ.samplesPerSecond;
+    stimData.NI_deviceID = obj.parent.settings.NI.device_ID;
+    delete(fn)
 
     %%
     % Save waveforms
     fname = 'zapit_waveforms.mat';
-    save(fullfile(filePath,fname),'waveforms', 'samplesPerSecond', '-v6')
+    save(fullfile(filePath,fname),'waveforms', 'stimData', '-v6')
 
 
     %%

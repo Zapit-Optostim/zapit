@@ -1,8 +1,8 @@
-classdef minimalStimPresenter < handle
+classdef minimalStimPresenter_dotNET < handle
 
     % Minimal code example showing how to present pre-calculated stimulus waveforms for optostim
     %
-    % minimalStimPresenter
+    % minimalStimPresenter_dotNET
     %
     %
     % * Purpose
@@ -76,12 +76,17 @@ classdef minimalStimPresenter < handle
         taskWriter % An object for writing
 
         rampDownInMS = 250  % Generally this is a good number. If the user has specified 
-                            % something else it will be in the stimConfig file. 
+                            % something else it will be in the stimConfig file. NOTE!!!
+                            % NOT IMPLEMENTED IN THIS CLASS is the fact that different stimuli
+                            % may have different ramp-downs. This is defined in
+                            % stimData.stimLocationsXX.Attributes.offRampDownDuration_ms
+                            % (see below) on a stimulus by stimulus basis.
 
-        samplesPerSecond = 1E6 % This must match the number used to build the waveforms
+        samplesPerSecond % defined in the stimData structure as it *MUST* match that in Zapit
 
-        device_ID = 'Dev1' % Must be set to the name of your device. This can be done
-                          % optionally at instantiation (see constructor)
+        device_ID  % Must be set to the name of your device. This can be done
+                % optionally at instantiation (see constructor) or it takes value
+                % from the stimData structure that is loaded.
 
         hardwareTriggered = false % By default we don't want to wait for a hardware
                                   % trigger before we start for this example. In reality
@@ -94,13 +99,13 @@ classdef minimalStimPresenter < handle
 
     methods
 
-        function obj = minimalStimPresenter(fname,devID)
+        function obj = minimalStimPresenter_dotNET(fname,devID)
             % constructor
             %
             % Inputs
             % fname - relative or absolute path to the zapit waveforms file
-            % devID - if you DAQ device is not called Dev1, you can supply the name here.
-            %         alternatively, set the device_ID property manually before sending samples.
+            % devID - By default uses the device ID provided by the loaded settings file. But you
+            %         can over-ride with this optional input arg
             %
             % Examples
             % msp = minimalStimPresenter('./zapit_waveforms.mat','Dev3')
@@ -108,16 +113,18 @@ classdef minimalStimPresenter < handle
             nidaqmx.add_DAQmx_Assembly
             import NationalInstruments.DAQmx.*
 
+            % Loads two variables: a cell array called "waveforms" and a structure,
+            % stimData, which contains meta-data need to make everything work.
+            load(fname)
+
+            obj.waveforms = waveforms;
+            obj.samplesPerSecond = stimData.samplesPerSecond ;
 
             if nargin>1
                 obj.device_ID = devID;
+            else
+                obj.device_ID = stimData.NI_deviceID;
             end
-
-            load(fname)
-            obj.waveforms = waveforms;
-            % USE ONE CYCLE
-            obj.waveforms = waveforms;
-            obj.samplesPerSecond = samplesPerSecond;
 
             % Reset the device we will use
             DaqSystem.Local.LoadDevice(obj.device_ID).Reset
@@ -178,27 +185,61 @@ classdef minimalStimPresenter < handle
                 obj.rampDownInMS = msPerBuffer;
             end
 
+            numBuffers = ceil(obj.rampDownInMS / msPerBuffer);
+
+            if obj.rampDownInMS == 0 || numBuffers == 1
+            % Zero everything
+                t = obj.lastBufferedWaveform;
+                t(:) = 0;
+
+                % This loop is run three times to ensure we get the lines zeroed. This was determined by
+                % trial an error on an NI USB-6363. A PCIe might be different (TODO).
+                for ii=1:3
+                    obj.taskWriter.WriteMultiSample(false, t')
+                end
+
+                obj.DAQ.stop
+                return
+            end
+
             % The number of buffers we need to play out to achieve the desired 
             % ramp-down time
             numBuffers = ceil(obj.rampDownInMS / msPerBuffer);
 
             % Each buffer will have the laser waveforms reduced by the amount defined by ampSequence
-            ampSequence = linspace(1,0,numBuffers+2);
-            ampSequence(1) = [];
+            ampSequence = linspace(1,0,numBuffers+1);
             ampSequence(end) = [];
+            ind = 2:length(ampSequence);
 
-            % Loop over amp sequence and fill the buffer with waveforms of the same shape as the original
-            % but of smaller amplitude:
+            % Pre-calculate the waveforms
+            t = obj.lastBufferedWaveform;
+            wave = {};
+            n=1;
+            for ii = ind
+                t(:,3) = t(:,3) * ampSequence(ii);
 
-            for amp = ampSequence
-                t = obj.lastBufferedWaveform;
-                t(:,3) = t(:,3) * amp; % The third column is the laser amplitude
-                obj.taskWriter.WriteMultiSample(false, t')
+                % Disable the masking light when we are on the last cycle.
+                % Unless this is done here there is a tendency for the masking
+                % light to remain on at the end.
+                if n <= length(ampSequence)
+                    t(:,4) = 0;
+                end
+                wave{n} = t';
+                n = n+1;
             end
 
-            % Zero everything (scanners and laser and masking light)
-            t(:) = 0;
+            % Dump all the waveforms to the DAQ
+            for ii=1:length(wave)
+                obj.taskWriter.WriteMultiSample(false, wave{ii});
+            end
+
+
+            % Zero everything.
             obj.taskWriter.WriteMultiSample(false, t')
+            % There needs to be a delay between writing to the task and calling stop.
+            % I have not played with this enough. If the task is stopped early then
+            % the zeroed waveforms are not written
+            pause(0.2)
             obj.hAO.Stop  % stop task
         end % stopOptoStim
 
@@ -229,8 +270,8 @@ classdef minimalStimPresenter < handle
             
             % Set output channels
             channelName = [obj.device_ID,'/ao0:3'];
-            channelName = ''; %Can be anything (you might want it to be task name, if that helps)
-            obj.hAO.AOChannels.CreateVoltageChannel(channelName, '',-10, 10, AOVoltageUnits.Volts);
+            channelFriendlyName = ''; %Can be anything (you might want it to be task name, if that helps)
+            obj.hAO.AOChannels.CreateVoltageChannel(channelName, channelFriendlyName,-10, 10, AOVoltageUnits.Volts);
 
 
 

@@ -34,7 +34,7 @@ function generateSupportReport(reportFname)
     filesToZip = {};
     tempFilesToDelete = {};
 
-    [fpath,fname,fext] = fileparts(reportFname);
+    [fpath,fname] = fileparts(reportFname);
     if isempty(fpath)
         fpath = pwd;
     end

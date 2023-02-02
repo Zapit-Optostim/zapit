@@ -33,7 +33,6 @@ function controlVal = laser_mW_to_control(obj,mW)
     if isempty(obj.laserFit) || useLinear
         minPower = obj.settings.laser.laserMinMax_mW(1);
         maxPower = obj.settings.laser.laserMinMax_mW(2);
-        minCV = obj.settings.laser.laserMinMaxControlVolts(1);
         maxCV = obj.settings.laser.laserMinMaxControlVolts(2);
         controlVal = (mW/maxPower) * maxCV - minPower ;
         return

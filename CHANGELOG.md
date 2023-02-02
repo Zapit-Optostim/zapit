@@ -19,7 +19,7 @@ The Zapit main window will print a notification in the title bar when a new vers
 
 2023/02/02 -- v0.10.4
  * BUGFIX: Support report could not be generated from the menu and the command itself failed.
-
+ * More data are saved with the waveforms and this is used in the minimal example code.
 
 
 2023/02/02 -- v0.10.3
