@@ -52,7 +52,7 @@ function generateSupportReport(reportFname)
 
 
     % Add the Zapit commit sha to filesToZip
-    gitInfo = zapit.utils.getGitInfo;
+    gitInfo = zapit.updater.getGitInfo;
     if ~isempty(gitInfo)
         dumpToTXT(tmpTxtFileName, gitInfo);
     end

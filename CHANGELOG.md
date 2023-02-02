@@ -17,6 +17,10 @@ The Zapit main window will print a notification in the title bar when a new vers
 
 ## Version History
 
+2023/02/02 -- v0.10.4
+ * BUGFIX: Support report could not be generated from the menu and the command itself failed.
+
+
 
 2023/02/02 -- v0.10.3
  * Bugfix: under some condition laser remained on after trial ended.

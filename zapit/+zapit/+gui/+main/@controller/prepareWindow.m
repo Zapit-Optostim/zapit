@@ -91,7 +91,7 @@ function prepareWindow(obj)
     obj.LoadstimconfigMenu.MenuSelectedFcn = @obj.loadStimConfig_Callback;
     obj.FileMenu.MenuSelectedFcn = @obj.removeMissingRecentConfigs; % So menu updates if files change
     obj.FileGitHubissueMenu.MenuSelectedFcn = @(~,~) web('https://github.com/BaselLaserMouse/zapit/issues');
-    obj.GeneratesupportreportMenu.MenuSelectedFcn = @zapit.utils.generateSupportReport;
+    obj.GeneratesupportreportMenu.MenuSelectedFcn = @(~,~) zapit.utils.generateSupportReport;
 
 
     % Set GUI state based on calibration state (TODO -- these two aren't actually asigned as a callback anywhere)
