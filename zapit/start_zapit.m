@@ -123,7 +123,6 @@ function start_zapit(varargin)
             fprintf('\n\n%s\n',details.msg)
             disp('For upgrading instructions see <a href="https://github.com/BaselLaserMouse/zapit/blob/main/README.md">the README</a>.')
             fprintf('\n\n')
-            hZPview.hFig.Name = [hZPview.hFig.Name, ' [New Version Available]'];
         end
     end
 

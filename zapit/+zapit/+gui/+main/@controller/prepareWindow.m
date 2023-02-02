@@ -23,10 +23,8 @@ function prepareWindow(obj)
     % the hardware tasks are stopped.
     obj.hFig.CloseRequestFcn = @obj.delete;
 
-    % Set the figure title to reflect the version number
-    zv = zapit.version;
-    obj.hFig.Name = ['Zapit v', zv.version.string];
-
+    % Set the figure title to reflect the version number and report if a new version is available
+    obj.setWindowTitle
 
     % Update elements from settings file
     % TODO: changing the settings spin boxes should change the settings file

@@ -29,10 +29,11 @@ classdef controller < zapit.gui.main.view
 
 
     properties(Hidden)
-        nInd                  % A counter used by calibrateSample_Callback
-        updatePlotListener    % used in calibrateScanners_Callback and here so we can implement the canceling easily
-        hStimConfigEditor     % The stim config editor (for making new stim config files)
-        hLaserPowerGUI        % GUI for calibrating laser power
+        nInd                 % A counter used by calibrateSample_Callback
+        updatePlotListener   % used in calibrateScanners_Callback and here so we can implement the canceling easily
+        hStimConfigEditor    % The stim config editor (for making new stim config files)
+        hLaserPowerGUI       % GUI for calibrating laser power
+        updateTimer          % Timer runs every 45 minutes and tests if software is up to date at 4am
     end
 
 
@@ -87,6 +88,13 @@ classdef controller < zapit.gui.main.view
                 end
 
             end
+            
+            % Timer runs every 45 minutes and tests if software is up to date at 4am
+            obj.updateTimer = timer('ExecutionMode','FixedRate', ...
+                                    'Period', 60*45, ...
+                                    'TimerFcn', @obj.fourAmUpdateChecker);
+            start(obj.updateTimer)
+
             % Attempt to report when figure is open
             %getframe(obj.hImAx)
             %fprintf('DONE\n')
@@ -101,6 +109,7 @@ classdef controller < zapit.gui.main.view
             fprintf('zapit.gui.main.view is cleaning up\n')
             cellfun(@delete,obj.listeners)
             delete(obj.model);
+            delete(obj.updateTimer)
 
             obj.model=[];
 
@@ -386,6 +395,23 @@ classdef controller < zapit.gui.main.view
             obj.model.clearExperimentPath;
         end % clearExperimentPath_Callback
 
+
+        function fourAmUpdateChecker(obj,~,~)
+            % Check if the hour is 4am and if so update the window title
+            %
+            % zapit.gui.main.controller.fourAmUpdateChecker
+            %
+            % Purpose
+            % The window title update function also checks if there is a new version
+            % and if so displays this information as a string in the titlebar. Since
+            % this operation may slightly pause execution and very unimportant (it is
+            % done on startup also) we want it to execute once every 24 hours and only
+            % when there can't possibly be running experiments. 4 am seems safe. 
+
+            if datestr(now,'HH') == '04'
+                obj.model.setWindowTitle;
+            end
+        end % fourAmUpdateChecker
 
     end % methods
 
