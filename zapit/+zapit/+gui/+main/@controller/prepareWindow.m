@@ -90,6 +90,7 @@ function prepareWindow(obj)
     obj.NewstimconfigMenu.MenuSelectedFcn = @obj.createNewStimConfig_Callback;
     obj.LoadstimconfigMenu.MenuSelectedFcn = @obj.loadStimConfig_Callback;
     obj.FileMenu.MenuSelectedFcn = @obj.removeMissingRecentConfigs; % So menu updates if files change
+    obj.Documentation.MenuSelectedFcn = @(~,~) web('https://zapit.gitbook.io/');
     obj.FileGitHubissueMenu.MenuSelectedFcn = @(~,~) web('https://github.com/BaselLaserMouse/zapit/issues');
     obj.GeneratesupportreportMenu.MenuSelectedFcn = @(~,~) zapit.utils.generateSupportReport;
 

@@ -8,6 +8,7 @@ classdef view < matlab.apps.AppBase
         LoadstimconfigMenu             matlab.ui.container.Menu
         LoadrecentMenu                 matlab.ui.container.Menu
         HelpMenu                       matlab.ui.container.Menu
+        Documentation                  matlab.ui.container.Menu
         FileGitHubissueMenu            matlab.ui.container.Menu
         GeneratesupportreportMenu      matlab.ui.container.Menu
         GridLayout                     matlab.ui.container.GridLayout
@@ -99,6 +100,10 @@ classdef view < matlab.apps.AppBase
             % Create HelpMenu
             app.HelpMenu = uimenu(app.hFig);
             app.HelpMenu.Text = 'Help';
+
+            % Create Documentation
+            app.Documentation = uimenu(app.HelpMenu);
+            app.Documentation.Text = 'On-Line User Guide';
 
             % Create FileGitHubissueMenu
             app.FileGitHubissueMenu = uimenu(app.HelpMenu);
