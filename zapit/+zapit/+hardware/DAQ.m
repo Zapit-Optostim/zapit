@@ -15,7 +15,8 @@ classdef (Abstract) DAQ < handle
 
     properties (Hidden)
         settings % Settings read from file
-        parent  %A reference of the parent object (likely zapit.pointer) to which this component is attached
+        parent    %A reference of the parent object (likely zapit.pointer) to which this component is attached
+        delayStop %Timer used to implement a short delay before stopping AO
     end %close hidden properties
 
 
@@ -67,6 +68,7 @@ classdef (Abstract) DAQ < handle
             obj.triggerChannel = params.Results.triggerChannel;
             %(seems circular, but works nicely)
 
+            obj.delayStop = timer('TimerFcn',@(~,~) obj.stop,'StartDelay',0.2);
         end % Constructor
 
     end

@@ -44,7 +44,7 @@ function stopOptoStim(obj, rampDownInMS)
 
     if rampDownInMS == 0 || numBuffers == 1
     % Zero everything
-         t = obj.DAQ.lastWaveform;
+        t = obj.DAQ.lastWaveform;
         t(:) = 0;
 
         % This loop is run three times to ensure we get the lines zeroed. This was determined by
@@ -129,20 +129,31 @@ function stopOptoStim(obj, rampDownInMS)
         ylabel('Voltage')
     end
 
-    % Zero everything. We might have to send the buffer more than once to get the laser to zero
-    % depending on the number of passes through the above loop. This was determined by
-    % trial an error on an NI USB-6363. A PCIe might be different (TODO).
-    minBuffers = 6;
-    writesToPerform = (1+minBuffers-numBuffers);
-    if writesToPerform<3
-        writesToPerform = 3;
-    end
-    t(:) = 0;
-    for ii = 1:writesToPerform
-        obj.DAQ.writeAnalogData(t);
-    end
 
-    obj.DAQ.stop
+    doTimerStop = true;
+    if doTimerStop
+        t(:) = 0;
+        obj.DAQ.writeAnalogData(t);
+        start(obj.DAQ.delayStop)
+    else
+        % TODO -- all the following loop achieves is a delay. We can do away with it simply
+        % by adding a 200 ms pause between writing to the buffer and closing the task. So if we
+        % can do this with a delayed stop with at timer that is better.
+        % Zero everything. We might have to send the buffer more than once to get the laser to zero
+        % depending on the number of passes through the above loop. This was determined by
+        % trial an error on an NI USB-6363. A PCIe might be different (TODO).
+        minBuffers = 6;
+        writesToPerform = (1+minBuffers-numBuffers);
+        if writesToPerform<3
+            writesToPerform = 3;
+        end
+        t(:) = 0;
+        for ii = 1:writesToPerform
+            obj.DAQ.writeAnalogData(t);
+        end
+
+        obj.DAQ.stop
+    end
 
 end % stopOptoStim
 
