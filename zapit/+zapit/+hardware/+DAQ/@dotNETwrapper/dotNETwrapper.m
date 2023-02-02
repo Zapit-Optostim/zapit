@@ -31,6 +31,7 @@ classdef dotNETwrapper < zapit.hardware.DAQ
 
     properties
         hAOtaskWriter % Class for writing data to AO lines
+        hAIreader % Class for reading from AI lines
     end
 
 
@@ -143,7 +144,8 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             if isempty(obj.hAI) || ~isvalid(obj.hAI)
                 return
             end
-            obj.hAI.stop;    % Calls DAQmxStopTask
+            obj.hAI.Stop;    % Calls DAQmxStopTask
+            obj.hAI.Dispose;
             delete(obj.hAI);
         end % stopAndDeleteAITask
 
@@ -159,6 +161,8 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             % chan - which channel to connect. Must be supplied as an integer.
             % verbose - [optional, false by default]. Reports to screen what it is doing if true
 
+            import NationalInstruments.DAQmx.*
+
             if nargin<3
                 verbose = false;
             end
@@ -172,10 +176,17 @@ classdef dotNETwrapper < zapit.hardware.DAQ
 
             taskName = 'unclockedai';
             obj.hAI = NationalInstruments.DAQmx.Task(taskName);
-            chan = [obj.device_ID,'/',num2str(chan)];
+            chan = [obj.device_ID,'/ai',num2str(chan)];
 
-            obj.hAI.AOChannels.CreateVoltageChannel(chan, taskName, ...
+            obj.hAI.AIChannels.CreateVoltageChannel(chan, taskName, ...
+                            AITerminalConfiguration.Differential, ...
                             -obj.AOrange, obj.AOrange, AIVoltageUnits.Volts);
+
+            obj.hAI.Control(TaskAction.Verify)
+
+            obj.hAIreader = AnalogSingleChannelReader(obj.hAI.Stream);
+
+
 
         end % connectUnclockedAI
 
@@ -190,6 +201,7 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             %
             % Inputs
             % verbose - [optional, false by default]. Reports to screen what it is doing if true
+
             import NationalInstruments.DAQmx.*
 
             if nargin<2
@@ -342,6 +354,17 @@ classdef dotNETwrapper < zapit.hardware.DAQ
                 obj.hAOtaskWriter.WriteMultiSample(false,waveforms');
             end
         end % writeAnalogData
+
+
+        function data = readAnalogData(obj)
+            % Read analog data from the DAQ
+            %
+            % function zapit.DAQ.vidriowrapper.readAnalogData
+            %
+            % Purpose
+            % Thin wrapper to read analog data.
+            data = obj.hAIreader.ReadSingleSample;
+        end % readAnalogData
 
 
         function nSamples = numSamplesInBuffer(obj)

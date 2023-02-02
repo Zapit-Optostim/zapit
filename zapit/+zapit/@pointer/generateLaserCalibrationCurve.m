@@ -50,29 +50,33 @@ function generateLaserCalibrationCurve(obj,minMax)
 
 
     % Generate vectors for testing
-    valsToTest = minMax(1):0.1:minMax(2);
+    valsToTest = minMax(1):0.025:minMax(2);
     sensorVals = zeros(size(valsToTest));
 
     % Run
     if ~obj.simulated
-        nValsToMeasure = 8; % Obtain this many values and take a average this many values
+        nValsToMeasure = 4; % Obtain this many values and take a average this many values
     else
         nValsToMeasure = 1;
     end
 
     for ii = 1:length(valsToTest)
-        obj.DAQ.setLaserPowerControlVoltage(valsToTest(ii))
+        if mod(ii,10)==0
+            fprintf('%d/%d\n',ii,length(valsToTest))
+        end
+        obj.setLaserPowerControlVoltage(valsToTest(ii))
 
         tmp = zeros(1,nValsToMeasure);
         for jj=1:nValsToMeasure
-            tmp(jj) = obj.DAQ.hAI.readAnalogData();
+            tmp(jj) = obj.DAQ.readAnalogData();
+            pause(0.025)
         end
 
         sensorVals(ii) = mean(tmp);
     end
 
     % Tidy up
-    obj.DAQ.setLaserPowerControlVoltage(0)
+    obj.setLaserPowerControlVoltage(0)
 
     %%
     % Fit a third order polynomial: photodiode voltage as a function of control voltage
@@ -93,10 +97,10 @@ function generateLaserCalibrationCurve(obj,minMax)
 
     %% 
     % plot the data
-    fig = zapit.utils.focusNamedFig('lasercalibrate');
+    zapit.utils.focusNamedFig('lasercalibrate');
     clf
     plot(laserFit.sensorOnControl,valsToTest,sensorVals)
-    ylim([0,12])
+    ylim([0,max(sensorVals)*1.1])
     grid on
     xlabel('Laser Control Value [V]')
     ylabel('Photodiode Signal [V]')

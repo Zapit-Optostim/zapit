@@ -295,6 +295,18 @@ classdef vidriowrapper < zapit.hardware.DAQ
         end % writeAnalogData
 
 
+        function data = readAnalogData(obj)
+            % Read analog data from the DAQ
+            %
+            % function zapit.DAQ.vidriowrapper.readAnalogData
+            %
+            % Purpose
+            % Thin wrapper to read analog data.
+
+            data = obj.DAQ.hAI.readAnalogData();
+        end % readAnalogData
+
+
         function nSamples = numSamplesInBuffer(obj)
             % Return the number of samples in the buffer
             %
