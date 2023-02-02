@@ -2,9 +2,6 @@
 [![View zapit on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://uk.mathworks.com/matlabcentral/fileexchange/122142-zapit)
 
 Zapit is software that runs a scanning opto-stim system for head-fixed mouse behavior.
-Code was initially written by Maja Skretowska and Rob Campbell at the Sainsbury Wellcome Centre (UCL) in 2021/2022.
-There is an [Installation & User Manual](https://zapit.gitbook.io/user-guide/) and a [Change Log](CHANGELOG.md).
-
 
 ## How it works
 A pair of scan mirrors deflect an incoming laser beam, which is focused onto the exposed skull with a lens.
@@ -15,6 +12,12 @@ A graphical tool builds experiment coordinate files using a top-down view of the
 There is a simple MATLAB API for integrating stimulation into existing behavioral code and a Python version of the API [is also provided](https://github.com/Zapit-Optostim/zapit-Python-Bridge).
 
 
+## Install & Usage
+See the [Installation & User Manual](https://zapit.gitbook.io/user-guide/).
+Please see the [list of known obvious bugs and issues](https://github.com/Zapit-Optostim/zapit/issues?q=is%3Aissue+is%3Aopen+label%3A%22Known+obvious+issue%22).
+There is a [Change Log](CHANGELOG.md) if you are concerned about applying updates.
+
+
 ## Requirements
 * [Image Processing Toolbox](https://www.mathworks.com/help/images/index.html)
 * [Image Acquisition Toolbox](https://www.mathworks.com/products/image-acquisition.html)
@@ -22,13 +25,8 @@ There is a simple MATLAB API for integrating stimulation into existing behaviora
 * [DAQmx](https://www.ni.com/en-gb/support/downloads/drivers/download.ni-daqmx.html) installed with .NET support (tested versions: 19.0 to 21.8).
 * Currently only Basler cameras are supported but in principle others can be incorporated. File an Issue if you need this. 
 
-
-## Install & Usage
-See the [Installation & User Manual](https://zapit.gitbook.io/user-guide/).
-Please see the [list of known obvious bugs and issues](https://github.com/Zapit-Optostim/zapit/issues?q=is%3Aissue+is%3Aopen+label%3A%22Known+obvious+issue%22).
-
-
 ## Contributing
+Code was written by Maja Skretowska and Rob Campbell at the Sainsbury Wellcome Centre (UCL) in 2021/2022.
 Contributions and collaborations are welcome.
 Please see the [CONTRIBUTING.md](CONTRIBUTING.md) file for more information.
 

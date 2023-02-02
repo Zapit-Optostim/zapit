@@ -408,7 +408,7 @@ classdef controller < zapit.gui.main.view
             % done on startup also) we want it to execute once every 24 hours and only
             % when there can't possibly be running experiments. 4 am seems safe. 
 
-            if datestr(now,'HH') == '04'
+            if strcmp(datestr(datetime,'HH'),'04')
                 obj.model.setWindowTitle;
             end
         end % fourAmUpdateChecker
