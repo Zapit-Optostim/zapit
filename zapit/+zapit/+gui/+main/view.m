@@ -78,6 +78,7 @@ classdef view < matlab.apps.AppBase
             app.hFig = uifigure('Visible', 'off');
             app.hFig.Position = [100 100 771 820];
             app.hFig.Name = 'Zapit';
+            app.hFig.Icon = fullfile(pathToMLAPP, 'Icons', 'brain_border.png');
             app.hFig.Resize = 'off';
             app.hFig.Tag = 'zapit_gui';
 

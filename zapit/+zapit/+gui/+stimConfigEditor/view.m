@@ -27,11 +27,15 @@ classdef view < matlab.apps.AppBase
         % Create UIFigure and components
         function createComponents(app)
 
+            % Get the file path for locating images
+            pathToMLAPP = fileparts(mfilename('fullpath'));
+
             % Create hFig and hide until all components are created
             app.hFig = uifigure('Visible', 'off');
             app.hFig.AutoResizeChildren = 'off';
             app.hFig.Position = [100 100 601 750];
             app.hFig.Name = 'MATLAB App';
+            app.hFig.Icon = fullfile(pathToMLAPP, 'Icons', 'brain_border.png');
 
             % Create GridLayout
             app.GridLayout = uigridlayout(app.hFig);
