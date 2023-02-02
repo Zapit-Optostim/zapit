@@ -12,7 +12,7 @@ This lens is also used to image the sample onto a camera in order to visualise w
 Zapit registers the scanners to the camera, allowing the user to place the beam in any desired location by clicking there on a live image feed.
 Zapit then registers stereotaxic coordinates into the camera space, allowing the user to point the beam to coordinates defined with respect to bregma. 
 A graphical tool builds experiment coordinate files using a top-down view of the Allen Atlas.
-A flexible, general purpose, MATLAB API for integrating stimulation into existing behavioral code [is provided](https://github.com/Zapit-Optostim/zapit-Python-Bridge).
+There is a simple MATLAB API for integrating stimulation into existing behavioral code and a Python version of the API [is also provided](https://github.com/Zapit-Optostim/zapit-Python-Bridge).
 
 
 ## Requirements
