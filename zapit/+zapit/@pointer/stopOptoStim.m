@@ -133,8 +133,12 @@ function stopOptoStim(obj, rampDownInMS)
     % depending on the number of passes through the above loop. This was determined by
     % trial an error on an NI USB-6363. A PCIe might be different (TODO).
     minBuffers = 6;
+    writesToPerform = (1+minBuffers-numBuffers);
+    if writesToPerform<3
+        writesToPerform = 3;
+    end
     t(:) = 0;
-    for ii = 1: (1+minBuffers-numBuffers)
+    for ii = 1:writesToPerform
         obj.DAQ.writeAnalogData(t);
     end
 

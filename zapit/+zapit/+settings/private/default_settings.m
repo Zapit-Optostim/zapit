@@ -30,7 +30,7 @@ function settings = default_settings
     settings.calibrateScanners.calibration_power_mW = 10;
     settings.calibrateScanners.beam_calib_exposure = 200;
     settings.calibrateScanners.bufferMM = 2;
-    settings.calibrateScanners.pointSpacingInMM = 3;
+    settings.calibrateScanners.pointSpacingInMM = 2;
 
     settings.calibrateSample.refAP = 3;
 
