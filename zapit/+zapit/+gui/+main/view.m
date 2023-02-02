@@ -7,8 +7,6 @@ classdef view < matlab.apps.AppBase
         NewstimconfigMenu              matlab.ui.container.Menu
         LoadstimconfigMenu             matlab.ui.container.Menu
         LoadrecentMenu                 matlab.ui.container.Menu
-        ToolsMenu                      matlab.ui.container.Menu
-        CalibratelaserMenu             matlab.ui.container.Menu
         HelpMenu                       matlab.ui.container.Menu
         FileGitHubissueMenu            matlab.ui.container.Menu
         GeneratesupportreportMenu      matlab.ui.container.Menu
@@ -97,14 +95,6 @@ classdef view < matlab.apps.AppBase
             % Create LoadrecentMenu
             app.LoadrecentMenu = uimenu(app.FileMenu);
             app.LoadrecentMenu.Text = 'Load recent';
-
-            % Create ToolsMenu
-            app.ToolsMenu = uimenu(app.hFig);
-            app.ToolsMenu.Text = 'Tools';
-
-            % Create CalibratelaserMenu
-            app.CalibratelaserMenu = uimenu(app.ToolsMenu);
-            app.CalibratelaserMenu.Text = 'Calibrate laser';
 
             % Create HelpMenu
             app.HelpMenu = uimenu(app.hFig);

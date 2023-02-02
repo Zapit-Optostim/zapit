@@ -21,6 +21,9 @@ The Zapit main window will print a notification in the title bar when a new vers
 2023/02/02 -- v0.10.3
  * Bugfix: under some condition laser remained on after trial ended.
  * Add custom icon to window.
+ * With no laser calibration file we employ a linear fit and ditch the error message.
+   In practice the fit is pretty good.
+ * Remove Tools menu.
 
 
 2023/02/01 -- v0.10.2
