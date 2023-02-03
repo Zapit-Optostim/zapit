@@ -27,10 +27,10 @@ function plotChanSamples(obj, conditionToPlot)
     end
 
     % extract data of interest
-    anlgOut = chanSamples.light(:,1,conditionToPlot);
-    digOut =  chanSamples.light(:,2,conditionToPlot);
-    xGalvo =  chanSamples.scan(:,1,conditionToPlot);
-    yGalvo =  chanSamples.scan(:,2,conditionToPlot);
+    xGalvo =  chanSamples(:,1,conditionToPlot);
+    yGalvo =  chanSamples(:,2,conditionToPlot);
+    laser = chanSamples(:,3,conditionToPlot);
+    digOut =  chanSamples(:,4,conditionToPlot);
 
 
 
@@ -52,7 +52,7 @@ function plotChanSamples(obj, conditionToPlot)
         
     subplot(3,1,2)
     % analog volt output to laser and masking light
-    plot(anlgOut,'.','MarkerSize',10);
+    plot(laser,'.','MarkerSize',10);
     hold on
     for ii = obj.edgeSamples
         plot([ii ii],ylim,'g--','LineWidth',1)
