@@ -186,8 +186,7 @@ classdef stimConfig < handle
             % find edges of half cycles (the indexes at which the beam moves or laser changes state)
             obj.edgeSamples = ceil(linspace(1, obj.numSamplesPerChannel, numHalfCycles+1));
             sampleInterval = 1/obj.parent.DAQ.samplesPerSecond; 
-            nSamplesInOneMS = 1E-3 / sampleInterval;  % Number of samples in 1 ms. % TODO -- probably should have this as a setting
-
+            nSamplesInOneMS = round(1E-3 / sampleInterval);  % Number of samples in 1 ms. % TODO -- probably should have this as a setting
 
             % Fill in the matrices for the galvos
             for ii = 1:length(calibratedPointsInVolts) % Loop over stim conditions
