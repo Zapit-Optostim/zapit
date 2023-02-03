@@ -108,9 +108,12 @@ classdef controller < zapit.gui.main.view
 
             fprintf('zapit.gui.main.view is cleaning up\n')
             cellfun(@delete,obj.listeners)
-            delete(obj.model);
-            delete(obj.updateTimer)
 
+            if isa(obj.updateTimer,'timer')
+                stop(obj.updateTimer)
+            end
+            
+            delete(obj.model);
             obj.model=[];
 
             delete(obj.hFig);

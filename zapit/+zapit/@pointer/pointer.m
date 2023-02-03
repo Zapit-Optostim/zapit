@@ -147,7 +147,7 @@ classdef pointer < handle
             % zapit.pointer.delete
             %
             
-            fprintf('Shutting down optostim software\n')
+            fprintf('Shutting down Zapit optostim software\n')
             cellfun(@delete,obj.listeners)
             if isvalid(obj.cam)
                 obj.cam.vid.FramesAcquiredFcn = [];

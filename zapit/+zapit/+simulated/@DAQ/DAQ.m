@@ -52,6 +52,10 @@ classdef DAQ < handle
         end % Constructor
 
         function delete(obj)
+            if isa(obj.delayStop,'timer')
+                stop(obj.delayStop)
+                delete(obj.delayStop)
+            end
         end
 
         function  success = connect(obj)
