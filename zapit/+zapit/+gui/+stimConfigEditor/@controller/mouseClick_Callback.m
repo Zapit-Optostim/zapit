@@ -51,30 +51,35 @@ function mouseClick_Callback(obj,~,~)
             if length(obj.pAddedPoints(end).XData) < maxPointsPerCondition
                 obj.pAddedPoints(end).XData(end+1) = obj.pCurrentPoint.XData;
                 obj.pAddedPoints(end).YData(end+1) = obj.pCurrentPoint.YData;
+
+                % Note if this was a bilateral or a unilateral condition and singular or plural number
+                if  obj.BilateralButton.Value
+                    uniBi = 'bilateral';
+                else
+                    uniBi = 'unilateral';
+                end
+
+                typeString = [uniBi,'_point'];
+                if length(obj.pAddedPoints(end).XData)>1
+                    typeString = [typeString,'s'];
+                end
+                obj.pAddedPoints(end).UserData = struct('type',typeString);
+
             else
+                % Otherwise two many point for this condition
                 fprintf('Maximum number of allowed points per stimulus condition is %d.\n', ...
                         maxPointsPerCondition)
-            end
-        end
+            end % if length
+
+        end % if  ~obj.isShiftPressed
+
         hold(obj.hAx,'on')
-    end
 
-    % Note if this was a bilateral or a unilateral condition and singular or plural number
-    if  obj.BilateralButton.Value
-        uniBi = 'bilateral';
-    else
-        uniBi = 'unilateral';
-    end
+    end % if obj.isCtrlPressed && ~isempty(obj.pAddedPoints)
 
-    typeString = [uniBi,'_point'];
-    if length(obj.pAddedPoints(end).XData)>1
-        typeString = [typeString,'s'];
-    end
-
-    obj.pAddedPoints(end).UserData = struct('type',typeString);
 
 
     % Update the text along the bottom
     obj.updateBottomLabel
 
-end
+end % mouseClick_Callback
