@@ -40,7 +40,11 @@ function varargout = getLaserPosAccuracy(obj, XYdata, backgroundImage, verbose)
     % Binarize
     for ii = 1:nFrames
         tFrame = tFrames(:,:,ii) - backgroundImage;
-        tFrames(:,:,ii) = tFrames(:,:,ii) > (max(tFrame(:))*0.5) ;
+        if isempty(backgroundImage)
+            tFrames(:,:,ii) = tFrames(:,:,ii) > (max(tFrame(:))*0.5) ;
+        else
+            tFrames(:,:,ii) = tFrames(:,:,ii) > (max(tFrame(:))*0.9) ;
+        end
     end
 
     BWmean = mean(tFrames,3);

@@ -22,6 +22,8 @@ The Zapit main window will print a notification in the title bar when a new vers
  * More data are saved with the waveforms and this is used in the minimal example code.
  * Add a menu option for the user-guide.
  * Checks for updates at 4am every day.
+ * Improve quality of scanner calibration beam detection.
+ *
 
 
 2023/02/02 -- v0.10.3
