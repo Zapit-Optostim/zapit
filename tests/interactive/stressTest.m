@@ -50,6 +50,7 @@ function stressTest(doRampStop)
 
         if doRampStop
             hZP.stopOptoStim;
+            pause(0.3) % Because of the timer pause
         else
             hZP.DAQ.stop;
         end
