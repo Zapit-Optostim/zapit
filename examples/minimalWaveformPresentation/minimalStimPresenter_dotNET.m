@@ -136,7 +136,9 @@ classdef minimalStimPresenter_dotNET < handle
         function delete(obj)
             % Destructor 
 
+
             if isa(obj.hAO, 'NationalInstruments.DAQmx.Task')
+                obj.hAO.Stop;
                 obj.hAO.Dispose
             end
 
@@ -192,13 +194,7 @@ classdef minimalStimPresenter_dotNET < handle
                 t = obj.lastBufferedWaveform;
                 t(:) = 0;
 
-                % This loop is run three times to ensure we get the lines zeroed. This was determined by
-                % trial an error on an NI USB-6363. A PCIe might be different (TODO).
-                for ii=1:3
-                    obj.taskWriter.WriteMultiSample(false, t')
-                end
-
-                obj.DAQ.stop
+                obj.taskWriter.WriteMultiSample(false, t')
                 return
             end
 
@@ -235,12 +231,9 @@ classdef minimalStimPresenter_dotNET < handle
 
 
             % Zero everything.
+            t(:) = 0;
             obj.taskWriter.WriteMultiSample(false, t')
-            % There needs to be a delay between writing to the task and calling stop.
-            % I have not played with this enough. If the task is stopped early then
-            % the zeroed waveforms are not written
-            pause(0.2)
-            obj.hAO.Stop  % stop task
+
         end % stopOptoStim
 
 
