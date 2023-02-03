@@ -47,7 +47,7 @@ function stopOptoStim(obj, rampDownInMS)
         t = obj.DAQ.lastWaveform;
         t(:) = 0;
         obj.DAQ.writeAnalogData(t);
-        start(obj.DAQ.delayStop)
+       % start(obj.DAQ.delayStop)
         return
     end
 
