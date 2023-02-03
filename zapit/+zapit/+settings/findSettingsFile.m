@@ -79,18 +79,14 @@ function varargout = findSettingsFile
                         'are not updating Zapit via Git.\n\n'])
             case 'C'
                 fprintf('%d. At "%s"\n', ii, settingsDirs(ii).settingsLocation)
-                fprintf('   Choose this if you change user accounts and are not updating Zapit via Git.\n')
-                fprintf(['   By default it could be that only the user account that created the settings\n ' ...
-                    '  file can then modify it. This can be changed via Windows Explorer.\n'])
+                fprintf(['    RECOMMENDED: Choose this if you change user accounts and are ', ...
+                        'not updating Zapit via Git.\n\n'])
             case 'zapit'
                 fprintf('%d. At "%s"\n', ii, settingsDirs(ii).settingsLocation)
-                fprintf(['   Choose this option if you like your settings files along with the code ', ...
+                fprintf(['   ADVANCED: Choose this option if you like your settings files along with the code ', ...
                         'and are updating Zapit via Git.\n\n'])
             end
         end
-
-        fprintf(' If you are unsure, options 1 or 2 are probably best. The file location can always be moved later.\n\n')
-
 
         % Handle user input
         while true

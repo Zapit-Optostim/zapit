@@ -15,15 +15,7 @@ function settingsDirs = possibleSettingsLocations
     % Rob Campbell - SWC 2022
 
 
-    n = 1;
-
-    % User's home directory
-    userFolder = zapit.settings.userFolder;
-    if ~isempty(userFolder)
-        settingsDirs(n).settingsLocation = fullfile(userFolder,'ZapitSettings');
-        settingsDirs(n).backupSettingsLocation = fullfile(settingsDirs(n).settingsLocation,'BackupSettings');
-        settingsDirs(n).locationType = 'homefolder';
-    end
+    n = 0;
 
     % In C:\ (on Windows)
     if ispc
@@ -33,10 +25,22 @@ function settingsDirs = possibleSettingsLocations
             settingsDirs(n).locationType = 'C';
     end
 
+
+    % User's home directory
+    userFolder = zapit.settings.userFolder;
+    if ~isempty(userFolder)
+        n = n+1;
+        settingsDirs(n).settingsLocation = fullfile(userFolder,'ZapitSettings');
+        settingsDirs(n).backupSettingsLocation = fullfile(settingsDirs(n).settingsLocation,'BackupSettings');
+        settingsDirs(n).locationType = 'homefolder';
+    end
+
+
     % In Zapit folder
-    n = n+1;
+
     installDir = zapit.updater.getInstallPath;
     if ~isempty(installDir)
+        n = n+1;
         settingsDirs(n).settingsLocation = fullfile(installDir,'SETTINGS');
         settingsDirs(n).backupSettingsLocation = fullfile(installDir,'BACKUPSETTINGS');
         settingsDirs(n).locationType = 'zapit';
