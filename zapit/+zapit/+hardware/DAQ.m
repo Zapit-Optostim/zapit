@@ -68,7 +68,9 @@ classdef (Abstract) DAQ < handle
             obj.triggerChannel = params.Results.triggerChannel;
             %(seems circular, but works nicely)
 
-            obj.delayStop = timer('TimerFcn',@(~,~) obj.stop,'StartDelay',0.2);
+            obj.delayStop = timer('Name', 'delayStopTimer', ...
+                                'TimerFcn', @(~,~) obj.stop, ...
+                                'StartDelay',0.2);
         end % Constructor
 
     end
