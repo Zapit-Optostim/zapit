@@ -17,13 +17,12 @@ The Zapit main window will print a notification in the title bar when a new vers
 
 ## Version History
 
-2023/02/02 -- v0.10.4
+2023/02/03 -- v0.10.4
  * BUGFIX: Support report could not be generated from the menu and the command itself failed.
  * More data are saved with the waveforms and this is used in the minimal example code.
  * Add a menu option for the user-guide.
  * Checks for updates at 4am every day.
  * Improve quality of scanner calibration beam detection.
- *
 
 
 2023/02/02 -- v0.10.3
