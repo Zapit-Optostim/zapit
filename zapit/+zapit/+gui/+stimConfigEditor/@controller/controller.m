@@ -126,10 +126,9 @@ classdef controller < zapit.gui.stimConfigEditor.view
             %
 
             % re-enable camera if needed
-            if ~isempty(obj.mainGUI) && obj.isCamRunning
+            if ~isempty(obj.mainGUI) && ~isempty(obj.mainGUI.model) && obj.isCamRunning
                 obj.mainGUI.model.cam.startVideo;
             end
-
             delete(obj.hFig);
         end %close destructor
 
