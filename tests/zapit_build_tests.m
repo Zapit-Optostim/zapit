@@ -7,7 +7,7 @@ classdef zapit_build_tests < matlab.unittest.TestCase
     end %properties
 
 
-    methods(TestMethodSetup)
+    methods(TestClassSetup)
         function buildZapit(obj)
             % Does Zapit build with dummy parameters?
             [obj.hZP, obj.hZPview] = start_zapit;
@@ -16,7 +16,7 @@ classdef zapit_build_tests < matlab.unittest.TestCase
         end
     end
  
-    methods(TestMethodTeardown)
+    methods(TestClassTeardown)
         function closeBT(obj)
             delete(obj.hZPview);
             delete(obj.hZP);
