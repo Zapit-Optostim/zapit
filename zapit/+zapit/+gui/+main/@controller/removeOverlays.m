@@ -48,7 +48,7 @@ function removeOverlays(obj,overlayToRemove)
         if iscell(t_Handles)
             cellfun(@(x) delete(x), t_Handles)
         elseif isstruct(t_Handles)
-            structfun(@(x) delete(x), t_Handles)
+            structfun(@(x) checkIfLineAndDelete(x), t_Handles)
         elseif ismatrix(t_Handles)
             delete(obj.plotOverlayHandles.(f{ii}))
         end
@@ -57,3 +57,10 @@ function removeOverlays(obj,overlayToRemove)
     end
 
 end %removeOverlays
+
+
+function checkIfLineAndDelete(h)
+    if isa(h,'matlab.graphics.chart.primitive.Line')
+        delete(h)
+    end
+end
