@@ -7,6 +7,9 @@ function drawBrainOutlineOnSample(obj)
 
     coords = obj.calibratedBrainOutline;
 
+    % Sub-sample it a bit
+    coords = coords(1:3:end,:);
+  
     % First place beam in the centre of the area we want to stimulate
     obj.moveBeamXY(mean(coords));
     coords(:,3) = obj.laser_mW_to_control(obj.settings.calibrateScanners.calibration_power_mW);
@@ -24,7 +27,13 @@ function drawBrainOutlineOnSample(obj)
 
     % Set sample rate so we are drawing at about 60 cycles per second.
     n = length(coords) * 100;
-    sRate = 10^round(log10(n),1) ;
+    sRate = round(10^round(log10(n),1)) ;
+    
+    verbose=false;
+    if verbose
+        fprintf('Setting sample rate to %d\n', sRate);
+    end
+
     obj.DAQ.connectClockedAO('numSamplesPerChannel',size(coords,1), ...
                             'samplesPerSecond',sRate, ...
                             'taskName','scannercalib')
