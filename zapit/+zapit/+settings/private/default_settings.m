@@ -7,7 +7,7 @@ function settings = default_settings
     settings.general.openPythonBridgeOnStartup = 0;
 
     settings.NI.device_ID = 'Dev1';
-    settings.NI.samplesPerSecond = 10000;
+    settings.NI.samplesPerSecond = 100000;
     settings.NI.triggerChannel = 'PFI0';
     settings.NI.wrapper = 'dotnet'; % 'vidrio' or 'dotnet'
 
