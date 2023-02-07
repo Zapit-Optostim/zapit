@@ -10,7 +10,7 @@ classdef zapit_build_tests < matlab.unittest.TestCase
     methods(TestClassSetup)
         function buildZapit(obj)
             % Does Zapit build with dummy parameters?
-            [obj.hZP, obj.hZPview] = start_zapit;
+            [obj.hZP, obj.hZPview] = start_zapit('simulated',true);
             obj.verifyClass(obj.hZP,'zapit.pointer');
             obj.verifyClass(obj.hZPview,'zapit.gui.main.controller');
         end

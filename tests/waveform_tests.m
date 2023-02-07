@@ -14,14 +14,19 @@ classdef waveform_tests < matlab.unittest.TestCase
     methods(TestClassSetup)
         function buildZapit(obj)
             % Does Zapit build with dummy parameters?
+            fprintf('Building Zapit API object\n')
             obj.hZP =  zapit.pointer('simulated',true);
             obj.verifyClass(obj.hZP,'zapit.pointer');
+
+
+            obj.hZP.listeners.saveSettings.Enabled=0; % Because we will repalce the settings
+
+            % TODO load settings from testDataDir
             fname = fullfile(obj.testDataDir,obj.configFname);
             obj.hZP.loadStimConfig(fname);
 
-            % "calibrate" it
+            % "calibrate" it. No transformation will be done.
             obj.hZP.refPointsSample = obj.hZP.refPointsStereotaxic;
-
             % Load data that we previously generated with these conditions
             obj.chanSamples = obj.loadChanSamples;
         end
@@ -29,6 +34,7 @@ classdef waveform_tests < matlab.unittest.TestCase
  
     methods(TestClassTeardown)
         function closeBT(obj)
+            fprintf('Closing down Zapit API object\n')
             delete(obj.hZP);
         end
     end
@@ -39,9 +45,29 @@ classdef waveform_tests < matlab.unittest.TestCase
 
     methods (Test)
 
-        function checkWaveformsMatch(obj)
+        function checkWaveformLengthsMatch(obj)
             %Check that the waveforms were generated correctly
-            obj.verifyEqual(obj.hZP.stimConfig.chanSamples,obj.chanSamples);
+            obj.verifyEqual(size(obj.hZP.stimConfig.chanSamples), size(obj.chanSamples));
+        end
+
+        function checkXWaveformsMatch(obj)
+             obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,1,:),obj.chanSamples(:,1,:));
+        end
+
+        function checkYWaveformsMatch(obj)
+             obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,2,:),obj.chanSamples(:,2,:));
+        end
+
+        function checkLaserWaveformsMatch(obj)
+             obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,3,:),obj.chanSamples(:,3,:));
+        end
+
+        function checkBlankinWaveformsMatch(obj)
+             obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,4,:),obj.chanSamples(:,4,:));
+        end
+
+        function checkBlankinWaveformsDoNotMatch(obj)
+             obj.verifyNotEqual(obj.hZP.stimConfig.chanSamples(:,4,:)+0.1,obj.chanSamples(:,4,:));
         end
 
         function checkWaveformsDoNotMatch(obj)
@@ -58,10 +84,10 @@ classdef waveform_tests < matlab.unittest.TestCase
     methods
         % These are convenience methods for running the tests
         function chanSamples  = loadChanSamples(obj);
-            load(fullfile(obj.testDataDir,'chanSamples.mat'));
+            fname = fullfile(obj.testDataDir,'chanSamples.mat');
+            fprintf('Loading %s\n', fname)
+            load(fname);
         end
     end
-
-
 
 end %classdef zapit_build_tests < matlab.unittest.TestCase
