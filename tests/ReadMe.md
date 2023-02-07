@@ -17,7 +17,6 @@ or
 
                         Name                        Passed    Failed    Incomplete    Duration       Details   
     ____________________________________________    ______    ______    __________    _________    ____________
-
     {'waveform_tests/checkWaveformsMatch'      }    true      false       false          1.0318    {1×1 struct}
     {'waveform_tests/checkWaveformsDoNotMatch' }    true      false       false        0.051651    {1×1 struct}
     {'zapit_build_tests/checkSimulated'        }    true      false       false          2.2722    {1×1 struct}

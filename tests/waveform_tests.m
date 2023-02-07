@@ -17,8 +17,7 @@ classdef waveform_tests < matlab.unittest.TestCase
             obj.hZP =  zapit.pointer('simulated',true);
             obj.verifyClass(obj.hZP,'zapit.pointer');
             fname = fullfile(obj.testDataDir,obj.configFname);
-            obj.hZP.stimConfig = zapit.stimConfig(fname);
-            obj.hZP.stimConfig.parent = obj.hZP;
+            obj.hZP.loadStimConfig(fname);
 
             % "calibrate" it
             obj.hZP.refPointsSample = obj.hZP.refPointsStereotaxic;

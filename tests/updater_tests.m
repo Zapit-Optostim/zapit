@@ -45,8 +45,9 @@ classdef updater_tests < matlab.unittest.TestCase
             obj.verifyEqual(regexp(msg,'^Zapit version \d+\.\d+\.\d+  --  \d{4}/\d+/\d+'),1);
         end
 
-
-
+        function checkInstallPath(obj)
+            obj.verifyEqual(exist(zapit.updater.getInstallPath,'dir'),7)
+        end
     end %methods (Test)
 
 
