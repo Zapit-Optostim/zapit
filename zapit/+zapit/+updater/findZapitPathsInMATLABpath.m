@@ -18,6 +18,12 @@ function zPaths = findZapitPathsInMATLABpath
     p = path;
     p = strsplit(p,':')';
 
-    find( cellfun(@(x) ~isempty(strfind(x,'zapit')), p) )
+    f = find( cellfun(@(x) ~isempty(strfind(x,'zapit')), p) );
+
+    if isempty(f)
+        zPaths = [];
+    else
+        zPaths = p(f);
+    end
 
 end % getInstallPath
