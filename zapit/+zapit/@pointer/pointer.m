@@ -52,7 +52,7 @@ classdef pointer < handle
         buildFailed = true % Used during boostrap by start_zapit
         breakScannerCalibLoop = false; % Used so GUI can break out of the scanner calibration loop.
         simulated = false % Tag to indicate whether it is in simulated mode
-        listeners = {} % Cell array that holds listeners so they can be easily cleaned up in the destructor
+        listeners  % Structure that holds listeners so they can be easily cleaned up in the destructor
     end % hidden properties
 
 
@@ -68,7 +68,8 @@ classdef pointer < handle
     properties (SetAccess=protected, GetAccess=public)
        imSize
        refPointsStereotaxic  % Two reference points in stereotaxic space. By default bregma
-                             % (first line [ML,AP] and a point 3 mm in front (second line)
+                             % (first line [ML,AP] and the second is defined by the settings
+                             % value at settings.calibrateSample.refAP
     end % getter properties
 
 
@@ -111,7 +112,7 @@ classdef pointer < handle
                 obj.cam.vid.FramesAcquiredFcn = @obj.storeLastFrame;
                 obj.cam.vid.FramesAcquiredFcnCount=1; %Run frame acq fun every N frames
             else
-               obj.listeners{end+1} = addlistener(obj.cam, 'lastAcquiredFrame', 'PostSet', @obj.storeLastFrame);
+               obj.listeners.lastAcquiredFrame = addlistener(obj.cam, 'lastAcquiredFrame', 'PostSet', @obj.storeLastFrame);
                % Make a listener instead of the FramesAcquiredFcn
                obj.cam.startVideo; pause(0.2), obj.cam.stopVideo; pause(0.2) % TODO -- for some reason we need to call this twice for it to start working properly
             end
@@ -119,7 +120,7 @@ classdef pointer < handle
 
 
             % Save settings if they are changed
-            obj.listeners{end+1} = addlistener(obj, 'settings', 'PostSet', @obj.saveSettingsFile);
+            obj.listeners.saveSettings = addlistener(obj, 'settings', 'PostSet', @obj.saveSettingsFile);
 
             if obj.simulated
                 obj.DAQ = zapit.simulated.DAQ;
@@ -148,7 +149,7 @@ classdef pointer < handle
             %
             
             fprintf('Shutting down Zapit optostim software\n')
-            cellfun(@delete,obj.listeners)
+            structfun(@delete,obj.listeners)
             if isvalid(obj.cam)
                 obj.cam.vid.FramesAcquiredFcn = [];
                 obj.cam.stopVideo;

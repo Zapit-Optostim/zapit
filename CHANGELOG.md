@@ -20,7 +20,8 @@ The Zapit main window will print a notification in the title bar when a new vers
 2023/02/03 -- v0.10.5
  * Small bugfixes
  * Paint brain area runs more quietly and blanks the beam between areas.
- *
+ * Zap all points runs more quietly and blanks the beam between points
+ * Listeners are now in a structure instead of a cell array.
 
 2023/02/03 -- v0.10.4
  * BUGFIX: Support report could not be generated from the menu and the command itself failed.
