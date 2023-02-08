@@ -74,79 +74,10 @@ classdef stimConfig < handle
 
         end % numConditions
 
+    end
 
-        function cPoints = calibratedPoints(obj) 
-            % The stimulation locations after they have been calibrated to the sample
-            % 
-            % zapit.stimConfig.calibratedPoints
-            %
-            % Purpose
-            % Places the stereotaxic target coords in stimLocations into the sample
-            % space being imaged by the camera. It does this using the estimate of 
-            % bregma plus one more stereotaxic point that are stored in refPointsSample.
-            %
-            % Inputs
-            % none
-            %
-            % Outputs
-            % A cell array of converted coordinates. The cells correspond in order to
-            % the orginal data in the structure stimLocations. If the cells are 
-            % concatenated as [cPoints{:}] then the first row is ML coords and second
-            % row is AP coords. All in mm.
-            %
-
-            cPoints = {};
-
-            if isempty(obj.parent.refPointsSample)
-                fprintf('Sample has not been calibrated! Returning empty data! \n')
-                return
-            end
-
-            for ii = 1:obj.numConditions
-                tmpMat = [obj.stimLocations(ii).ML; obj.stimLocations(ii).AP];
-                cPoints{ii} = zapit.utils.rotateAndScaleCoords(...
-                            tmpMat, ...
-                            obj.parent.refPointsStereotaxic, ...
-                            obj.parent.refPointsSample);
-            end
-        end % calibratedPoints
-
-
-        function cPointsVolts = calibratedPointsInVolts(obj)
-            % Convert the calibrated points (sample space) into voltage values for the scanners
-            %
-            % zapit.stimConfig.calibratedPointsInVolts
-            %
-            % Purpose
-            % This method returns voltage values that can be sent to the scanners in order
-            % to point the beam at the locations defined calibratedPoints.
-            %
-            % Inputs
-            % none
-            %
-            % Outputs
-            % A cell array of coordinates converted into voltages. The cells correspond in order 
-            % to the orginal data in the structure stimLocations. If the cells are concatenated 
-            % as [cPointsVolts{:}] then the first column is ML coords and second column is AP 
-            % coords. All in volts. NOTE this is transposed with respect to calibratedPoints
-            %
-
-            cPointsVolts = {};
-
-            calibratedPoints = obj.calibratedPoints;
-
-            if isempty(calibratedPoints)
-                return 
-            end
-
-            for ii = 1:length(calibratedPoints)
-                [xVolt, yVolt] = obj.parent.mmToVolt(calibratedPoints{ii}(1,:), ...
-                                                    calibratedPoints{ii}(2,:));
-                cPointsVolts{ii} = [xVolt' yVolt'];
-            end
-
-        end % calibratedPointsInVolts
-
+    % Getters and setters
+    methods
 
         function chanSamples = get.chanSamples(obj)
             % Prepares voltages for each photostimulation site
@@ -266,8 +197,7 @@ classdef stimConfig < handle
 
         end % get.chanSamples
 
-
-    end % methods
+    end % methods (getters and setters)
 
 
 end % config
