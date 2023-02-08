@@ -103,19 +103,19 @@ classdef stimConfig < handle
             % Pull in data from method
             calibratedPointsInVolts = obj.calibratedPointsInVolts;
 
-            numHalfCycles = 2; % The number of half cycles to buffer
-
             % TODO -- we need to make sure that the number of samples per second here is the right number
-            obj.numSamplesPerChannel = obj.parent.DAQ.samplesPerSecond/obj.stimFreqInHz*(numHalfCycles/2);
+            obj.numSamplesPerChannel = obj.parent.DAQ.samplesPerSecond/obj.stimFreqInHz;
 
             % make up samples for scanner channels (of course calibratedPointsInVolts is already in volt format)
             % pre-allocate the waveforms array: 1st dim is samples, 2nd dim is channel, 3rd dim is conditions
             waveforms = zeros(obj.numSamplesPerChannel,4,length(calibratedPointsInVolts)); % matrix for each channel
 
             
-            % Calculate some constants that we will need in multiple places below            
+            % Calculate some constants that we will need in multiple places further below.
+
             % find edges of half cycles (the indexes at which the beam moves or laser changes state)
-            obj.edgeSamples = ceil(linspace(1, obj.numSamplesPerChannel, numHalfCycles+1));
+            pointsPerTrial = obj.parent.settings.experiment.maxStimPointsPerCondition;
+            obj.edgeSamples = ceil(linspace(1, obj.numSamplesPerChannel, pointsPerTrial+1));
             sampleInterval = 1/obj.parent.DAQ.samplesPerSecond; 
             nSamplesInOneMS = round(1E-3 / sampleInterval);  % Number of samples in 1 ms. % TODO -- probably should have this as a setting
 
@@ -124,22 +124,32 @@ classdef stimConfig < handle
 
                 % If this position is a single point we duplicate it to spoof two points
                 if size(calibratedPointsInVolts{ii},1) == 1
-                    t_volts = repmat(calibratedPointsInVolts{ii},2,1);
+                    t_volts = repmat(calibratedPointsInVolts{ii},pointsPerTrial,1);
                 else
                     t_volts = calibratedPointsInVolts{ii};
                 end
 
-                xVolts = t_volts(:,1);
-                xVolts = repmat(xVolts', 1, numHalfCycles/2); % TODO: Not needed if we definitely stick with 1 cycle
+                % The array t_volts is 2 by 2 with the first column being is ML coords (x mirror)
+                % and second column being AP (y mirror). The rows indicate positions in this trial.
+                % This is why for the single trial case we are repeating the row. Longer term we
+                % may need a different system here, if we opt for multiple points.
 
-                yVolts = t_volts(:,2);
-                yVolts = repmat(yVolts', 1, numHalfCycles/2); % TODO: Not needed if we definitely stick with 1 cycle
+                % Explicitly extract X and Y scanner voltages from t_volts
+                xVolts = t_volts(:,1)';
+                yVolts = t_volts(:,2)';
 
-                % Make the full waveforms for X and Y
-                Y = repmat(yVolts,obj.numSamplesPerChannel/numHalfCycles,1);
-                X = repmat(xVolts,obj.numSamplesPerChannel/numHalfCycles,1);
 
-                % apply a ramp to slow down the scanners and make the quieter.
+                % Make the full waveforms for X and Y. The logic here is that one cycle of the
+                % waveform plays out over numSamplesPerChannel samples. So we want the beam to be
+                % in each of the positions for half the time. We will define this using the number
+                % points per trial to make this a bit more explicit and perhaps more fure proof
+                Y = repmat(yVolts, obj.numSamplesPerChannel/pointsPerTrial, 1);
+                X = repmat(xVolts, obj.numSamplesPerChannel/pointsPerTrial, 1);
+
+
+                % The beam will now go to the correct locations but it will be noisy because the
+                % waveforms have no shaping. We will swing the scanners slowly from one position
+                % to the next over a period of 1 ms.
                 X(1:nSamplesInOneMS,1) = linspace(xVolts(1,2),xVolts(1,1),nSamplesInOneMS);
                 Y(1:nSamplesInOneMS,1) = linspace(yVolts(1,2),yVolts(1,1),nSamplesInOneMS);
 
