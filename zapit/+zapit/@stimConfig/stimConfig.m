@@ -117,7 +117,15 @@ classdef stimConfig < handle
             pointsPerTrial = obj.parent.settings.experiment.maxStimPointsPerCondition;
             obj.edgeSamples = ceil(linspace(1, obj.numSamplesPerChannel, pointsPerTrial+1));
             sampleInterval = 1/obj.parent.DAQ.samplesPerSecond; 
-            nSamplesInOneMS = round(1E-3 / sampleInterval);  % Number of samples in 1 ms. % TODO -- probably should have this as a setting
+
+            % The blanking time is the period during which the beam is off and the scanners slowly
+            % transition from one place to the next. Defined in ms.
+            % a setting.
+            blankingTime_ms = obj.parent.settings.experiment.blankingTime_ms;
+
+            % The number of samples that correspond to the blanking time.
+            blankingSamples = round( (blankingTime_ms*1E-3)/sampleInterval );
+
 
             % Fill in the matrices for the galvos
             for ii = 1:length(calibratedPointsInVolts) % Loop over stim conditions
@@ -134,7 +142,9 @@ classdef stimConfig < handle
                 % This is why for the single trial case we are repeating the row. Longer term we
                 % may need a different system here, if we opt for multiple points.
 
-                % Explicitly extract X and Y scanner voltages from t_volts
+                % Explicitly extract X and Y scanner voltages from t_volts.
+                % These are column vectors. The first column is the first location and the
+                % second column is the second location.
                 xVolts = t_volts(:,1)';
                 yVolts = t_volts(:,2)';
 
@@ -147,15 +157,20 @@ classdef stimConfig < handle
                 X = repmat(xVolts, obj.numSamplesPerChannel/pointsPerTrial, 1);
 
 
-                % The beam will now go to the correct locations but it will be noisy because the
-                % waveforms have no shaping. We will swing the scanners slowly from one position
-                % to the next over a period of 1 ms.
-                X(1:nSamplesInOneMS,1) = linspace(xVolts(1,2),xVolts(1,1),nSamplesInOneMS);
-                Y(1:nSamplesInOneMS,1) = linspace(yVolts(1,2),yVolts(1,1),nSamplesInOneMS);
+                % The beam will now go to the correct locations but the scanners will generate a lot
+                % of noise because the waveforms have no shaping. We will therefore swing the
+                % scanners slowly from one position to the next over a period of 1 ms.
 
-                X(1:nSamplesInOneMS,2) = linspace(xVolts(1,1),xVolts(1,2),nSamplesInOneMS);
-                Y(1:nSamplesInOneMS,2) = linspace(yVolts(1,1),yVolts(1,2),nSamplesInOneMS);
+                % This does the ramp at the start of the waveform: it modifies the first column
+                X(1:blankingSamples,1) = linspace(xVolts(2),xVolts(1),blankingSamples);
+                Y(1:blankingSamples,1) = linspace(yVolts(2),yVolts(1),blankingSamples);
 
+                % This does the ramp at the middle of the waveform: it modifies the second column
+                X(1:blankingSamples,2) = linspace(xVolts(1),xVolts(2),blankingSamples);
+                Y(1:blankingSamples,2) = linspace(yVolts(1),yVolts(2),blankingSamples);
+
+                % Turn the two columns into a row vector and add it into the waveforms array.
+                % Here the first column is the X scan waveform and the second is the Y waveform.
                 waveforms(:,1,ii) = X(:);
                 waveforms(:,2,ii) = Y(:);
 
@@ -169,13 +184,13 @@ classdef stimConfig < handle
 
                 % The masking light
                 waveforms(:,4,ii) = ones(1,obj.numSamplesPerChannel) * 5; % 5V TTL
-            end % for
+            end % for ii
 
 
             % Handling masking for periods beam is moving and one vs two locations
             MASK = ones(obj.numSamplesPerChannel,1);
 
-            for ii=1:nSamplesInOneMS
+            for ii=1:blankingSamples
                 MASK(obj.edgeSamples(1:end-1)+(ii-1))=0;
             end
 

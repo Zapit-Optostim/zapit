@@ -38,6 +38,7 @@ function settings = default_settings
     settings.experiment.defaultLaserPowerMW = 5;
     settings.experiment.offRampDownDuration_ms = 250;
     settings.experiment.maxStimPointsPerCondition = 2;
+    settings.experiment.blankingTime_ms = 1.5;
 
     settings.cache.ROI = [];
     settings.cache.previouslyLoadedFiles = [];

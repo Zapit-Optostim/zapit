@@ -288,6 +288,18 @@ function [settings,allValid] = checkSettingsAreValid(settings)
         allValid=false;
     end
 
+    if ~isnumeric(settings.experiment.blankingTime_ms)
+        fprintf('experiment.blankingTime_ms should be a number. Setting it to %d \n', ...
+            DEFAULT_SETTINGS.experiment.blankingTime_ms)
+        settings.experiment.blankingTime_ms = DEFAULT_SETTINGS.experiment.blankingTime_ms;
+        allValid=false;
+    elseif settings.experiment.blankingTime_ms<=0
+        fprintf('experiment.blankingTime_ms should be >0. Setting it to %d \n', ...
+            DEFAULT_SETTINGS.experiment.blankingTime_ms)
+        settings.experiment.blankingTime_ms = DEFAULT_SETTINGS.experiment.blankingTime_ms;
+        allValid=false;
+    end
+
     %%
     %
     % cache

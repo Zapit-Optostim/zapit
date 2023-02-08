@@ -12,7 +12,7 @@ camera: {connection_index: 1.0, default_exposure: 10.0, micronsPerPixel: 19.3, b
 calibrateScanners: {areaThreshold: 500.0, calibration_power_mW: 9.0, beam_calib_exposure: 2.0,
   bufferMM: 2.0, pointSpacingInMM: 3.0}
 experiment: {defaultLaserFrequency: 40.0, defaultLaserFrequencyHz: 40.0, defaultLaserPowerMW: 5.0,
-  maxStimPointsPerCondition: 2.0, offRampDownDuration_ms: 250.0}
+  maxStimPointsPerCondition: 2.0, offRampDownDuration_ms: 250.0, blankingTime_ms: 1.0}
 calibrateSample: {refAP: -6.0}
 zapit: {gitCommit: branch=dev  commit=1c0506fd72f9241d24f72b17839a0c1ad814258e, version: 0.10.2}
 cache:

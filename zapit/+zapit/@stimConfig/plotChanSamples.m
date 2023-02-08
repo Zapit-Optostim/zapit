@@ -68,8 +68,11 @@ function plotChanSamples(obj, conditionToPlot)
     end
 
     title('analog output to masking light')
-    ylabel('amplitude')
-    xlabel(sprintf('samples (at %d Hz)', obj.parent.DAQ.samplesPerSecond))
+    ylabel('State')
+    xlabel(sprintf('Samples (at %d Hz)', obj.parent.DAQ.samplesPerSecond))
+    set(gca,'YTick',[0,5],'YTickLabel',{'Low','High'})
+    ylim([-0.25,5.25])
+
     
 end % plotChanSamples
 
