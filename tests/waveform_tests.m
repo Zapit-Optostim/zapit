@@ -15,11 +15,12 @@ classdef waveform_tests < matlab.unittest.TestCase
         function buildZapit(obj)
             % Does Zapit build with dummy parameters?
             fprintf('Building Zapit API object\n')
-            obj.hZP =  zapit.pointer('simulated',true);
+            obj.hZP =  zapit.pointer('simulated',true, ...
+                            'settingsFile',fullfile(obj.testDataDir,'zapitSystemSettings.yml'));
             obj.verifyClass(obj.hZP,'zapit.pointer');
 
 
-            obj.hZP.listeners.saveSettings.Enabled=0; % Because we will repalce the settings
+            obj.hZP.listeners.saveSettings.Enabled=0; % To ensure the settings are not changed
 
             % TODO load settings from testDataDir
             fname = fullfile(obj.testDataDir,obj.configFname);

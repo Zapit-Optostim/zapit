@@ -1,4 +1,4 @@
-function settings = readSettings
+function settings = readSettings(fname)
     % Read Zapit settings YAML file and return as a structure
     %
     % function settings = zapit.settings.readSettings
@@ -12,7 +12,9 @@ function settings = readSettings
     % Otherwise the settings file is read and returned as a structure. 
     %
     % Inputs
-    % none
+    % fname - [optional] If not provided, the default settings file is found and loaded. If
+    %       fname is provided, this is loaded instead. A non-standard settings file is only
+    %       used for running certain tests.
     % 
     % Outputs
     % settings - the zapit settings as a structure
@@ -23,9 +25,16 @@ function settings = readSettings
 
     settings=[];
 
+    if nargin<1
+        fname = [];
+    end
 
-
-    [settingsFile,backupSettingsDir] = zapit.settings.findSettingsFile;
+    if isempty(fname)
+        [settingsFile,backupSettingsDir] = zapit.settings.findSettingsFile;
+    else
+        settingsFile = fname;
+        backupSettingsDir = []; % Do not write to backup settings at all
+    end
 
     settings = zapit.yaml.ReadYaml(settingsFile);
 
@@ -87,6 +96,10 @@ function settings = readSettings
 
     % If there are missing or invalid values we will replace these in the settings file as well as making
     % a backup copy of the original file.
+    if isempty(backupSettingsDir)
+        return
+    end
+
     if ~allValid || addedDefaultValue
        % Copy file
        backupFname = fullfile(backupSettingsDir, ...
@@ -110,7 +123,6 @@ function settings = readSettings
             delete(fullfile(backupFiles(ii).folder,backupFiles(ii).name))
         end
     end
-
 
 
     % Log current version info to the settings

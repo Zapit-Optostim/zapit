@@ -57,8 +57,6 @@ classdef camera < handle
             obj.frameTimer.TimerFcn = @obj.updateFrameCounter_Callback;
             obj.frameTimer.ExecutionMode = 'fixedDelay';
 
-
-
         end % close constructor
 
 

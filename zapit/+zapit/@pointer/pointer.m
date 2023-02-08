@@ -87,12 +87,18 @@ classdef pointer < handle
             params = inputParser;
             params.CaseSensitive = false;
             params.addParameter('simulated', false, @(x) islogical(x) || x==0 || x==1);
-
+            params.addParameter('settingsFile', [], @(x) isempty(x) || ischar(x))
             params.parse(varargin{:});
 
-            obj.simulated=params.Results.simulated;
+            obj.simulated = params.Results.simulated;
 
-            obj.settings = zapit.settings.readSettings;
+            % By default we load the settings file in the normal location but for testing
+            % is possible to define a different one
+            if isempty(params.Results.settingsFile)
+                obj.settings = zapit.settings.readSettings;
+            else
+                obj.settings = zapit.settings.readSettings(params.Results.settingsFile)
+            end
 
             % Connect to camera
             if obj.simulated
@@ -116,7 +122,11 @@ classdef pointer < handle
                % Make a listener instead of the FramesAcquiredFcn
                obj.cam.startVideo; pause(0.2), obj.cam.stopVideo; pause(0.2) % TODO -- for some reason we need to call this twice for it to start working properly
             end
-            obj.cam.startVideo; 
+
+            % Only start video by default if we are not in simulated mode
+            if ~obj.simulated
+                obj.cam.startVideo;
+            end
 
 
             % Save settings if they are changed
