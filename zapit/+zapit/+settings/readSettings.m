@@ -1,4 +1,4 @@
-function settings = readSettings(fname)
+function outputSettings = readSettings(fname)
     % Read Zapit settings YAML file and return as a structure
     %
     % function settings = zapit.settings.readSettings
@@ -14,7 +14,8 @@ function settings = readSettings(fname)
     % Inputs
     % fname - [optional] If not provided, the default settings file is found and loaded. If
     %       fname is provided, this is loaded instead. A non-standard settings file is only
-    %       used for running certain tests.
+    %       used for running certain tests. The settings file is never modified if this
+    %       this arg is defined.
     % 
     % Outputs
     % settings - the zapit settings as a structure
@@ -23,11 +24,17 @@ function settings = readSettings(fname)
     % Rob Campbell - Basel 2017
     % Rob Campbell - SWC 2022
 
-    settings=[];
+    outputSettings = [];
 
     if nargin<1
         fname = [];
     end
+
+    if nargin<2
+        doNotReplaceOriginal = false;
+    end
+
+
 
     if isempty(fname)
         [settingsFile,backupSettingsDir] = zapit.settings.findSettingsFile;
@@ -36,12 +43,12 @@ function settings = readSettings(fname)
         backupSettingsDir = []; % Do not write to backup settings at all
     end
 
-    settings = zapit.yaml.ReadYaml(settingsFile);
+    settingsFromYML = zapit.yaml.ReadYaml(settingsFile);
 
     %Check if the loaded settings are the same as the default settings
     DEFAULT_SETTINGS = default_settings;
 
-    if isequal(settings,DEFAULT_SETTINGS)
+    if isequal(settingsFromYML,DEFAULT_SETTINGS)
         fprintf(['\n\n *** The settings file at %s has never been edited\n ', ...
             '*** Press RETURN then edit the file for your system.\n'], settingsFile)
         fprintf(' *** For help editing the file see: https://github.com/BaselLaserMouse/zapit\n\n')
@@ -52,29 +59,45 @@ function settings = readSettings(fname)
         fprintf('\n\n *** Once you have finished editing the file, save it and press RETURN\n')
 
         pause
-        settings = zapit.settings.readSettings;
+        outputSettings = zapit.settings.readSettings;
+        [outputSettings,allValid] = checkSettingsAreValid(outputSettings);
         return
     end
 
 
-    % Pull in values from the default settings that are missing in the user settings file.
+    % Report which missing values were added
     f0 = fields(DEFAULT_SETTINGS);
     addedDefaultValue = false;
+    outputSettings = DEFAULT_SETTINGS;
+
     for ii = 1:length(f0);
         f1 = fields(DEFAULT_SETTINGS.(f0{ii}));
 
-        % Create missing structure if necessary (unlikely to ever be the case)
-        if ~isfield(settings,f0{ii});
-            settings.(f0{ii}) = [];
+        % There is a whole section missing
+        if ~isfield(settingsFromYML,f0{ii});
+            fprintf('\n\n Added missing section "%s" from default_Settings.m\n', f0{ii})
+            addedDefaultValue = true;
+            continue
         end
 
         for jj = 1:length(f1)
-            if ~isfield(settings.(f0{ii}), f1{jj})
+            if ~isfield(settingsFromYML.(f0{ii}), f1{jj})
                 addedDefaultValue = true;
                 fprintf('\n\n Adding missing default setting "%s.%s" from default_Settings.m\n', ...
-                    (f0{ii}), f1{jj})
-                settings.(f0{ii}).(f1{jj}) = DEFAULT_SETTINGS.(f0{ii}).(f1{jj});
+                    f0{ii}, f1{jj})
             end
+        end
+    end
+
+
+    % Now go through the user's settings file and replace all fields in the default with those.
+    % This ensures that any values the user file has the should not be there will be removed. 
+    f0 = fields(DEFAULT_SETTINGS);
+    for ii = 1:length(f0);
+        f1 = fields(DEFAULT_SETTINGS.(f0{ii}));
+
+        for jj = 1:length(f1)
+            outputSettings.(f0{ii}).(f1{jj}) = settingsFromYML.(f0{ii}).(f1{jj});
         end
     end
 
@@ -82,7 +105,7 @@ function settings = readSettings(fname)
 
     % Make sure all settings that are returned are valid
     % If they are not, we replace them with the original default value
-    [settings,allValid] = checkSettingsAreValid(settings); % see private directory
+    [outputSettings,allValid] = checkSettingsAreValid(outputSettings); % see private directory
 
 
 
@@ -109,15 +132,15 @@ function settings = readSettings(fname)
 
        % Write the new file to the settings location
        fprintf('Replacing settings file with updated version\n')
-       zapit.yaml.WriteYaml(settingsFile,settings);
+       zapit.yaml.WriteYaml(settingsFile,outputSettings);
     end
 
     % Ensure we don't have too many backup files
     backupFiles = dir(fullfile(backupSettingsDir,'*.yml'));
-    if length(backupFiles) > settings.general.maxSettingsBackUpFiles
+    if length(backupFiles) > outputSettings.general.maxSettingsBackUpFiles
         [~,ind]=sort([backupFiles.datenum],'descend');
         backupFiles = backupFiles(ind); % make certain they are in date order
-        backupFiles = backupFiles(settings.general.maxSettingsBackUpFiles+1:end);
+        backupFiles = backupFiles(outputSettings.general.maxSettingsBackUpFiles+1:end);
         % Delete only these
         for ii = length(backupFiles):-1:1
             delete(fullfile(backupFiles(ii).folder,backupFiles(ii).name))
