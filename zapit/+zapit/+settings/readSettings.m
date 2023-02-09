@@ -43,10 +43,15 @@ function outputSettings = readSettings(fname)
         backupSettingsDir = []; % Do not write to backup settings at all
     end
 
+    if ~exist(settingsFile,'file')
+        fprintf('Can not find settings file %s\n', settingsFile)
+        return
+    end
+
     settingsFromYML = zapit.yaml.ReadYaml(settingsFile);
 
     %Check if the loaded settings are the same as the default settings
-    DEFAULT_SETTINGS = default_settings;
+    DEFAULT_SETTINGS = zapit.settings.default_settings;
 
     if isequal(settingsFromYML,DEFAULT_SETTINGS)
         fprintf(['\n\n *** The settings file at %s has never been edited\n ', ...
@@ -60,7 +65,7 @@ function outputSettings = readSettings(fname)
 
         pause
         outputSettings = zapit.settings.readSettings;
-        [outputSettings,allValid] = checkSettingsAreValid(outputSettings);
+        [outputSettings,allValid] = zapit.settings.checkSettingsAreValid(outputSettings);
         return
     end
 
@@ -97,6 +102,7 @@ function outputSettings = readSettings(fname)
         f1 = fields(DEFAULT_SETTINGS.(f0{ii}));
 
         for jj = 1:length(f1)
+            settingsFromYML.(f0{ii}).(f1{jj});
             outputSettings.(f0{ii}).(f1{jj}) = settingsFromYML.(f0{ii}).(f1{jj});
         end
     end
@@ -105,8 +111,7 @@ function outputSettings = readSettings(fname)
 
     % Make sure all settings that are returned are valid
     % If they are not, we replace them with the original default value
-    [outputSettings,allValid] = checkSettingsAreValid(outputSettings); % see private directory
-
+    [outputSettings,allValid] = zapit.settings.checkSettingsAreValid(outputSettings); % see private directory
 
 
     if ~allValid

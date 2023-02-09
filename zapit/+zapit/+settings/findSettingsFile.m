@@ -123,7 +123,7 @@ function varargout = findSettingsFile
 
 
 
-    DEFAULT_SETTINGS = default_settings;
+    DEFAULT_SETTINGS = zapit.settings.default_settings;
     if ~exist(settingsFilePath)
         fprintf('\nCan not find system settings file: making empty default file at %s\n', settingsFilePath)
         zapit.yaml.WriteYaml(settingsFilePath,DEFAULT_SETTINGS);

@@ -13,11 +13,27 @@ classdef settings_tests < matlab.unittest.TestCase
 
     methods (Test)
 
+        function readSettingsFile(obj)
+            % Check we can read the regular settings file
+            S = zapit.settings.readSettings;
+            obj.verifyClass(S,'struct')
+        end
+
         function basicTest(obj)
             % Can we read in a current, correct, settings file?
             expected = obj.loadSettingsExample('zapitSystemSettings_01.mat');
             actual = zapit.settings.readSettings(fullfile(obj.dataDir,'zapitSystemSettings_01.yml'));
             obj.verifyEqual(actual,expected)
+        end
+
+        function fixWrongValues(obj)
+            % Can we read in a current, correct, settings file?
+            expected = zapit.settings.default_settings;
+            actual = zapit.settings.readSettings(fullfile(obj.dataDir,'zapitSystemSettings_wrong_values_01.yml'));
+
+            obj.verifyEqual(actual.general, expected.general)
+            obj.verifyEqual(actual.NI, expected.NI)
+
         end
 
     end %methods (Test)

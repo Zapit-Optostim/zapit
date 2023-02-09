@@ -127,6 +127,14 @@ classdef stimConfig < handle
             blankingSamples = round( (blankingTime_ms*1E-3)/sampleInterval );
 
 
+            % We want the ability to present the stimuli for a shorter time but a higher power.
+            % Therefore we need to know the maximum stimulus duration:
+            maxStimDuration = (1/obj.stimFreqInHz)*1E3 - blankingTime_ms;
+
+            % THIS IS TESTING CODE. if stimDuration = maxStimDuration then there is no change in the function's output
+            stimDuration = maxStimDuration;
+
+
             % Fill in the matrices for the galvos
             for ii = 1:length(calibratedPointsInVolts) % Loop over stim conditions
 
@@ -179,8 +187,16 @@ classdef stimConfig < handle
                 % whether we have one or two positions in this trial. This will be dealt
                 % with later.
                 t_mW = obj.stimLocations(ii).Attributes.laserPowerInMW;
+
+                % TODO -- testing code handle situation where user has asked for a
+                % shorter stimulus. We scale the waveform:
+                t_mW = (maxStimDuration / stimDuration) * t_mW;
+
                 laserControlVoltage = obj.parent.laser_mW_to_control(t_mW);
                 waveforms(:,3,ii) = ones(1,obj.numSamplesPerChannel) * laserControlVoltage;
+
+                % TODO -- we need to now disable the beam outside of the period that the
+                % user has specified. Should this happen here or below?
 
                 % The masking light
                 waveforms(:,4,ii) = ones(1,obj.numSamplesPerChannel) * 5; % 5V TTL
@@ -198,7 +214,8 @@ classdef stimConfig < handle
             waveforms(:,3:4,:) = bsxfun(@times, waveforms(:,3:4,:), MASK);
             
             % Finally, we loop through and turn off laser on the even cycles when it's a single position
-            % TODO -- I'm sure this can be vectorised
+            % TODO -- I'm sure this can be vectorised (Or do above by making an by 2 array with second
+            % column being zeros).
             edgesToZero = obj.edgeSamples(2:2:end);
             distanceBetweenEdges = median(diff(obj.edgeSamples));
             for ii=1:size(waveforms,3)
