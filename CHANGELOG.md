@@ -23,6 +23,9 @@ The Zapit main window will print a notification in the title bar when a new vers
  * Zap all points runs more quietly and blanks the beam between points
  * Listeners are now in a structure instead of a cell array.
  * Blanking time is now a setting.
+ * Overhaul how the user settings are processed. Add tests.
+ * Rename defaultLaserFrequencyHz to defaultDutyCycleHz in user settings.
+
 
 
 2023/02/03 -- v0.10.4
