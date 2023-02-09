@@ -1,7 +1,7 @@
 function outputSettings = readSettings(fname)
     % Read Zapit settings YAML file and return as a structure
     %
-    % function settings = zapit.settings.readSettings
+    % function settings = zapit.settings.readSettings()
     %
     % Purpose
     % This function parses SETTINGS/settings.yml and creates it if does not already exist.

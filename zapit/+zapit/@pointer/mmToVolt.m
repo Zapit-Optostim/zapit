@@ -1,7 +1,7 @@
 function [xVolts, yVolts] = mmToVolt(obj, pixelColumnInMM, pixelRowInMM)
     % Converts position in the image in mm to scanner voltage value to send to scanners
     %
-    % function [xVolts, yVolts] = zapit.pointer.mmToVolt(obj, pixelColumnInMM, pixelRowInMM)
+    % function [xVolts, yVolts] = zapit.pointer.mmToVolt(pixelColumnInMM, pixelRowInMM)
     %
     %
     % Purpose

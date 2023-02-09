@@ -1,5 +1,10 @@
 classdef settings_tests < matlab.unittest.TestCase
     % Tests of the updater pipeline
+    %
+    % Purpose
+    % We wish to ensure that settings values entered by the user into the YAML are valid. 
+    % To make sure this is the case, all entered values are tested upon load. This testing
+    % class ensures this is being correctly. 
 
     properties
         dataDir = 'settings_tests_data';

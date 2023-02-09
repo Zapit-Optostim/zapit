@@ -1,7 +1,7 @@
 function varargout = calibrateScanners(obj)
     % Calibrate scanners with camera: conduct an affine transform to calibrate camera and beam
     %
-    % function varargout = zapit.pointer.calibrateScanners(obj)
+    % function varargout = zapit.pointer.calibrateScanners()
     %
     % Purpose
     % Moves beam sequentially across a series of locations and records the intended vs

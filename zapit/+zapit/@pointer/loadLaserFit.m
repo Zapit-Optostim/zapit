@@ -1,7 +1,7 @@
 function loadLaserFit(obj)
     % Load the laser fit object to the user settings directory
     % 
-    % zapit.pointer.loadLaserFit
+    % zapit.pointer.loadLaserFit()
     %
     % Purpose
     % Loads the laser fit to a .mat in the settings directory.

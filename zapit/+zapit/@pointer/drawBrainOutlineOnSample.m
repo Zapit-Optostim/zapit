@@ -1,9 +1,15 @@
 function drawBrainOutlineOnSample(obj)
     % Run the beam around around the brain outline
     %
-    % Must run DAQ.stopAndDeleteAOTask manually to stop.
+    % zapit.pointer.drawBrainOutlineOnSample()
     %
-    % Does no plotting.
+    % Purpose
+    % Draw the brain outline onto the sample using the laser and scanners. 
+    % Once started you can stop it with zapit.DAQ.stopAndDeleteAOTask.
+    % This method is generally called via the GUI, which handles stopping 
+    % in a neat way using a toggle button.
+    %
+    % Rob Campbell - SWC 2023
 
     coords = obj.calibratedBrainOutline;
 
@@ -42,4 +48,4 @@ function drawBrainOutlineOnSample(obj)
 
     obj.DAQ.start;
 
-end
+end % drawBrainOutlineOnSample

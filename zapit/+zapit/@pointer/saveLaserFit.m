@@ -1,7 +1,7 @@
 function saveLaserFit(obj)
     % Save the laser fit object to the user settings directory
     % 
-    % zapit.pointer.saveLaserFit
+    % zapit.pointer.saveLaserFit()
     %
     % Purpose
     % Saves the laser fit to a .mat in the settings directory.

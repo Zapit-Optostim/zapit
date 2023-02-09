@@ -1,7 +1,7 @@
 function generateLaserCalibrationCurve(obj,minMax)
     % Calibrate the laser: determine the relationship between output and control voltage
     %
-    % function laserFit = zapit.pointer.generateLaserCalibrationCurve(obj,minMax)
+    % function laserFit = zapit.pointer.generateLaserCalibrationCurve(minMax)
     %
     % Purpose
     % Measure the relationship between control voltage laser output using an uncalibrated
@@ -23,7 +23,7 @@ function generateLaserCalibrationCurve(obj,minMax)
     % saved to a laserFit.mat file in the user settings directory.
     %
     %
-    % Inputs [optioanl]
+    % Inputs [optional]
     % minMax - [minValueToTest, maxValueToTest] These are the minimum and maximum control 
     %           values to use. By default these come from the settings file that is accesible
     %           via zapit.pointer.settings. 

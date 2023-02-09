@@ -1,7 +1,7 @@
 function stopOptoStim(obj, rampDownInMS)
     % Stop laser stimulation. Slowly ramping down the signal over time
     %
-    % zapit.pointer.stopOptoStim(obj, rampDownInMS)
+    % zapit.pointer.stopOptoStim(rampDownInMS)
     %
     % Purpose
     % Stop stimulation over a period of time specified by rampDownInMS.

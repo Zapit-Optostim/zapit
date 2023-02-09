@@ -1,7 +1,7 @@
 function im = returnCurrentFrame(obj,nFrames)
     % Return the last recorded camera image and optionally the last n frames
     %
-    % function im = zapit.pointer.returnCurrentFrame(obj,nFrames)
+    % function im = zapit.pointer.returnCurrentFrame(nFrames)
     %
     % Purpose
     % Return the last frame and, if requested, the last n frames.

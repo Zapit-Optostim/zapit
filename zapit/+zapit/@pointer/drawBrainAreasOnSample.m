@@ -1,7 +1,7 @@
 function drawBrainAreasOnSample(obj,areaCoords)
     % Run the beam around the perimeter of defined brain areas
     %
-    % zapit.pointer.drawBrainAreasOnSample(obj,areaCoords)
+    % zapit.pointer.drawBrainAreasOnSample(areaCoords)
     %
     % Purpose
     % Accepts a list of brain area index values and runs the beam around them.
@@ -10,7 +10,7 @@ function drawBrainAreasOnSample(obj,areaCoords)
     %
     % Inputs
     % areaCoords - a vector that is a list of brain area index values.
-    % Does no plotting.
+
 
 
     if isempty(obj.stimConfig)

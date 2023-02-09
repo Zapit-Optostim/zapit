@@ -1,5 +1,7 @@
-function varargout = runAffineTransform(obj, targetBeamLocation, actualBeamLocation,diagnosticPlots)
+function varargout = runAffineTransform(obj, targetBeamLocation, actualBeamLocation, diagnosticPlots)
     % Run an affine transformation to calibrate scanners to camera
+    %
+    % zapit.pointer.runAffineTransform(targetBeamLocation, actualBeamLocation, diagnosticPlots)
     %
     % Purpose
     % Runs an affine transform to calibrate the scanner and camera.

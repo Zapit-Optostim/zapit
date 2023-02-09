@@ -1,7 +1,7 @@
 function isReady = isReadyToStim(obj)
     % Return true if Zapit is ready to stimulate
     %
-    % zapit.pointer.isReadyToStim
+    % zapit.pointer.isReadyToStim()
     %
     % Purpose
     % Returns true if the scanners are calibrated, and the the

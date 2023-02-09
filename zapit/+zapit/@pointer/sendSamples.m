@@ -1,22 +1,30 @@
 function varargout = sendSamples(obj, varargin)
-    % Take X/Y coordinates of two points and cycle the laser between them.
+    % Send waveforms for stimulation to the DAQ. Stimulation starts immediately or following a trigger.
     %
-    % [conditionNum, laserOn, waveforms] = zapit.pointer.sendSamples(obj,newTrial,verbose)
+    % [conditionNum, laserOn, waveforms] = zapit.pointer.sendSamples(newTrial, verbose)
     %
     %
     % Purpose
-    % Take X/Y coordinates of two points and exchange the laser between them at freqLaser for
-    % pulseDuration seconds, locking it at a given point for tOpen ms. The parameters to actually
-    % stimulate are obtained from the structure, t_trial, which is supplied as an obligatory
-    % input argument (see below).
-    % This function builds an n by 4 matrix of waveforms to send to the DAQ. The first two columns
-    % are the scanner waveforms. The last two are the laser power and masking light.
+    % This method is a critical part of the API for running experiments using Zapit.
+    % This method writes the stimulation waveforms for a single trial to the DAQ. The photostimulation
+    % either starts immediately or after receipt of a digital trigger, depending on the state of the 
+    % "hardwareTriggered" input argument. The default is to wait for a trigger. Unless specified 
+    % explicitly, the stimulus (locations to photoactivate) is chosen at random. If the user has 
+    % defined an experiment directory via the GUI (or directly with zapit.pointer.experimentPath)
+    % then trial data are logged to disk automatically. 
+    %
+    % * How are the waveforms generated?
+    % The zapit.stimConfig class contains three methods that are used to make waveforms to
+    % send to the DAQ. These methods are automatically run sequentially: 
+    % calibratedPoints -> calibratedPointsInVolts -> chanSamples (a getter)
+    % The waveforms are obtained here with a call to stimConfig.chanSamples
+    %
     %
     % Inputs [param/value pairs]
     % 'conditionNum' - Integer but empty by default. This is the index of the condition number to
     %                  present. If empty or -1 a random one is chosen.
     % 'laserOn' - [bool, true by default] If true the laser is on. If false the galvos move but laser is off.
-    %              If empty or -1 a random laser state is chosen.
+    %              If empty or -1, a random laser state is chosen.
     % 'hardwareTriggered' [bool, true by default] If true the DAQ waits for a hardware trgger before 
     %                   presenting the waveforms. 
     % 'logging' - [bool, true by default] If true we write log files automatically if the user has
@@ -93,10 +101,11 @@ function varargout = sendSamples(obj, varargin)
         fprintf('Stimulating area %d\n', conditionNumber)
     end
 
-
+    %%
     % Make the waveforms to play
     cs = obj.stimConfig.chanSamples;
     waveforms = cs(:,:,conditionNumber);
+
 
     % Disable laser if requested
     if laserOn == 0
@@ -113,13 +122,14 @@ function varargout = sendSamples(obj, varargin)
     obj.stimConfig.offRampDownDuration_ms = ...
             obj.stimConfig.stimLocations(conditionNumber).Attributes.offRampDownDuration_ms;
 
-
-    % write voltage samples onto the task
+    % Write voltage samples onto the task
     obj.DAQ.writeAnalogData(waveforms);
 
-    % start the execution of the new task
+    % Start the execution of the new task
     obj.DAQ.start;
 
+
+    %% 
     if nargout>0
         varargout{1} = conditionNumber;
     end
