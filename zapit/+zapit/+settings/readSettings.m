@@ -124,12 +124,4 @@ function settings = readSettings(fname)
         end
     end
 
-
-    % Log current version info to the settings
-    g=zapit.updater.getGitInfo;
-    systemVersion = sprintf('branch=%s  commit=%s', g.branch, g.hash);
-    settings.zapit.gitCommit=systemVersion;
-    v = zapit.version;
-    settings.zapit.version=v.version.string;
-
 end % readSettings
