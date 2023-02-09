@@ -11,7 +11,7 @@ camera: {connection_index: 1.0, default_exposure: 10.0, micronsPerPixel: 19.3, b
   flipImageUD: 0.0, flipImageLR: 0.0, connectionIndex: 1.0}
 calibrateScanners: {areaThreshold: 500.0, calibration_power_mW: 9.0, beam_calib_exposure: 2.0,
   bufferMM: 2.0, pointSpacingInMM: 3.0}
-experiment: {defaultLaserFrequency: 40.0, defaultLaserFrequencyHz: 40.0, defaultLaserPowerMW: 5.0,
+experiment: {defaultDutyCycleHz: 40.0, defaultLaserPowerMW: 5.0,
   maxStimPointsPerCondition: 2.0, offRampDownDuration_ms: 250.0, blankingTime_ms: 1.0}
 calibrateSample: {refAP: -6.0}
 cache:

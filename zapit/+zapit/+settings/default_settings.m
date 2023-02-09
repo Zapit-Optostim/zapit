@@ -107,8 +107,8 @@ function [settings,setTests] = default_settings
 
 
     %% Experiment
-    settings.experiment.defaultLaserFrequencyHz = 40; 
-    setTests.experiment.defaultLaserFrequencyHz = {@check_isnumeric, @check_isscalar};
+    settings.experiment.defaultDutyCycleHz = 40;
+    setTests.experiment.defaultDutyCycleHz = {@check_isnumeric, @check_isscalar};
 
     settings.experiment.defaultLaserPowerMW = 5;
     setTests.experiment.defaultLaserPowerMW = {@check_isnumeric, @check_isscalar};;

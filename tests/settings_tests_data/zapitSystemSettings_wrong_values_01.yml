@@ -1,6 +1,6 @@
 general: {maxSettingsBackUpFiles: -10, openPythonBridgeOnStartup: 290}
 NI: {device_ID: 123, samplesPerSecond: 'WRONG', triggerChannel: -1,
-  wrapper: dotnet, EXTRASETTING: -90}
+  wrapper: dotnet, EXTRASETTING: 245}
 scanners: {voltsPerPixel: 0.0022, invertXscanner: 0.0, invertYscanner: 0.0}
 laser:
   laserMinMaxControlVolts: [0, 3.5]
