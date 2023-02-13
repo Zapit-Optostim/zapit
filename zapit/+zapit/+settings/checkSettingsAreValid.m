@@ -1,16 +1,23 @@
 function [settings,allValid] = checkSettingsAreValid(settings)
     % Check that all settings that are read in are valid
     %
-    % function [settings,allValid] = checkSettingsAreValid(settings)
+    % function [settings,allValid] = zapit.settings.checkSettingsAreValid(settings)
     %
     % Purpose
     % Attempt to stop weird errors that could be caused by the user entering a weird setting.
     % This function *also* converts some values from cells to vectors, as this is happens
     % when they are read in from the YAML. Consequently, this function must be run after data 
-    % are read in!
+    % are read in. It is called by zapit.settings.readSettings.
     %
+    % Inputs
+    % settings - The is the  
     %
     % Rob Campbell - SWC 2023
+    %
+    % See also:
+    % zapit.settings.readSettings
+    % zapit.settings.default_settings
+    % zapit.settings.settingsValuesTests
 
     allValid=true;
     [DEFAULT_SETTINGS,SETTINGS_TESTS] = zapit.settings.default_settings;
@@ -35,3 +42,5 @@ function [settings,allValid] = checkSettingsAreValid(settings)
 
         end
     end
+
+end 

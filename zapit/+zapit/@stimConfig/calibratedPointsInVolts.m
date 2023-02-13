@@ -1,7 +1,7 @@
 function cPointsVolts = calibratedPointsInVolts(obj)
     % Convert the calibrated points (sample space) into voltage values for the scanners
     %
-    % zapit.stimConfig.calibratedPointsInVolts
+    % zapit.stimConfig.calibratedPointsInVolts()
     %
     % Purpose
     % This method returns voltage values that can be sent to the scanners in order

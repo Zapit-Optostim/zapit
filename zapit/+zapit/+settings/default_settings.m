@@ -1,7 +1,7 @@
 function [settings,setTests] = default_settings
     % Return a set of default system settings to write to a file in the settings directory
     %
-    % function default_settings
+    % function [settings, setTests] = zapit.settings.default_settings
     %
     % Purpose
     % Defines the default settings of Zapit. These are what are written to YAML when there

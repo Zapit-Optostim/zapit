@@ -30,11 +30,6 @@ function outputSettings = readSettings(fname)
         fname = [];
     end
 
-    if nargin<2
-        doNotReplaceOriginal = false;
-    end
-
-
 
     if isempty(fname)
         [settingsFile,backupSettingsDir] = zapit.settings.findSettingsFile;
@@ -53,6 +48,7 @@ function outputSettings = readSettings(fname)
     %Check if the loaded settings are the same as the default settings
     DEFAULT_SETTINGS = zapit.settings.default_settings;
 
+    % TODO -- does this ever run? Can we delete it?
     if isequal(settingsFromYML,DEFAULT_SETTINGS)
         fprintf(['\n\n *** The settings file at %s has never been edited\n ', ...
             '*** Press RETURN then edit the file for your system.\n'], settingsFile)
