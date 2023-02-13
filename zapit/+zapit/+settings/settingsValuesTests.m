@@ -53,7 +53,8 @@ classdef (Abstract) settingsValuesTests
 
         function [actualStruct,isValid] = check_isscalar(actualStruct,defaultStruct,sectionName,fieldName)
             isValid = true;
-            if ~isscalar(actualStruct.(sectionName).(fieldName))
+            if ~isnumeric(actualStruct.(sectionName).(fieldName)) || ...
+                 ~isscalar(actualStruct.(sectionName).(fieldName))
                 fprintf('-> %s.%s should be a scalar. Setting it to %d.\n', ...
                     sectionName,fieldName,defaultStruct.(sectionName).(fieldName))
                 actualStruct.(sectionName).(fieldName) = defaultStruct.(sectionName).(fieldName);
@@ -64,7 +65,8 @@ classdef (Abstract) settingsValuesTests
 
         function [actualStruct,isValid] = check_isZeroOrGreaterScalar(actualStruct,defaultStruct,sectionName,fieldName)
             isValid = true;
-            if ~isscalar(actualStruct.(sectionName).(fieldName)) || ...
+            if ~isnumeric(actualStruct.(sectionName).(fieldName)) || ...
+                ~isscalar(actualStruct.(sectionName).(fieldName)) || ...
                     actualStruct.(sectionName).(fieldName)<0
                 fprintf('-> %s.%s should be a number. Setting it to %d.\n', ...
                     sectionName,fieldName,defaultStruct.(sectionName).(fieldName))

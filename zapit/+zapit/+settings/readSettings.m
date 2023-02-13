@@ -119,7 +119,7 @@ function outputSettings = readSettings(fname)
         end
 
         % If it's there we add the new value also (the old get's removed in the next step)
-        settingsFromYML.(newName{1}).(newName{2}) = settingsFromYML.(oldName{1}).(oldName{2})
+        settingsFromYML.(newName{1}).(newName{2}) = settingsFromYML.(oldName{1}).(oldName{2});
     end
 
 
