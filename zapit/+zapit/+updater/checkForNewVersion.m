@@ -1,7 +1,7 @@
 function details = checkForNewVersion
     % Check whether there is a GitHub release with a new version of the software
     %
-    % details = zapit.updater.checkForNewVersion
+    % details = zapit.updater.checkForNewVersion()
     %
     % Purpose
     % Use GitHub's releases and the local reported version number to decide 

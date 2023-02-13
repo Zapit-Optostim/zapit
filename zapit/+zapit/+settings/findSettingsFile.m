@@ -1,7 +1,7 @@
 function varargout = findSettingsFile
     % Find the Zapit settings file and return as a string
     %
-    % function settingsFile = findSettingsFile
+    % function settingsFile = zapit.settings.findSettingsFile()
     %
     % Purpose
     % There are three places the Zapit settings file could be located. This function

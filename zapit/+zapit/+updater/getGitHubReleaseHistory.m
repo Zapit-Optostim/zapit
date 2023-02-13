@@ -1,7 +1,7 @@
 function releases = getGitHubReleaseHistory
     % Return a structure containing the release history on GitHub
     %
-    % gURL = zapit.updater.getGitHubReleaseHistory
+    % gURL = zapit.updater.getGitHubReleaseHistory()
     %
     % Purpose
     % Return the project's GitHub release history. This can be used to determine 

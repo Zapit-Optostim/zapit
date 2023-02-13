@@ -1,7 +1,7 @@
 function zPaths = findZapitPathsInMATLABpath
     % Find all paths associated with Zapit in the MATLAB path
     %
-    % zapit.updater.findZapitPathsInMATLABpath
+    % zapit.updater.findZapitPathsInMATLABpath()
     %
     % Purpose
     % Search through the MATLAB and return all paths associated with zapit. This is

@@ -1,7 +1,7 @@
 function userDir = userFolder
     % Return path to user's home folder as a string
     %
-    % function userDir = userFolder
+    % function userDir = zapit.settings.userFolder
     %
     % Purpose
     % Return path to user's home folder on Windows or Unix systems. Returns
@@ -30,3 +30,5 @@ function userDir = userFolder
     if ~exist(userDir)
         userDir = [];
     end
+
+end % userFolder
