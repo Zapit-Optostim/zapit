@@ -17,6 +17,7 @@ The Zapit main window will print a notification in the title bar when a new vers
 
 ## Version History
 
+
 2023/02/03 -- v0.10.5
  * Small bugfixes
  * Paint brain area runs more quietly and blanks the beam between areas.
@@ -24,8 +25,8 @@ The Zapit main window will print a notification in the title bar when a new vers
  * Listeners are now in a structure instead of a cell array, so it's easy to disable specific ones by name.
  * Beam blanking time (time taken to move between positions) is now a setting.
  * Overhaul how the user settings are processed: code is far more streamlined. There are now associated tests.
- * Rename defaultLaserFrequencyHz to defaultDutyCycleHz in user settings. Renaming of settings now can be done automatically.
-
+ * Rename defaultLaserFrequencyHz to defaultDutyCycleHz in default user settings. Renaming of settings now can be done automatically.
+ * Rename stimFreqInHz to stimDutyCycleHz in the user stimulus settings file.
 
 2023/02/03 -- v0.10.4
  * BUGFIX: Support report could not be generated from the menu and the command itself failed.

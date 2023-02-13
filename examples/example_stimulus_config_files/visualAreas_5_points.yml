@@ -3,28 +3,28 @@ stimLocations01:
   AP: [-2.94, -2.94]
   Class: stimulate
   Type: bilateral_points
-  Attributes: {laserPowerInMW: 5.0, stimFreqInHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 5.0, stimDutyCycleHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations02:
   ML: [2.62, -2.62]
   AP: [-4.53, -4.53]
   Class: stimulate
   Type: bilateral_points
-  Attributes: {laserPowerInMW: 5.0, stimFreqInHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 5.0, stimDutyCycleHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations03:
   ML: [3.89, -3.89]
   AP: [-3.76, -3.76]
   Class: stimulate
   Type: bilateral_points
-  Attributes: {laserPowerInMW: 5.0, stimFreqInHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 5.0, stimDutyCycleHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations04:
   ML: [3.95, -3.95]
   AP: [-2.89, -2.89]
   Class: stimulate
   Type: bilateral_points
-  Attributes: {laserPowerInMW: 5.0, stimFreqInHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 5.0, stimDutyCycleHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations05:
   ML: [3.23, -3.23]
   AP: [-2.39, -2.39]
   Class: stimulate
   Type: bilateral_points
-  Attributes: {laserPowerInMW: 5.0, stimFreqInHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 5.0, stimDutyCycleHz: 40.0, offRampDownDuration_ms: 250.0}

@@ -14,7 +14,7 @@ classdef stimConfig < handle
         configFileName % file name of the loaded stimConfig file
 
         laserPowerInMW
-        stimFreqInHz
+        stimDutyCycleHz
         stimLocations
         offRampDownDuration_ms
 
@@ -104,7 +104,7 @@ classdef stimConfig < handle
             calibratedPointsInVolts = obj.calibratedPointsInVolts;
 
             % TODO -- we need to make sure that the number of samples per second here is the right number
-            obj.numSamplesPerChannel = obj.parent.DAQ.samplesPerSecond/obj.stimFreqInHz;
+            obj.numSamplesPerChannel = obj.parent.DAQ.samplesPerSecond/obj.stimDutyCycleHz;
 
             % make up samples for scanner channels (of course calibratedPointsInVolts is already in volt format)
             % pre-allocate the waveforms array: 1st dim is samples, 2nd dim is channel, 3rd dim is conditions
@@ -129,7 +129,8 @@ classdef stimConfig < handle
 
             % We want the ability to present the stimuli for a shorter time but a higher power.
             % Therefore we need to know the maximum stimulus duration:
-            maxStimDuration = (1/obj.stimFreqInHz)*1E3 - blankingTime_ms;
+            maxStimDuration = (1/obj.stimDutyCycleHz)*1E3 - blankingTime_ms;
+
 
             % THIS IS TESTING CODE. if stimDuration = maxStimDuration then there is no change in the function's output
             stimDuration = maxStimDuration;
