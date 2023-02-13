@@ -134,7 +134,7 @@ classdef stimConfig < handle
 
             % THIS IS TESTING CODE. if stimDuration = maxStimDuration then there is no change in the function's output
             stimDuration = maxStimDuration;
-
+            %stimDuration = 4;
 
             % Fill in the matrices for the galvos
             for ii = 1:length(calibratedPointsInVolts) % Loop over stim conditions
@@ -191,29 +191,64 @@ classdef stimConfig < handle
 
                 % TODO -- testing code handle situation where user has asked for a
                 % shorter stimulus. We scale the waveform:
-                t_mW = (maxStimDuration / stimDuration) * t_mW;
+                if isfield(obj.stimLocations(ii).Attributes,'stimDuration_ms')
+                    stimDuration = obj.stimLocations(ii).Attributes.stimDuration_ms;
+                    t_mW = (maxStimDuration / stimDuration) * t_mW;
+                end
 
                 laserControlVoltage = obj.parent.laser_mW_to_control(t_mW);
                 waveforms(:,3,ii) = ones(1,obj.numSamplesPerChannel) * laserControlVoltage;
-
-                % TODO -- we need to now disable the beam outside of the period that the
-                % user has specified. Should this happen here or below?
 
                 % The masking light
                 waveforms(:,4,ii) = ones(1,obj.numSamplesPerChannel) * 5; % 5V TTL
             end % for ii
 
 
+            %%
             % Handling masking for periods beam is moving and one vs two locations
-            MASK = ones(obj.numSamplesPerChannel,1);
+
+            % Blank the beam and masking light during periods when the beam is moving
+            blankingMask = ones(obj.numSamplesPerChannel,1);
 
             for ii=1:blankingSamples
-                MASK(obj.edgeSamples(1:end-1)+(ii-1))=0;
+                blankingMask(obj.edgeSamples(1:end-1)+(ii-1))=0;
             end
 
-            % Apply the mask
-            waveforms(:,3:4,:) = bsxfun(@times, waveforms(:,3:4,:), MASK);
-            
+            waveforms(:,3:4,:) = bsxfun(@times, waveforms(:,3:4,:), blankingMask);
+
+
+            %%
+            % Handle instance where we asking for a shorter duration stimulus at a higher laser power
+            % TODO -- this does not handle different durations in different trials.
+            for ii=1:length(obj.stimLocations)
+                if ~isfield(obj.stimLocations(ii).Attributes,'stimDuration_ms')
+                    continue
+                end
+                stimDuration = obj.stimLocations(ii).Attributes.stimDuration_ms;
+                if stimDuration < maxStimDuration
+                    % Find the first sample after the beam turns on
+                    digWaveform = waveforms(:,4,ii);
+
+                    fs = find(diff(digWaveform)>0)+1;
+                    % Find the last sample before the beam turns off
+                    fe = find(diff(digWaveform)<0);
+                    fe(end+1) = length(digWaveform);
+
+                    % We want the beam on for this long
+                    durationOfStimInSamples = stimDuration*1E-3/sampleInterval;
+
+                    % So we need to blank to zero the following points:
+                    blankTimes(:,1) = fs+durationOfStimInSamples;
+                    blankTimes(:,2) = fe;
+
+                    % Do it!
+                    waveforms(blankTimes(1,1):blankTimes(1,2),3,ii)=0;
+                    waveforms(blankTimes(2,1):blankTimes(2,2),3,ii)=0;
+                end
+            end
+
+
+
             % Finally, we loop through and turn off laser on the even cycles when it's a single position
             % TODO -- I'm sure this can be vectorised (Or do above by making an by 2 array with second
             % column being zeros).
