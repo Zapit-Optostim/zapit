@@ -18,7 +18,7 @@ The Zapit main window will print a notification in the title bar when a new vers
 ## Version History
 
 
-2023/02/03 -- v0.10.5
+2023/02/14 -- v0.10.5
  * Small bugfixes
  * Paint brain area runs more quietly and blanks the beam between areas.
  * Zap all points runs more quietly and blanks the beam between points
@@ -27,6 +27,7 @@ The Zapit main window will print a notification in the title bar when a new vers
  * Overhaul how the user settings are processed: code is far more streamlined. There are now associated tests.
  * Rename defaultLaserFrequencyHz to defaultDutyCycleHz in default user settings. Renaming of settings now can be done automatically.
  * Rename stimFreqInHz to stimDutyCycleHz in the user stimulus settings file.
+
 
 2023/02/03 -- v0.10.4
  * BUGFIX: Support report could not be generated from the menu and the command itself failed.
@@ -61,6 +62,7 @@ The Zapit main window will print a notification in the title bar when a new vers
  * Make stim config YML format more flexible with extra field names and allow stim-specific settings
    for the rep rate, laser power, rampdown. Confirm that we can have different powers and
    different ranpdowns on different trials. Have not tried different rep rates.
+
 
 ### Beta Versions
 
