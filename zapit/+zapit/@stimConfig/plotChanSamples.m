@@ -79,6 +79,7 @@ function plotChanSamples(obj, conditionToPlot)
     for ii = obj.edgeSamples
         plot([timeAxisMS(ii), timeAxisMS(ii)],ylim,'r--','LineWidth',1)
     end
+    set(gca,'XTick',0:25)
     
 end % plotChanSamples
 
