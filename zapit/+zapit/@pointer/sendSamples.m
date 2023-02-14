@@ -5,9 +5,9 @@ function varargout = sendSamples(obj, varargin)
     %
     %
     % Purpose
-    % This method is a critical part of the API for running experiments using Zapit.
-    % This method writes the stimulation waveforms for a single trial to the DAQ. The photostimulation
-    % either starts immediately or after receipt of a digital trigger, depending on the state of the 
+    % This method is a critical part of the API for running experiments using Zapit. It writes
+    % the stimulation waveforms for a single trial to the DAQ. The photostimulation either starts 
+    % immediately or after receipt of a digital trigger, depending on the state of the 
     % "hardwareTriggered" input argument. The default is to wait for a trigger. Unless specified 
     % explicitly, the stimulus (locations to photoactivate) is chosen at random. If the user has 
     % defined an experiment directory via the GUI (or directly with zapit.pointer.experimentPath)
@@ -23,9 +23,9 @@ function varargout = sendSamples(obj, varargin)
     % Inputs [param/value pairs]
     % 'conditionNum' - Integer but empty by default. This is the index of the condition number to
     %                  present. If empty or -1 a random one is chosen.
-    % 'laserOn' - [bool, true by default] If true the laser is on. If false the galvos move but laser is off.
-    %              If empty or -1, a random laser state is chosen.
-    % 'hardwareTriggered' [bool, true by default] If true the DAQ waits for a hardware trgger before 
+    % 'laserOn' - [bool, true by default] If true the laser is on. If false the galvos move but 
+    %              the laser is off. If empty or -1, a random laser state is chosen.
+    % 'hardwareTriggered' [bool, true by default] If true the DAQ waits for a hardware trigger before 
     %                   presenting the waveforms. 
     % 'logging' - [bool, true by default] If true we write log files automatically if the user has
     %             defined a valid directory in zapit.pointer.experimentPath.
@@ -40,7 +40,7 @@ function varargout = sendSamples(obj, varargin)
     %   
     % Examples
     % .sendSamples('laserOn',[]) % Present random condition with random laser on/off state
-    % .sendSamples('hardwareTriggered', false) % Present random sample and do not wait for hardware trigger
+    % .sendSamples('hardwareTriggered', false) % Choose random sample and present immediately 
     % .sendSamples('conditionNumber',3) % Play condition 3 after receiving a hardware trigger
     %
     % Rob Campbell - SWC 2022 
