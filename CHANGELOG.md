@@ -9,13 +9,25 @@ The project largely adheres to [semantic versioning](http://semver.org) guidelin
 
 * The MAJOR version is incremented when there are incompatible API changes, or changes in functionality which might carry important caveats. You should review the nature of a MAJOR version change before upgrading a production system. An example of a MAJOR change might be that the API commands running the experiments change. 
 * The MINOR version is incremented when functionality is added in a backwards compatible manner. This might mean significant new features that do not break existing functionality, or it might mean existing features are significantly improved. For example, addition of a rat atlas, or improvements in the way stimulus conditions are overlaid in the main GUI. 
-* The PATCH version is incremented when there are backwards compatible bug fixes. It may also be incremented by the addition of new example code snippets, or by code changes which result in no functionality change. 
+* The PATCH version is incremented when there are backwards compatible bug fixes. It will also be incremented by the addition of new example code snippets, addition of tests, or by code changes which result in no functionality change. 
 
 ### Upgrade Notifications
 The Zapit main window will print a notification in the title bar when a new version is available.
 
 
 ## Version History
+
+
+2023/02/14 -- v0.10.5
+ * Small bugfixes
+ * Paint brain area runs more quietly and blanks the beam between areas.
+ * Zap all points runs more quietly and blanks the beam between points
+ * Listeners are now in a structure instead of a cell array, so it's easy to disable specific ones by name.
+ * Beam blanking time (time taken to move between positions) is now a setting.
+ * Overhaul how the user settings are processed: code is far more streamlined. There are now associated tests.
+ * Rename defaultLaserFrequencyHz to defaultDutyCycleHz in default user settings. Renaming of settings now can be done automatically.
+ * Rename stimFreqInHz to stimDutyCycleHz in the user stimulus settings file.
+
 
 2023/02/03 -- v0.10.4
  * BUGFIX: Support report could not be generated from the menu and the command itself failed.
@@ -50,6 +62,7 @@ The Zapit main window will print a notification in the title bar when a new vers
  * Make stim config YML format more flexible with extra field names and allow stim-specific settings
    for the rep rate, laser power, rampdown. Confirm that we can have different powers and
    different ranpdowns on different trials. Have not tried different rep rates.
+
 
 ### Beta Versions
 

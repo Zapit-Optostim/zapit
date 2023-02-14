@@ -1,7 +1,7 @@
 function drawBrainAreasOnSample(obj,areaCoords)
     % Run the beam around the perimeter of defined brain areas
     %
-    % zapit.pointer.drawBrainAreasOnSample(obj,areaCoords)
+    % zapit.pointer.drawBrainAreasOnSample(areaCoords)
     %
     % Purpose
     % Accepts a list of brain area index values and runs the beam around them.
@@ -10,7 +10,7 @@ function drawBrainAreasOnSample(obj,areaCoords)
     %
     % Inputs
     % areaCoords - a vector that is a list of brain area index values.
-    % Does no plotting.
+
 
 
     if isempty(obj.stimConfig)
@@ -32,12 +32,52 @@ function drawBrainAreasOnSample(obj,areaCoords)
                             obj.refPointsSample)', ...
                      bAreas, 'UniformOutput', false);
 
-    coords = cat(1,coords{:});
+    % Add short ramps between jumps to areas
+    n = 200; % Number of points in the jump between areas
+
+    laserControl = obj.laser_mW_to_control(obj.settings.calibrateScanners.calibration_power_mW);
+
+    for ii=1:length(coords)-1
+
+        % Add laser and blanking signals
+        coords{ii} = coords{ii}(1:2:end,:); % downsample to avoid high sample rates later
+        coords{ii}(:,3) = laserControl;
+        coords{ii}(:,4) = 0; % blanking LED
+
+        % Make the ramps
+        x1 = coords{ii}(end,1);
+        x2 = coords{ii+1}(1,1);
+        y1 = coords{ii}(end,2);
+        y2 = coords{ii+1}(1,2);
+
+        galvoRamp = [linspace(x1,x2,n)',linspace(y1,y2,n)'];
+        galvoRamp(:,3:4) = 0; % so beam is off
+
+        coords{ii} = [coords{ii}; galvoRamp];
+
+    end
+
+    % Now the last position wraps around to the first
+    coords{end} = coords{end}(1:2:end,:);
+    coords{end}(:,3) = laserControl;
+    coords{end}(:,4) = 0; % blanking LED
+
+    % Make the ramps
+    x1 = coords{end}(end,1);
+    x2 = coords{1}(1,1);
+    y1 = coords{end}(end,2);
+    y2 = coords{1}(1,2);
+
+    galvoRamp = [linspace(x1,x2,n)',linspace(y1,y2,n)'];
+    galvoRamp(:,3:4) = 0; % so beam is off
+
+    coords{end} = [coords{end}; galvoRamp];
+
+    coords = cat(1, coords{:});
+
 
     % First place beam in the centre of the area we want to stimulate
-    obj.moveBeamXY(mean(coords));
-    coords(:,3) = obj.laser_mW_to_control(obj.settings.calibrateScanners.calibration_power_mW);
-    coords(:,4) = 0;
+    obj.moveBeamXY(mean(coords(:,1:2)));
     
     %Replace first two columns with voltage values
     [xVolt,yVolt] = obj.mmToVolt(coords(:,1), coords(:,2));
@@ -52,7 +92,19 @@ function drawBrainAreasOnSample(obj,areaCoords)
 
     % Set sample rate so we are drawing at about 60 cycles per second.
     n = length(coords) * 50;
-    sRate = 10^round(log10(n),1) ;
+    sRate = round(10^round(log10(n),1));
+
+    maxSampleRate = 125000;
+
+    % If we get sample rate issues we can maybe set the blanking signal to zero
+    % at the start then play out only three AOs.
+    if sRate>maxSampleRate
+        fprintf('Draw brain areas capping sample rate from %d to %d\n', ...
+        sRate, maxSampleRate)
+        sRate = maxSampleRate;
+    end
+
+
     obj.DAQ.connectClockedAO('numSamplesPerChannel',size(coords,1), ...
                             'samplesPerSecond',sRate, ...
                             'taskName','scannercalib')

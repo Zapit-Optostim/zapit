@@ -1,0 +1,30 @@
+stimLocations01:
+  ML: [3.56, -3.56]
+  AP: [-1.24, -1.24]
+  Class: stimulate
+  Type: bilateral_points
+  Attributes: {laserPowerInMW: 5.0, stimDutyCycleHz: 40.0, offRampDownDuration_ms: 250.0}
+stimLocations02:
+  ML: [3.95, -3.95]
+  AP: [-0.08, -0.08]
+  Class: stimulate
+  Type: bilateral_points
+  Attributes: {laserPowerInMW: 5.0, stimDutyCycleHz: 40.0, offRampDownDuration_ms: 250.0}
+stimLocations03:
+  ML: 0.71
+  AP: 0.8
+  Class: stimulate
+  Type: unilateral_point
+  Attributes: {laserPowerInMW: 5.0, stimDutyCycleHz: 40.0, offRampDownDuration_ms: 250.0}
+stimLocations04:
+  ML: [2.73, 1.88]
+  AP: [1.66, 0.94]
+  Class: stimulate
+  Type: unilateral_points
+  Attributes: {laserPowerInMW: 5.0, stimDutyCycleHz: 40.0, offRampDownDuration_ms: 250.0}
+stimLocations05:
+  ML: [-2.73, -2.73]
+  AP: [-2.98, -4.09]
+  Class: stimulate
+  Type: bilateral_points
+  Attributes: {laserPowerInMW: 5.0, stimDutyCycleHz: 40.0, offRampDownDuration_ms: 250.0}

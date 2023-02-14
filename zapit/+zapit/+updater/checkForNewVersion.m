@@ -1,7 +1,7 @@
 function details = checkForNewVersion
     % Check whether there is a GitHub release with a new version of the software
     %
-    % details = zapit.updater.checkForNewVersion
+    % details = zapit.updater.checkForNewVersion()
     %
     % Purpose
     % Use GitHub's releases and the local reported version number to decide 
@@ -29,11 +29,11 @@ function details = checkForNewVersion
 
     % Make two structures that are directly comparable.
     lVer = localVersion.version;
-    releaseVersions = arrayfun(@(x) versionStringToStructure(x.tag_name), releases);
+    releaseVersions = arrayfun(@(x) zapit.updater.versionStringToStructure(x.tag_name), releases);
 
 
     % Assemble data for what will be the output structure
-    isNewer = arrayfun(@(x) isVersionNewer(lVer,x), releaseVersions)';
+    isNewer = arrayfun(@(x) zapit.updater.isVersionNewer(lVer,x), releaseVersions)';
 
 
     details.installedVersion = lVer.string;
@@ -61,82 +61,3 @@ function details = checkForNewVersion
 
 end % checkForNewVersion
 
-
-% Internal functions follow
-function vStruct = versionStringToStructure(vString)
-    % Convert a version string into a structure for easier parsing
-    %
-    % 
-    % For example, if vString is "0.6.0-alpha" then vStruct will be:
-    %
-    %            MAJOR: 0
-    %            MINOR: 6
-    %            PATCH: 0
-    % preReleaseString: '-alpha'
-    %
-
-    if strcmp(vString(1),'v')
-        vString(1) = [];
-    end
-
-    tmp = strsplit(vString,'-');
-
-    if length(tmp)>1
-        preReleaseString = ['-',tmp{2}];
-    else
-        preReleaseString = '';
-    end
-
-    tmp = strsplit(tmp{1},'.');
-
-    vStruct.MAJOR = str2num(tmp{1});
-    vStruct.MINOR = str2num(tmp{2});
-    vStruct.PATCH = str2num(tmp{3});
-    vStruct.preReleaseString = preReleaseString;
-    vStruct.string = sprintf('%d.%d.%d%s', vStruct.MAJOR, vStruct.MINOR, ...
-                            vStruct.PATCH, vStruct.preReleaseString);
-end % versionStringToStructure
-
-
-function isNewer = isVersionNewer(referenceVersion, testVersion)
-    % Return true if testVersion is more recent than referenceVersion
-    %
-    % Accepts structures of the form produced by versionStringToStructure.
-
-    % If all are the same then we return false
-    if testVersion.MAJOR == referenceVersion.MAJOR && ...
-            testVersion.MINOR == referenceVersion.MINOR && ...
-            testVersion.PATCH == referenceVersion.PATCH
-        isNewer = false;
-        return
-    end
-
-    if testVersion.MAJOR < referenceVersion.MAJOR
-        isNewer = false;
-        return
-    elseif testVersion.MAJOR > referenceVersion.MAJOR
-        isNewer = true;
-        return
-    end
-
-    % If we are here they are the same and we move on to testing the next
-
-    if testVersion.MINOR < referenceVersion.MINOR
-        isNewer = false;
-        return
-    elseif testVersion.MINOR > referenceVersion.MINOR
-        isNewer = true;
-        return
-    end
-
-    % If we are here they are the same and we move on to testing the next
-
-    if testVersion.PATCH < referenceVersion.PATCH
-        isNewer = false;
-    elseif testVersion.PATCH > referenceVersion.PATCH
-        isNewer = true;
-    end
-
-    % No more possibilities
-   
-end % isVersionNewer

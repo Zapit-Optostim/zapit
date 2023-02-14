@@ -27,7 +27,7 @@ function varargout = logStimulusParametersToFile(obj, filePath)
     data.hostname = strip(hostname);
 
     data.laserPowerInMW = obj.laserPowerInMW;
-    data.stimFreqInHz = obj.stimFreqInHz;
+    data.stimDutyCycleHz = obj.stimDutyCycleHz;
     data.offRampDownDuration_ms = obj.offRampDownDuration_ms;
 
     for ii = 1:obj.numConditions

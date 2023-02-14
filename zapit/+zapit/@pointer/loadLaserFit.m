@@ -1,7 +1,7 @@
 function loadLaserFit(obj)
     % Load the laser fit object to the user settings directory
     % 
-    % zapit.pointer.loadLaserFit
+    % zapit.pointer.loadLaserFit()
     %
     % Purpose
     % Loads the laser fit to a .mat in the settings directory.
@@ -28,7 +28,7 @@ function loadLaserFit(obj)
         fprintf('Loading laser fit\n')
         obj.laserFit = laserFit;
     else
-        fprintf('No laser fit file found. Laser is uncalibrated\n')
+        fprintf('Not loading a laser fit file. Using a linear fit based on the config file.\n')
     end
 
 end % loadLaserFit

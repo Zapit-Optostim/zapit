@@ -40,6 +40,7 @@ function runThroughAllStimPoints(varargin)
         hZP.sendSamples('conditionNum',ii, 'hardwareTriggered', false) % Starts right away
         pause(stimDuration)
         hZP.stopOptoStim
+        pause(0.3) % Because of https://github.com/Zapit-Optostim/zapit/issues/102
     end
 
 end % runThroughAllStimPoints

@@ -52,7 +52,7 @@ classdef pointer < handle
         buildFailed = true % Used during boostrap by start_zapit
         breakScannerCalibLoop = false; % Used so GUI can break out of the scanner calibration loop.
         simulated = false % Tag to indicate whether it is in simulated mode
-        listeners = {} % Cell array that holds listeners so they can be easily cleaned up in the destructor
+        listeners  % Structure that holds listeners so they can be easily cleaned up in the destructor
     end % hidden properties
 
 
@@ -68,7 +68,8 @@ classdef pointer < handle
     properties (SetAccess=protected, GetAccess=public)
        imSize
        refPointsStereotaxic  % Two reference points in stereotaxic space. By default bregma
-                             % (first line [ML,AP] and a point 3 mm in front (second line)
+                             % (first line [ML,AP] and the second is defined by the settings
+                             % value at settings.calibrateSample.refAP
     end % getter properties
 
 
@@ -86,12 +87,18 @@ classdef pointer < handle
             params = inputParser;
             params.CaseSensitive = false;
             params.addParameter('simulated', false, @(x) islogical(x) || x==0 || x==1);
-
+            params.addParameter('settingsFile', [], @(x) isempty(x) || ischar(x))
             params.parse(varargin{:});
 
-            obj.simulated=params.Results.simulated;
+            obj.simulated = params.Results.simulated;
 
-            obj.settings = zapit.settings.readSettings;
+            % By default we load the settings file in the normal location but for testing
+            % is possible to define a different one
+            if isempty(params.Results.settingsFile)
+                obj.settings = zapit.settings.readSettings;
+            else
+                obj.settings = zapit.settings.readSettings(params.Results.settingsFile)
+            end
 
             % Connect to camera
             if obj.simulated
@@ -111,15 +118,19 @@ classdef pointer < handle
                 obj.cam.vid.FramesAcquiredFcn = @obj.storeLastFrame;
                 obj.cam.vid.FramesAcquiredFcnCount=1; %Run frame acq fun every N frames
             else
-               obj.listeners{end+1} = addlistener(obj.cam, 'lastAcquiredFrame', 'PostSet', @obj.storeLastFrame);
+               obj.listeners.lastAcquiredFrame = addlistener(obj.cam, 'lastAcquiredFrame', 'PostSet', @obj.storeLastFrame);
                % Make a listener instead of the FramesAcquiredFcn
                obj.cam.startVideo; pause(0.2), obj.cam.stopVideo; pause(0.2) % TODO -- for some reason we need to call this twice for it to start working properly
             end
-            obj.cam.startVideo; 
+
+            % Only start video by default if we are not in simulated mode
+            if ~obj.simulated
+                obj.cam.startVideo;
+            end
 
 
             % Save settings if they are changed
-            obj.listeners{end+1} = addlistener(obj, 'settings', 'PostSet', @obj.saveSettingsFile);
+            obj.listeners.saveSettings = addlistener(obj, 'settings', 'PostSet', @obj.saveSettingsFile);
 
             if obj.simulated
                 obj.DAQ = zapit.simulated.DAQ;
@@ -147,8 +158,8 @@ classdef pointer < handle
             % zapit.pointer.delete
             %
             
-            fprintf('Shutting down optostim software\n')
-            cellfun(@delete,obj.listeners)
+            fprintf('Shutting down Zapit optostim software\n')
+            structfun(@delete,obj.listeners)
             if isvalid(obj.cam)
                 obj.cam.vid.FramesAcquiredFcn = [];
                 obj.cam.stopVideo;

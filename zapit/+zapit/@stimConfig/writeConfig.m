@@ -7,7 +7,7 @@ function writeConfig(obj,fname)
     % Write properties into a stim config YAML file that can be re-read.
 
     data.laserPowerInMW = obj.laserPowerInMW;
-    data.stimFreqInHz = obj.stimFreqInHz;
+    data.stimDutyCycleHz = obj.stimDutyCycleHz;
     data.offRampDownDuration_ms = obj.offRampDownDuration_ms;
 
     for ii = 1:obj.numConditions

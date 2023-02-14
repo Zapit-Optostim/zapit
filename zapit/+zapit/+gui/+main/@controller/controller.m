@@ -24,7 +24,7 @@ classdef controller < zapit.gui.main.view
         model     % The zapit.pointer object that runs the hardware
         atlasData % Brain atlas data for overlaying brain areas, etc
         recentLoadedConfigsMenu = {} % Contains the menu vector for recently loaded configs
-        listeners = {}; % All go in this cell array
+        listeners % All go in this structure
     end
 
 
@@ -107,10 +107,13 @@ classdef controller < zapit.gui.main.view
             % zapit.gui.main.controller.delete
 
             fprintf('zapit.gui.main.view is cleaning up\n')
-            cellfun(@delete,obj.listeners)
-            delete(obj.model);
-            delete(obj.updateTimer)
+            structfun(@delete,obj.listeners)
 
+            if isa(obj.updateTimer,'timer')
+                stop(obj.updateTimer)
+            end
+            
+            delete(obj.model);
             obj.model=[];
 
             delete(obj.hFig);

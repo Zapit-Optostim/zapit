@@ -1,7 +1,7 @@
 function checkScannerCalibClocked(obj)
     % Run through the scanner calib locations using a clocked AO task.
     %
-    % zapit.pointer.checkScannerCalibClocked
+    % zapit.pointer.checkScannerCalibClocked()
     %
     % Purpose
     % Run the beam rapidly over all of the coordinates in the scanner calibration

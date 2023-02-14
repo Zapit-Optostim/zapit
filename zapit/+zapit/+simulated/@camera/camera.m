@@ -57,14 +57,15 @@ classdef camera < handle
             obj.frameTimer.TimerFcn = @obj.updateFrameCounter_Callback;
             obj.frameTimer.ExecutionMode = 'fixedDelay';
 
-
-
         end % close constructor
 
 
         function delete(obj)
             obj.stopVideo
-            delete(obj.frameTimer)
+            if isa(obj.frameTimer,'timer')
+                stop(obj.frameTimer)
+                delete(obj.frameTimer)
+            end
         end % close destructor
 
     end % methods

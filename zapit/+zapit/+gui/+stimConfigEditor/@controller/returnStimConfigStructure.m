@@ -20,7 +20,7 @@ function stimC = returnStimConfigStructure(obj)
     %  https://github.com/Zapit-Optostim/zapit/issues/9
 
     pointAttributes.laserPowerInMW = obj.LaserPowermWSpinner.Value;
-    pointAttributes.stimFreqInHz = obj.StimFreqHzSpinner.Value;
+    pointAttributes.stimDutyCycleHz = obj.StimFreqHzSpinner.Value;
     pointAttributes.offRampDownDuration_ms = obj.RampdownmsSpinner.Value;
 
     for ii=1:length(obj.pAddedPoints)

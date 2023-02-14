@@ -55,6 +55,10 @@ function varargout = writeWaveformsToDisk(obj,filePath)
         fprintf('zapit.stimConfig.%s requires one input argument\n', mfilename)
         return
     end
+   
+    if isempty(filePath) || filePath==0
+        return
+    end
 
     if ~exist(filePath,'dir')
         fprintf('The path "%s" does not exist. zapit.stimConfig.%s can not save waveforms there.\n', ...

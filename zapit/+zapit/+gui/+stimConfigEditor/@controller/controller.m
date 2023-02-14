@@ -86,7 +86,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
             
             % Apply default values to UI elements from settings
             obj.LaserPowermWSpinner.Value = obj.settings.experiment.defaultLaserPowerMW;
-            obj.StimFreqHzSpinner.Value = obj.settings.experiment.defaultLaserFrequencyHz;
+            obj.StimFreqHzSpinner.Value = obj.settings.experiment.defaultDutyCycleHz;
             obj.RampdownmsSpinner.Value = obj.settings.experiment.offRampDownDuration_ms;
 
             obj.LaserPowermWSpinner.Limits(2) = obj.settings.laser.laserMinMax_mW(2);
@@ -126,10 +126,9 @@ classdef controller < zapit.gui.stimConfigEditor.view
             %
 
             % re-enable camera if needed
-            if ~isempty(obj.mainGUI) && obj.isCamRunning
+            if ~isempty(obj.mainGUI) && ~isempty(obj.mainGUI.model) && obj.isCamRunning
                 obj.mainGUI.model.cam.startVideo;
             end
-
             delete(obj.hFig);
         end %close destructor
 

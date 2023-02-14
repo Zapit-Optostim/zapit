@@ -1,7 +1,7 @@
 function [R,C] = generateScannerCalibrationPoints(obj, doPlot)
     % Generate the calibration points for the scanner calibration
     %
-    % function [R,C] = zapit.pointer.generateScannerCalibrationPoints
+    % function [R,C] = zapit.pointer.generateScannerCalibrationPoints(doPlot)
     %
     % Purpose
     % Generate the scanner calibration point locations

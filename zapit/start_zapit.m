@@ -1,4 +1,4 @@
-function start_zapit(varargin)
+function varargout = start_zapit(varargin)
     % Creates a instance of the zapit pointer class and places it in the base workspace as hZP
     %
     % function start_zapit(varargin)
@@ -13,6 +13,13 @@ function start_zapit(varargin)
     % 'useExisting'  -  [False by default] If true, an exsiting instance of hZP is used.
     % 'startGUI'  -  [True by default]
     %
+    %
+    % Outputs
+    % The outputs are optional. These variables are automatically created in the
+    % base workspace and don't need to be explicitly placed there.
+    %
+    % hZP - instance of class zapit.pointer 
+    % hZPview - instance of class zapit.gui.main.controller
     %
     % Rob Campbell - SWC 2022
 
@@ -105,10 +112,12 @@ function start_zapit(varargin)
     fprintf('Zapit is installed at %s\n', zapit.updater.getInstallPath)
 
     % Now we make the view
-   if startGUI
+    if startGUI
         fprintf('Building GUI\n')
         hZPview = zapit.gui.main.controller(hZP);
         assignin('base','hZPview',hZPview);
+    else
+        hZPview = [];
     end
 
     fprintf('Zapit has started\n')
@@ -126,6 +135,13 @@ function start_zapit(varargin)
         end
     end
 
+    if nargout>0
+        varargout{1} = hZP;
+    end
+
+    if nargout>1
+        varargout{2} = hZPview;
+    end
 
 %-------------------------------------------------------------------------------------------------------------------------
 function safe = isSafeToMake_hZP

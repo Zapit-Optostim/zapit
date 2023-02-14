@@ -14,7 +14,7 @@ classdef stimConfig < handle
         configFileName % file name of the loaded stimConfig file
 
         laserPowerInMW
-        stimFreqInHz
+        stimDutyCycleHz
         stimLocations
         offRampDownDuration_ms
 
@@ -74,79 +74,10 @@ classdef stimConfig < handle
 
         end % numConditions
 
+    end
 
-        function cPoints = calibratedPoints(obj) 
-            % The stimulation locations after they have been calibrated to the sample
-            % 
-            % zapit.stimConfig.calibratedPoints
-            %
-            % Purpose
-            % Places the stereotaxic target coords in stimLocations into the sample
-            % space being imaged by the camera. It does this using the estimate of 
-            % bregma plus one more stereotaxic point that are stored in refPointsSample.
-            %
-            % Inputs
-            % none
-            %
-            % Outputs
-            % A cell array of converted coordinates. The cells correspond in order to
-            % the orginal data in the structure stimLocations. If the cells are 
-            % concatenated as [cPoints{:}] then the first row is ML coords and second
-            % row is AP coords. All in mm.
-            %
-
-            cPoints = {};
-
-            if isempty(obj.parent.refPointsSample)
-                fprintf('Sample has not been calibrated! Returning empty data! \n')
-                return
-            end
-
-            for ii = 1:obj.numConditions
-                tmpMat = [obj.stimLocations(ii).ML; obj.stimLocations(ii).AP];
-                cPoints{ii} = zapit.utils.rotateAndScaleCoords(...
-                            tmpMat, ...
-                            obj.parent.refPointsStereotaxic, ...
-                            obj.parent.refPointsSample);
-            end
-        end % calibratedPoints
-
-
-        function cPointsVolts = calibratedPointsInVolts(obj)
-            % Convert the calibrated points (sample space) into voltage values for the scanners
-            %
-            % zapit.stimConfig.calibratedPointsInVolts
-            %
-            % Purpose
-            % This method returns voltage values that can be sent to the scanners in order
-            % to point the beam at the locations defined calibratedPoints.
-            %
-            % Inputs
-            % none
-            %
-            % Outputs
-            % A cell array of coordinates converted into voltages. The cells correspond in order 
-            % to the orginal data in the structure stimLocations. If the cells are concatenated 
-            % as [cPointsVolts{:}] then the first column is ML coords and second column is AP 
-            % coords. All in volts. NOTE this is transposed with respect to calibratedPoints
-            %
-
-            cPointsVolts = {};
-
-            calibratedPoints = obj.calibratedPoints;
-
-            if isempty(calibratedPoints)
-                return 
-            end
-
-            for ii = 1:length(calibratedPoints)
-                [xVolt, yVolt] = obj.parent.mmToVolt(calibratedPoints{ii}(1,:), ...
-                                                    calibratedPoints{ii}(2,:));
-                cPointsVolts{ii} = [xVolt' yVolt'];
-            end
-
-        end % calibratedPointsInVolts
-
+    % Getters and setters
+    methods
 
         function chanSamples = get.chanSamples(obj)
             % Prepares voltages for each photostimulation site
@@ -172,50 +103,83 @@ classdef stimConfig < handle
             % Pull in data from method
             calibratedPointsInVolts = obj.calibratedPointsInVolts;
 
-            numHalfCycles = 2; % The number of half cycles to buffer
-
             % TODO -- we need to make sure that the number of samples per second here is the right number
-            obj.numSamplesPerChannel = obj.parent.DAQ.samplesPerSecond/obj.stimFreqInHz*(numHalfCycles/2);
+            obj.numSamplesPerChannel = obj.parent.DAQ.samplesPerSecond/obj.stimDutyCycleHz;
 
             % make up samples for scanner channels (of course calibratedPointsInVolts is already in volt format)
             % pre-allocate the waveforms array: 1st dim is samples, 2nd dim is channel, 3rd dim is conditions
             waveforms = zeros(obj.numSamplesPerChannel,4,length(calibratedPointsInVolts)); % matrix for each channel
 
             
-            % Calculate some constants that we will need in multiple places below            
-            % find edges of half cycles (the indexes at which the beam moves or laser changes state)
-            obj.edgeSamples = ceil(linspace(1, obj.numSamplesPerChannel, numHalfCycles+1));
-            sampleInterval = 1/obj.parent.DAQ.samplesPerSecond; 
-            nSamplesInOneMS = 1E-3 / sampleInterval;  % Number of samples in 1 ms. % TODO -- probably should have this as a setting
+            % Calculate some constants that we will need in multiple places further below.
 
+            % find edges of half cycles (the indexes at which the beam moves or laser changes state)
+            pointsPerTrial = obj.parent.settings.experiment.maxStimPointsPerCondition;
+            obj.edgeSamples = ceil(linspace(1, obj.numSamplesPerChannel, pointsPerTrial+1));
+            sampleInterval = 1/obj.parent.DAQ.samplesPerSecond; 
+
+            % The blanking time is the period during which the beam is off and the scanners slowly
+            % transition from one place to the next. Defined in ms.
+            % a setting.
+            blankingTime_ms = obj.parent.settings.experiment.blankingTime_ms;
+
+            % The number of samples that correspond to the blanking time.
+            blankingSamples = round( (blankingTime_ms*1E-3)/sampleInterval );
+
+
+            % We want the ability to present the stimuli for a shorter time but a higher power.
+            % Therefore we need to know the maximum stimulus duration:
+            maxStimDuration = (1/obj.stimDutyCycleHz)*1E3 - blankingTime_ms;
+
+
+            % THIS IS TESTING CODE. if stimDuration = maxStimDuration then there is no change in the function's output
+            stimDuration = maxStimDuration;
+            %stimDuration = 4;
 
             % Fill in the matrices for the galvos
             for ii = 1:length(calibratedPointsInVolts) % Loop over stim conditions
 
                 % If this position is a single point we duplicate it to spoof two points
                 if size(calibratedPointsInVolts{ii},1) == 1
-                    t_volts = repmat(calibratedPointsInVolts{ii},2,1);
+                    t_volts = repmat(calibratedPointsInVolts{ii},pointsPerTrial,1);
                 else
                     t_volts = calibratedPointsInVolts{ii};
                 end
 
-                xVolts = t_volts(:,1);
-                xVolts = repmat(xVolts', 1, numHalfCycles/2); % TODO: Not needed if we definitely stick with 1 cycle
+                % The array t_volts is 2 by 2 with the first column being is ML coords (x mirror)
+                % and second column being AP (y mirror). The rows indicate positions in this trial.
+                % This is why for the single trial case we are repeating the row. Longer term we
+                % may need a different system here, if we opt for multiple points.
 
-                yVolts = t_volts(:,2);
-                yVolts = repmat(yVolts', 1, numHalfCycles/2); % TODO: Not needed if we definitely stick with 1 cycle
+                % Explicitly extract X and Y scanner voltages from t_volts.
+                % These are column vectors. The first column is the first location and the
+                % second column is the second location.
+                xVolts = t_volts(:,1)';
+                yVolts = t_volts(:,2)';
 
-                % Make the full waveforms for X and Y
-                Y = repmat(yVolts,obj.numSamplesPerChannel/numHalfCycles,1);
-                X = repmat(xVolts,obj.numSamplesPerChannel/numHalfCycles,1);
 
-                % apply a ramp to slow down the scanners and make the quieter.
-                X(1:nSamplesInOneMS,1) = linspace(xVolts(1,2),xVolts(1,1),nSamplesInOneMS);
-                Y(1:nSamplesInOneMS,1) = linspace(yVolts(1,2),yVolts(1,1),nSamplesInOneMS);
+                % Make the full waveforms for X and Y. The logic here is that one cycle of the
+                % waveform plays out over numSamplesPerChannel samples. So we want the beam to be
+                % in each of the positions for half the time. We will define this using the number
+                % points per trial to make this a bit more explicit and perhaps more fure proof
+                Y = repmat(yVolts, obj.numSamplesPerChannel/pointsPerTrial, 1);
+                X = repmat(xVolts, obj.numSamplesPerChannel/pointsPerTrial, 1);
 
-                X(1:nSamplesInOneMS,2) = linspace(xVolts(1,1),xVolts(1,2),nSamplesInOneMS);
-                Y(1:nSamplesInOneMS,2) = linspace(yVolts(1,1),yVolts(1,2),nSamplesInOneMS);
 
+                % The beam will now go to the correct locations but the scanners will generate a lot
+                % of noise because the waveforms have no shaping. We will therefore swing the
+                % scanners slowly from one position to the next over a period of 1 ms.
+
+                % This does the ramp at the start of the waveform: it modifies the first column
+                X(1:blankingSamples,1) = linspace(xVolts(2),xVolts(1),blankingSamples);
+                Y(1:blankingSamples,1) = linspace(yVolts(2),yVolts(1),blankingSamples);
+
+                % This does the ramp at the middle of the waveform: it modifies the second column
+                X(1:blankingSamples,2) = linspace(xVolts(1),xVolts(2),blankingSamples);
+                Y(1:blankingSamples,2) = linspace(yVolts(1),yVolts(2),blankingSamples);
+
+                % Turn the two columns into a row vector and add it into the waveforms array.
+                % Here the first column is the X scan waveform and the second is the Y waveform.
                 waveforms(:,1,ii) = X(:);
                 waveforms(:,2,ii) = Y(:);
 
@@ -224,26 +188,70 @@ classdef stimConfig < handle
                 % whether we have one or two positions in this trial. This will be dealt
                 % with later.
                 t_mW = obj.stimLocations(ii).Attributes.laserPowerInMW;
+
+                % TODO -- testing code handle situation where user has asked for a
+                % shorter stimulus. We scale the waveform:
+                if isfield(obj.stimLocations(ii).Attributes,'stimDuration_ms')
+                    stimDuration = obj.stimLocations(ii).Attributes.stimDuration_ms;
+                    t_mW = (maxStimDuration / stimDuration) * t_mW;
+                end
+
                 laserControlVoltage = obj.parent.laser_mW_to_control(t_mW);
                 waveforms(:,3,ii) = ones(1,obj.numSamplesPerChannel) * laserControlVoltage;
 
                 % The masking light
                 waveforms(:,4,ii) = ones(1,obj.numSamplesPerChannel) * 5; % 5V TTL
-            end % for
+            end % for ii
 
 
+            %%
             % Handling masking for periods beam is moving and one vs two locations
-            MASK = ones(obj.numSamplesPerChannel,1);
 
-            for ii=1:nSamplesInOneMS
-                MASK(obj.edgeSamples(1:end-1)+(ii-1))=0;
+            % Blank the beam and masking light during periods when the beam is moving
+            blankingMask = ones(obj.numSamplesPerChannel,1);
+
+            for ii=1:blankingSamples
+                blankingMask(obj.edgeSamples(1:end-1)+(ii-1))=0;
             end
 
-            % Apply the mask
-            waveforms(:,3:4,:) = bsxfun(@times, waveforms(:,3:4,:), MASK);
-            
+            waveforms(:,3:4,:) = bsxfun(@times, waveforms(:,3:4,:), blankingMask);
+
+
+            %%
+            % Handle instance where we asking for a shorter duration stimulus at a higher laser power
+            % TODO -- this does not handle different durations in different trials.
+            for ii=1:length(obj.stimLocations)
+                if ~isfield(obj.stimLocations(ii).Attributes,'stimDuration_ms')
+                    continue
+                end
+                stimDuration = obj.stimLocations(ii).Attributes.stimDuration_ms;
+                if stimDuration < maxStimDuration
+                    % Find the first sample after the beam turns on
+                    digWaveform = waveforms(:,4,ii);
+
+                    fs = find(diff(digWaveform)>0)+1;
+                    % Find the last sample before the beam turns off
+                    fe = find(diff(digWaveform)<0);
+                    fe(end+1) = length(digWaveform);
+
+                    % We want the beam on for this long
+                    durationOfStimInSamples = stimDuration*1E-3/sampleInterval;
+
+                    % So we need to blank to zero the following points:
+                    blankTimes(:,1) = fs+durationOfStimInSamples;
+                    blankTimes(:,2) = fe;
+
+                    % Do it!
+                    waveforms(blankTimes(1,1):blankTimes(1,2),3,ii)=0;
+                    waveforms(blankTimes(2,1):blankTimes(2,2),3,ii)=0;
+                end
+            end
+
+
+
             % Finally, we loop through and turn off laser on the even cycles when it's a single position
-            % TODO -- I'm sure this can be vectorised
+            % TODO -- I'm sure this can be vectorised (Or do above by making an by 2 array with second
+            % column being zeros).
             edgesToZero = obj.edgeSamples(2:2:end);
             distanceBetweenEdges = median(diff(obj.edgeSamples));
             for ii=1:size(waveforms,3)
@@ -267,8 +275,7 @@ classdef stimConfig < handle
 
         end % get.chanSamples
 
-
-    end % methods
+    end % methods (getters and setters)
 
 
 end % config

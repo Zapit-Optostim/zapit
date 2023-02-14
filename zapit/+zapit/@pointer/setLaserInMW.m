@@ -1,7 +1,7 @@
 function setLaserInMW(obj,mW)
     % Set laser to a value specified by the user in mW
     %
-    % function zapit.pointer.setLaserInMW(obj,mW)
+    % function zapit.pointer.setLaserInMW(mW)
     %
     %
     % Purpose

@@ -26,6 +26,7 @@ classdef DAQ < handle
     properties (Hidden)
         settings % Settings read from file
         parent  %A reference of the parent object (likely zapit.pointer) to which this component is attached
+        delayStop %Timer used to implement a short delay before stopping AO
     end %close hidden properties
 
 
@@ -44,9 +45,17 @@ classdef DAQ < handle
             obj.hAI.readAnalogData = @(x) rand(length(obj.AIchans),1); % assumes unclocked
             obj.hAO.isTaskDone = true;
             obj.hAO.taskName = '';
+
+            obj.delayStop = timer('Name', 'delayStopTimer', ...
+                                'TimerFcn', @(~,~) obj.stop, ...
+                                'StartDelay',0.2);
         end % Constructor
 
         function delete(obj)
+            if isa(obj.delayStop,'timer')
+                stop(obj.delayStop)
+                delete(obj.delayStop)
+            end
         end
 
         function  success = connect(obj)
@@ -90,6 +99,10 @@ classdef DAQ < handle
             obj.hAO.isTaskDone = false;
             obj.doingClockedAcquisition = false;
         end
+
+        function isDone = isAOTaskDone(obj)
+            isDone = obj.hAO.isTaskDone;
+        end % isAOTaskDone
 
         function writeAnalogData(obj,waveforms)
             % Simulates write of analog data to the buffer

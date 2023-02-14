@@ -23,7 +23,7 @@ function harmonizeGUIstate(obj,~,~)
     stateStructure(end+1) = struct('GUIstate', 'paintArea_Callback', 'UIelement', 'PaintareaButton');
     stateStructure(end+1) = struct('GUIstate', 'calibrateSample_Callback', 'UIelement', 'CalibrateSampleButton');
 
-    verbose = true;
+    verbose = false;
     for ii=1:length(stateStructure)
         tS = stateStructure(ii);
 

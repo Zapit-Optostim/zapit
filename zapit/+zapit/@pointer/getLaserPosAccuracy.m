@@ -1,7 +1,7 @@
 function varargout = getLaserPosAccuracy(obj, XYdata, backgroundImage, verbose)
     % Quantify accuracy of beam pointing
     %
-    % function out = getLaserPosAccuracy(obj, XYdata)
+    % function out = getLaserPosAccuracy(XYdata, backgroundImage, verbose)
     %
     % Purpose
     % Find the coords of the beam location and compare to the desired location. Returns 

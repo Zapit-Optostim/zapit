@@ -50,6 +50,7 @@ function runThroughAllStimPointsWithLogging
         hZP.sendSamples('hardwareTriggered', false) % Starts a random stimulus right away
         pause(stimDuration)
         hZP.stopOptoStim
+        pause(0.3) % Because of https://github.com/Zapit-Optostim/zapit/issues/102
     end
 
     % Stop logging to the folder

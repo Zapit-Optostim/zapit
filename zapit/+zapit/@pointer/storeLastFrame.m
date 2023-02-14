@@ -1,10 +1,12 @@
 function storeLastFrame(obj,~,~)
     % This callback is run every time a frame has been acquired
     %
-    %  function zapit.pointer.storeLastFrame(obj,~,~)
+    %  function zapit.pointer.storeLastFrame()
     %
     % Purpose
     % Stores the last acquired frame in an observable property
+    %
+    % 
 
     if obj.cam.vid.FramesAvailable==0
         return

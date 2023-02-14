@@ -1,0 +1,19 @@
+general: {maxSettingsBackUpFiles: 5.0, openPythonBridgeOnStartup: 0.0}
+NI: {device_ID: Dev1, samplesPerSecond: 10000.0, AOrange: 10.0, triggerChannel: PFI0,
+  wrapper: dotnet}
+scanners: {voltsPerPixel: 0.0022, invertXscanner: 0.0, invertYscanner: 0.0}
+laser:
+  laserMinMaxControlVolts: [0, 3.5]
+  laserMinMax_mW: [0.0, 75.0]
+  name: obis
+  maxValueInGUI: 20.0
+camera: {connection_index: 1.0, default_exposure: 10.0, micronsPerPixel: 19.3, beam_calib_exposure: 4.0,
+  flipImageUD: 0.0, flipImageLR: 0.0, connectionIndex: 1.0}
+calibrateScanners: {areaThreshold: 500.0, calibration_power_mW: 9.0, beam_calib_exposure: 2.0,
+  bufferMM: 2.0, pointSpacingInMM: 3.0}
+experiment: {defaultDutyCycleHz: 40.0, defaultLaserPowerMW: 5.0,
+  maxStimPointsPerCondition: 2.0, offRampDownDuration_ms: 250.0, blankingTime_ms: 1.0}
+calibrateSample: {refAP: -6.0}
+cache:
+  ROI: []
+  previouslyLoadedFiles: []

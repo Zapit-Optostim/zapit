@@ -27,49 +27,58 @@ function plotChanSamples(obj, conditionToPlot)
     end
 
     % extract data of interest
-    anlgOut = chanSamples.light(:,1,conditionToPlot);
-    digOut =  chanSamples.light(:,2,conditionToPlot);
-    xGalvo =  chanSamples.scan(:,1,conditionToPlot);
-    yGalvo =  chanSamples.scan(:,2,conditionToPlot);
+    xGalvo =  chanSamples(:,1,conditionToPlot);
+    yGalvo =  chanSamples(:,2,conditionToPlot);
+    laser = chanSamples(:,3,conditionToPlot);
+    digOut =  chanSamples(:,4,conditionToPlot);
 
 
 
     % Make plot        
     fig = zapit.utils.focusNamedFig(mfilename);
 
+    timeAxisMS = ((1:length(xGalvo)) /obj.parent.DAQ.samplesPerSecond)*1E3;
+
     clf
     subplot(3,1,1)
     % analog volt output for 1st area to 1st scanner mirror
-    plot(xGalvo,'.k','MarkerSize',10);
+    plot(timeAxisMS,xGalvo,'k-','LineWidth',1);
     hold on
-    plot(yGalvo,'.r','MarkerSize',10);
+    plot(timeAxisMS,yGalvo,'b-','LineWidth',1);
 
     for ii = obj.edgeSamples
-        plot([ii ii],ylim,'g--','LineWidth',1)
+        plot([timeAxisMS(ii), timeAxisMS(ii)],ylim,'r--','LineWidth',1)
     end
     title('analog output to scan mirrors')
     ylabel('Galvo voltage')
         
     subplot(3,1,2)
     % analog volt output to laser and masking light
-    plot(anlgOut,'.','MarkerSize',10);
+    plot(timeAxisMS,laser,'-','LineWidth',1,'MarkerSize',10);
     hold on
-    for ii = obj.edgeSamples
-        plot([ii ii],ylim,'g--','LineWidth',1)
-    end
     title('analog output to laser')
     ylabel('amplitude')
-        
-    subplot(3,1,3)
-    plot(digOut,'.','MarkerSize',10);
-    hold on
+    ylim(obj.parent.settings.laser.laserMinMaxControlVolts)
+
     for ii = obj.edgeSamples
-        plot([ii ii],ylim,'g--','LineWidth',1)
+        plot([timeAxisMS(ii), timeAxisMS(ii)],ylim,'r--','LineWidth',1)
     end
 
+
+    subplot(3,1,3)
+    plot(timeAxisMS,digOut,'-','LineWidth',1,'MarkerSize',10);
+    hold on
+
+
     title('analog output to masking light')
-    ylabel('amplitude')
-    xlabel(sprintf('samples (at %d Hz)', obj.parent.DAQ.samplesPerSecond))
+    ylabel('State')
+    xlabel(sprintf('Time [ms]'))
+    set(gca,'YTick',[0,5],'YTickLabel',{'Low','High'})
+    ylim([-0.25,5.25])
+
+    for ii = obj.edgeSamples
+        plot([timeAxisMS(ii), timeAxisMS(ii)],ylim,'r--','LineWidth',1)
+    end
     
 end % plotChanSamples
 
