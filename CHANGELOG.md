@@ -18,7 +18,7 @@ The Zapit main window will print a notification in the title bar when a new vers
 ## Version History
 
 
-2023/02/14 -- v0.10.5
+2023/02/14 -- v0.10.6
  * Small bugfixes
  * Paint brain area runs more quietly and blanks the beam between areas.
  * Zap all points runs more quietly and blanks the beam between points
