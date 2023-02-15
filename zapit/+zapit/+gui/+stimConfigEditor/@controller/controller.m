@@ -318,7 +318,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
                 end            
             end
 
-        end %saveConfigYAML
+        end %loadConfigYAML
 
 
         function ind = findIndexOfAddedPointNearestCursor(obj)

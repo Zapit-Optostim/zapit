@@ -26,8 +26,7 @@ classdef stimLocations
 
 
     methods
-        function obj = Test
-        end
+
     end % methods
 
 end % classdef

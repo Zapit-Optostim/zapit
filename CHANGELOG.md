@@ -17,6 +17,9 @@ The Zapit main window will print a notification in the title bar when a new vers
 
 ## Version History
 
+2023/02/XX -- v0.10.7
+ * Add a command line stim config editor for generating patterns of points like grids, squares,
+   and lines.
 
 2023/02/14 -- v0.10.6
  * Small bugfixes

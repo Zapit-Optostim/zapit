@@ -223,8 +223,8 @@ classdef settings_tests < matlab.unittest.TestCase
     % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     methods
         % These are convenience methods for running the tests
-        function settings  = loadSettingsExample(obj,fname);
-            load(fullfile(obj.dataDir,fname));
+        function settings  = loadSettingsExample(obj,fname)
+            load(fullfile(obj.dataDir,fname),'settings');
         end
     end
 
