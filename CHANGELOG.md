@@ -20,6 +20,10 @@ The Zapit main window will print a notification in the title bar when a new vers
 2023/02/XX -- v0.10.7
  * Add a command line stim config editor for generating patterns of points like grids, squares,
    and lines.
+ * Shortening the stimulus duration correctly increases beam intensity.
+ * Add `experiment.blankOnsetShift_ms` and `experiment.blankOffsetShift_ms` to allow precise
+   control of when the beam is blanking to take into account scanner motion.
+
 
 2023/02/14 -- v0.10.6
  * Small bugfixes

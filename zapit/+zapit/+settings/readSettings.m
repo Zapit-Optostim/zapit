@@ -134,8 +134,9 @@ function outputSettings = readSettings(fname)
         f1 = fields(DEFAULT_SETTINGS.(f0{ii}));
 
         for jj = 1:length(f1)
-            settingsFromYML.(f0{ii}).(f1{jj});
-            outputSettings.(f0{ii}).(f1{jj}) = settingsFromYML.(f0{ii}).(f1{jj});
+            if isfield(settingsFromYML.(f0{ii}), f1{jj})
+                outputSettings.(f0{ii}).(f1{jj}) = settingsFromYML.(f0{ii}).(f1{jj});
+            end
         end
     end
 

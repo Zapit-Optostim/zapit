@@ -5,7 +5,7 @@ classdef stimConfig < handle
     % zapit.stimConfig
     %
     % Purpose
-    % This class handles configuration files used to determine where the laser stim locations are.
+    % This class handles configuration files used to determine where the laser stim locatins are.
     %
     % Rob Campbell - SWC 2022
 
@@ -128,13 +128,9 @@ classdef stimConfig < handle
 
 
             % We want the ability to present the stimuli for a shorter time but a higher power.
-            % Therefore we need to know the maximum stimulus duration:
-            maxStimDuration = (1/obj.stimDutyCycleHz)*1E3 - blankingTime_ms;
+            % Therefore we need to know the maximum stimulus duration (a half-cycle):
+            maxStimDuration = (0.5/obj.stimDutyCycleHz)*1E3 - blankingTime_ms;
 
-
-            % THIS IS TESTING CODE. if stimDuration = maxStimDuration then there is no change in the function's output
-            stimDuration = maxStimDuration;
-            %stimDuration = 4;
 
             % Fill in the matrices for the galvos
             for ii = 1:length(calibratedPointsInVolts) % Loop over stim conditions
@@ -189,8 +185,8 @@ classdef stimConfig < handle
                 % with later.
                 t_mW = obj.stimLocations(ii).Attributes.laserPowerInMW;
 
-                % TODO -- testing code handle situation where user has asked for a
-                % shorter stimulus. We scale the waveform:
+                % Handle situation where user has asked for a shorter stimulus.
+                % We scale the waveform amplitude:
                 if isfield(obj.stimLocations(ii).Attributes,'stimDuration_ms')
                     stimDuration = obj.stimLocations(ii).Attributes.stimDuration_ms;
                     t_mW = (maxStimDuration / stimDuration) * t_mW;
@@ -208,9 +204,21 @@ classdef stimConfig < handle
             % Handling masking for periods beam is moving and one vs two locations
 
             % Blank the beam and masking light during periods when the beam is moving
+
             blankingMask = ones(obj.numSamplesPerChannel,1);
 
-            for ii=1:blankingSamples
+
+            % These two lines define variables that allow us to tweak the onset and offset of the
+            % beam blanking to take into account latency of the scanners.
+            % See zapit.settings.default_settings for a description of what these lines do
+            blankOnsetShift_ms = obj.parent.settings.experiment.blankOnsetShift_ms;
+            blankOffsetShift_ms = obj.parent.settings.experiment.blankOffsetShift_ms;
+
+            % The followng two lines convert ms to samples.
+            blankOnsetShift_samples = (blankOnsetShift_ms*1E-3)/sampleInterval;
+            blankOffsetShift_samples = (blankOffsetShift_ms*1E-3)/sampleInterval;
+
+            for ii=1:(blankingSamples+blankOnsetShift_samples+blankOffsetShift_samples)
                 blankingMask(obj.edgeSamples(1:end-1)+(ii-1))=0;
             end
 
@@ -219,8 +227,8 @@ classdef stimConfig < handle
 
             %%
             % Handle instance where we asking for a shorter duration stimulus at a higher laser power
-            % TODO -- this does not handle different durations in different trials.
             for ii=1:length(obj.stimLocations)
+
                 if ~isfield(obj.stimLocations(ii).Attributes,'stimDuration_ms')
                     continue
                 end
@@ -234,10 +242,15 @@ classdef stimConfig < handle
                     fe = find(diff(digWaveform)<0);
                     fe(end+1) = length(digWaveform);
 
+
                     % We want the beam on for this long
                     durationOfStimInSamples = stimDuration*1E-3/sampleInterval;
 
                     % So we need to blank to zero the following points:
+                    if length(fe)>length(fs)
+                        fs = [1;fs];
+                    end
+
                     blankTimes(:,1) = fs+durationOfStimInSamples;
                     blankTimes(:,2) = fe;
 
@@ -247,6 +260,9 @@ classdef stimConfig < handle
                 end
             end
 
+            % Now we circularly shift the waveforms to deal with the wrapping issue. Doing this
+            % here makes the preceeding loop a lot easier to handle.
+            waveforms(:,3:4,:) = circshift(waveforms(:,3:4,:),-blankOnsetShift_samples,1);
 
 
             % Finally, we loop through and turn off laser on the even cycles when it's a single position

@@ -119,8 +119,21 @@ function [settings,setTests] = default_settings
     settings.experiment.maxStimPointsPerCondition = 2;
     setTests.experiment.maxStimPointsPerCondition = {@check_isnumeric, @check_isscalar};
 
-    settings.experiment.blankingTime_ms = 1.5;
+    % The following settings should provide minimum blanking time for Saturn 5 scanners
+    % ThorLabs scanners are slower and will need larger numbers.
+    settings.experiment.blankingTime_ms = 0.3;
     setTests.experiment.blankingTime_ms = {@check_isnumeric, @check_isZeroOrGreaterScalar};
+
+    % A positive value of blankOnsetShift_ms shifts the onset of the blanking time earlier.
+    % Negative shifts it later. We shift it later because of the lag of the scanners
+    settings.experiment.blankOnsetShift_ms = -0.12;
+    setTests.experiment.blankOnsetShift_ms = {@check_isnumeric, @check_isscalar};
+
+    % A positive value of blankOffsetShift_ms shifts the offset of the blanking time later.
+    settings.experiment.blankOffsetShift_ms = 0.25;
+    setTests.experiment.blankOffsetShift_ms = {@check_isnumeric, @check_isscalar};
+
+
 
 
     %% Cache

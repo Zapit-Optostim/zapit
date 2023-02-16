@@ -56,7 +56,7 @@ function varargout = writeWaveformsToDisk(obj,filePath)
         return
     end
    
-    if isempty(filePath) || filePath==0
+    if isempty(filePath) | filePath==0
         return
     end
 

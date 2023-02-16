@@ -32,12 +32,9 @@ function plotChanSamples(obj, conditionToPlot)
     laser = chanSamples(:,3,conditionToPlot);
     digOut =  chanSamples(:,4,conditionToPlot);
 
-
-
-    % Make plot        
-    fig = zapit.utils.focusNamedFig(mfilename);
-
     timeAxisMS = ((1:length(xGalvo)) /obj.parent.DAQ.samplesPerSecond)*1E3;
+
+
 
     clf
     subplot(3,1,1)
@@ -45,18 +42,28 @@ function plotChanSamples(obj, conditionToPlot)
     plot(timeAxisMS,xGalvo,'k-','LineWidth',1);
     hold on
     plot(timeAxisMS,yGalvo,'b-','LineWidth',1);
+    Y = ylim; %cache the current axis limits
+
+    % Modify the digout waveform so it matches the Y axis
+    LaserOnOff = digOut;
+    LaserOnOff(LaserOnOff==0) = Y(1);
+    LaserOnOff(LaserOnOff>0) = Y(2);
+
+    area(timeAxisMS, LaserOnOff,'FaceColor','r','EdgeColor','r', ...
+        'FaceAlpha',0.1, 'EdgeAlpha',0.5,'BaseValue',Y(1))
+    ylim(Y)
 
     for ii = obj.edgeSamples
-        plot([timeAxisMS(ii), timeAxisMS(ii)],ylim,'r--','LineWidth',1)
+       % plot([timeAxisMS(ii), timeAxisMS(ii)],ylim,'r--','LineWidth',1)
     end
-    title('analog output to scan mirrors')
+    title('analog output to scan mirrors (red overlay is blanking light)')
     ylabel('Galvo voltage')
         
     subplot(3,1,2)
     % analog volt output to laser and masking light
     plot(timeAxisMS,laser,'-','LineWidth',1,'MarkerSize',10);
     hold on
-    title('analog output to laser')
+    title(sprintf('analog output to laser (%0.2f V)', max(laser)))
     ylabel('amplitude')
     ylim(obj.parent.settings.laser.laserMinMaxControlVolts)
 
