@@ -133,6 +133,12 @@ function outputSettings = readSettings(fname)
     for ii = 1:length(f0);
         f1 = fields(DEFAULT_SETTINGS.(f0{ii}));
 
+        if ~isequal( fields(DEFAULT_SETTINGS.(f0{ii})),  fields(settingsFromYML.(f0{ii})) )
+            % If the two have different fields then we need to replace the user settings
+            % file on disk. This catches the case where the user has an old setting in
+            % their user settings file and we want to remove it by re-saving the file.
+            allValid = false;
+        end
         for jj = 1:length(f1)
             if isfield(settingsFromYML.(f0{ii}), f1{jj})
                 outputSettings.(f0{ii}).(f1{jj}) = settingsFromYML.(f0{ii}).(f1{jj});
@@ -146,12 +152,14 @@ function outputSettings = readSettings(fname)
     % Four
     % Make sure all settings that are returned are valid
     % If they are not, we replace them with the original default value
-    [outputSettings,allValid] = zapit.settings.checkSettingsAreValid(outputSettings); % see private directory
+    [outputSettings,allValidCheck] = zapit.settings.checkSettingsAreValid(outputSettings); % see private directory
 
+    % Because settings will return as valid even if an old setting exists.
+    allValid = allValid * allValidCheck;
 
     if ~allValid
         fprintf('\n ********************************************************************\n')
-        fprintf(' * YOU HAVE INVALID VALUES IN %s (see above). \n', settingsFile)
+        fprintf(' * YOU HAVE INVALID OR OLD SETTINGS IN %s. \n', settingsFile)
         fprintf(' * They have been replaced with valid defaults. \n')
         fprintf(' **********************************************************************\n')
     end

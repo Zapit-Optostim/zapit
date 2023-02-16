@@ -134,8 +134,6 @@ function [settings,setTests] = default_settings
     setTests.experiment.blankOffsetShift_ms = {@check_isnumeric, @check_isscalar};
 
 
-
-
     %% Cache
     settings.cache.ROI = [];
     setTests.cache.ROI = {@convert_cell2mat};
