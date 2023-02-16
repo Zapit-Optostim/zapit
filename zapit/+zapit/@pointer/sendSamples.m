@@ -114,7 +114,8 @@ function varargout = sendSamples(obj, varargin)
     % It will only connect if the existing task name is different
     obj.DAQ.connectClockedAO('numSamplesPerChannel',size(waveforms,1), ...
                             'hardwareTriggered', hardwareTriggered, ...
-                            'taskName','sendSamples');
+                            'taskName','sendSamples', ...
+                            'verbose', false);
   
     
     % The current rampdown should be what is requested by this trial

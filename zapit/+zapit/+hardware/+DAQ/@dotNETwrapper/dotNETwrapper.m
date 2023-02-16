@@ -310,6 +310,10 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             obj.hAOtaskWriter = AnalogMultiChannelWriter(obj.hAO.Stream);
             % Configure the trigger
             if hardwareTriggered
+                if verbose
+                    fprintf('Configuring a hardware trigger on line %s\n', ...
+                        obj.settings.NI.triggerChannel)
+                end
                 obj.hAO.Triggers.StartTrigger.ConfigureDigitalEdgeTrigger(...
                             obj.settings.NI.triggerChannel, ...
                             DigitalEdgeStartTriggerEdge.Rising);
