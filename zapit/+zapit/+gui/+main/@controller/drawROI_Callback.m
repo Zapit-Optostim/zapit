@@ -56,13 +56,17 @@ function drawROI_Callback(obj,~,~)
 
     %  We have obtained this in local image coords so if user is drawing a ROI on a zoomed-in image we need to 
     % add the existing offset.  
+    try
     originalROI = obj.model.cam.ROI;
     originalROI(3:4) = 0;
     newROI = originalROI + rect_pos;
 
 
     obj.model.cam.ROI = round(newROI);
-
+    catch ME
+        fprintf('ROI drawing failed with error:\n"%s"\n', ME.message)
+        fprintf("\nIf this keeps happening, please file a bug report\n")
+    end
     obj.refreshImage % Re-draw everything so axes display the correct units in mm
 
     % Cache this value to the settings file
