@@ -230,7 +230,8 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             obj.hAO.Control(TaskAction.Verify);
 
             obj.hAOtaskWriter = AnalogMultiChannelWriter(obj.hAO.Stream);
-
+            
+            obj.hAO.Start;
         end % connectUnclockedAO
 
 
@@ -350,7 +351,7 @@ classdef dotNETwrapper < zapit.hardware.DAQ
                 if verbose
                     fprintf('Writing to buffer: on-demand\n')
                 end
-                obj.hAOtaskWriter.WriteMultiSample(true,waveforms');
+                obj.hAOtaskWriter.WriteMultiSample(false,waveforms');
             else
                 if verbose
                     fprintf('Writing to buffer: clocked\n')
