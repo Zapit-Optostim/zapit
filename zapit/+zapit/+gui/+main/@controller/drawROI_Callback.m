@@ -46,8 +46,21 @@ function drawROI_Callback(obj,~,~)
     yl = yl / mixPix;
     yl = yl - min(yl) + 1;
 
+    % Flip ROI if the image is flippes
+    if  obj.model.settings.camera.flipImageLR == 1
+        % Flip along x
+        rect_pos(1) = (rect_pos(1) + rect_pos(3)) * -1;
+    end
+
+    if  obj.model.settings.camera.flipImageUD == 1
+        % Flip along x
+        rect_pos(2) = (rect_pos(2) + rect_pos(4)) * -1;
+    end
+
+
     rect_pos(1) = rect_pos(1) + xl(2)/2;
     rect_pos(2) = rect_pos(2) + yl(2)/2;
+
 
     delete(L)
     delete(roi)

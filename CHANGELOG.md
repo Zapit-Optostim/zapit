@@ -24,6 +24,7 @@ The Zapit main window will print a notification in the title bar when a new vers
  * MAJOR: Add `experiment.blankOnsetShift_ms` and `experiment.blankOffsetShift_ms` to allow precise
    control of when the beam is blanking to take into account scanner motion.
  * Revert stimDutyCycleHz name change.
+ * BugFix: Ensure ROI is flipped when it is made.
 
 
 2023/02/14 -- v0.10.6
