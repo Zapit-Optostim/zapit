@@ -32,6 +32,16 @@ function [R,C] = generateScannerCalibrationPoints(obj, doPlot)
     pixel_colsMM = (-imSizeRangeMM(1)+bufferMM) : pointSpacingInMM : (imSizeRangeMM(1)-bufferMM);
     pixel_rowsMM = (-imSizeRangeMM(2)+bufferMM) : pointSpacingInMM : (imSizeRangeMM(2)-bufferMM);
 
+    % The user has almost certainly applied a ROI and so we must add the offset assoicated with that.
+    origImCentreInPixels = obj.cam.vid.VideoResolution/2;
+    currentImCentre =  (obj.cam.ROI(3:4)/2) + obj.cam.ROI(1:2);
+
+    delta = origImCentreInPixels - currentImCentre;
+    delta = delta * mmPix;
+
+    pixel_rowsMM = pixel_rowsMM + delta(2);
+    pixel_colsMM = pixel_colsMM + delta(1);
+
 
     % Calculate a set product to go to all combinations
     [R,C] = meshgrid(pixel_rowsMM,pixel_colsMM);

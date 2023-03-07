@@ -25,6 +25,7 @@ The Zapit main window will print a notification in the title bar when a new vers
    control of when the beam is blanking to take into account scanner motion.
  * Revert stimDutyCycleHz name change.
  * BugFix: Ensure ROI is flipped when it is made.
+ * BugFix: Calibration points follow ROI
 
 
 2023/02/14 -- v0.10.6
