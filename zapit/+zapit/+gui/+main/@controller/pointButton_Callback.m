@@ -37,6 +37,7 @@ function pointButton_Callback(obj,~,~)
 
         obj.hImLive.ButtonDownFcn = [];
         obj.removeOverlays('hLastPoint')
+        obj.removeOverlays('hLastDetectedLaserPos')
     end
 
 end

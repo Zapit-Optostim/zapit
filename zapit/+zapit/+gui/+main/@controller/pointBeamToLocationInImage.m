@@ -27,16 +27,31 @@ function pointBeamToLocationInImage(obj,~,~)
     obj.plotOverlayHandles.hLastPoint.YData = yPos;
 
 
+    % Build title text
+    msg = sprintf('X=%0.2f mm (%0.1f V) Y=%0.2f mm (%0.1f V)',...
+        xPos, xVolts, yPos, yVolts);
+
     obj.model.moveBeamXY([xVolts, yVolts]); % send beam to this location
+
+    pause(0.15)
+    OUT = obj.model.getLaserPosAccuracy([xPos,yPos]);
+    if ~isempty(OUT)
+        obj.plotOverlayHandles.hLastDetectedLaserPos.XData = OUT.actualCoords(1);
+        obj.plotOverlayHandles.hLastDetectedLaserPos.YData = OUT.actualCoords(2);
+        msg = sprintf('%s error: %d microns', msg, OUT.totalErrorMicrons);
+    else
+        obj.plotOverlayHandles.hLastDetectedLaserPos.XData = nan;
+        obj.plotOverlayHandles.hLastDetectedLaserPos.YData = nan;
+    end
 
 
     % Update figure title    
     showPosInTitle = true;
 
     if showPosInTitle
-        msg = sprintf('X=%0.2f (%0.1f V) Y=%0.2f (%0.1f V)',...
-            xPos, xVolts, yPos, yVolts);
         set(get( obj.hImAx,'Title'),'String',msg)
+    else
+        set(get( obj.hImAx,'Title'),'String','')
     end
     
 end % pointBeamToLocationInImage

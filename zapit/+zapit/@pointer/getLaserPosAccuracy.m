@@ -82,21 +82,21 @@ function varargout = getLaserPosAccuracy(obj, XYdata, backgroundImage, verbose)
     end
 
     %% report to screen or return as a structure
+    out.targetCoords = XYdata;
+    out.actualCoords = (BWc.Centroid - obj.imSize/2) * ...
+                obj.settings.camera.micronsPerPixel * 1E-3;
+
+    out.error = out.targetCoords-out.actualCoords;
+    out.totalErrorMicrons = round(sqrt(sum(out.error.^2)) * 1e3);
+
     if nargout==0
-        fprintf('Laser at x = %d y = %d\n', round(BWc.Centroid))
-        fprintf('User point at x = %d y = %d\n', round(XYData))
+        fprintf('Laser at x = %0.3f mm y = %0.3f mm\n', out.actualCoords)
+        fprintf('User point at x = %0.3f mm y = %0.3f mm\n', out.targetCoords)
         fprintf('Error: x = %0.2f um  y = %0.1f um\n', ...
-            abs(XYData-BWc.Centroid) * obj.settings.camera.micronsPerPixel)
+            out.error)
 
     elseif nargout>0
         % Return
-        out.targetCoords = XYdata;
-        out.actualCoords = BWc.Centroid;
-        out.actualCoords = (out.actualCoords - obj.imSize/2) * ...
-                    obj.settings.camera.micronsPerPixel * 1E-3;
-
-        out.error = out.targetCoords-out.actualCoords;
-        out.absErrorMicrons = abs(out.error) * 1e3;
         varargout{1} = out;
     end
 

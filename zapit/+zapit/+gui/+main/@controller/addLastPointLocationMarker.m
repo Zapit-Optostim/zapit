@@ -9,8 +9,12 @@ function addLastPointLocationMarker(obj)
     % place in its own method.
 
     hold(obj.hImAx,'on')
+
+    obj.plotOverlayHandles.hLastDetectedLaserPos = plot(nan, nan,'g+','MarkerSize',14, ...
+        'LineWidth', 2, 'Parent',obj.hImAx);
     obj.plotOverlayHandles.hLastPoint = plot(nan, nan,'or','MarkerSize',10, ...
         'LineWidth', 2, 'Parent',obj.hImAx);
+
     hold(obj.hImAx,'off')
 
     % Set GUI state based on calibration state
