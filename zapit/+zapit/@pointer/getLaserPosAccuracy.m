@@ -49,10 +49,8 @@ function varargout = getLaserPosAccuracy(obj, XYdata, backgroundImage, verbose)
 
     BWmean = mean(tFrames,3);
 
-    BW = BWmean>(max(BWmean(:))*0.7);
-
-    BWa = regionprops(BW,'Area');
-    BWc = regionprops(BW,'Centroid');
+    BWa = regionprops(BWmean,'Area');
+    BWc = regionprops(BWmean,'Centroid');
 
     % Bail out if we find no or multiple points
     bailOut = false;

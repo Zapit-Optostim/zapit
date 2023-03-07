@@ -34,7 +34,7 @@ function pointBeamToLocationInImage(obj,~,~)
     obj.model.moveBeamXY([xVolts, yVolts]); % send beam to this location
 
     pause(0.15)
-    OUT = obj.model.getLaserPosAccuracy([xPos,yPos]);
+    OUT = obj.model.getLaserPosAccuracy([xPos,yPos],[],false);
     if ~isempty(OUT)
         obj.plotOverlayHandles.hLastDetectedLaserPos.XData = OUT.actualCoords(1);
         obj.plotOverlayHandles.hLastDetectedLaserPos.YData = OUT.actualCoords(2);
