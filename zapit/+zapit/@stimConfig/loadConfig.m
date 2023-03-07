@@ -39,7 +39,7 @@ function loadConfig(obj,fname)
     % changing on a trial by trial basis might be a little more work so we
     % do not implement for now. SO HIDE FROM USER THAT THIS CAN BE DONE!
     obj.laserPowerInMW = obj.stimLocations(1).Attributes.laserPowerInMW;
-    obj.stimDutyCycleHz = obj.stimLocations(1).Attributes.stimDutyCycleHz;
+    obj.stimModulationFreqHz = obj.stimLocations(1).Attributes.stimModulationFreqHz;
     obj.offRampDownDuration_ms = obj.stimLocations(1).Attributes.offRampDownDuration_ms;
 
 

@@ -23,6 +23,7 @@ The Zapit main window will print a notification in the title bar when a new vers
  * MAJOR: Shortening the stimulus duration correctly increases beam intensity.
  * MAJOR: Add `experiment.blankOnsetShift_ms` and `experiment.blankOffsetShift_ms` to allow precise
    control of when the beam is blanking to take into account scanner motion.
+ * Revert stimDutyCycleHz name change.
 
 
 2023/02/14 -- v0.10.6

@@ -14,7 +14,7 @@ classdef stimConfig < handle
         configFileName % file name of the loaded stimConfig file
 
         laserPowerInMW
-        stimDutyCycleHz
+        stimModulationFreqHz
         stimLocations
         offRampDownDuration_ms
 
@@ -104,7 +104,7 @@ classdef stimConfig < handle
             calibratedPointsInVolts = obj.calibratedPointsInVolts;
 
             % TODO -- we need to make sure that the number of samples per second here is the right number
-            obj.numSamplesPerChannel = obj.parent.DAQ.samplesPerSecond/obj.stimDutyCycleHz;
+            obj.numSamplesPerChannel = obj.parent.DAQ.samplesPerSecond/obj.stimModulationFreqHz;
 
             % make up samples for scanner channels (of course calibratedPointsInVolts is already in volt format)
             % pre-allocate the waveforms array: 1st dim is samples, 2nd dim is channel, 3rd dim is conditions
@@ -129,7 +129,7 @@ classdef stimConfig < handle
 
             % We want the ability to present the stimuli for a shorter time but a higher power.
             % Therefore we need to know the maximum stimulus duration (a half-cycle):
-            maxStimDuration = (0.5/obj.stimDutyCycleHz)*1E3 - blankingTime_ms;
+            maxStimDuration = (0.5/obj.stimModulationFreqHz)*1E3 - blankingTime_ms;
 
 
             % Fill in the matrices for the galvos

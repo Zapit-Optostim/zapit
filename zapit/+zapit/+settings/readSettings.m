@@ -25,7 +25,7 @@ function outputSettings = readSettings(fname)
     % Rob Campbell - SWC 2022
 
     outputSettings = [];
-
+    allValid = true; % By default all settings are valid
     if nargin<1
         fname = [];
     end
@@ -105,7 +105,7 @@ function outputSettings = readSettings(fname)
     % rename it to the new field name. If we do this here, then the redundant field will just
     % vanish in the next step. First column is new field name and second is old.
     namesToReplace = {...
-                {'experiment','defaultLaserFrequencyHz'}, {'experiment','defaultDutyCycleHz'}; ...
+                {'experiment','defaultLaserFrequencyHz'}, {'experiment','defaultLaserModulationFrequencyHz'}; ...
     };
 
     for ii=1:size(namesToReplace)

@@ -145,7 +145,7 @@ function stimConfigPatternGenerator(fname,coords,varargin)
 
     % Convert the point matrix into a structure that we can save to disk as a YAML
     pointAttributes.laserPowerInMW = laserPower;
-    pointAttributes.stimDutyCycleHz = tSettings.experiment.defaultDutyCycleHz;
+    pointAttributes.stimModulationFreqHz = tSettings.experiment.defaultLaserModulationFrequencyHz;
     pointAttributes.offRampDownDuration_ms = tSettings.experiment.offRampDownDuration_ms;
 
 

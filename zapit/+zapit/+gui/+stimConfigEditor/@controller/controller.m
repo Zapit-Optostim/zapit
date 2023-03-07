@@ -86,7 +86,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
             
             % Apply default values to UI elements from settings
             obj.LaserPowermWSpinner.Value = obj.settings.experiment.defaultLaserPowerMW;
-            obj.StimFreqHzSpinner.Value = obj.settings.experiment.defaultDutyCycleHz;
+            obj.StimFreqHzSpinner.Value = obj.settings.experiment.defaultLaserModulationFrequencyHz;
             obj.RampdownmsSpinner.Value = obj.settings.experiment.offRampDownDuration_ms;
 
             obj.LaserPowermWSpinner.Limits(2) = obj.settings.laser.laserMinMax_mW(2);
