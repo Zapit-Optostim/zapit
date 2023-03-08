@@ -58,7 +58,7 @@ function zapAllCoords_Callback(obj,~,~)
 
         waveforms = W;
 
-        obj.model.moveBeamXY(waveforms(1,1:2)) % Go to first position
+        obj.model.moveBeamXYinVolts(waveforms(1,1:2)) % Go to first position
 
         obj.model.DAQ.connectClockedAO('numSamplesPerChannel',size(waveforms,1), ...
                                 'samplesPerSecond',5000, ...

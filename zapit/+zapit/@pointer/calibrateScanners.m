@@ -30,10 +30,12 @@ function varargout = calibrateScanners(obj)
     obj.wipeScannerCalib
     [R,C] = obj.generateScannerCalibrationPoints;
 
+    % NOTE: see also zapit.pointer.measurePointingAccuracy which does a similar thing and maybe we should
+    % use that instead of repeating code here?
 
     % change mm coords into voltage 
     [rVolts(:,1), rVolts(:,2)] = obj.mmToVolt(C,R);
-    obj.moveBeamXY(rVolts(1,:)); % Move to first position
+    obj.moveBeamXYinVolts(rVolts(1,:)); % Move to first position
 
     pause(0.05)
 
@@ -49,17 +51,17 @@ function varargout = calibrateScanners(obj)
     end
 
     ind=1;
-    obj.breakScannerCalibLoop = false; % If an external entity (like the GUI) sets this to
-                                       % true then we will break out of the loop.
+    obj.breakPointingAccuracyLoop = false; % If an external entity (like the GUI) sets this to
+                                           % true then we will break out of the loop.
     verbose=false;
     for ii=1:length(R)
 
-        if obj.breakScannerCalibLoop
+        if obj.breakPointingAccuracyLoop
             break
         end
         % feed volts into scan mirrors, wait for precise image
         % without smudges and take position in pixels
-        obj.moveBeamXY(rVolts(ii,:));
+        obj.moveBeamXYinVolts(rVolts(ii,:));
         pause(0.1)
 
         % Attempt to get laser position and append to list if the position was found

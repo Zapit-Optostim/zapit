@@ -1,13 +1,15 @@
-function [R,C] = generateScannerCalibrationPoints(obj, doPlot)
+function [R,C] = generateScannerCalibrationPoints(obj, varargin)
     % Generate the calibration points for the scanner calibration
     %
-    % function [R,C] = zapit.pointer.generateScannerCalibrationPoints(doPlot)
+    % function [R,C] = zapit.pointer.generateScannerCalibrationPoints(param1,val1,...t)
     %
     % Purpose
     % Generate the scanner calibration point locations
     %
-    % Inputs
-    % doPlot - false by default. If true, spawn a new window an plot points.
+    % Inputs (param/val pairs)
+    % 'pointSpacingInMM' - distance in mm between points. By default the value in the GUI is chosen
+    % 'bufferMM' - distance in mm between image edge and points. By default the value in the GUI is chosen.
+    % 'doPlot' - false by default. If true, spawn a new window an plot points.
     %
     % Outputs
     % R and C - the rows and columns where the laser will be sent
@@ -15,13 +17,23 @@ function [R,C] = generateScannerCalibrationPoints(obj, doPlot)
     % See also:
     % zapit.pointer.calibrateScanners
 
-    if nargin<2
-        doPlot = false;
-    end
 
-    % Unique row and column values to sample
-    pointSpacingInMM = obj.settings.calibrateScanners.pointSpacingInMM;
-    bufferMM = obj.settings.calibrateScanners.bufferMM; % So we don't stimulate very close to the edges
+
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    %Parse optional arguments
+    params = inputParser;
+    params.CaseSensitive = false;
+
+    params.addParameter('pointSpacingInMM', obj.settings.calibrateScanners.pointSpacingInMM, @(x) isnumeric(x) && isscalar(x))
+    params.addParameter('bufferMM', obj.settings.calibrateScanners.bufferMM, @(x) isnumeric(x) && isscalar(x))
+    params.addParameter('doPlot', false, @(x) islogical(x) || x==0 || x==1);
+
+    params.parse(varargin{:});
+
+    pointSpacingInMM=params.Results.pointSpacingInMM;
+    bufferMM=params.Results.bufferMM;
+    doPlot=params.Results.doPlot;
+
 
     % Get mm per pixel
     mixPix = obj.settings.camera.micronsPerPixel;

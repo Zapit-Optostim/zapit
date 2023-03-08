@@ -82,11 +82,6 @@ classdef DAQ < handle
         function stopAndDeleteAITask(obj)
         end
 
-        function moveBeamXY(obj,beamXYvoltage)
-            obj.lastXgalvoVoltage = beamXYvoltage(1);
-            obj.lastYgalvoVoltage = beamXYvoltage(2);
-        end
-
         function setLaserPowerControlVoltage(obj,laserVoltage)
             obj.lastLaserVoltage = laserVoltage;
         end

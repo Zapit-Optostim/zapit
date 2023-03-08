@@ -31,7 +31,7 @@ function catAndMouseButton_Callback(obj,~,~)
     end
 
 
-    function mouseMove (~, ~)
+    function mouseMove(~, ~)
         C = get (obj.hImAx, 'CurrentPoint');
         X = C(1,1);
         Y = C(1,2);
@@ -43,10 +43,9 @@ function catAndMouseButton_Callback(obj,~,~)
         end
 
         % Send the beam to the last point the cursor was at
-        [xVolts, yVolts] = obj.model.mmToVolt(X,Y);
         obj.plotOverlayHandles.hLastPoint.XData = X;
         obj.plotOverlayHandles.hLastPoint.YData = Y;
-        obj.model.moveBeamXY([xVolts, yVolts]);
+        obj.model.moveBeamXYinMM([X, Y]);
     end % mouseMove
 
 end % catAndMouseButton_Callback

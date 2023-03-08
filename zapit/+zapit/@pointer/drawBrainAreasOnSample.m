@@ -77,7 +77,7 @@ function drawBrainAreasOnSample(obj,areaCoords)
 
 
     % First place beam in the centre of the area we want to stimulate
-    obj.moveBeamXY(mean(coords(:,1:2)));
+    obj.moveBeamXYinVolts(mean(coords(:,1:2)));
     
     %Replace first two columns with voltage values
     [xVolt,yVolt] = obj.mmToVolt(coords(:,1), coords(:,2));

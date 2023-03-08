@@ -17,7 +17,7 @@ function calibrateScanners_Callback(obj,~,~)
         obj.RunScannerCalibrationButton.Text = 'CANCEL';
     elseif obj.RunScannerCalibrationButton.Value == 0
 
-        obj.model.breakScannerCalibLoop=true;
+        obj.model.breakPointingAccuracyLoop=true;
         %obj.RunScannerCalibrationButton.Text = {'Run';'Calibration'};
         tidy
         return

@@ -50,7 +50,7 @@ classdef pointer < handle
         lastYgalvoVoltage  = 0 % Cached value indicating last Y scanner voltage 
         lastLaserValue = 0 % Cached value indicating what the laser was last set to
         buildFailed = true % Used during boostrap by start_zapit
-        breakScannerCalibLoop = false; % Used so GUI can break out of the scanner calibration loop.
+        breakPointingAccuracyLoop = false; % Used so GUI can break out of a loop (like that in scanner calib) where the beam accuracy is measured
         simulated = false % Tag to indicate whether it is in simulated mode
         listeners  % Structure that holds listeners so they can be easily cleaned up in the destructor
     end % hidden properties
@@ -281,15 +281,18 @@ classdef pointer < handle
         end % setLaserPowerControlVoltage
 
 
-        function moveBeamXY(obj,beamXY)
+        function moveBeamXYinVolts(obj,beamXY)
             % Set the two scanner AO lines to specified voltage value
             %
-            % function zapit.pointer.moveBeamXY
+            % function zapit.pointer.moveBeamXYinVolts(xyVolts)
             %
             % Purpose
             % Set the two galvo control AO lines with an unlocked AO operation.
             % This property was moved from the DAQ class to here because there 
             % are now two DAQ classes and leaving it there led to repetition. 
+            %
+            % Inputs
+            % beamXY - [x_voltage_value, y_voltage_value]
 
             obj.DAQ.connectUnclockedAO % will not re-connect if currently connected
 
@@ -299,7 +302,25 @@ classdef pointer < handle
             % update cached values
             obj.lastXgalvoVoltage = beamXY(1);
             obj.lastYgalvoVoltage = beamXY(2);
-        end % moveBeamXY
+        end % moveBeamXYinVolts
+
+
+        function moveBeamXYinMM(obj,beamXY)
+            % Set the scanners to point the beam to a specified coordinate in mm
+            %
+            % function zapit.pointer.moveBeamXYinMM(xyVolts)
+            %
+            % Purpose
+            % Point the beam to a locatation in mm
+            %
+            % Inputs
+            % beamXY - [x_pos_in_mm, y_pos_in_mm]
+
+            [xVoltage, yVoltage] = obj.mmToVolt(beamXY(1),beamXY(2));
+
+            obj.moveBeamXYinVolts([xVoltage, yVoltage])
+
+        end % moveBeamXYinVolts
 
 
         function zeroScanners(obj)
@@ -310,7 +331,7 @@ classdef pointer < handle
             % Purpose
             % Sets beam to 0V/0V (center of image).
 
-            obj.moveBeamXY([0,0]);
+            obj.moveBeamXYinVolts([0,0]);
         end % zeroScanners
 
     end % methods

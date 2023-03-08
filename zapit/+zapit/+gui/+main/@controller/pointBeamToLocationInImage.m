@@ -20,18 +20,19 @@ function pointBeamToLocationInImage(obj,~,~)
     xPos = pos(1,1);
     yPos = pos(1,2);
     
-    % convert to voltage values to send to scanners
-    [xVolts, yVolts] = obj.model.mmToVolt(xPos, yPos);
     
     obj.plotOverlayHandles.hLastPoint.XData = xPos;
     obj.plotOverlayHandles.hLastPoint.YData = yPos;
 
 
     % Build title text
+    % convert to voltage values for title textto send to scanners
+    [xVolts, yVolts] = obj.model.mmToVolt(xPos, yPos);
     msg = sprintf('X=%0.2f mm (%0.1f V) Y=%0.2f mm (%0.1f V)',...
         xPos, xVolts, yPos, yVolts);
 
-    obj.model.moveBeamXY([xVolts, yVolts]); % send beam to this location
+    %obj.model.moveBeamXYinVolts([xVolts, yVolts]); % send beam to this location
+    obj.model.moveBeamXYinMM([xPos, yPos]); % send beam to this location
 
     pause(0.15)
     OUT = obj.model.getLaserPosAccuracy([xPos,yPos],[],false);
