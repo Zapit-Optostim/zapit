@@ -1,5 +1,5 @@
 classdef utils_tests < matlab.unittest.TestCase
-    % Simple tests of the updater pipeline
+    % Simple tests of the utils module
 
     properties
 
@@ -29,4 +29,4 @@ classdef utils_tests < matlab.unittest.TestCase
 
 
 
-end %classdef zapit_build_tests < matlab.unittest.TestCase
+end %classdef utils_tests < matlab.unittest.TestCase
