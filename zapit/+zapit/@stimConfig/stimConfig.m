@@ -215,8 +215,8 @@ classdef stimConfig < handle
             blankOffsetShift_ms = obj.parent.settings.experiment.blankOffsetShift_ms;
 
             % The followng two lines convert ms to samples.
-            blankOnsetShift_samples = (blankOnsetShift_ms*1E-3)/sampleInterval;
-            blankOffsetShift_samples = (blankOffsetShift_ms*1E-3)/sampleInterval;
+            blankOnsetShift_samples = round((blankOnsetShift_ms*1E-3)/sampleInterval);
+            blankOffsetShift_samples = round((blankOffsetShift_ms*1E-3)/sampleInterval);
 
             for ii=1:(blankingSamples+blankOnsetShift_samples+blankOffsetShift_samples)
                 blankingMask(obj.edgeSamples(1:end-1)+(ii-1))=0;
