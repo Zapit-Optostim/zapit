@@ -47,7 +47,7 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             % The main purpose of the constructor is to set up default parameters.
             %
 
-            nidaqmx.add_DAQmx_Assembly
+            NET.addAssembly('NationalInstruments.DAQmx');
             import NationalInstruments.DAQmx.*
 
             obj = obj@zapit.hardware.DAQ(varargin{:});
