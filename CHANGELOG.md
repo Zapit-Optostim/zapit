@@ -20,12 +20,16 @@ The Zapit main window will print a notification in the title bar when a new vers
 2023/02/XX -- v0.11.7
  * Add a command line stim config editor for generating patterns of points like grids, squares,
    and lines.
+ * MAJOR: Add a simple TCP/IP server for external control. Zapit has a new property: state, that reports
+     whether it is idle, stimulating, or ramping down.
  * MAJOR: Shortening the stimulus duration correctly increases beam intensity.
  * MAJOR: Add `experiment.blankOnsetShift_ms` and `experiment.blankOffsetShift_ms` to allow precise
    control of when the beam is blanking to take into account scanner motion.
  * Revert stimDutyCycleHz name change.
  * BugFix: Ensure ROI is flipped when it is made.
  * BugFix: Calibration points follow ROI.
+ * BugFix: add new tests and bugfixes to tests
+ * 
 
 
 2023/02/14 -- v0.10.6

@@ -21,10 +21,13 @@ function stopOptoStim(obj, rampDownInMS)
         rampDownInMS = obj.stimConfig.offRampDownDuration_ms;
     end
 
+    obj.state = 'rampdown';
+
     samplesPerSecond = obj.DAQ.samplesPerSecond;
     bufferSize = obj.DAQ.numSamplesInBuffer;
 
     if isempty(bufferSize) || obj.DAQ.isAOTaskDone
+        obj.state = 'idle';
         return
     end
 
@@ -48,6 +51,7 @@ function stopOptoStim(obj, rampDownInMS)
         t(:) = 0;
         obj.DAQ.writeAnalogData(t);
        % start(obj.DAQ.delayStop)
+        obj.state = 'idle';
         return
     end
 
@@ -115,7 +119,8 @@ function stopOptoStim(obj, rampDownInMS)
         obj.DAQ.writeAnalogData(wave{ii});
     end
 
-    if obj.simulated
+    doPlot = false;
+    if doPlot
         zapit.utils.focusNamedFig(mfilename)
         clf
         plot(data(:,3),'-k', 'LineWidth',2)
@@ -127,6 +132,10 @@ function stopOptoStim(obj, rampDownInMS)
     t(:) = 0;
     obj.DAQ.writeAnalogData(t);
     start(obj.DAQ.delayStop)
+
+    % TODO -- there is no pause here and we will return to idle mode
+    %        too soon. This is a minor BUG but we live with it for now. 
+    obj.state = 'idle';
 
 end % stopOptoStim
 

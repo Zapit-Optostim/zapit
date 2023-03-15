@@ -20,14 +20,22 @@ function [settings,setTests] = default_settings
     %
     % Rob Campbell - 2023
 
+
+    % Import the functions we use for checking that stuff is valid
     import zapit.settings.settingsValuesTests.*
+
+
+    %% NOTE!
+    % In each case, every default setting value is defined on the first line then a test for its validity
+    % is on the line after it. 
+
 
     %% General
     settings.general.maxSettingsBackUpFiles = 50;  % Default value
     setTests.general.maxSettingsBackUpFiles = {@check_isnumeric, @check_isZeroOrGreaterScalar}; % Tests of the default value
 
-    settings.general.openPythonBridgeOnStartup = 0;
-    setTests.general.openPythonBridgeOnStartup = {@check_isLogicalScalar};
+    settings.general.openPythonBridgeOnStartup = 0; % Default value
+    setTests.general.openPythonBridgeOnStartup = {@check_isLogicalScalar}; % Tests of the default value (same for each below)
 
 
     %% NI
@@ -132,6 +140,18 @@ function [settings,setTests] = default_settings
     % A positive value of blankOffsetShift_ms shifts the offset of the blanking time later.
     settings.experiment.blankOffsetShift_ms = 0.25;
     setTests.experiment.blankOffsetShift_ms = {@check_isnumeric, @check_isscalar};
+
+
+    % The TCP/IP server
+    settings.tcpServer.IP = 'localhost'; % This will need changing
+    setTests.tcpServer.IP = {@check_isIPaddress};
+
+    settings.tcpServer.port = 1488; % This can be left
+    setTests.tcpServer.port = {@check_isnumeric, @check_isZeroOrGreaterScalar};
+
+    settings.tcpServer.enable = false;
+    setTests.tcpServer.enable = {@check_isLogicalScalar};
+
 
 
     %% Cache

@@ -213,9 +213,56 @@ classdef settings_tests < matlab.unittest.TestCase
             % Can we fix a field that has an old name to a new name?
             expected = obj.loadSettingsExample('zapitSystemSettings_01.mat');
             actual = zapit.settings.readSettings(fullfile(obj.dataDir, ...
-                        'zapitSystemSettings_fieldNameCHanged_01.yml'));
+                        'zapitSystemSettings_fieldNameChanged_01.yml'));
 
             obj.verifyEqual(actual.experiment, expected.experiment)
+        end
+
+        function checkIPtestWorks(obj)
+            % Does the regular expression we have for checking for an IP address work?
+            import zapit.settings.settingsValuesTests.*
+            defaultStruct = struct('server',struct('IP','localhost'));
+            actualStruct =  struct('server',struct('IP','localhost'));
+            sectionName = 'server';
+            fieldName = 'IP';
+
+            % These are valid values for the IP
+            [~,isValid] = check_isIPaddress(actualStruct,defaultStruct,sectionName,fieldName);
+            obj.verifyTrue(isValid)
+
+            actualStruct.server.IP = '127.0.0.1';
+            [~,isValid] = check_isIPaddress(actualStruct,defaultStruct,sectionName,fieldName);
+            obj.verifyTrue(isValid)
+
+            actualStruct.server.IP = '0.0.0.0';
+            [~,isValid] = check_isIPaddress(actualStruct,defaultStruct,sectionName,fieldName);
+            obj.verifyTrue(isValid)
+
+            actualStruct.server.IP = '255.255.255.255';
+            [~,isValid] = check_isIPaddress(actualStruct,defaultStruct,sectionName,fieldName);
+            obj.verifyTrue(isValid)
+
+
+            % These are invalid values for the IP
+            actualStruct.server.IP = '255.255.255.';
+            [~,isValid] = check_isIPaddress(actualStruct,defaultStruct,sectionName,fieldName);
+            obj.verifyFalse(isValid)
+
+            actualStruct.server.IP = '255.255.255';
+            [~,isValid] = check_isIPaddress(actualStruct,defaultStruct,sectionName,fieldName);
+            obj.verifyFalse(isValid)
+
+            actualStruct.server.IP = '255.255.255.sdf';
+            [~,isValid] = check_isIPaddress(actualStruct,defaultStruct,sectionName,fieldName);
+            obj.verifyFalse(isValid)
+
+            actualStruct.server.IP = 'localh';
+            [~,isValid] = check_isIPaddress(actualStruct,defaultStruct,sectionName,fieldName);
+            obj.verifyFalse(isValid)
+
+            actualStruct.server.IP = 'Localhost';
+            [~,isValid] = check_isIPaddress(actualStruct,defaultStruct,sectionName,fieldName);
+            obj.verifyFalse(isValid)
         end
     end %methods (Test)
 

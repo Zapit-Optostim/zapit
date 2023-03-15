@@ -35,6 +35,10 @@ classdef pointer < handle
         calibratedBrainOutline % The outline of the brain calibrated to the sample
         refPointsSample  % The two reference points in sample space. User provides these via calibrateSample
         % -> see also refPointsStereotaxic, below under the getters section
+
+
+        % TODO here for now (March 2023)
+        tcpServer
     end % properties
 
 
@@ -42,6 +46,10 @@ classdef pointer < handle
         experimentPath = '' % The absolute path to an experiment folder. This is used to automatically write log data
                             % when zapit.pointer.sendSamples is called.
         settings % The settings read in from the YAML file
+
+        % State of the software - TODO -- doc
+        state = 'idle'; % idle, rampdown, stim (queued or actually stimulating)
+
     end % observable properties
 
 
@@ -126,6 +134,15 @@ classdef pointer < handle
             % Only start video by default if we are not in simulated mode
             if ~obj.simulated
                 obj.cam.startVideo;
+            end
+
+
+            % Set up TCP server if requested
+            if obj.settings.tcpServer.enable
+                obj.tcpServer = zapit.interfaces.TCPserver(...
+                    'ip', obj.settings.tcpServer.IP, ...
+                    'port', obj.settings.tcpServer.port)
+                obj.tcpServer.parent = obj;
             end
 
 

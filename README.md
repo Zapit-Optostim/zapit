@@ -21,9 +21,12 @@ There is a [Change Log](CHANGELOG.md) if you are concerned about applying update
 ## Requirements
 * [Image Processing Toolbox](https://www.mathworks.com/help/images/index.html)
 * [Image Acquisition Toolbox](https://www.mathworks.com/products/image-acquisition.html)
-* [Curve Fittting Toolbox](https://www.mathworks.com/help/curvefit/)
 * [DAQmx](https://www.ni.com/en-gb/support/downloads/drivers/download.ni-daqmx.html) installed with .NET support (tested versions: 19.0 to 21.8).
+* [Curve Fittting Toolbox](https://www.mathworks.com/help/curvefit/) (Desirable but perhaps not needed)
+* [Instrument Control Toolbox](https://uk.mathworks.com/products/instrument.html) (Optional)
 * Currently only Basler cameras are supported but in principle others can be incorporated. File an Issue if you need this. 
+
+If any of the above Toolboxes are included in your licence but not installed, you may install them using the Add On Manager.
 
 ## Contributing
 Code was written by Maja Skretowska and Rob Campbell at the Sainsbury Wellcome Centre (UCL) in 2021/2022.

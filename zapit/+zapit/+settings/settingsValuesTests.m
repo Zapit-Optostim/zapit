@@ -87,6 +87,29 @@ classdef (Abstract) settingsValuesTests
                 isValid = false;
             end
         end
+
+
+        function [actualStruct,isValid] = check_isIPaddress(actualStruct,defaultStruct,sectionName,fieldName)
+            isValid = true;
+            % Check if it's a character array
+            if ~ischar(actualStruct.(sectionName).(fieldName))
+                fprintf('-> %s.%s should be a scalar. Setting it to %s.\n', ...
+                    sectionName,fieldName,defaultStruct.(sectionName).(fieldName))
+                actualStruct.(sectionName).(fieldName) = defaultStruct.(sectionName).(fieldName);
+                isValid = false;
+                return
+            end
+
+            % Then make sure the string is a valid IP address (or 'localhost')
+            if ~strcmp(actualStruct.(sectionName).(fieldName),'localhost') && ...
+                isempty(regexp(actualStruct.(sectionName).(fieldName),'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$'))
+                fprintf('-> %s.%s should be a valid IP address. Setting it to %s.\n', ...
+                    sectionName, fieldName, defaultStruct.(sectionName).(fieldName))
+                actualStruct.(sectionName).(fieldName) = defaultStruct.(sectionName).(fieldName);
+                isValid = false;
+            end
+
+        end
     end % check methods
 
 
