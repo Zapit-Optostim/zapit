@@ -133,6 +133,14 @@ function outputSettings = readSettings(fname)
     for ii = 1:length(f0);
         f1 = fields(DEFAULT_SETTINGS.(f0{ii}));
 
+
+
+        if ~isfield(settingsFromYML, f0{ii})
+            % The section is missing from the user settings file so we will use the defaults
+            allValid = false;
+            continue
+        end
+
         if ~isequal( fields(DEFAULT_SETTINGS.(f0{ii})),  fields(settingsFromYML.(f0{ii})) )
             % If the two have different fields then we need to replace the user settings
             % file on disk. This catches the case where the user has an old setting in

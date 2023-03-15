@@ -1,3 +1,4 @@
+*.pyc
 *.asv
 .DS_Store
 code/+zapit/+gui/notes.txt
