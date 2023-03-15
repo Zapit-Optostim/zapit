@@ -141,7 +141,7 @@ classdef pointer < handle
             if obj.settings.tcpServer.enable
                 obj.tcpServer = zapit.interfaces.TCPserver(...
                     'ip', obj.settings.tcpServer.IP, ...
-                    'port', obj.settings.tcpServer.port)
+                    'port', obj.settings.tcpServer.port);
                 obj.tcpServer.parent = obj;
             end
 

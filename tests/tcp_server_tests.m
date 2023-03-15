@@ -1,6 +1,9 @@
 classdef tcp_server_tests < matlab.unittest.TestCase
     % Tests of the tcp/ip server. Tests here pick up where the
     % interface module tests leave off
+    %
+    % NOTE: tests will fail if you don't have the TCP server
+    % enabled in the settings file.
 
     % TODO -- test also the API state: zapit.pointer.state
     %            idle, rampdown, stim 
@@ -17,13 +20,8 @@ classdef tcp_server_tests < matlab.unittest.TestCase
             % Does Zapit build with dummy parameters?
             [obj.hZP, obj.hZPview] = start_zapit('simulated',true);
 
-            obj.hZP.tcpServer = zapit.interfaces.TCPserver;
-            obj.hZP.tcpServer.parent = obj.hZP;
-
             % "calibrate" it. No transformation will be done.
             obj.hZP.refPointsSample = obj.hZP.refPointsStereotaxic;
-
-
 
             % To communicate with the server
             pause(0.05)
