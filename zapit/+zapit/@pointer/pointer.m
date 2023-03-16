@@ -128,7 +128,10 @@ classdef pointer < handle
             else
                obj.listeners.lastAcquiredFrame = addlistener(obj.cam, 'lastAcquiredFrame', 'PostSet', @obj.storeLastFrame);
                % Make a listener instead of the FramesAcquiredFcn
-               obj.cam.startVideo; pause(0.2), obj.cam.stopVideo; pause(0.2) % TODO -- for some reason we need to call this twice for it to start working properly
+               % TODO: this seems to cause Zapit to hang on many systems and we don't care about the
+               % simulated camera anyway, since it doesn't do anything useful right now. So comment
+               % out until/unless it is actually needed.
+               %obj.cam.startVideo; pause(0.2), obj.cam.stopVideo; pause(0.2) % TODO -- for some reason we need to call this twice for it to start working properly
             end
 
             % Only start video by default if we are not in simulated mode
