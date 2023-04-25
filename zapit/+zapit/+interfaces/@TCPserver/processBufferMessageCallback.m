@@ -17,9 +17,12 @@ function response = processBufferMessageCallback(obj,~,~)
     % Rob Campbell - SWC 2023
 
 
+    sendSampBools = dictionary([2,3,4,5],["laserOn","hardwareTriggered","logging","verbose"]);
+    bitLocs = keys(sendSampBools);
     % If nothing modifies the response output variable, the "error"
-    % state of -1 is returned. 
-    response = '-1';
+    % state of 255 in each byte is returned. 
+    response = [uint8(255),uint8(255)];
+
 
     verbose = false;
 
@@ -28,89 +31,110 @@ function response = processBufferMessageCallback(obj,~,~)
     end
 
     if isempty(obj.parent)
-        write(obj.hSocket, sprintf('%s\n',response), "string")
+        current_date = datetime('now');
+        date_float = datenum(current_date);
+        date_bytes = typecast(date_float,"uint8");
+
+        write(obj.hSocket, [date_bytes uint8(255) response], "uint8")
         return
     end
-
-    commandIn = obj.buffer.message;
-
-    % If the command is empty, return
+    current_date = datetime('now');
+    date_float = datenum(current_date);
+    commandIn = obj.buffer.command;
+    com_byte = commandIn;
+     % If the command is empty, return
     % First we handle commands that have input args
-    if startsWith(commandIn, 'sendsamples')
+    try
+    if commandIn == 1  
+        
+        arg_keys  = bitget(obj.buffer.ArgKeys,1:8,"uint8");
+        arg_vals  = bitget(obj.buffer.ArgVals,1:8,"uint8");
+        sampNum   = obj.buffer.NumSamples;
         if verbose
             disp('Starting routin to call zapit.pointer.sendSamples')
         end
         % Handle send sendSamples
-        sendSamplesArgs = strsplit(char(commandIn),' ');
-        
-        if length(sendSamplesArgs)>2
-            % Convert values from strings if needed
-            sendSamplesArgs(1) = [];
-            for ii = 1:length(sendSamplesArgs)
-                if strcmp(sendSamplesArgs{ii},'false')
-                    sendSamplesArgs{ii} = false;
-                elseif strcmp(sendSamplesArgs{ii},'true')
-                    sendSamplesArgs{ii} = true;
-                elseif ~isempty(str2num(sendSamplesArgs{ii}))
-                    sendSamplesArgs{ii} = str2num(sendSamplesArgs{ii});
-                end
-            end
 
+        
+        if sum(arg_keys) > 0
+            sendSamplesArgs = {};
+                for ii = 1:length(bitLocs)
+                    bit_loc = bitLocs(ii);
+                    if logical(arg_keys(bit_loc))
+                        sendSamplesArgs{end + 1} = sendSampBools(bit_loc);
+                        sendSamplesArgs{end + 1} = logical(arg_vals(bit_loc));
+                    end
+                end
+                if logical(arg_keys(1))
+                    sendSamplesArgs{end + 1} = "conditionNum";
+                    sendSamplesArgs{end + 1} = sampNum;
+                end
             if verbose
                 disp('zapit.pointer.sendSamples called with input arguments')
             end
-            response = obj.parent.sendSamples(sendSamplesArgs{:});
+            [varCondNum, varLaserOn] = obj.parent.sendSamples(sendSamplesArgs{:});
         else
-            response = obj.parent.sendSamples;
+            [varCondNum, varLaserOn] = obj.parent.sendSamples;
             if verbose
                 disp('zapit.pointer.sendSamples called with no input arguments')
             end
         end
-        response = num2str(response);
-
+        response(1) = varCondNum;
+        response(2) = varLaserOn;
         if verbose
             disp('Finished calling sendsamples')
         end
     else
-
         % Now handle other commands with no input args
         switch commandIn
-
-        % Queries
-        case {'stimConfLoaded?', 'scl?'}
-            % Is a stimulus config loaded?
-            if isempty(obj.parent.stimConfig)
-                response = '0';
-            else
-                response = '1';
-            end
-
-        case {'numConditions?', 'ncs?'}
-            if isempty(obj.parent.stimConfig)
-                response = '-1';
-            else
-                response = num2str(obj.parent.stimConfig.numConditions);
-            end
-
-        case {'returnState?', 'res?'}
-            response = obj.parent.state;
-
-        % Commands
-        case {'stopOptoStim', 'sos'}
-            if verbose
-                disp('Stopping stim')
-            end
-            obj.parent.stopOptoStim
-            response = '1'; % Placeholder
-
-            
+            % Queries
+            case {2} 
+                % Is a stimulus config loaded?
+                if isempty(obj.parent.stimConfig)
+                    response(1) = 0;
+                else
+                    response(1) = 1;
+                end
+    
+            case {4}
+                % How many conditions?
+                if isempty(obj.parent.stimConfig)
+                    response(1) = 0;
+                else
+                    response(1) = obj.parent.stimConfig.numConditions;
+                end
+    
+            case {3}
+                % State of zapit
+                cur_state = obj.parent.state;
+                switch cur_state
+                    case {"idle"}
+                        response(1) = 0;
+                    case {"active"}
+                        response(1) = 1;
+                end
+                
+    
+            % Commands
+            case {0}
+                % stopOptoStim
+                if verbose
+                    disp('Stopping stim')
+                end
+                obj.parent.stopOptoStim
+                response(1) = 1; % Placeholder 
         end % switch
-
-    end % if
-
+    
+    end
+    catch
+        date_float = -1.0;
+    end
         
-
+    
+    % Generate response bytes
+    response_array = [typecast(date_float,'uint8') com_byte response];
     % Reply to the client
-    write(obj.hSocket, sprintf('%s\n',response), "string");
+    write(obj.hSocket, response_array, "uint8");
 
+    
 end % processBufferMessageCallback

@@ -24,9 +24,8 @@ classdef (Abstract) tcpip < handle
         end % Destructor
 
         function setupSocket(obj)
-            % Set up for reading strings
-            configureCallback(obj.hSocket,"terminator",@obj.readDataFcn);
-            configureTerminator(obj.hSocket,"LF"); 
+            % Set up for reading messages of 4 bytes
+            configureCallback(obj.hSocket,"byte",4,@obj.readDataFcn);
         end % setupSocket
 
         function readDataFcn(obj, src, ~)
@@ -39,8 +38,11 @@ classdef (Abstract) tcpip < handle
             % the string:
             % '20230120 19:23:01;numeric;5'
 
-            msg = readline(src);
-            obj.buffer = struct('message', msg, 'messageClass', 'char');
+            msg = read(src,4,"uint8");
+            obj.buffer = struct('command', msg(1), ...
+                                'ArgKeys', msg(2), ...
+                                'ArgVals', msg(3), ...
+                                'NumSamples', msg(4));
 
         end % readDataFcn
 
