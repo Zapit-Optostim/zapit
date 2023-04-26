@@ -1,8 +1,19 @@
-classdef TCPclient < zapit.interfaces.tcpip
+classdef TCPclient < handle
+
+    properties (Hidden)
+        listeners
+    end
 
     properties
-
+        connected
+        hSocket % The server or client object will reside here
+        port = 1488
+        ip = 'localhost'
     end % properties
+
+    properties (SetObservable)
+        buffer
+    end
 
 
     methods
@@ -81,19 +92,31 @@ classdef TCPclient < zapit.interfaces.tcpip
                 return
             end
             % Sends a command and waits for a response
-            obj.buffer = []; % Wipe the buffer because we will later wait for it to change
-            obj.sendMessage(commandString);
+            obj.sendMessage(byte_tuple);
 
             waitfor(obj, 'buffer')
-            reply_bytes = obj.buffer.message;
             % Parse the reply into its components
             reply = cell(4,1);
-            reply{1} = typecast(reply_bytes(1:8),'double');
-            reply{2} = reply_bytes{9};
-            reply{3} = reply_bytes{10};
-            reply{4} = reply_bytes{11};
+            reply{1} = obj.buffer.datetime;
+            reply{2} = obj.buffer.message_type;
+            reply{3} = obj.buffer.response_tuple(1);
+            reply{4} = obj.buffer.response_tuple(2);
             return
         end % sendCommand
+
+        function setupSocket(obj)
+            % Set up for reading messages of 11 bytes (replies from the
+            % server)
+            configureCallback(obj.hSocket,"byte",11,@obj.readDataFcn);
+        end % setupSocket
+
+        function readDataFcn(obj, src, ~)
+            msg = read(src,11,"uint8");
+            obj.buffer = struct('datetime', typecast(msg(1:8),'double'), ...
+                                'message_type', msg(9), ...
+                                'response_tuple', msg(10:11));
+
+        end % readDataFcn
 
     end % methods
 
