@@ -1,14 +1,14 @@
 function pointBeamToLocationInImage(obj,~,~)
     % Obtain mouse cursor position and point beam here
-    % 
+    %
     % function zapit.gui.main.controller.pointBeamToLocationInImage(obj,~,~)
-    % 
+    %
     % Purpose
     % This callback function obtains the mouse position in the
     % image and uses this to point the scanners to this location.s
     %
     % Maja Skretowska - SWC 2021
-    
+
     if ~isfield(obj.plotOverlayHandles,'hLastPoint')
         % If the point is not present we bail out
         return
@@ -19,8 +19,8 @@ function pointBeamToLocationInImage(obj,~,~)
     pos = obj.hImAx.CurrentPoint;
     xPos = pos(1,1);
     yPos = pos(1,2);
-    
-    
+
+
     obj.plotOverlayHandles.hLastPoint.XData = xPos;
     obj.plotOverlayHandles.hLastPoint.YData = yPos;
 
@@ -46,7 +46,7 @@ function pointBeamToLocationInImage(obj,~,~)
     end
 
 
-    % Update figure title    
+    % Update figure title
     showPosInTitle = true;
 
     if showPosInTitle
@@ -54,5 +54,5 @@ function pointBeamToLocationInImage(obj,~,~)
     else
         set(get( obj.hImAx,'Title'),'String','')
     end
-    
+
 end % pointBeamToLocationInImage

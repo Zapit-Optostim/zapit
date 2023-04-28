@@ -17,25 +17,25 @@ function varargout = calibrateScanners(obj)
     % Outputs
     % optional - target and actual pixel coordinates in a structure
     %
+    % Also see
+    % zapit.pointer.measurePointingAccuracy
     %
     % Maja Skretowska - SWC 2021
     % Rob Campbell - SWC 2022
 
     obj.setLaserInMW(0)
 
-    % lower camera illumination for increased precision in detecting beam location 
+    % lower camera illumination for increased precision in detecting beam location
 
     obj.cam.exposure = obj.settings.calibrateScanners.beam_calib_exposure;
 
     obj.wipeScannerCalib
-    [R,C] = obj.generateScannerCalibrationPoints;
+    [R,C] = obj.generateScannerCalibrationPoints; % Output in mm
 
     % NOTE: see also zapit.pointer.measurePointingAccuracy which does a similar thing and maybe we should
     % use that instead of repeating code here?
 
-    % change mm coords into voltage 
-    [rVolts(:,1), rVolts(:,2)] = obj.mmToVolt(C,R);
-    obj.moveBeamXYinVolts(rVolts(1,:)); % Move to first position
+    obj.moveBeamXYinMM([C(1),R(1)]); % Move to first position
 
     pause(0.05)
 
@@ -59,9 +59,9 @@ function varargout = calibrateScanners(obj)
         if obj.breakPointingAccuracyLoop
             break
         end
-        % feed volts into scan mirrors, wait for precise image
-        % without smudges and take position in pixels
-        obj.moveBeamXYinVolts(rVolts(ii,:));
+
+        % Move scan mirrors then wait a short period to ensure we have a blur-free image
+        obj.moveBeamXYinMM([C(ii),R(ii)]);
         pause(0.1)
 
         % Attempt to get laser position and append to list if the position was found

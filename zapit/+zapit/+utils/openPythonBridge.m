@@ -5,7 +5,7 @@ function success = openPythonBridge
     %
     % Purpose
     % Share the MATLAB engine with Python in a session named 'zapit'.
-    % The initialization of the share will fail if another MATLAB 
+    % The initialization of the share will fail if another MATLAB
     % instance is already shared with this name. Return false in this
     % case. Also returns false if called on a non-Windows system.
     %
@@ -37,7 +37,7 @@ function success = openPythonBridge
     end
 
 
-    % Attempt to open connection to Python 
+    % Attempt to open connection to Python
     try
         matlab.engine.shareEngine('zapit')
         success = true;

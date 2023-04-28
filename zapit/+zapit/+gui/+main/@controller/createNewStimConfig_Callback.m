@@ -1,6 +1,6 @@
 function createNewStimConfig_Callback(obj,~,~)
     % Load the stim config editor GUI
-    % 
+    %
     % zapit.gui.main.controller.createNewStimConfig_Callback
     %
     % Purpose
@@ -9,7 +9,7 @@ function createNewStimConfig_Callback(obj,~,~)
     %
     %
     % Rob Campbell - SWC 2023
-    
+
     obj.hStimConfigEditor = zapit.gui.stimConfigEditor.controller(obj);
 
 end % createNewStimConfig_Callback

@@ -7,7 +7,7 @@ function [out,im] = measurePointingAccuracy(obj,pointsToTest)
     % Run the beam rapidly over a set of points and report pointing accuracy
     %
     % Inputs
-    % pointsToTest - n by 2 matrix of positions in mm TODO -- what is each column?
+    % pointsToTest - n by 2 matrix of positions in mm
     %
     % Outputs
     % out - structure with results
@@ -26,7 +26,7 @@ function [out,im] = measurePointingAccuracy(obj,pointsToTest)
 
 
 
-    obj.moveBeamXYinVolts(pointsToTest(1,:)); % Move to first position
+    obj.moveBeamXYinMM(pointsToTest(1,:)); % Move to first position
 
     pause(0.05)
 
@@ -36,8 +36,8 @@ function [out,im] = measurePointingAccuracy(obj,pointsToTest)
     doBackgroundFrame = true;
     if doBackgroundFrame
         backgroundFrame = obj.returnCurrentFrame(5);
-        backgroundFrame = cast(mean(backgroundFrame,3),class(backgroundFrame));
     else
+        backgroundFrame = cast(mean(backgroundFrame,3),class(backgroundFrame));
         backgroundFrame = [];
     end
 
@@ -72,8 +72,8 @@ function [out,im] = measurePointingAccuracy(obj,pointsToTest)
 
     obj.setLaserInMW(0)
 
-
     % Data for image so it can be plotted along with the data
+    pause(0.1)
     im = obj.lastAcquiredFrame;
 
 end % measurePointingAccuracy
