@@ -17,6 +17,10 @@ The Zapit main window will print a notification in the title bar when a new vers
 
 ## Version History
 
+2023/05/26 -- v0.11.1
+  * BugFix: Stop hanging on start if install does not contain a .git directory
+
+
 2023/05/26 -- v0.11.0
  * MAJOR: Add a command line stim config editor for generating patterns of points like grids, squares,
    and lines.
