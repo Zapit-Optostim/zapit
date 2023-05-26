@@ -2,9 +2,20 @@ function out = plotPointingError(data,im)
     % Testing code for plotting nicely the beam pointing error
     %
     % Example
+    %
+    % Run at the CLI:
     %  [R,C] = hZP.generateScannerCalibrationPoints;
-    %  [out,im] = hZP.measurePointingAccuracy([C,R])
+    %  [out,im] = hZP.measurePointingAccuracy([C,R]);
     %  plotPointingError(out,im) % Second optional
+    %
+    %
+    % To plot data from the last calibration in the API:
+    % plotPointingError(hZP.calibrateScannersPosData)
+    % That will, however, tell you how much it needed to shift
+    % the points for the translation.
+    %
+    %
+    % Rob Campbell
 
 
 
@@ -16,6 +27,7 @@ function out = plotPointingError(data,im)
     clf
 
 
+    % Plot as circles the error size
     subplot(2,2,1)
     ax = cla;
     hold(ax,'on')
@@ -38,7 +50,14 @@ function out = plotPointingError(data,im)
 
 
     pltData = reshape([data.targetCoords],2,length(data))';
-    viscircles(pltData,[data.totalErrorMicrons]/1000)
+    viscircles(pltData,[data.totalErrorMicrons]/1000);
+
+    % Overlay index number of the presentation
+    for ii=1:length(data)
+        text(data(ii).targetCoords(1), ...
+          data(ii).targetCoords(2), num2str(ii), ...
+          'FontSize', 8)
+    end
 
     hold(ax,'off')
     axis equal tight
