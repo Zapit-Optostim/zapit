@@ -27,7 +27,7 @@ function [settings,setTests] = default_settings
 
     %% NOTE!
     % In each case, every default setting value is defined on the first line then a test for its validity
-    % is on the line after it. 
+    % is on the line after it.
 
 
     %% General
@@ -53,7 +53,7 @@ function [settings,setTests] = default_settings
 
 
     %% Scanners
-    settings.scanners.voltsPerPixel = 2.2E-3;
+    settings.scanners.voltsPerPixel = 1.5E-3;
     setTests.scanners.voltsPerPixel = {@check_isnumeric, @check_isZeroOrGreaterScalar};
 
     settings.scanners.invertXscanner = 0;

@@ -4,7 +4,7 @@ classdef pointer < handle
     % zapit.pointer
     %
     % Purpose
-    % Drives a galvo-based photo-stimulator. The scan-lens doubles as an objective to 
+    % Drives a galvo-based photo-stimulator. The scan-lens doubles as an objective to
     % scan the beam over the sample and also to form an image via a camera.
     %
     %
@@ -12,7 +12,7 @@ classdef pointer < handle
     % Rob Campbell - SWC 2023
 
 
-    
+
     properties
 
         %%
@@ -54,8 +54,8 @@ classdef pointer < handle
 
 
     properties (Hidden)
-        lastXgalvoVoltage  = 0 % Cached value indicating last X scanner voltage 
-        lastYgalvoVoltage  = 0 % Cached value indicating last Y scanner voltage 
+        lastXgalvoVoltage  = 0 % Cached value indicating last X scanner voltage
+        lastYgalvoVoltage  = 0 % Cached value indicating last Y scanner voltage
         lastLaserValue = 0 % Cached value indicating what the laser was last set to
         buildFailed = true % Used during boostrap by start_zapit
         breakPointingAccuracyLoop = false; % Used so GUI can break out of a loop (like that in scanner calib) where the beam accuracy is measured
@@ -89,7 +89,7 @@ classdef pointer < handle
             % zapit.pointer.pointer
             %
             % Inputs (param/value pairs)
-            % 'simulated' - [false by default] If true does not connect to hardware but 
+            % 'simulated' - [false by default] If true does not connect to hardware but
             %   runs in simulated mode.
 
             params = inputParser;
@@ -170,14 +170,14 @@ classdef pointer < handle
             obj.buildFailed = false; % signal to start_zapit that all went well
 
         end % Constructor
-        
-        
+
+
         function delete(obj,~,~)
             % Stop the camera and disconnect from hardware
             %
             % zapit.pointer.delete
             %
-            
+
             fprintf('Shutting down Zapit optostim software\n')
             structfun(@delete,obj.listeners)
             if isvalid(obj.cam)
@@ -188,7 +188,7 @@ classdef pointer < handle
             delete(obj.DAQ)
 
         end % Destructor
-        
+
     end % end of constructor/destructor block
 
 
@@ -250,7 +250,7 @@ classdef pointer < handle
             % Return the coordinates the beam is supposed to have gone to during
             % calibration. These are the coordinates for which we also got a location
             % for where the beam actually went. Some locations may be missing if the
-            % software could not determine the location of the beam there. 
+            % software could not determine the location of the beam there.
 
             if isempty(obj.calibrateScannersPosData)
                 actualCoords = [];
@@ -268,7 +268,7 @@ classdef pointer < handle
             %
             % Purpose
             % Saves the settings to the YAML when they are changed
-    
+
             settingsFile = zapit.settings.findSettingsFile;
             zapit.yaml.WriteYaml(settingsFile,obj.settings);
         end % saveSettingsFile
@@ -308,8 +308,8 @@ classdef pointer < handle
             %
             % Purpose
             % Set the two galvo control AO lines with an unlocked AO operation.
-            % This property was moved from the DAQ class to here because there 
-            % are now two DAQ classes and leaving it there led to repetition. 
+            % This property was moved from the DAQ class to here because there
+            % are now two DAQ classes and leaving it there led to repetition.
             %
             % Inputs
             % beamXY - [x_voltage_value, y_voltage_value]
@@ -345,7 +345,7 @@ classdef pointer < handle
 
         function zeroScanners(obj)
             % Zero the beam
-            % 
+            %
             % zapit.pointer.zeroScanners
             %
             % Purpose

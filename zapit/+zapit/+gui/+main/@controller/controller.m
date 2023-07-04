@@ -6,11 +6,11 @@ classdef controller < zapit.gui.main.view
     %
     % Purpose
     % The "main" Zapit GUI is that which appears when the user runs "start_zapit".
-    % This class runs this GUI by controlling the elements defined by zapit.gui.main.view, 
+    % This class runs this GUI by controlling the elements defined by zapit.gui.main.view,
     % which it inherits. The view class is made in MATLAB AppDesigner and is not modified in
-    % any way. All changes are made programatically by this class. The controller also 
+    % any way. All changes are made programatically by this class. The controller also
     % interfaces with the Zapit API (the "model") which controls the hardware.
-    % 
+    %
     %
     % Rob Campbell - SWC 2022
 
@@ -41,7 +41,7 @@ classdef controller < zapit.gui.main.view
         % The following are used to build the recently loaded stim config drop-down
         % A structure that contains names and paths to recently loaded stim config files.
         previouslyLoadedStimConfigs = struct('fname', '', 'pathToFname', '', 'timeAdded', []);
-        maxPreviouslyLoadedStimConfigs = 10 % Max number to display. 
+        maxPreviouslyLoadedStimConfigs = 10 % Max number to display.
 
         % The following represents the GUI state and is used to allow for seamless transitions
         % between different states. e.g. to switch between Point and Cat & Mouse
@@ -80,7 +80,7 @@ classdef controller < zapit.gui.main.view
                 for ii=1:length(obj.model.settings.cache.previouslyLoadedFiles)
                     pl = obj.model.settings.cache.previouslyLoadedFiles{ii};
                     [pt,fn,ext] = fileparts(pl{1});
-             
+
                     obj.previouslyLoadedStimConfigs(ii) = ...
                             struct('fname', [fn,ext], ...
                                     'pathToFname', pt, ...
@@ -88,7 +88,7 @@ classdef controller < zapit.gui.main.view
                 end
 
             end
-            
+
             % Timer runs every 45 minutes and tests if software is up to date at 4am
             obj.updateTimer = timer('ExecutionMode','FixedRate', ...
                                     'Period', 60*45, ...
@@ -112,7 +112,7 @@ classdef controller < zapit.gui.main.view
             if isa(obj.updateTimer,'timer')
                 stop(obj.updateTimer)
             end
-            
+
             delete(obj.model);
             obj.model=[];
 
@@ -161,8 +161,8 @@ classdef controller < zapit.gui.main.view
             % zapit.gui.main.controller.resetROI_Callback
             %
             % Purpose
-            % Right now just calls the resetROI method of the camera object but in 
-            % future might do more stuff. 
+            % Right now just calls the resetROI method of the camera object but in
+            % future might do more stuff.
 
             obj.model.cam.resetROI;
             obj.refreshImage;
@@ -268,8 +268,8 @@ classdef controller < zapit.gui.main.view
             % zapit.gui.main.controller.setLaserPower_Callback
             %
             % Purpose
-            % Runs when the laser power slider is changed. If the laser calibration 
-            % switch is On, the laser power is set to the power level listed in the 
+            % Runs when the laser power slider is changed. If the laser calibration
+            % switch is On, the laser power is set to the power level listed in the
             % laser slider. Updates associated setting in file.
 
             if strcmp(obj.CalibLaserSwitch.Value,'On')
@@ -336,7 +336,7 @@ classdef controller < zapit.gui.main.view
             % zapit.gui.main.controller.pointSpacing_CallBack
             %
             % Purpose
-            % Changing the spinnerbox writes to the corresponding value in the settings structure. 
+            % Changing the spinnerbox writes to the corresponding value in the settings structure.
 
             obj.model.settings.calibrateScanners.pointSpacingInMM = obj.PointSpacingSpinner.Value;
         end % pointSpacing_CallBack
@@ -347,7 +347,7 @@ classdef controller < zapit.gui.main.view
             % zapit.gui.main.controller.borderBuffer_CallBack
             %
             % Purpose
-            % Changing the spinnerbox writes to the corresponding value in the settings structure. 
+            % Changing the spinnerbox writes to the corresponding value in the settings structure.
 
             obj.model.settings.calibrateScanners.bufferMM = obj.BorderBufferSpinner.Value;
         end % borderBuffer_CallBack
@@ -358,7 +358,7 @@ classdef controller < zapit.gui.main.view
             % zapit.gui.main.controller.sizeThreshSpinner_CallBack
             %
             % Purpose
-            % Changing the spinnerbox writes to the corresponding value in the settings structure. 
+            % Changing the spinnerbox writes to the corresponding value in the settings structure.
 
             if obj.SizeThreshSpinner.Value < 1
                 obj.SizeThreshSpinner.Value = 1;
@@ -372,7 +372,7 @@ classdef controller < zapit.gui.main.view
             % zapit.gui.main.controller.calibExposureSpinner_CallBack
             %
             % Purpose
-            % Changing the spinnerbox writes to the corresponding value in the settings structure. 
+            % Changing the spinnerbox writes to the corresponding value in the settings structure.
 
             if obj.CalibExposureSpinner.Value < 0
                 obj.CalibExposureSpinner.Value = 0;
@@ -409,7 +409,7 @@ classdef controller < zapit.gui.main.view
             % and if so displays this information as a string in the titlebar. Since
             % this operation may slightly pause execution and very unimportant (it is
             % done on startup also) we want it to execute once every 24 hours and only
-            % when there can't possibly be running experiments. 4 am seems safe. 
+            % when there can't possibly be running experiments. 4 am seems safe.
 
             if strcmp(datestr(datetime,'HH'),'04')
                 obj.model.setWindowTitle;

@@ -1,26 +1,26 @@
 function varargout = version
 % Return version number of the zapit package as a whole
-% 
+%
 % out = zapit.version
 %
 % Purpose
-% Return version number of the zapit package as a whole. 
+% Return version number of the zapit package as a whole.
 % Versions are semantic, meaning MAJOR.MINOR.PATCH
-% and are incremented as follows: 
+% and are incremented as follows:
 % * MAJOR version when you make incompatible API changes
 % * MINOR version when you add functionality in a backwards compatible manner
 % * PATCH version when you make backwards compatible bug fixes
 %
 % Patch number will not always be updated. e.g. in the case of minor
-% documentation commits and so forth. 
+% documentation commits and so forth.
 %
-% Inputs 
+% Inputs
 % none
 %
 % Outputs
-% out - optional structure containing the version number in numeric and string formats 
-%       plus the date of last update and information on the current Git commit. 
-%       If no output asked, version printed to screen. 
+% out - optional structure containing the version number in numeric and string formats
+%       plus the date of last update and information on the current Git commit.
+%       If no output asked, version printed to screen.
 %
 %
 % Rob Campbell - SWC 2022
@@ -28,8 +28,8 @@ function varargout = version
 
 %% EDIT THE FOLLOWING TO INCREMENT THE VERSION
 out.version.MAJOR = 0;
-out.version.MINOR = 10;
-out.version.PATCH = 6;
+out.version.MINOR = 11;
+out.version.PATCH = 0;
 
 %% Since v0.10.0 (2023/02/01) the preReleaseString will likely remain empty.
 out.version.preReleaseString = '';

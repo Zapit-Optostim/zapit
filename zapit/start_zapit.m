@@ -8,7 +8,7 @@ function varargout = start_zapit(varargin)
     %
     %
     % Optional Input args (param/val pairs
-    % 'simulated'  -  [False by default on Windows. True on Linux and Mac] If true does not connect 
+    % 'simulated'  -  [False by default on Windows. True on Linux and Mac] If true does not connect
     %                to hardware but runs in  simulated mode.
     % 'useExisting'  -  [False by default] If true, an exsiting instance of hZP is used.
     % 'startGUI'  -  [True by default]
@@ -18,12 +18,12 @@ function varargout = start_zapit(varargin)
     % The outputs are optional. These variables are automatically created in the
     % base workspace and don't need to be explicitly placed there.
     %
-    % hZP - instance of class zapit.pointer 
+    % hZP - instance of class zapit.pointer
     % hZPview - instance of class zapit.gui.main.controller
     %
     % Rob Campbell - SWC 2022
 
-    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     %Parse optional arguments
     params = inputParser;
     params.CaseSensitive = false;
@@ -42,7 +42,7 @@ function varargout = start_zapit(varargin)
     simulated=params.Results.simulated;
     startGUI=params.Results.startGUI;
 
-    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+    % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     % Build optional arguments to feed to Zapit during its construction
     ZPargs={'simulated',simulated};
@@ -105,7 +105,7 @@ function varargout = start_zapit(varargin)
 
     %By this point we should have a functioning hZP object, which is the model in our model/view system
 
- 
+
 
 
     % Report where Zapit is installed
@@ -158,4 +158,4 @@ function safe = isSafeToMake_hZP
         safe=true;
     end
 
-    
+

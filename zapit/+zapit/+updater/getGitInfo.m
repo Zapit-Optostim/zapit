@@ -84,6 +84,13 @@ while length(pathToFile)>1
     if exist(pathToDotGit,'dir')
         break
     end
+
+    % If we are in the root directory we break: no git dir was found
+    [~,curDir] = fileparts(pathToFile);
+    if isempty(curDir)
+        return
+    end
+
 end
 
 verbose = false;

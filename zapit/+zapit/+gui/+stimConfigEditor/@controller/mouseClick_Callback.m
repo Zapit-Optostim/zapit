@@ -10,7 +10,7 @@ function mouseClick_Callback(obj,~,~)
     if verbose
         fprintf('mouseClick_Callback executed\n')
     end
-    
+
     C = get(obj.hAx, 'CurrentPoint');
     X = C(1,1);
     Y = C(1,2);
@@ -21,7 +21,7 @@ function mouseClick_Callback(obj,~,~)
     if X<xl(1) || X>xl(2) || Y<yl(1) || Y>yl(2)
         return
     end
-    
+
     % TODO -- should we make it impossible to place points outside of the brain?
 
     % Each time the user clicks we will add a new data point color and symbol.
@@ -36,6 +36,14 @@ function mouseClick_Callback(obj,~,~)
         % Add a point
         hold(obj.hAx,'on')
 
+
+        if  obj.BilateralButton.Value
+            uniBi = 'bilateral';
+        else
+            uniBi = 'unilateral';
+        end
+
+
         if ~obj.isShiftPressed
             % We add a point as a new condition
             obj.pAddedPoints(end+1) = plot(obj.pCurrentPoint.XData, ...
@@ -44,6 +52,10 @@ function mouseClick_Callback(obj,~,~)
                                             'Marker', obj.currentSymbol, ...
                                             'Color', obj.currentColor, ...
                                             'Parent', obj.hAx);
+
+            typeString = [uniBi,'_point'];
+            obj.pAddedPoints(end).UserData = struct('type',typeString);
+
         elseif obj.isShiftPressed && obj.BilateralButton.Value == 0
             % Then we append a point
             maxPointsPerCondition = obj.settings.experiment.maxStimPointsPerCondition;
@@ -53,11 +65,6 @@ function mouseClick_Callback(obj,~,~)
                 obj.pAddedPoints(end).YData(end+1) = obj.pCurrentPoint.YData;
 
                 % Note if this was a bilateral or a unilateral condition and singular or plural number
-                if  obj.BilateralButton.Value
-                    uniBi = 'bilateral';
-                else
-                    uniBi = 'unilateral';
-                end
 
                 typeString = [uniBi,'_point'];
                 if length(obj.pAddedPoints(end).XData)>1

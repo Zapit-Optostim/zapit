@@ -6,16 +6,29 @@ function [R,C] = generateScannerCalibrationPoints(obj, varargin)
     % Purpose
     % Generate the scanner calibration point locations
     %
+    %
     % Inputs (param/val pairs)
     % 'pointSpacingInMM' - distance in mm between points. By default the value in the GUI is chosen
     % 'bufferMM' - distance in mm between image edge and points. By default the value in the GUI is chosen.
     % 'doPlot' - false by default. If true, spawn a new window an plot points.
     %
     % Outputs
-    % R and C - the rows and columns where the laser will be sent
+    % R and C - the rows and columns where the laser will be sent. Units in mm.
+    %
+    %
+    % Examples
+    % >> start_zapit
+    % >> [R,C] = hZP.generateScannerCalibrationPoints('doPlot',true);
+    %
+    % Note that in the above example, altering the point spacing and buffer
+    % parameters in the GUI will alter the output of this method.
+    %
     %
     % See also:
     % zapit.pointer.calibrateScanners
+    %
+    %
+    % Rob Campbell - SWC 2023
 
 
 

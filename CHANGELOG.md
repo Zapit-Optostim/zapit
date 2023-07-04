@@ -17,8 +17,12 @@ The Zapit main window will print a notification in the title bar when a new vers
 
 ## Version History
 
-2023/02/XX -- v0.11.7
- * Add a command line stim config editor for generating patterns of points like grids, squares,
+2023/05/26 -- v0.11.1
+  * BugFix: Stop hanging on start if install does not contain a .git directory
+
+
+2023/05/26 -- v0.11.0
+ * MAJOR: Add a command line stim config editor for generating patterns of points like grids, squares,
    and lines.
  * MAJOR: Add a simple TCP/IP server for external control. Zapit has a new property: state, that reports
      whether it is idle, stimulating, or ramping down.
@@ -29,7 +33,10 @@ The Zapit main window will print a notification in the title bar when a new vers
  * BugFix: Ensure ROI is flipped when it is made.
  * BugFix: Calibration points follow ROI.
  * BugFix: add new tests and bugfixes to tests
- * 
+ * BugFix: stimulus generator was producing files that do not work. 
+ * Various behind the scenes improvements to how settings are handled. 
+ * IMPROVEMENT: Cat & mouse runs much faster
+ * IMPROVEMENT: Report positioning errors to figure title in Point Mode
 
 
 2023/02/14 -- v0.10.6
