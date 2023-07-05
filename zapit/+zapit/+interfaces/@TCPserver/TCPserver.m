@@ -1,4 +1,4 @@
-classdef TCPserver < zapit.interfaces.tcpip
+classdef TCPserver < handle
     % zapit.interfaces.TCPserver
     %
     % This class handles TCP/IP comms. If the tcpServer.enable setting is
@@ -9,8 +9,17 @@ classdef TCPserver < zapit.interfaces.tcpip
     properties (Hidden)
         parent % instance of zaptit.pointer to which we attached
         listeners  % Structure that holds listeners so they can be easily cleaned up in the destructor
-
     end % properties
+
+    properties
+        hSocket % The server or client object will reside here
+        port = 1488
+        ip = 'localhost'
+    end
+
+    properties (SetObservable)
+        buffer
+    end
 
 
     methods
@@ -42,6 +51,20 @@ classdef TCPserver < zapit.interfaces.tcpip
                 @obj.processBufferMessageCallback);
 
         end % Constructor
+
+        function setupSocket(obj)
+            % Set up for reading messages of 4 bytes
+            configureCallback(obj.hSocket,"byte",4,@obj.readDataFcn);
+        end % setupSocket
+
+        function readDataFcn(obj, src, ~)
+            msg = read(src,4,"uint8");
+            obj.buffer = struct('command', msg(1), ...
+                                'ArgKeys', msg(2), ...
+                                'ArgVals', msg(3), ...
+                                'NumSamples', msg(4));
+
+        end % readDataFcn
 
 
         function delete(obj)
