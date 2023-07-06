@@ -29,7 +29,7 @@ function varargout = version
 %% EDIT THE FOLLOWING TO INCREMENT THE VERSION
 out.version.MAJOR = 0;
 out.version.MINOR = 11;
-out.version.PATCH = 0;
+out.version.PATCH = 1;
 
 %% Since v0.10.0 (2023/02/01) the preReleaseString will likely remain empty.
 out.version.preReleaseString = '';
