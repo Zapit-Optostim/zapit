@@ -12,7 +12,9 @@ function varargout = version
 % * PATCH version when you make backwards compatible bug fixes
 %
 % Patch number will not always be updated. e.g. in the case of minor
-% documentation commits and so forth.
+% documentation commits and so forth. This information is extracted from CHANGELOG.md
+% file automatically. You do not need to edit this file.
+%
 %
 % Inputs
 % none
@@ -26,21 +28,7 @@ function varargout = version
 % Rob Campbell - SWC 2022
 
 
-%% EDIT THE FOLLOWING TO INCREMENT THE VERSION
-out.version.MAJOR = 0;
-out.version.MINOR = 11;
-out.version.PATCH = 1;
-
-%% Since v0.10.0 (2023/02/01) the preReleaseString will likely remain empty.
-out.version.preReleaseString = '';
-
-%%% UPDATE THE DATE
-out.date.year = 2023;
-out.date.month = 2;
-out.date.day = 2;
-
-
-
+out = zapit.updater.getVersionFromChangeLog;
 
 out.version.string = sprintf('%d.%d.%d%s', ...
                 out.version.MAJOR, ...

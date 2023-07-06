@@ -11,11 +11,25 @@ The project largely adheres to [semantic versioning](http://semver.org) guidelin
 * The MINOR version is incremented when functionality is added in a backwards compatible manner. This might mean significant new features that do not break existing functionality, or it might mean existing features are significantly improved. For example, addition of a rat atlas, or improvements in the way stimulus conditions are overlaid in the main GUI. 
 * The PATCH version is incremented when there are backwards compatible bug fixes. It will also be incremented by the addition of new example code snippets, addition of tests, or by code changes which result in no functionality change. 
 
+### NOTE ON CONVENTIONS IN THIS FILE
+The function zapit.updater.getVersionFromChangeLog extracts the software version number
+from this file. For this to work the version must be written out in this format:
+YEAR/MONTH/DAY -- vMAJOR.MINOR.PATCH
+For example, the following are valid
+
+
 ### Upgrade Notifications
 The Zapit main window will print a notification in the title bar when a new version is available.
+2023/05/26 -- v0.11.1
+2023/5/26 --   v0.11.1
+2023/05/26 -- v0.11.01
+2023/05/26    --    v 0.11.1
 
 
 ## Version History
+
+2023/07/23 -- v0.12.0
+  * Get version information from CHANGELOG.md not hardcoded numbers in zapit.version
 
 2023/05/26 -- v0.11.1
   * BugFix: Stop hanging on start if install does not contain a .git directory
