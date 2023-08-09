@@ -4,7 +4,7 @@ function response = processBufferMessageCallback(obj,~,~)
     % function response = zapit.interfaces.TCPserver.processBufferMessageCallback()
     %
     % Purpose
-    % Callback function that handles the TCP messaging system for zapit. 
+    % Callback function that handles the TCP messaging system for zapit.
     %
     % Commands
     % IN: 'stimConfLoaded?', 'scl?' ; OUT: 0 or 1
@@ -14,13 +14,14 @@ function response = processBufferMessageCallback(obj,~,~)
     %
     % Return false if not connected to zapit.pointer
     %
-    % Rob Campbell - SWC 2023
+    % Rob Campbell, Peter Vincent - SWC 2023
+
 
 
     sendSampBools = dictionary([2,3,4,5],["laserOn","hardwareTriggered","logging","verbose"]);
     bitLocs = keys(sendSampBools);
     % If nothing modifies the response output variable, the "error"
-    % state of 255 in each byte is returned. 
+    % state of 255 in each byte is returned.
     response = [uint8(255),uint8(255)];
 
 
@@ -35,7 +36,7 @@ function response = processBufferMessageCallback(obj,~,~)
         date_float = datenum(current_date);
         date_bytes = typecast(date_float,"uint8");
 
-        write(obj.hSocket, [date_bytes uint8(255) response], "uint8")
+        write(obj.hSocket, [date_bytes uint8(255) response], "uint8");
         return
     end
     current_date = datetime('now');
@@ -45,17 +46,17 @@ function response = processBufferMessageCallback(obj,~,~)
      % If the command is empty, return
     % First we handle commands that have input args
     try
-    if commandIn == 1  
-        
+    if commandIn == 1
+
         arg_keys  = bitget(obj.buffer.ArgKeys,1:8,"uint8");
         arg_vals  = bitget(obj.buffer.ArgVals,1:8,"uint8");
         sampNum   = obj.buffer.NumSamples;
         if verbose
-            disp('Starting routin to call zapit.pointer.sendSamples')
+            disp('Starting routine to call zapit.pointer.sendSamples')
         end
         % Handle send sendSamples
 
-        
+
         if sum(arg_keys) > 0
             sendSamplesArgs = {};
                 for ii = 1:length(bitLocs)
@@ -88,14 +89,14 @@ function response = processBufferMessageCallback(obj,~,~)
         % Now handle other commands with no input args
         switch commandIn
             % Queries
-            case {2} 
+            case {2}
                 % Is a stimulus config loaded?
                 if isempty(obj.parent.stimConfig)
                     response(1) = 0;
                 else
                     response(1) = 1;
                 end
-    
+
             case {4}
                 % How many conditions?
                 if isempty(obj.parent.stimConfig)
@@ -103,7 +104,7 @@ function response = processBufferMessageCallback(obj,~,~)
                 else
                     response(1) = obj.parent.stimConfig.numConditions;
                 end
-    
+
             case {3}
                 % State of zapit
                 cur_state = obj.parent.state;
@@ -113,8 +114,8 @@ function response = processBufferMessageCallback(obj,~,~)
                     case {"active"}
                         response(1) = 1;
                 end
-                
-    
+
+
             % Commands
             case {0}
                 % stopOptoStim
@@ -122,19 +123,19 @@ function response = processBufferMessageCallback(obj,~,~)
                     disp('Stopping stim')
                 end
                 obj.parent.stopOptoStim
-                response(1) = 1; % Placeholder 
+                response(1) = 1; % Placeholder
         end % switch
-    
+
     end
     catch
         date_float = -1.0;
     end
-        
-    
+
+
     % Generate response bytes
     response_array = [typecast(date_float,'uint8') com_byte response];
     % Reply to the client
     write(obj.hSocket, response_array, "uint8");
 
-    
+
 end % processBufferMessageCallback
