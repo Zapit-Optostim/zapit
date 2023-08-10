@@ -242,6 +242,33 @@ classdef pointer < handle
         end % wipeScannerCalib
 
 
+        function applyUnityStereotaxicCalib(obj)
+            % Apply a 1:1 calibration between camera and stereotaxic coordinates
+            %
+            % function zapit.pointer.applyUnityStereotaxicCalib
+            %
+            % Purpose
+            % Apply a dummy stereotaxic coordinate calibration for debugging and dev.
+
+            obj.sampleCalibrated = true;
+            obj.refPointsSample = obj.refPointsStereotaxic;
+        end % applyUnityStereotaxicCalib
+
+
+        function wipeStereotaxicCalib(obj)
+            % Wipe the current stereotaxic calibration
+            %
+            % function zapit.pointer.wipeStereotaxicCalib
+            %
+            % Purpose
+            % Used to remove the current stereotaxic coordinate calibration. Likely this
+            % method will only be used for debugging and dev purposes.
+
+            obj.sampleCalibrated = false;
+            obj.refPointsSample = [];
+        end % wipeStereotaxicCalib
+
+
         function actualCoords = returnScannerCalibTargetCoords(obj)
             % Return target coords of the beam during calibration
             %
