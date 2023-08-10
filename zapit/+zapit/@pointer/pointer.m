@@ -154,6 +154,7 @@ classdef pointer < handle
 
             if obj.simulated
                 obj.DAQ = zapit.simulated.DAQ;
+                obj.scannersCalibrated = true;
             else
                 fprintf('Connecting to DAQ\n')
                 switch lower(obj.settings.NI.wrapper)
