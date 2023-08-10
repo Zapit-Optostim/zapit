@@ -65,7 +65,6 @@ function varargout = sendSamples(obj, varargin)
     logging = params.Results.logging;
     verbose = params.Results.verbose;
 
-
     if ~obj.isReadyToStim
         fprintf('zapit.pointer.%s -- Not ready to stimulate\n', mfilename)
         if nargout>0

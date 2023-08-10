@@ -82,7 +82,7 @@ function response = processBufferMessageCallback(obj,~,~)
             end
         end
 
-        if varCondNum>0 && varLaserOn>0
+        if varCondNum>0 && varLaserOn>=0
             % If -1 is being returned for either, then sendSamples failed
             response(1) = varCondNum;
             response(2) = varLaserOn;
