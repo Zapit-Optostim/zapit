@@ -24,7 +24,7 @@ NOTE: the version number of the software is taken from the last version number i
 
 ## Version History
 
-2023/07/23 -- v0.12.0
+2023/08/10 -- v0.12.0
   * Get version information from CHANGELOG.md not hardcoded numbers in zapit.version
   * Move TCP/IP client out of Zapit and to standalone repo.
   * Update TCP/IP server to handle the new protocols.
