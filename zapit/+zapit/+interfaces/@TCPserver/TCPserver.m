@@ -7,7 +7,7 @@ classdef TCPserver < handle
     %
     %
     properties (Hidden)
-        parent % instance of zaptit.pointer to which we attached
+        parent % instance of zapit.pointer to which we attached
         listeners  % Structure that holds listeners so they can be easily cleaned up in the destructor
     end % properties
 
@@ -26,7 +26,7 @@ classdef TCPserver < handle
 
         function obj = TCPserver(varargin)
             % Inputs (optional param/val pairs)
-            % 'ip' - [string] Is 'localhost' by default (see zapit.interfaces.tcpip)
+            % 'ip' - [string] Is 'localhost' by default
             % 'port' - [numeric scalar] is 1488 by default
 
             params = inputParser;
