@@ -32,7 +32,8 @@ NOTE: the version number of the software is taken from the last version number i
   * IMPROVEMENT: Added hZP.applyUnityStereotaxicCalib so user doesn't have to remember hZP.refPointsSample = hZP.refPointsStereotaxic;
   * BUGFIX: stopOptoStim can not be run if no stim config loaded.
   * zapit.pointer.sendSamples returns -1 if it failed to run.
-
+  * zapit.interfaces.getIPaddress is new function to return IP address of Zapit Windows PC.
+  * zapit.interfaces.tcpServer.isClientConnected reports if a client is connected.
 
 2023/05/26 -- v0.11.1
   * BugFix: Stop hanging on start if install does not contain a .git directory

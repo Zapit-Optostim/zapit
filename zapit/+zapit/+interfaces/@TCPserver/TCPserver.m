@@ -71,6 +71,41 @@ classdef TCPserver < handle
             delete(obj.hSocket)
         end % Destructor
 
+
+        function varargout = isClientConnected(obj)
+            % Check if a client is currently connected to the server
+            %
+            % function zapit.interfaces.TCPserver.isClientConnected
+            %
+            % Purpose
+            % Return true if a client is connected. False otherwise. If no output
+            % argument is requested, the state is printed to screen.
+            %
+            % Inputs
+            % none
+            %
+            % Outputs
+            % isConnected - [optional] True if connected. False otherwise
+
+            if isempty(obj.hSocket)
+                isConnected = false;
+            else
+                isConnected = obj.hSocket.Connected;
+            end
+
+            if nargout>0
+                varargout{1} = isConnected;
+                return
+            end
+
+            if isConnected
+                fprintf('Client is connected to the TCP server\n')
+            else
+                fprintf('No client is connected to the TCP server\n')
+            end
+        end % isClientConnected
+
     end % methods
 
 end  % TCPserver
+
