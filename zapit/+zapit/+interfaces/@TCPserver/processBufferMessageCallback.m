@@ -19,7 +19,7 @@ function response = processBufferMessageCallback(obj,~,~)
 
     % This dictionary defines a lookup table for optional parameter value names for
     % zapit.pointer.sendSamples
-    sendSampBools = dictionary([2,3,4,5],["laserOn","hardwareTriggered","logging","verbose"]);
+    sendSampBools = containers.Map([2,3,4,5],["laserOn","hardwareTriggered","logging","verbose"]);
     bitLocs = keys(sendSampBools);
 
     % Define the default response bytes. If nothing modifies the response output variable,
@@ -108,7 +108,7 @@ function response = processBufferMessageCallback(obj,~,~)
         % Now handle other commands with no input args
         switch com_byte
             % Queries
-            case {2}
+            case 2
                 % Is a stimulus config loaded?
                 if isempty(obj.parent.stimConfig)
                     response(1) = 0;
@@ -116,7 +116,7 @@ function response = processBufferMessageCallback(obj,~,~)
                     response(1) = 1;
                 end
 
-            case {4}
+            case 4
                 % How many conditions?
                 if isempty(obj.parent.stimConfig)
                     response(1) = 0;
@@ -124,17 +124,19 @@ function response = processBufferMessageCallback(obj,~,~)
                     response(1) = obj.parent.stimConfig.numConditions;
                 end
 
-            case {3}
+            case 3
                 % State of zapit
                 cur_state = obj.parent.state;
                 switch cur_state
-                    case {"idle"}
+                    case "idle"
                         response(1) = 0;
-                    case {"active"}
+                    case "active"
                         response(1) = 1;
+                    case "rampdown"
+                        response(1) = 2;
                 end
 
-            case {0}
+            case 0
                 % stopOptoStim
                 if verbose
                     disp('Stopping stim')
