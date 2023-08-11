@@ -105,7 +105,7 @@ classdef pointer < handle
             if isempty(params.Results.settingsFile)
                 obj.settings = zapit.settings.readSettings;
             else
-                obj.settings = zapit.settings.readSettings(params.Results.settingsFile)
+                obj.settings = zapit.settings.readSettings(params.Results.settingsFile);
             end
 
             % Connect to camera

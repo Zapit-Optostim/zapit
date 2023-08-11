@@ -7,7 +7,7 @@ function loadStimConfig_Callback(obj,src,~)
     % Loads stim config on button press and add to the list of previously loaded files
     %
     %
-    
+
 
     % Stop video first as the video running seems to really slow down loading
     isCamRunning = obj.model.cam.isrunning;
