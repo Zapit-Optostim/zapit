@@ -11,11 +11,29 @@ The project largely adheres to [semantic versioning](http://semver.org) guidelin
 * The MINOR version is incremented when functionality is added in a backwards compatible manner. This might mean significant new features that do not break existing functionality, or it might mean existing features are significantly improved. For example, addition of a rat atlas, or improvements in the way stimulus conditions are overlaid in the main GUI. 
 * The PATCH version is incremented when there are backwards compatible bug fixes. It will also be incremented by the addition of new example code snippets, addition of tests, or by code changes which result in no functionality change. 
 
+### NOTE ON CONVENTIONS IN THIS FILE
+The function zapit.updater.getVersionFromChangeLog extracts the software version number
+from this file. For this to work the version must be written out in this format:
+YEAR/MONTH/DAY -- vMAJOR.MINOR.PATCH
+For example, the following are valid
+
+
 ### Upgrade Notifications
 The Zapit main window will print a notification in the title bar when a new version is available.
-
+NOTE: the version number of the software is taken from the last version number in the version history in this file!
 
 ## Version History
+
+2023/08/10 -- v0.12.0
+  * Get version information from CHANGELOG.md not hardcoded numbers in zapit.version
+  * Move TCP/IP client out of Zapit and to standalone repo.
+  * Update TCP/IP server to handle the new protocols.
+  * IMPROVEMENT: Scanners are marked as calibrated when starting in simulated mode.
+  * IMPROVEMENT: Added hZP.applyUnityStereotaxicCalib so user doesn't have to remember hZP.refPointsSample = hZP.refPointsStereotaxic;
+  * BUGFIX: stopOptoStim can not be run if no stim config loaded.
+  * zapit.pointer.sendSamples returns -1 if it failed to run.
+  * zapit.interfaces.getIPaddress is new function to return IP address of Zapit Windows PC.
+  * zapit.interfaces.tcpServer.isClientConnected reports if a client is connected.
 
 2023/05/26 -- v0.11.1
   * BugFix: Stop hanging on start if install does not contain a .git directory

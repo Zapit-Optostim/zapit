@@ -6,16 +6,17 @@ function varargout = sendSamples(obj, varargin)
     %
     % Purpose
     % This method is a critical part of the API for running experiments using Zapit. It writes
-    % the stimulation waveforms for a single trial to the DAQ. The photostimulation either starts 
-    % immediately or after receipt of a digital trigger, depending on the state of the 
-    % "hardwareTriggered" input argument. The default is to wait for a trigger. Unless specified 
-    % explicitly, the stimulus (locations to photoactivate) is chosen at random. If the user has 
+    % the stimulation waveforms for a single trial to the DAQ. The photostimulation either starts
+    % immediately or after receipt of a digital trigger, depending on the state of the
+    % "hardwareTriggered" input argument. The default is to wait for a trigger. Unless specified
+    % explicitly, the stimulus (locations to photoactivate) is chosen at random. If the user has
     % defined an experiment directory via the GUI (or directly with zapit.pointer.experimentPath)
-    % then trial data are logged to disk automatically. 
+    % then trial data are logged to disk automatically.
+    % Only runs if zapit.pointer.isReadyToStim returns true
     %
     % * How are the waveforms generated?
     % The zapit.stimConfig class contains three methods that are used to make waveforms to
-    % send to the DAQ. These methods are automatically run sequentially: 
+    % send to the DAQ. These methods are automatically run sequentially:
     % calibratedPoints -> calibratedPointsInVolts -> chanSamples (a getter)
     % The waveforms are obtained here with a call to stimConfig.chanSamples
     %
@@ -23,10 +24,10 @@ function varargout = sendSamples(obj, varargin)
     % Inputs [param/value pairs]
     % 'conditionNum' - Integer but empty by default. This is the index of the condition number to
     %                  present. If empty or -1 a random one is chosen.
-    % 'laserOn' - [bool, true by default] If true the laser is on. If false the galvos move but 
+    % 'laserOn' - [bool, true by default] If true the laser is on. If false the galvos move but
     %              the laser is off. If empty or -1, a random laser state is chosen.
-    % 'hardwareTriggered' [bool, true by default] If true the DAQ waits for a hardware trigger before 
-    %                   presenting the waveforms. 
+    % 'hardwareTriggered' [bool, true by default] If true the DAQ waits for a hardware trigger before
+    %                   presenting the waveforms.
     % 'logging' - [bool, true by default] If true we write log files automatically if the user has
     %             defined a valid directory in zapit.pointer.experimentPath.
     % 'verbose' - [bool, false by default] If true print debug messages to screen.
@@ -35,15 +36,16 @@ function varargout = sendSamples(obj, varargin)
     % Outputs
     % conditionNum - optionally return the condition number (index of this stimulus)
     % laserOn - optionally return whether or not the laser was on.
-    % waveforms - optionally return the waveforms for debug. 
+    % waveforms - optionally return the waveforms for debug.
+    % All outputs are -1 if the method failed to run.
     %
-    %   
+    %
     % Examples
     % .sendSamples('laserOn',[]) % Present random condition with random laser on/off state
-    % .sendSamples('hardwareTriggered', false) % Choose random sample and present immediately 
+    % .sendSamples('hardwareTriggered', false) % Choose random sample and present immediately
     % .sendSamples('conditionNumber',3) % Play condition 3 after receiving a hardware trigger
     %
-    % Rob Campbell - SWC 2022 
+    % Rob Campbell - SWC 2022
     % (from original by Maja Skretowska - SWC 2020-2022)
 
 
@@ -63,6 +65,21 @@ function varargout = sendSamples(obj, varargin)
     logging = params.Results.logging;
     verbose = params.Results.verbose;
 
+    if ~obj.isReadyToStim
+        fprintf('zapit.pointer.%s -- Not ready to stimulate\n', mfilename)
+        if nargout>0
+            varargout{1} = -1;
+        end
+
+        if nargout>1
+            varargout{2} = -1;
+        end
+
+        if nargout>2
+            varargout{3} = -1;
+        end
+        return
+    end
 
     % Choose a random condition if necessary
     if isempty(conditionNumber) || conditionNumber == -1
@@ -116,8 +133,8 @@ function varargout = sendSamples(obj, varargin)
                             'hardwareTriggered', hardwareTriggered, ...
                             'taskName','sendSamples', ...
                             'verbose', false);
-  
-    
+
+
     % The current rampdown should be what is requested by this trial
     obj.stimConfig.offRampDownDuration_ms = ...
             obj.stimConfig.stimLocations(conditionNumber).Attributes.offRampDownDuration_ms;
@@ -129,7 +146,7 @@ function varargout = sendSamples(obj, varargin)
     obj.DAQ.start;
 
 
-    %% 
+    %%
     if nargout>0
         varargout{1} = conditionNumber;
     end

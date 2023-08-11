@@ -16,6 +16,9 @@ function stopOptoStim(obj, rampDownInMS)
     %
     % Rob Campbell - SWC 2022
 
+    if isempty(obj.stimConfig)
+        return
+    end
 
     if nargin<2
         rampDownInMS = obj.stimConfig.offRampDownDuration_ms;

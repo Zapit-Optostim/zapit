@@ -4,16 +4,16 @@ function details = checkForNewVersion
     % details = zapit.updater.checkForNewVersion()
     %
     % Purpose
-    % Use GitHub's releases and the local reported version number to decide 
+    % Use GitHub's releases and the local reported version number to decide
     % whether there is a new version up on GitHub.
     %
     % Inputs
     % none
     %
     % Outputs
-    % details - A structure that reports whether or not there is a new version, what is the 
-    %          current local version, how many releases old it is, and what is the latest
-    %          version on GitHub.
+    % details - A structure that reports whether or not there is a new version, what is
+    %          the current local version, how many releases old it is, and what is the
+    %          latest version on GitHub.
     %
     % Rob Campbell - SWC 2023
 

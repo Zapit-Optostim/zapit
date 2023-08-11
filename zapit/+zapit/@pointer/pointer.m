@@ -105,7 +105,7 @@ classdef pointer < handle
             if isempty(params.Results.settingsFile)
                 obj.settings = zapit.settings.readSettings;
             else
-                obj.settings = zapit.settings.readSettings(params.Results.settingsFile)
+                obj.settings = zapit.settings.readSettings(params.Results.settingsFile);
             end
 
             % Connect to camera
@@ -154,6 +154,7 @@ classdef pointer < handle
 
             if obj.simulated
                 obj.DAQ = zapit.simulated.DAQ;
+                obj.scannersCalibrated = true;
             else
                 fprintf('Connecting to DAQ\n')
                 switch lower(obj.settings.NI.wrapper)
@@ -239,6 +240,33 @@ classdef pointer < handle
             obj.transform = [];
             obj.scannersCalibrated = false;
         end % wipeScannerCalib
+
+
+        function applyUnityStereotaxicCalib(obj)
+            % Apply a 1:1 calibration between camera and stereotaxic coordinates
+            %
+            % function zapit.pointer.applyUnityStereotaxicCalib
+            %
+            % Purpose
+            % Apply a dummy stereotaxic coordinate calibration for debugging and dev.
+
+            obj.sampleCalibrated = true;
+            obj.refPointsSample = obj.refPointsStereotaxic;
+        end % applyUnityStereotaxicCalib
+
+
+        function wipeStereotaxicCalib(obj)
+            % Wipe the current stereotaxic calibration
+            %
+            % function zapit.pointer.wipeStereotaxicCalib
+            %
+            % Purpose
+            % Used to remove the current stereotaxic coordinate calibration. Likely this
+            % method will only be used for debugging and dev purposes.
+
+            obj.sampleCalibrated = false;
+            obj.refPointsSample = [];
+        end % wipeStereotaxicCalib
 
 
         function actualCoords = returnScannerCalibTargetCoords(obj)

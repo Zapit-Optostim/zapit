@@ -2,16 +2,16 @@ function vStruct = versionStringToStructure(vString)
     % Convert a version string into a structure for easier parsing
     %
     % function vStruct = zapit.updater.versionStringToStructure(vString)
-    % 
+    %
     % Purpose
     % Converts a version string to a structure so it can be handled more easily.
     %
     % Inputs
-    % vString - A string i the form 'v0.11.23-beta'. The pre-release string 
+    % vString - A string i the form 'v0.11.23-beta'. The pre-release string
     %           ('-.*') is optional.
     %
     % Outputs
-    % vStuct - The string converted in to a structure. For example, if vString 
+    % vStuct - The string converted in to a structure. For example, if vString
     %          is "0.6.0-alpha" then vStruct will be:
     %
     %            MAJOR: 0
@@ -22,9 +22,11 @@ function vStruct = versionStringToStructure(vString)
     %
     % Rob Campbell - SWC 2022
 
-    if strcmp(vString(1),'v')
-        vString(1) = [];
-    end
+    % strip any leading text up the 'v' for 'version'
+    vString = regexprep(vString,'.*v','');
+
+    % strip any trailing newlines
+    vString = regexprep(vString,'\n$','');
 
     tmp = strsplit(vString,'-');
 
