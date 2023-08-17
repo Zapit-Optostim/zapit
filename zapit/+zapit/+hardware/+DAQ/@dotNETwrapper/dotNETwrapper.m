@@ -230,7 +230,7 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             obj.hAO.Control(TaskAction.Verify);
 
             obj.hAOtaskWriter = AnalogMultiChannelWriter(obj.hAO.Stream);
-            
+
             obj.hAO.Start;
         end % connectUnclockedAO
 
@@ -277,7 +277,10 @@ classdef dotNETwrapper < zapit.hardware.DAQ
 
             % If we are already connected we don't proceed
             if ~isempty(obj.hAO) && isvalid(obj.hAO) && obj.hAO.AOChannels.Count>0 && ...
-                    startsWith(char(obj.hAO.AOChannels.All.VirtualName), taskName) %TODO: not the task name!
+                    startsWith(char(obj.hAO.AOChannels.All.VirtualName), taskName)
+                if verbose
+                    fprintf('DAQ connection to task %s already made. Skipping.\n', taskName)
+                end
                 return
             end
 

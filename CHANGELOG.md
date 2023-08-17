@@ -24,6 +24,12 @@ NOTE: the version number of the software is taken from the last version number i
 
 ## Version History
 
+2023/08/17 --
+  * Add an "external trigger" example showing how to use the .NET NI DAQmx wrapper to generate a TTL pulse from a DAQ.
+  * BugFix: BugFix to TCP/IP server code. Was parsing a cell array as a vector.
+  * BugFix: pointer.sendSamples not switching correctly between triggered and untriggered modes.
+
+
 2023/08/10 -- v0.12.0
   * Get version information from CHANGELOG.md not hardcoded numbers in zapit.version
   * Move TCP/IP client out of Zapit and to standalone repo.
