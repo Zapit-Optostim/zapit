@@ -70,7 +70,7 @@ function response = processBufferMessageCallback(obj,~,~)
             % Build the arguments then call sendSamples with these.
             sendSamplesArgs = {};
                 for ii = 1:length(bitLocs)
-                    bit_loc = bitLocs(ii);
+                    bit_loc = bitLocs{ii};
                     if logical(arg_keys(bit_loc))
                         sendSamplesArgs{end + 1} = sendSampBools(bit_loc);
                         sendSamplesArgs{end + 1} = logical(arg_vals(bit_loc));
