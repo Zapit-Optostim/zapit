@@ -24,7 +24,7 @@ NOTE: the version number of the software is taken from the last version number i
 
 ## Version History
 
-2023/08/17 --
+2023/08/17 -- v0.12.1
   * Add an "external trigger" example showing how to use the .NET NI DAQmx wrapper to generate a TTL pulse from a DAQ.
   * BugFix: BugFix to TCP/IP server code. Was parsing a cell array as a vector.
   * BugFix: pointer.sendSamples not switching correctly between triggered and untriggered modes.
