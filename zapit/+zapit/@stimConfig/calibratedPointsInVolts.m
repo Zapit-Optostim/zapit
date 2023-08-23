@@ -11,9 +11,9 @@ function cPointsVolts = calibratedPointsInVolts(obj)
     % none
     %
     % Outputs
-    % A cell array of coordinates converted into voltages. The cells correspond in order 
-    % to the orginal data in the structure stimLocations. If the cells are concatenated 
-    % as [cPointsVolts{:}] then the first column is ML coords and second column is AP 
+    % A cell array of coordinates converted into voltages. The cells correspond in order
+    % to the orginal data in the structure stimLocations. If the cells are concatenated
+    % as [cPointsVolts{:}] then the first column is ML coords and second column is AP
     % coords. All in volts. NOTE this is transposed with respect to calibratedPoints
     %
     % Rob Campbell - SWC 2022
@@ -23,7 +23,7 @@ function cPointsVolts = calibratedPointsInVolts(obj)
     calibratedPoints = obj.calibratedPoints;
 
     if isempty(calibratedPoints)
-        return 
+        return
     end
 
     for ii = 1:length(calibratedPoints)

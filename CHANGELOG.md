@@ -24,6 +24,9 @@ NOTE: the version number of the software is taken from the last version number i
 
 ## Version History
 
+2023/08/23 -- v0.13.0
+  * MAJOR: Add ability to set a fixed stimulus duration with `sendSamples`. Breaks compatibility with vidrio DAQ wrapper. Only the .NET wrapper will work now. This will make no difference to end users. 
+
 2023/08/17 -- v0.12.1
   * Add an "external trigger" example showing how to use the .NET NI DAQmx wrapper to generate a TTL pulse from a DAQ.
   * BugFix: BugFix to TCP/IP server code. Was parsing a cell array as a vector.

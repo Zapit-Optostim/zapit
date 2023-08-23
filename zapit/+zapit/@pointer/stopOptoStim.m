@@ -16,9 +16,17 @@ function stopOptoStim(obj, rampDownInMS)
     %
     % Rob Campbell - SWC 2022
 
+
+    % Do not try to run if no stimuli loaded
     if isempty(obj.stimConfig)
         return
     end
+
+    % Do not try to run if we are presenting a stimulus of a finite length
+    if strcmp(obj.hAO.Timing.SampleQuantityMode,'FiniteSamples')
+        return
+    end
+
 
     if nargin<2
         rampDownInMS = obj.stimConfig.offRampDownDuration_ms;
