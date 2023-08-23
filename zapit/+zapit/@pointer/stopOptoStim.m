@@ -6,7 +6,7 @@ function stopOptoStim(obj, rampDownInMS)
     % Purpose
     % Stop stimulation over a period of time specified by rampDownInMS.
     % The value of rampDownInMS is obtained from the stimConfig file,
-    % which in turn gets a default values from the Zapit settings file. 
+    % which in turn gets a default values from the Zapit settings file.
     % It can, however, be over-ridden by supplying an input argiument
     % to this function.
     %
@@ -102,7 +102,7 @@ function stopOptoStim(obj, rampDownInMS)
         end
 
         if obj.simulated
-            data = [data;t]; %#ok<AGROW> 
+            data = [data;t]; %#ok<AGROW>
         end
 
         % Disable the masking light when we are on the last cycle.
@@ -137,7 +137,7 @@ function stopOptoStim(obj, rampDownInMS)
     start(obj.DAQ.delayStop)
 
     % TODO -- there is no pause here and we will return to idle mode
-    %        too soon. This is a minor BUG but we live with it for now. 
+    %        too soon. This is a minor BUG but we live with it for now.
     obj.state = 'idle';
 
 end % stopOptoStim

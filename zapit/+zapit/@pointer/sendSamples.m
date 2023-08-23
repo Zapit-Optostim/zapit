@@ -15,10 +15,13 @@ function varargout = sendSamples(obj, varargin)
     % Only runs if zapit.pointer.isReadyToStim returns true
     %
     % * How are the waveforms generated?
+    % The waveforms are obtained here with a call to stimConfig.chanSamples. i.e.
+    % The user can call this at the CLI using "cs = hZP.stimConfig.chanSamples"
+    % Then, for example, cs(:,:,3) are the waveforms for condition 3.
+    % How is this generated?
     % The zapit.stimConfig class contains three methods that are used to make waveforms to
     % send to the DAQ. These methods are automatically run sequentially:
     % calibratedPoints -> calibratedPointsInVolts -> chanSamples (a getter)
-    % The waveforms are obtained here with a call to stimConfig.chanSamples
     %
     %
     % Inputs [param/value pairs]

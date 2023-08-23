@@ -38,7 +38,7 @@ classdef stimConfig < handle
 
         function obj = stimConfig(fname)
             % Construct a stimConfig file object and load data
-            % 
+            %
             % zapit.stimConfig.stimConfig
             %
 
@@ -63,10 +63,10 @@ classdef stimConfig < handle
             %
             % Purpose
             % Return the number of stimulus conditions
-            % 
+            %
             % Inputs
             % none
-            % 
+            %
             % Outputs
             % n - scalar defining the number of conditions
 
@@ -86,10 +86,10 @@ classdef stimConfig < handle
             %
             % Purpose
             % The calibratedPoints getter returns the locations of stimulus points in sample space.
-            % The calibratedPointsInVolts converts this to volts. This method uses these voltage 
+            % The calibratedPointsInVolts converts this to volts. This method uses these voltage
             % values to generate waveforms that can be played with a clocked NI output task in order
-            % stimulate the sample at the laser power and rep rate defined by properties of this 
-            % class. 
+            % stimulate the sample at the laser power and rep rate defined by properties of this
+            % class.
             %
             % Inputs
             % none
@@ -110,13 +110,13 @@ classdef stimConfig < handle
             % pre-allocate the waveforms array: 1st dim is samples, 2nd dim is channel, 3rd dim is conditions
             waveforms = zeros(obj.numSamplesPerChannel,4,length(calibratedPointsInVolts)); % matrix for each channel
 
-            
+
             % Calculate some constants that we will need in multiple places further below.
 
             % find edges of half cycles (the indexes at which the beam moves or laser changes state)
             pointsPerTrial = obj.parent.settings.experiment.maxStimPointsPerCondition;
             obj.edgeSamples = ceil(linspace(1, obj.numSamplesPerChannel, pointsPerTrial+1));
-            sampleInterval = 1/obj.parent.DAQ.samplesPerSecond; 
+            sampleInterval = 1/obj.parent.DAQ.samplesPerSecond;
 
             % The blanking time is the period during which the beam is off and the scanners slowly
             % transition from one place to the next. Defined in ms.
@@ -280,7 +280,7 @@ classdef stimConfig < handle
                     e = s+distanceBetweenEdges;
                     if e > size(waveforms,1)
                         e = size(waveforms,1);
-                    end 
+                    end
                     waveforms(s:e,3,ii) = 0; % The laser AO line
                 end
             end
