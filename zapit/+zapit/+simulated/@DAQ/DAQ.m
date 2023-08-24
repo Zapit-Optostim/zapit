@@ -91,7 +91,12 @@ classdef DAQ < handle
         end
 
         function stop(obj)
-            obj.hAO.isTaskDone = false;
+            obj.hAO.isTaskDone = true;
+            obj.doingClockedAcquisition = false;
+        end
+
+        function waitUntilAOTaskDone(obj)
+            obj.hAO.isTaskDone = true;
             obj.doingClockedAcquisition = false;
         end
 

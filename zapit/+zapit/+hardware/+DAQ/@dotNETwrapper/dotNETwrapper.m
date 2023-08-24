@@ -367,7 +367,6 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             % If the task is a finite samples we must set the number of samples in the
             % DAQ buffer.
             if strcmp(obj.hAO.Timing.SampleQuantityMode,'FiniteSamples')
-                import NationalInstruments.DAQmx.*
                 obj.hAO.Timing.SamplesPerChannel = length(waveforms);
             end
 

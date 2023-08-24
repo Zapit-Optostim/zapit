@@ -20,10 +20,14 @@ function varargout = sendSamples(obj, varargin)
     %                  present. If empty or -1 a random one is chosen.
     % 'laserOn' - [bool, true by default] If true the laser is on. If false the galvos move but
     %              the laser is off. If empty or -1, a random laser state is chosen.
+    %              Note: The laserOn parameter takes precedence over laserPower_mw.
     % 'stimDurationSeconds' - [scalar, -1 by default] If >0 once the waveform is sent to the DAQ
     %             and begins to play it will do so for a pre-defined time period before
     %             ramping down and stopping. e.g. if stimDurationSeconds is 1.5 then
     %             the waveform will play for 1.5 seconds then will ramp down and stop.
+    % 'laserPower_mw' - By default the value in the stim config file is used. If this is
+    %             provided, the stim config value is ignored. The value actually presented
+    %             is always logged to the experiment log file.
     % 'hardwareTriggered' [bool, true by default] If true the DAQ waits for a hardware trigger before
     %                   presenting the waveforms.
     % 'logging' - [bool, true by default] If true we write log files automatically if the user has
@@ -65,17 +69,21 @@ function varargout = sendSamples(obj, varargin)
     params.addParameter('conditionNumber', [], @(x) isnumeric(x) && (isscalar(x) || isempty(x) || x == -1));
     params.addParameter('laserOn', true, @(x) isempty(x) || islogical(x) || x == 0 || x == 1 || x == -1);
     params.addParameter('stimDurationSeconds', -1, @(x) isnumeric(x) && (isscalar(x) || isempty(x) || x == -1));
+    params.addParameter('laserPower_mw', [], @(x) isnumeric(x) && (isscalar(x) || isempty(x) || x == -1));
     params.addParameter('hardwareTriggered', true, @(x) islogical(x) || x==0 || x==1);
     params.addParameter('logging', true, @(x) islogical(x) || x==0 || x==1);
     params.addParameter('verbose', false, @(x) islogical(x) || x==0 || x==1);
 
+
     params.parse(varargin{:});
     conditionNumber = params.Results.conditionNumber;
     laserOn = params.Results.laserOn;
-    stimDurationSeconds = parms.Results.stimDurationSeconds;
+    stimDurationSeconds = params.Results.stimDurationSeconds;
     hardwareTriggered = params.Results.hardwareTriggered;
+    laserPower_mw = params.Results.laserPower_mw;
     logging = params.Results.logging;
     verbose = params.Results.verbose;
+
 
     if ~obj.isReadyToStim
         fprintf('zapit.pointer.%s -- Not ready to stimulate\n', mfilename)
@@ -105,6 +113,14 @@ function varargout = sendSamples(obj, varargin)
         laserOn = r(1);
     end
 
+    % Set laser power to 0 if the laserOn state is false. Otherwise read from stimconfig
+    if ~laserOn
+        laserPower_mw = 0;
+    else
+        % Return second arg that is the **standardized** laser power, taking into account
+        % possible shorter stimulus pulse duration.
+        [~,laserPower_mw] = obj.stimConfig.laserPowerFromTrial(conditionNumber);
+    end
 
     % If the user has specified an experiment directory path, we check whether a stimulus parameter
     % log file exists there and make one if not.
@@ -121,7 +137,7 @@ function varargout = sendSamples(obj, varargin)
 
         % By this point there must be a parameter log file and, since we are logging, we write
         % a trial log file also.
-        obj.stimConfig.logTrialToFile(obj.experimentPath, conditionNumber, laserOn, hardwareTriggered)
+        obj.stimConfig.logTrialToFile(obj.experimentPath, conditionNumber, laserPower_mw, hardwareTriggered, stimDurationSeconds)
     end
 
 
@@ -168,7 +184,7 @@ function varargout = sendSamples(obj, varargin)
 
             % Then shut off masking LED
             rampdownWaveform(end,4) = 0;
-            tmp_waveforms = [waveform; rampdownWaveform];
+            tmp_waveforms = [waveforms; rampdownWaveform];
         end
 
         waveforms = tmp_waveforms;
