@@ -271,7 +271,7 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             params = inputParser;
             params.CaseSensitive = false;
 
-            params.addParameter('fixedDurationWaveform', false,  islogical(x) || x==0 || x==1);
+            params.addParameter('fixedDurationWaveform', false, @(x) islogical(x) || x==0 || x==1);
             params.addParameter('numSamplesPerChannel', 1000, @(x) isnumeric(x) && isscalar(x));
             params.addParameter('samplesPerSecond', obj.samplesPerSecond, @(x) isnumeric(x) && isscalar(x));
             params.addParameter('taskName', 'clockedAO', @(x) ischar(x));

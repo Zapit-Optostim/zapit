@@ -23,7 +23,7 @@ function stopOptoStim(obj, rampDownInMS)
     end
 
     % Do not try to run if we are presenting a stimulus of a finite length
-    if strcmp(obj.hAO.Timing.SampleQuantityMode,'FiniteSamples')
+    if strcmp(obj.DAQ.hAO.Timing.SampleQuantityMode,'FiniteSamples')
         return
     end
 
