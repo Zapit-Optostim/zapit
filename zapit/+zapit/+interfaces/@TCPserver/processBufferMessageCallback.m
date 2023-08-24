@@ -61,6 +61,14 @@ function response = processBufferMessageCallback(obj,~,~)
         arg_vals  = bitget(obj.buffer.ArgVals,1:8,"uint8");
         condNum   = obj.buffer.ConditionNumber;
 
+        % Process the stimulus duration
+        if obj.buffer.stimDurationWholeSeconds == 0
+            stimDuration = -1; % Stimulus will continue until stopOptoStim
+        else
+            stimDuration = obj.buffer.stimDurationWholeSeconds;
+            stimDuration = stimDuration + (obj.buffer.stimDurationFractionSeconds/256);
+        end
+
         if verbose
             disp('Starting routine to call zapit.pointer.sendSamples')
         end
@@ -69,17 +77,25 @@ function response = processBufferMessageCallback(obj,~,~)
             % If true, the command contains parameter value pairs for sendSamples.
             % Build the arguments then call sendSamples with these.
             sendSamplesArgs = {};
-                for ii = 1:length(bitLocs)
-                    bit_loc = bitLocs{ii};
-                    if logical(arg_keys(bit_loc))
-                        sendSamplesArgs{end + 1} = sendSampBools(bit_loc);
-                        sendSamplesArgs{end + 1} = logical(arg_vals(bit_loc));
-                    end
+
+            for ii = 1:length(bitLocs)
+                bit_loc = bitLocs{ii};
+                if logical(arg_keys(bit_loc))
+                    sendSamplesArgs{end + 1} = sendSampBools(bit_loc);
+                    sendSamplesArgs{end + 1} = logical(arg_vals(bit_loc));
                 end
-                if logical(arg_keys(1))
-                    sendSamplesArgs{end + 1} = "conditionNum";
-                    sendSamplesArgs{end + 1} = condNum;
-                end
+            end
+
+            if logical(arg_keys(1))
+                sendSamplesArgs{end + 1} = "conditionNum";
+                sendSamplesArgs{end + 1} = condNum;
+            end
+
+            if stimDuration > -1
+                sendSamplesArgs{end + 1} = "stimDurationSeconds";
+                sendSamplesArgs{end + 1} = stimDuration;
+            end
+
             if verbose
                 disp('zapit.pointer.sendSamples called with input arguments')
             end

@@ -9,6 +9,7 @@ classdef TCPserver < handle
     properties (Hidden)
         parent % instance of zapit.pointer to which we attached
         listeners  % Structure that holds listeners so they can be easily cleaned up in the destructor
+        bytesInMessage = 6 % Number of bytes in incoming message
     end % properties
 
     properties
@@ -52,15 +53,18 @@ classdef TCPserver < handle
 
         function setupSocket(obj)
             % Set up for reading messages of 4 bytes
-            configureCallback(obj.hSocket,"byte",4,@obj.readDataFcn);
+            configureCallback(obj.hSocket, "byte", obj.bytesInMessage, @obj.readDataFcn);
         end % setupSocket
 
         function readDataFcn(obj, src, ~)
-            msg = read(src,4,"uint8");
+            % Read 6 bytes from the
+            msg = read(src, obj.bytesInMessage,"uint8");
             obj.buffer = struct('command', msg(1), ...
                                 'ArgKeys', msg(2), ...
                                 'ArgVals', msg(3), ...
-                                'ConditionNumber', msg(4));
+                                'ConditionNumber', msg(4), ...
+                                'stimDurationWholeSeconds', msg(5), ...
+                                'stimDurationFractionSeconds', single(msg(6)));
 
         end % readDataFcn
 
