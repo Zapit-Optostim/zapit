@@ -196,7 +196,7 @@ function varargout = sendSamples(obj, varargin)
 
             % Then shut off masking LED
             rampdownWaveform(end,4) = 0;
-            tmp_waveforms = [waveforms; rampdownWaveform];
+            tmp_waveforms = [tmp_waveforms; rampdownWaveform];
         end
 
         waveforms = tmp_waveforms;
