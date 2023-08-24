@@ -116,11 +116,13 @@ function varargout = sendSamples(obj, varargin)
     % Set laser power to 0 if the laserOn state is false. Otherwise read from stimconfig
     if ~laserOn
         laserPower_mw = 0;
-    else
+    elseif laserOn && isempty(laserPower_mw)
+        % We use the laser power requested in the stim config file
         % Return second arg that is the **standardized** laser power, taking into account
         % possible shorter stimulus pulse duration.
         [~,laserPower_mw] = obj.stimConfig.laserPowerFromTrial(conditionNumber);
     end
+
 
     % If the user has specified an experiment directory path, we check whether a stimulus parameter
     % log file exists there and make one if not.
@@ -159,6 +161,16 @@ function varargout = sendSamples(obj, varargin)
     % continuously until the user stops it. We first query stimConfig to get
     % one cycle of the waveform back
     waveforms = obj.stimConfig.chanSamples(:,:,conditionNumber);
+
+    % If the user specified a laser power as an input argument then we must alter the
+    % power here on the third channel.
+    if ~isempty(laserPower_mw)
+        peakPower_mw = obj.stimConfig.laserPowerFromTrial(conditionNumber,laserPower_mw);
+        laserControlVoltage = obj.laser_mW_to_control(peakPower_mw);
+
+        waveforms(waveforms(:,3)>0,3) = 1;
+        waveforms(:,3) = waveforms(:,3)*laserControlVoltage;
+    end
 
     if stimDurationSeconds > 0
         % If the user has asked for a fixed duration, we make the required waveforms by
