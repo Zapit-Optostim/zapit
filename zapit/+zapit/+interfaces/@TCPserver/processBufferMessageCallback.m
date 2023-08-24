@@ -62,7 +62,7 @@ function response = processBufferMessageCallback(obj,~,~)
         condNum   = obj.buffer.ConditionNumber;
 
         % Process the stimulus duration
-        if obj.buffer.stimDurationWholeSeconds == 0
+        if (obj.buffer.stimDurationWholeSeconds + obj.buffer.stimDurationFractionSeconds)== 0
             stimDuration = -1; % Stimulus will continue until stopOptoStim
         else
             stimDuration = obj.buffer.stimDurationWholeSeconds;
