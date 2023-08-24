@@ -61,13 +61,6 @@ function response = processBufferMessageCallback(obj,~,~)
         arg_vals  = bitget(obj.buffer.ArgVals,1:8,"uint8");
         condNum   = obj.buffer.ConditionNumber;
 
-        % Process the stimulus duration
-        if (obj.buffer.stimDurationWholeSeconds + obj.buffer.stimDurationFractionSeconds)== 0
-            stimDuration = -1; % Stimulus will continue until stopOptoStim
-        else
-            stimDuration = obj.buffer.stimDurationWholeSeconds;
-            stimDuration = stimDuration + (obj.buffer.stimDurationFractionSeconds/256);
-        end
 
         if verbose
             disp('Starting routine to call zapit.pointer.sendSamples')
@@ -86,18 +79,27 @@ function response = processBufferMessageCallback(obj,~,~)
                 end
             end
 
+            % Handle stimulus condition number
             if logical(arg_keys(1))
                 sendSamplesArgs{end + 1} = "conditionNum";
                 sendSamplesArgs{end + 1} = condNum;
             end
 
-            if stimDuration > -1
+            % Handle stimulus duration in seconds
+            if  logical(arg_keys(6))
                 sendSamplesArgs{end + 1} = "stimDurationSeconds";
-                sendSamplesArgs{end + 1} = stimDuration;
+                sendSamplesArgs{end + 1} = obj.buffer.stimDuration;
+            end
+
+            % Handle laser power in mW
+            if  logical(arg_keys(7))
+                sendSamplesArgs{end + 1} = "laserPower_mw";
+                sendSamplesArgs{end + 1} = obj.buffer.laserPower_mW;
             end
 
             if verbose
                 disp('zapit.pointer.sendSamples called with input arguments')
+                disp(sendSamplesArgs)
             end
 
             [varCondNum, varLaserOn] = obj.parent.sendSamples(sendSamplesArgs{:});
@@ -170,6 +172,7 @@ function response = processBufferMessageCallback(obj,~,~)
 
     % Generate response bytes
     response_array = [typecast(date_float,'uint8') com_byte response];
+
     % Reply to the client
     write(obj.hSocket, response_array, "uint8");
 
