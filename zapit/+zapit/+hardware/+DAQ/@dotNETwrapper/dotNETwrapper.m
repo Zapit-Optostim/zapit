@@ -289,7 +289,7 @@ classdef dotNETwrapper < zapit.hardware.DAQ
 
             % If we are already connected we don't proceed
             if ~isempty(obj.hAO) && isvalid(obj.hAO) && obj.hAO.AOChannels.Count>0 && ...
-                    startsWith(char(obj.hAO.AOChannels.All.VirtualName), taskName)
+                    strcmp(char(obj.hAO.AOChannels.All.VirtualName), taskName)
                 if verbose
                     fprintf('DAQ connection to task %s already made. Skipping.\n', taskName)
                 end
