@@ -49,12 +49,6 @@ function response = processBufferMessageCallback(obj,~,~)
     com_byte = obj.buffer.command;
 
 
-    % To deal with the blocking behavior of zapit.pointer.sendSamples with a finite stim
-    % we will make a bool that will help us send a response back before sendSamples is
-    % complete. We don't pass the blocking on to the client. TODO: not ideal --
-    % https://github.com/Zapit-Optostim/zapit/issues/135
-    finiteStim = false;
-
     % First we handle commands that have input args
     try
 
@@ -95,7 +89,6 @@ function response = processBufferMessageCallback(obj,~,~)
             if  logical(arg_keys(6))
                 sendSamplesArgs{end + 1} = "stimDurationSeconds";
                 sendSamplesArgs{end + 1} = obj.buffer.stimDuration;
-                finiteStim = true;
             end
 
             % Handle laser power in mW
@@ -109,14 +102,6 @@ function response = processBufferMessageCallback(obj,~,~)
                 disp(sendSamplesArgs)
             end
 
-            % if finite stim we reply now but this means we can not send back
-            % the stimulus state at the moment.
-            % TODO: https://github.com/Zapit-Optostim/zapit/issues/135
-            % Generate response bytes and reply to the client
-            if finiteStim
-                response_array = [typecast(date_float,'uint8'), com_byte, 255, 255];
-                write(obj.hSocket, response_array, "uint8");
-            end
             [varCondNum, varLaserOn] = obj.parent.sendSamples(sendSamplesArgs{:});
 
         else
@@ -187,10 +172,7 @@ function response = processBufferMessageCallback(obj,~,~)
 
 
     % Generate response bytes and reply to the client
-    if ~finiteStim
-        response_array = [typecast(date_float,'uint8') com_byte response];
-        write(obj.hSocket, response_array, "uint8");
-    end
-
+    response_array = [typecast(date_float,'uint8') com_byte response];
+    write(obj.hSocket, response_array, "uint8");
 
 end % processBufferMessageCallback

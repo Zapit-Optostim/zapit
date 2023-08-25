@@ -122,6 +122,18 @@ classdef dotNETwrapper < zapit.hardware.DAQ
         end % isAOTaskDone
 
 
+        function isRunning = isFiniteSamplePlaying(obj)
+            % Return true if we are playing a finite waveform
+            %
+            % zapit.DAQ.dotNETwrapper.isFiniteSamplePlaying
+            if ~obj.hAO.IsDone && strcmp(obj.hAO.Timing.SampleQuantityMode,'FiniteSamples')
+                isRunning = true;
+            else
+                isRunning = false;
+            end
+        end % isFiniteSamplePlaying
+
+
         function stopAndDeleteAOTask(obj)
             % Stop and then delete the AO task
             %
@@ -293,6 +305,13 @@ classdef dotNETwrapper < zapit.hardware.DAQ
                 if verbose
                     fprintf('DAQ connection to task %s already made. Skipping.\n', taskName)
                 end
+
+                % If we don't need to re-connect we may still need to stop the current task.
+                % If finite samples are being presented we need to stop it before we can write more
+                if strcmp(obj.hAO.Timing.SampleQuantityMode,'FiniteSamples')
+                    obj.stop
+                end
+
                 return
             end
 

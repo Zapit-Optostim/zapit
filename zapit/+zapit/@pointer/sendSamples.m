@@ -85,7 +85,8 @@ function varargout = sendSamples(obj, varargin)
     verbose = params.Results.verbose;
 
 
-    if ~obj.isReadyToStim
+    % If not ready to present or a finite waveform is playing we don't proceed
+    if ~obj.isReadyToStim || obj.DAQ.isFiniteSamplePlaying
         fprintf('zapit.pointer.%s -- Not ready to stimulate\n', mfilename)
         if nargout>0
             varargout{1} = -1;
@@ -237,12 +238,7 @@ function varargout = sendSamples(obj, varargin)
     % we are not waiting for a hardware trigger.
     obj.DAQ.start
 
-
-    % If stim duration is fixed we wait for it to stop before stopping the task
-    if  stimDurationSeconds > 0
-        obj.DAQ.waitUntilAOTaskDone; % Block until the task is complete. (TODO: abstract this?)
-        obj.DAQ.stop
-    end
+    % The waveform starts and no blocking happens
 
     %%
     if nargout>0
