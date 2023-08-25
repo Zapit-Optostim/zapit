@@ -104,6 +104,10 @@ classdef DAQ < handle
             isDone = obj.hAO.isTaskDone;
         end % isAOTaskDone
 
+        function isRunning = isFiniteSamplePlaying(obj)
+            isRunning = false;
+        end % isFiniteSamplePlaying
+
         function writeAnalogData(obj,waveforms)
             % Simulates write of analog data to the buffer
             %

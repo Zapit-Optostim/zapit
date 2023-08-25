@@ -26,10 +26,15 @@ NOTE: the version number of the software is taken from the last version number i
 
 
 2023/08/23 -- v0.13.0
-  * MAJOR: Add ability to set a fixed stimulus duration with `sendSamples`. Breaks compatibility with vidrio DAQ wrapper. Only the .NET wrapper will work now. This will make no difference to end users. 
-  * Update TCPserver to handle the stimulus duration argument.
-  * Remove tests associated with the TCP/IP comms as Zapit on its own can no longer run these. 
+  * MAJOR: Add ability to set a fixed stimulus duration with `sendSamples`. 
+  * MAJOR: Add a stimulus delay parameter to `sendSamples` for use with stimulus duration.
   * MAJOR: Make it possible to set laser power at the CLI with a sendSamples param/val pair. 
+  * Update TCPserver to handle the stimulus duration, stimulus delay, and laser power arguments.
+  * Remove tests associated with the TCP/IP comms as Zapit on its own can no longer run these. 
+  NOTE: The changes in this version breaks compatibility with the Vidrio DAQmx wrapper. 
+       We will only maintain the .NET wrapper in future will work now. This will make no
+       difference to end users.
+
 
 2023/08/17 -- v0.12.1
   * Add an "external trigger" example showing how to use the .NET NI DAQmx wrapper to generate a TTL pulse from a DAQ.

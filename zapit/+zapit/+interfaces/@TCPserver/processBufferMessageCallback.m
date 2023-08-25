@@ -97,6 +97,12 @@ function response = processBufferMessageCallback(obj,~,~)
                 sendSamplesArgs{end + 1} = obj.buffer.laserPower_mW;
             end
 
+            % Handle stimulus delay in seconds
+            if  logical(arg_keys(8))
+                sendSamplesArgs{end + 1} = "startDelaySeconds";
+                sendSamplesArgs{end + 1} = obj.buffer.startDelaySeconds;
+            end
+
             if verbose
                 disp('zapit.pointer.sendSamples called with input arguments')
                 disp(sendSamplesArgs)

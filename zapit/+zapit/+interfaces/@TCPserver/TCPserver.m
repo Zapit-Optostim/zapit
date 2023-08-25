@@ -9,7 +9,7 @@ classdef TCPserver < handle
     properties (Hidden)
         parent % instance of zapit.pointer to which we attached
         listeners  % Structure that holds listeners so they can be easily cleaned up in the destructor
-        bytesInMessage = 12 % Number of bytes in incoming message
+        bytesInMessage = 16 % Number of bytes in incoming message
     end % properties
 
     properties
@@ -65,7 +65,8 @@ classdef TCPserver < handle
                                 'ArgVals', msg(3), ...
                                 'ConditionNumber', msg(4), ...
                                 'stimDuration', typecast(uint8(msg(5:8)),'single'), ...
-                                'laserPower_mW', typecast(uint8(msg(9:12)),'single'));
+                                'laserPower_mW', typecast(uint8(msg(9:12)),'single'), ...
+                                'startDelaySeconds', typecast(uint8(msg(13:16)),'single'));
         end % readDataFcn
 
 

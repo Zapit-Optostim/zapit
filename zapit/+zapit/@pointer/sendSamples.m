@@ -5,33 +5,38 @@ function varargout = sendSamples(obj, varargin)
     %
     %
     % Purpose
-    % This method is a critical part of the API for running experiments using Zapit. It writes
-    % the stimulation waveforms for a single trial to the DAQ. The photostimulation either starts
-    % immediately or after receipt of a digital trigger, depending on the state of the
-    % "hardwareTriggered" input argument. The default is to wait for a trigger. Unless specified
-    % explicitly, the stimulus (locations to photoactivate) is chosen at random. If the user has
-    % defined an experiment directory via the GUI (or directly with zapit.pointer.experimentPath)
-    % then trial data are logged to disk automatically.
-    % Only runs if zapit.pointer.isReadyToStim returns true
+    % This method is a critical part of the API for running experiments using Zapit. It
+    % writes the stimulation waveforms for a single trial to the DAQ. The photostimulation
+    % either starts immediately or after receipt of a digital trigger, depending on the
+    % state of the "hardwareTriggered" input argument. The default is to wait for a trigger.
+    % Unless specified explicitly, the stimulus (locations to photoactivate) is chosen at
+    % random. If the user has defined an experiment directory via the GUI (or directly with
+    % zapit.pointer.experimentPath) then trial data are logged to disk automatically. This
+    % method only runs if zapit.pointer.isReadyToStim returns true.
     %
     %
     % Inputs [param/value pairs]
-    % 'conditionNum' - Integer but empty by default. This is the index of the condition number to
-    %                  present. If empty or -1 a random one is chosen.
-    % 'laserOn' - [bool, true by default] If true the laser is on. If false the galvos move but
-    %              the laser is off. If empty or -1, a random laser state is chosen.
-    %              Note: The laserOn parameter takes precedence over laserPower_mw.
-    % 'stimDurationSeconds' - [scalar, -1 by default] If >0 once the waveform is sent to the DAQ
-    %             and begins to play it will do so for a pre-defined time period before
-    %             ramping down and stopping. e.g. if stimDurationSeconds is 1.5 then
-    %             the waveform will play for 1.5 seconds then will ramp down and stop.
+    % 'conditionNum' - Integer but empty by default. This is the index of the condition
+    %                  number to present. If empty or -1 a random one is chosen.
+    % 'laserOn' - [bool, true by default] If true the laser is on. If false the galvos move
+    %             but the laser is off. If empty or -1, a random laser state is chosen.
+    %             Note: The laserOn parameter takes precedence over laserPower_mw.
+    % 'stimDurationSeconds' - [scalar float, -1 by default] If >0 once the waveform is sent
+    %             to the DAQ and begins to play it will do so for a pre-defined time
+    %             period before ramping down and stopping. e.g. if stimDurationSeconds is
+    %             1.5 then the waveform will play for 1.5 seconds then will ramp down and
+    %             stop.
+    % 'startDelaySeconds' - [scalar float, 0 by default] This setting is only valid if
+    %             stimDurationSeconds is >0. Otherwise it is ignored. A delay of this many
+    %             seconds is added to finite stimulus durations. This is going to be most
+    %             useful for cases where the stimulus is triggered by a TTL pulse.
     % 'laserPower_mw' - By default the value in the stim config file is used. If this is
     %             provided, the stim config value is ignored. The value actually presented
     %             is always logged to the experiment log file.
-    % 'hardwareTriggered' [bool, true by default] If true the DAQ waits for a hardware trigger before
-    %                   presenting the waveforms.
-    % 'logging' - [bool, true by default] If true we write log files automatically if the user has
-    %             defined a valid directory in zapit.pointer.experimentPath.
+    % 'hardwareTriggered' [bool, true by default] If true the DAQ waits for a hardware
+    %             trigger before presenting the waveforms.
+    % 'logging' - [bool, true by default] If true we write log files automatically if the
+    %             user has defined a valid directory in zapit.pointer.experimentPath.
     % 'verbose' - [bool, false by default] If true print debug messages to screen.
     %
     %
@@ -69,6 +74,7 @@ function varargout = sendSamples(obj, varargin)
     params.addParameter('conditionNumber', [], @(x) isnumeric(x) && (isscalar(x) || isempty(x) || x == -1));
     params.addParameter('laserOn', true, @(x) isempty(x) || islogical(x) || x == 0 || x == 1 || x == -1);
     params.addParameter('stimDurationSeconds', -1, @(x) isnumeric(x) && (isscalar(x) || isempty(x) || x == -1));
+    params.addParameter('startDelaySeconds', 0, @(x) isnumeric(x) && (isscalar(x) || isempty(x) || x == -1));
     params.addParameter('laserPower_mw', [], @(x) isnumeric(x) && (isscalar(x) || isempty(x) || x == -1));
     params.addParameter('hardwareTriggered', true, @(x) islogical(x) || x==0 || x==1);
     params.addParameter('logging', true, @(x) islogical(x) || x==0 || x==1);
@@ -79,6 +85,7 @@ function varargout = sendSamples(obj, varargin)
     conditionNumber = params.Results.conditionNumber;
     laserOn = params.Results.laserOn;
     stimDurationSeconds = params.Results.stimDurationSeconds;
+    startDelaySeconds = params.Results.startDelaySeconds;
     hardwareTriggered = params.Results.hardwareTriggered;
     laserPower_mw = params.Results.laserPower_mw;
     logging = params.Results.logging;
@@ -101,6 +108,7 @@ function varargout = sendSamples(obj, varargin)
         end
         return
     end
+
 
     % Choose a random condition if necessary
     if isempty(conditionNumber) || conditionNumber == -1
@@ -201,6 +209,16 @@ function varargout = sendSamples(obj, varargin)
         end
 
         waveforms = tmp_waveforms;
+
+        % Append a delay if requested
+        if startDelaySeconds>0
+            % Just repeat the first position with the laser and LED off
+            nSamples = round(obj.DAQ.samplesPerSecond*startDelaySeconds);
+            tmp_waveforms = repmat(waveforms(1,:), [nSamples,1]);
+            tmp_waveforms(:,3:4) = 0;
+            waveforms = [tmp_waveforms; waveforms];
+        end
+
     end
 
 
