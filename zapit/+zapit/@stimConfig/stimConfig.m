@@ -292,9 +292,22 @@ classdef stimConfig < handle
                 end
             end
 
+            %%
+            % Handle case where we want an ephys waveform
+            for ii=1:length(obj.stimLocations)
+
+                if ~isfield(obj.stimLocations(ii).Attributes,'ephysWaveform') || ...
+                    obj.stimLocations(ii).Attributes.ephysWaveform == false
+                    continue
+                end
+                waveforms(:,3,ii) = obj.filterForEphys(waveforms(:,3,ii));
+            end
+
+
             % Now we circularly shift the waveforms to deal with the wrapping issue. Doing
             % this here makes the preceding loop a lot easier to handle.
             waveforms(:,3:4,:) = circshift(waveforms(:,3:4,:),-blankOnsetShift_samples,1);
+
 
 
             % Finally, we loop through and turn off laser on the even cycles when it's a

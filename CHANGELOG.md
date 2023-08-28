@@ -34,6 +34,8 @@ NOTE: the version number of the software is taken from the last version number i
   NOTE: The changes in this version breaks compatibility with the Vidrio DAQmx wrapper. 
        We will only maintain the .NET wrapper in future will work now. This will make no
        difference to end users.
+  * TEST FEATURE: "ephysWaveform" Attribute to stimConfig makes a smoothed waveform to help with ephys.
+      This waveform is *UNTESTED* as of now and may not get rid of photoelectric transient.
 
 
 2023/08/17 -- v0.12.1
