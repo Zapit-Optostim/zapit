@@ -31,6 +31,7 @@ NOTE: the version number of the software is taken from the last version number i
   * MAJOR: Make it possible to set laser power at the CLI with a sendSamples param/val pair. 
   * Update TCPserver to handle the stimulus duration, stimulus delay, and laser power arguments.
   * Remove tests associated with the TCP/IP comms as Zapit on its own can no longer run these. 
+  * When choosing random stimuli, sendSamples will not choose the same stimulus twice. 
   NOTE: The changes in this version breaks compatibility with the Vidrio DAQmx wrapper. 
        We will only maintain the .NET wrapper in future will work now. This will make no
        difference to end users.

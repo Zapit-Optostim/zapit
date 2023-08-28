@@ -126,8 +126,8 @@ function varargout = sendSamples(obj, varargin)
                 conditionNumber = r(1);
             end
         end
-        obj.lastPresentedCondition = conditionNumber;
     end
+    obj.lastPresentedCondition = conditionNumber;
 
 
     % Choose random laser state if necessary
