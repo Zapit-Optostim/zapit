@@ -15,8 +15,6 @@ classdef waveform_tests < matlab.unittest.TestCase
         chanSamples % The pre-computed data
         testDataDir = './waveform_tests_data/';
         configFname = 'uniAndBilateral_5_conditions.yml';
-
-c
     end %properties
 
 
