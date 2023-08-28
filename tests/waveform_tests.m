@@ -16,7 +16,7 @@ classdef waveform_tests < matlab.unittest.TestCase
         testDataDir = './waveform_tests_data/';
         configFname = 'uniAndBilateral_5_conditions.yml';
 
-
+c
     end %properties
 
 
@@ -28,10 +28,6 @@ classdef waveform_tests < matlab.unittest.TestCase
                             'settingsFile',fullfile(obj.testDataDir,'zapitSystemSettings.yml'));
             obj.verifyClass(obj.hZP,'zapit.pointer');
 
-            % The waveforms were generated at a sample rate of 10E5 so set this in the
-            % DAQ class. Otherwise, if user settings sample rate is different we will
-            % get failures.
-            obj.hZP.DAQ.samplesPerSecond = 10E5;
             obj.hZP.listeners.saveSettings.Enabled=0; % To ensure the settings are not changed
 
             % TODO load settings from testDataDir
@@ -71,7 +67,11 @@ classdef waveform_tests < matlab.unittest.TestCase
              obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,2,:),obj.chanSamples(:,2,:));
         end
 
-        function checkLaserWaveformsMatch(obj)
+        function checkLaserWaveformsMatchTwoPoints(obj)
+             obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,2,:),obj.chanSamples(:,2,:));
+        end
+
+        function checkLaserWaveformsMatchOnePoint(obj)
              obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,3,:),obj.chanSamples(:,3,:));
         end
 
