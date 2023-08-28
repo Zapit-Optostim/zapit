@@ -304,15 +304,13 @@ classdef stimConfig < handle
             end
 
 
-            % Now we circularly shift the waveforms to deal with the wrapping issue. Doing
-            % this here makes the preceding loop a lot easier to handle.
-            waveforms(:,3:4,:) = circshift(waveforms(:,3:4,:),-blankOnsetShift_samples,1);
 
 
 
             % Finally, we loop through and turn off laser on the even cycles when it's a
-            % single position. This ensures the beam flashes at the correct rep rate eve
-            % though it is stationary.
+            % single position trial. This ensures the beam flashes at the correct rep rate
+            % even though it is stationary.
+
             % TODO -- I'm sure this can be vectorised (Or do above by making an by 2 array
             % with second column being zeros).
             edgesToZero = obj.edgeSamples(2:2:end);
@@ -331,6 +329,11 @@ classdef stimConfig < handle
                     waveforms(s:e,3,ii) = 0; % The laser AO line
                 end
             end
+
+
+            % Now we circularly shift the waveforms to deal with the wrapping issue.
+            % TODO: What is the reason this being done???
+            waveforms(:,3:4,:) = circshift(waveforms(:,3:4,:),-blankOnsetShift_samples,1);
 
 
             % Output
