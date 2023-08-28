@@ -1,7 +1,7 @@
-function peak_mW = correctLaserPowerForShorterDurationPulses(obj,standardisedPower_mw,stimDuration_ms)
+function peak_mW = correctLaserPower(obj,standardisedPower_mw,stimDuration_ms)
     % Increase laser peak power if duty cycle is below 50%. e.g. multiple samples
     %
-    % function peak_mW = zapit.stimConfig.correctLaserPowerForShorterDurationPulses(standardisedPower_mw,stimDuration_ms)
+    % function peak_mW = zapit.stimConfig.correctLaserPower(standardisedPower_mw,stimDuration_ms)
     %
     % Purpose
     % Implements peak power calculation described in  zapit.stimConfig.laserPowerFromTrial
@@ -25,4 +25,4 @@ function peak_mW = correctLaserPowerForShorterDurationPulses(obj,standardisedPow
 
     peak_mW = (obj.maxStimPulseDuration / stimDuration_ms) * standardisedPower_mw;
 
-end % correctLaserPowerForShorterDurationPulses
+end % correctLaserPower

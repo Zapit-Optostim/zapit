@@ -21,7 +21,7 @@ function cPoints = calibratedPoints(obj)
 
     cPoints = {};
 
-    if isempty(obj.parent.refPointsSample)
+    if isempty(obj.parent) || isempty(obj.parent.refPointsSample)
         fprintf('Sample has not been calibrated! Returning empty data! \n')
         return
     end

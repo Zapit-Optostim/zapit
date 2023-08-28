@@ -12,7 +12,8 @@ function plotChanSamples(obj, conditionToPlot)
     % Outputs
     % none
     %
-    % Maja Skretowska - 2021
+    % Maja Skretowska - SWC 2021
+    % Rob Campbell - SWC 2023
 
 
     if nargin<2
@@ -47,18 +48,18 @@ function plotChanSamples(obj, conditionToPlot)
     % Modify the digout waveform so it matches the Y axis
     LaserOnOff = digOut;
     LaserOnOff(LaserOnOff==0) = Y(1);
-    LaserOnOff(LaserOnOff>0) = Y(2);
+    LaserOnOff(digOut>0) = Y(2);
 
     area(timeAxisMS, LaserOnOff,'FaceColor','r','EdgeColor','r', ...
         'FaceAlpha',0.1, 'EdgeAlpha',0.5,'BaseValue',Y(1))
     ylim(Y)
 
-    for ii = obj.edgeSamples
-       % plot([timeAxisMS(ii), timeAxisMS(ii)],ylim,'r--','LineWidth',1)
-    end
+
+
     title('analog output to scan mirrors (red overlay is blanking light)')
     ylabel('Galvo voltage')
-        
+
+
     subplot(3,1,2)
     % analog volt output to laser and masking light
     plot(timeAxisMS,laser,'-','LineWidth',1,'MarkerSize',10);
@@ -66,10 +67,6 @@ function plotChanSamples(obj, conditionToPlot)
     title(sprintf('analog output to laser (%0.2f V)', max(laser)))
     ylabel('amplitude')
     ylim(obj.parent.settings.laser.laserMinMaxControlVolts)
-
-    for ii = obj.edgeSamples
-        plot([timeAxisMS(ii), timeAxisMS(ii)],ylim,'r--','LineWidth',1)
-    end
 
 
     subplot(3,1,3)
@@ -83,10 +80,8 @@ function plotChanSamples(obj, conditionToPlot)
     set(gca,'YTick',[0,5],'YTickLabel',{'Low','High'})
     ylim([-0.25,5.25])
 
-    for ii = obj.edgeSamples
-        plot([timeAxisMS(ii), timeAxisMS(ii)],ylim,'r--','LineWidth',1)
-    end
+
     set(gca,'XTick',0:25)
-    
+
 end % plotChanSamples
 

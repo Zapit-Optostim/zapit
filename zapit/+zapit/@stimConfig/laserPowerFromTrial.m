@@ -42,7 +42,7 @@ function [peak_mW, standardised_mW] = laserPowerFromTrial(obj, trialIndex, stand
 
     if isfield(obj.stimLocations(trialIndex).Attributes,'stimPulseDuration_ms')
         stimDuration = obj.stimLocations(trialIndex).Attributes.stimPulseDuration_ms;
-        peak_mW = obj.correctLaserPowerForShorterDurationPulses(standardised_mW,stimDuration);
+        peak_mW = obj.correctLaserPower(standardised_mW,stimDuration);
     else
         peak_mW = standardised_mW;
     end

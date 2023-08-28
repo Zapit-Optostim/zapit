@@ -14,7 +14,6 @@ classdef pointer < handle
 
 
     properties
-
         %%
         % The following are associated with hardware components
         cam % camera
@@ -188,7 +187,7 @@ classdef pointer < handle
             end
             delete(obj.cam)
             delete(obj.DAQ)
-
+            delete(obj.tcpServer)
         end % Destructor
 
     end % end of constructor/destructor block
@@ -208,6 +207,7 @@ classdef pointer < handle
             imSize = obj.cam.ROI;
             imSize = imSize(3:4);
         end % get.imsize
+
 
         function refPointsStereotaxic = get.refPointsStereotaxic(obj)
             % Return the stereoatxic reference points

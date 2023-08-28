@@ -32,7 +32,8 @@ function varargout = sendSamples(obj, varargin)
     %             useful for cases where the stimulus is triggered by a TTL pulse.
     % 'laserPower_mw' - By default the value in the stim config file is used. If this is
     %             provided, the stim config value is ignored. The value actually presented
-    %             is always logged to the experiment log file.
+    %             is always logged to the experiment log file. If laserPower is empty or -1
+    %             then the default power specified in the stimConfig file is used.
     % 'hardwareTriggered' [bool, true by default] If true the DAQ waits for a hardware
     %             trigger before presenting the waveforms.
     % 'logging' - [bool, true by default] If true we write log files automatically if the
@@ -91,6 +92,9 @@ function varargout = sendSamples(obj, varargin)
     logging = params.Results.logging;
     verbose = params.Results.verbose;
 
+    if ~isempty(laserPower_mw) && laserPower_mw == -1
+        laserPower_mw = [];
+    end
 
     % If not ready to present or a finite waveform is playing we don't proceed
     if ~obj.isReadyToStim || obj.DAQ.isFiniteSamplePlaying
@@ -220,7 +224,6 @@ function varargout = sendSamples(obj, varargin)
         end
 
     end
-
 
 
     % Disable laser if requested (masking LED remains on)

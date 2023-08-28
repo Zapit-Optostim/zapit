@@ -82,7 +82,7 @@ classdef stimConfig < handle
     methods
 
         function maxStimPulseDuration = get.maxStimPulseDuration(obj)
-            % Return the maximum possible stimulus duration given the current blanking time and refresh rate
+            % Maximum possible stimulus duration given the current blanking time and refresh rate
             %
             % zapit.stimConfig.maxStimPulseDuration
             %
@@ -140,13 +140,20 @@ classdef stimConfig < handle
             % Updated by Rob Campbell - SWC 2023 to cope with new stimulus structure
 
             % Pull in data from method
+
+            if isempty(obj.parent)
+                chanSamples = [];
+                return
+            end
+
             calibratedPointsInVolts = obj.calibratedPointsInVolts;
 
             obj.numSamplesPerChannel = obj.parent.DAQ.samplesPerSecond/obj.stimModulationFreqHz;
 
-            % make up samples for scanner channels (of course calibratedPointsInVolts is already in volt format)
-            % pre-allocate the waveforms array: 1st dim is samples, 2nd dim is channel, 3rd dim is conditions
-            waveforms = zeros(obj.numSamplesPerChannel,4,length(calibratedPointsInVolts)); % matrix for each channel
+            % Make up samples for scanner channels (of course calibratedPointsInVolts is
+            % already in volt format) pre-allocate the waveforms array: 1st dim is samples,
+            % 2nd dim is channel, 3rd dim is conditions.
+            waveforms = zeros(obj.numSamplesPerChannel,4,length(calibratedPointsInVolts));
 
 
             % Calculate some constants that we will need in multiple places further below.
@@ -174,10 +181,11 @@ classdef stimConfig < handle
                     t_volts = calibratedPointsInVolts{ii};
                 end
 
-                % The array t_volts is 2 by 2 with the first column being is ML coords (x mirror)
-                % and second column being AP (y mirror). The rows indicate positions in this trial.
-                % This is why for the single trial case we are repeating the row. Longer term we
-                % may need a different system here, if we opt for multiple points.
+                % The array t_volts is 2 by 2 with the first column being is ML coords
+                % (x mirror) and second column being AP (y mirror). The rows indicate
+                % positions in this trial. This is why for the single trial case we are
+                % repeating the row. Longer term we may need a different system here, if
+                % we opt for multiple points.
 
                 % Explicitly extract X and Y scanner voltages from t_volts.
                 % These are column vectors. The first column is the first location and the
@@ -186,17 +194,19 @@ classdef stimConfig < handle
                 yVolts = t_volts(:,2)';
 
 
-                % Make the full waveforms for X and Y. The logic here is that one cycle of the
-                % waveform plays out over numSamplesPerChannel samples. So we want the beam to be
-                % in each of the positions for half the time. We will define this using the number
-                % points per trial to make this a bit more explicit and perhaps more fure proof
+                % Make the full waveforms for X and Y. The logic here is that one cycle of
+                % the waveform plays out over numSamplesPerChannel samples. So we want the
+                % beam to be in each of the positions for half the time. We will define
+                % this using the number points per trial to make this a bit more explicit
+                % and perhaps more future proof.
                 Y = repmat(yVolts, obj.numSamplesPerChannel/pointsPerTrial, 1);
                 X = repmat(xVolts, obj.numSamplesPerChannel/pointsPerTrial, 1);
 
 
-                % The beam will now go to the correct locations but the scanners will generate a lot
-                % of noise because the waveforms have no shaping. We will therefore swing the
-                % scanners slowly from one position to the next over a period of 1 ms.
+                % The beam will now go to the correct locations but the scanners will
+                % generate a lot of noise because the waveforms have no shaping. We will
+                % therefore swing the scanners slowly from one position to the next over
+                % a period of 1 ms.
 
                 % This does the ramp at the start of the waveform: it modifies the first column
                 X(1:blankingSamples,1) = linspace(xVolts(2),xVolts(1),blankingSamples);
@@ -224,12 +234,11 @@ classdef stimConfig < handle
             % Handling masking for periods beam is moving and one vs two locations
 
             % Blank the beam and masking light during periods when the beam is moving
-
             blankingMask = ones(obj.numSamplesPerChannel,1);
 
 
-            % These two lines define variables that allow us to tweak the onset and offset of the
-            % beam blanking to take into account latency of the scanners.
+            % These two lines define variables that allow us to tweak the onset and offset
+            % of the beam blanking to take into account latency of the scanners.
             % See zapit.settings.default_settings for a description of what these lines do
             blankOnsetShift_ms = obj.parent.settings.experiment.blankOnsetShift_ms;
             blankOffsetShift_ms = obj.parent.settings.experiment.blankOffsetShift_ms;
@@ -246,18 +255,21 @@ classdef stimConfig < handle
 
 
             %%
-            % Handle instance where we asking for a shorter duration stimulus at a higher laser power
+            % Handle case where we ask for a shorter duration stimulus at higher laser power
             for ii=1:length(obj.stimLocations)
 
                 if ~isfield(obj.stimLocations(ii).Attributes,'stimPulseDuration_ms')
                     continue
                 end
+
                 stimDuration = obj.stimLocations(ii).Attributes.stimPulseDuration_ms;
+
                 if stimDuration < obj.maxStimPulseDuration
                     % Find the first sample after the beam turns on
                     digWaveform = waveforms(:,4,ii);
 
                     fs = find(diff(digWaveform)>0)+1;
+
                     % Find the last sample before the beam turns off
                     fe = find(diff(digWaveform)<0);
                     fe(end+1) = length(digWaveform);
@@ -280,14 +292,16 @@ classdef stimConfig < handle
                 end
             end
 
-            % Now we circularly shift the waveforms to deal with the wrapping issue. Doing this
-            % here makes the preceeding loop a lot easier to handle.
+            % Now we circularly shift the waveforms to deal with the wrapping issue. Doing
+            % this here makes the preceding loop a lot easier to handle.
             waveforms(:,3:4,:) = circshift(waveforms(:,3:4,:),-blankOnsetShift_samples,1);
 
 
-            % Finally, we loop through and turn off laser on the even cycles when it's a single position
-            % TODO -- I'm sure this can be vectorised (Or do above by making an by 2 array with second
-            % column being zeros).
+            % Finally, we loop through and turn off laser on the even cycles when it's a
+            % single position. This ensures the beam flashes at the correct rep rate eve
+            % though it is stationary.
+            % TODO -- I'm sure this can be vectorised (Or do above by making an by 2 array
+            % with second column being zeros).
             edgesToZero = obj.edgeSamples(2:2:end);
             distanceBetweenEdges = median(diff(obj.edgeSamples));
             for ii=1:size(waveforms,3)
