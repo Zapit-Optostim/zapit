@@ -389,8 +389,8 @@ classdef dotNETwrapper < zapit.hardware.DAQ
                 obj.hAO.Timing.SamplesPerChannel = length(waveforms);
             end
 
-            % We want to auto-start only the on-demand tasks because zapit.pointer has methods
-            % that calls DAQmx start for the clocked operations.
+            % We want to auto-start only the on-demand tasks because zapit.pointer
+            % has methods that calls DAQmx start for the clocked operations.
             verbose = false; % For debugging
             if strcmp(char(obj.hAO.Timing.SampleTimingType),'OnDemand')
                 if verbose

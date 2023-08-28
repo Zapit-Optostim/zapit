@@ -118,7 +118,17 @@ function varargout = sendSamples(obj, varargin)
     if isempty(conditionNumber) || conditionNumber == -1
         r = randperm(obj.stimConfig.numConditions);
         conditionNumber = r(1);
+
+        % Avoid choosing the same condition twice in a row
+        if obj.stimConfig.numConditions>1
+            while conditionNumber == obj.lastPresentedCondition
+                r = randperm(obj.stimConfig.numConditions);
+                conditionNumber = r(1);
+            end
+        end
+        obj.lastPresentedCondition = conditionNumber;
     end
+
 
     % Choose random laser state if necessary
     if isempty(laserOn) || laserOn == -1

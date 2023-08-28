@@ -4,11 +4,10 @@ function stopOptoStim(obj, rampDownInMS)
     % zapit.pointer.stopOptoStim(rampDownInMS)
     %
     % Purpose
-    % Stop stimulation over a period of time specified by rampDownInMS.
-    % The value of rampDownInMS is obtained from the stimConfig file,
-    % which in turn gets a default values from the Zapit settings file.
-    % It can, however, be over-ridden by supplying an input argiument
-    % to this function.
+    % Stop stimulation over a period of time specified by rampDownInMS. The value of
+    % rampDownInMS is obtained from the stimConfig file, which in turn gets a default
+    % values from the Zapit settings file. It can, however, be over-ridden by supplying
+    % an input argument to this function.
     %
     % Inputs
     % rampDownInMS - Defaults to value in stimConfig.
