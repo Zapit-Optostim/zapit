@@ -47,7 +47,6 @@ function calibrateSample_Callback(obj,~,~)
 
     while obj.nInd<3
         pause(0.05)
-
     end
 
 
@@ -82,6 +81,13 @@ function calibrateSample_Callback(obj,~,~)
         obj.plotOverlayHandles.brainOutlineCalibrated = ...
            plot(calib(:,1), calib(:,2), '-g', 'linewidth', 2, 'parent', obj.hImAx);
         hold(obj.hImAx,'off')
+
+        % Overlay stim points
+        if obj.model.isReadyToStim
+            obj.OverlaystimsitesButton.Value=1; % Checks button
+            obj.overlayStimSites_Callback; % Adds points
+        end
+
     end
 
 
