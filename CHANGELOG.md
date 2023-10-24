@@ -25,6 +25,10 @@ NOTE: the version number of the software is taken from the last version number i
 ## Version History
 
 
+2023/08/23 -- v0.13.1
+  * BUGFIX: Zap all coords works with fewer than three locations.
+  * BUGFIX: Gracefully handle lack of Instrument Control Toolbox. 
+
 2023/08/23 -- v0.13.0
   * MAJOR: Add ability to set a fixed stimulus duration with `sendSamples`. 
   * MAJOR: Add a stimulus delay parameter to `sendSamples` for use with stimulus duration.
@@ -41,8 +45,8 @@ NOTE: the version number of the software is taken from the last version number i
 
 2023/08/17 -- v0.12.1
   * Add an "external trigger" example showing how to use the .NET NI DAQmx wrapper to generate a TTL pulse from a DAQ.
-  * BugFix: BugFix to TCP/IP server code. Was parsing a cell array as a vector.
-  * BugFix: pointer.sendSamples not switching correctly between triggered and untriggered modes.
+  * BUGFIX: Fix TCP/IP server code. Was parsing a cell array as a vector.
+  * BUGFIX: pointer.sendSamples not switching correctly between triggered and untriggered modes.
 
 
 2023/08/10 -- v0.12.0
@@ -57,7 +61,7 @@ NOTE: the version number of the software is taken from the last version number i
   * zapit.interfaces.tcpServer.isClientConnected reports if a client is connected.
 
 2023/05/26 -- v0.11.1
-  * BugFix: Stop hanging on start if install does not contain a .git directory
+  * BUGFIX: Stop hanging on start if install does not contain a .git directory
 
 
 2023/05/26 -- v0.11.0
@@ -69,10 +73,10 @@ NOTE: the version number of the software is taken from the last version number i
  * MAJOR: Add `experiment.blankOnsetShift_ms` and `experiment.blankOffsetShift_ms` to allow precise
    control of when the beam is blanking to take into account scanner motion.
  * Revert stimDutyCycleHz name change.
- * BugFix: Ensure ROI is flipped when it is made.
- * BugFix: Calibration points follow ROI.
- * BugFix: add new tests and bugfixes to tests
- * BugFix: stimulus generator was producing files that do not work. 
+ * BUGFIX: Ensure ROI is flipped when it is made.
+ * BUGFIX: Calibration points follow ROI.
+ * BUGFIX: add new tests and bugfixes to tests
+ * BUGFIX: stimulus generator was producing files that do not work. 
  * Various behind the scenes improvements to how settings are handled. 
  * IMPROVEMENT: Cat & mouse runs much faster
  * IMPROVEMENT: Report positioning errors to figure title in Point Mode
