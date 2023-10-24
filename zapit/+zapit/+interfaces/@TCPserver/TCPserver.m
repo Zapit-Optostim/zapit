@@ -29,6 +29,14 @@ classdef TCPserver < handle
             % Inputs (optional param/val pairs)
             % 'ip' - [string] Is 'localhost' by default
             % 'port' - [numeric scalar] is 1488 by default
+            
+            % Do not proceed if Instrument Control Toolbox is not installed
+            V = ver;
+            VName = {V.Name};
+            if ~any(strcmp(VName, 'Instrument Control Toolbox'))
+                fprintf('\n** The TCP/IP server requires the Instrument Control Toolbox **\n\n')
+                return
+            end
 
             params = inputParser;
             params.CaseSensitive = false;
@@ -71,6 +79,9 @@ classdef TCPserver < handle
 
 
         function delete(obj)
+            if isempty(obj.hSocket)
+                return
+            end
             flush(obj.hSocket)
             clear obj.hSocket
             delete(obj.hSocket)
