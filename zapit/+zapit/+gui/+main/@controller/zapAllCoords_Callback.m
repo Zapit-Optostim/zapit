@@ -6,10 +6,11 @@ function zapAllCoords_Callback(obj,~,~)
     % Purpose
     % Cycle the beam over all the stimulus locations rapidly. This just indicates whether
     % the beam is going to the right locations. It does not simulate what happens during
-    % an experiment, as it ignores the fact that points are stimulated in pairs (usually). 
+    % an experiment, as it ignores the fact that points are stimulated in pairs (usually).
     %
 
-    % TODO: Low priority. checkScannerCalibClocked is located in zapit.pointer. So the presence of this function here is odd
+    % TODO: Low priority. checkScannerCalibClocked is located in zapit.pointer.
+    %       So the presence of this function here is odd
 
     if isempty(obj.model.stimConfig)
         obj.ZapallcoordsButton.Value = 0;
@@ -30,31 +31,41 @@ function zapAllCoords_Callback(obj,~,~)
         waveforms(:,4) = 0;
 
         W = [];
-        for ii=1:length(waveforms)-1
-            W = [W; waveforms(ii,:)];
+        if size(waveforms,1)>1
+            % If multiple points are being stimulated
+            for ii=1:size(waveforms,1)-1
+                W = [W; waveforms(ii,:)];
 
-            % Make the ramps
-            x1 = waveforms(ii,1);
-            x2 = waveforms(ii+1,1);
-            y1 = waveforms(ii,2);
-            y2 = waveforms(ii+1,2);
+                % Make the ramps
+                x1 = waveforms(ii,1);
+                x2 = waveforms(ii+1,1);
+                y1 = waveforms(ii,2);
+                y2 = waveforms(ii+1,2);
 
+                galvoRamp = [linspace(x1,x2,n)',linspace(y1,y2,n)'];
+                galvoRamp(:,3:4) = 0; % so beam is off
+
+                W = [W; galvoRamp];
+            end
+
+            % Finally we switch on the beam in the final position and move to the first
+            % location on the list
+            x1 = waveforms(end,1);
+            x2 = waveforms(1,1);
+            y1 = waveforms(end,2);
+            y2 = waveforms(1,2);
             galvoRamp = [linspace(x1,x2,n)',linspace(y1,y2,n)'];
             galvoRamp(:,3:4) = 0; % so beam is off
+            galvoRamp(1,3) = W(1,3);
 
             W = [W; galvoRamp];
+
+        else
+            % If only one point is being stimulated
+            W = repmat(waveforms,n,1);
+            W(2:end,3) = 0;
         end
 
-        % Make the ramps
-        x1 = waveforms(end,1);
-        x2 = waveforms(1,1);
-        y1 = waveforms(end,2);
-        y2 = waveforms(1,2);
-
-        galvoRamp = [linspace(x1,x2,n)',linspace(y1,y2,n)'];
-        galvoRamp(:,3:4) = 0; % so beam is off
-
-        W = [W; galvoRamp];
 
         waveforms = W;
 

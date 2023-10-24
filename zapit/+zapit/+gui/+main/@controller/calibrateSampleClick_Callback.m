@@ -5,7 +5,7 @@ function calibrateSampleClick_Callback(obj,~,~)
     %
     % Purpose
     % Responds to clicks for placing and translating/rotating the brain border
-    % during sample calibration. 
+    % during sample calibration.
     %
     % Rob Campbell - SWC 2023
     %
