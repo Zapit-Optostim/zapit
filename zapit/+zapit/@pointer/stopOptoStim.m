@@ -4,11 +4,10 @@ function stopOptoStim(obj, rampDownInMS)
     % zapit.pointer.stopOptoStim(rampDownInMS)
     %
     % Purpose
-    % Stop stimulation over a period of time specified by rampDownInMS.
-    % The value of rampDownInMS is obtained from the stimConfig file,
-    % which in turn gets a default values from the Zapit settings file. 
-    % It can, however, be over-ridden by supplying an input argiument
-    % to this function.
+    % Stop stimulation over a period of time specified by rampDownInMS. The value of
+    % rampDownInMS is obtained from the stimConfig file, which in turn gets a default
+    % values from the Zapit settings file. It can, however, be over-ridden by supplying
+    % an input argument to this function.
     %
     % Inputs
     % rampDownInMS - Defaults to value in stimConfig.
@@ -16,9 +15,17 @@ function stopOptoStim(obj, rampDownInMS)
     %
     % Rob Campbell - SWC 2022
 
+
+    % Do not try to run if no stimuli loaded
     if isempty(obj.stimConfig)
         return
     end
+
+    % Do not try to run if we are presenting a stimulus of a finite length
+    if strcmp(obj.DAQ.hAO.Timing.SampleQuantityMode,'FiniteSamples')
+        return
+    end
+
 
     if nargin<2
         rampDownInMS = obj.stimConfig.offRampDownDuration_ms;
@@ -102,7 +109,7 @@ function stopOptoStim(obj, rampDownInMS)
         end
 
         if obj.simulated
-            data = [data;t]; %#ok<AGROW> 
+            data = [data;t]; %#ok<AGROW>
         end
 
         % Disable the masking light when we are on the last cycle.
@@ -137,7 +144,7 @@ function stopOptoStim(obj, rampDownInMS)
     start(obj.DAQ.delayStop)
 
     % TODO -- there is no pause here and we will return to idle mode
-    %        too soon. This is a minor BUG but we live with it for now. 
+    %        too soon. This is a minor BUG but we live with it for now.
     obj.state = 'idle';
 
 end % stopOptoStim

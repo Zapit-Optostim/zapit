@@ -3,19 +3,19 @@ classdef vidriowrapper < zapit.hardware.DAQ
     %
     % zapit.hardware.DAQ.vidriowrapper
     %
-    % This class wraps Vidrio's NI DAQmx wrapper, allowing zapit.pointer to easily 
+    % This class wraps Vidrio's NI DAQmx wrapper, allowing zapit.pointer to easily
     % set up clocked and unclocked AO scenarios as well as unclocked AI. No clocked
     % AI is needed for Zapit.
     %
     %
     % Instantiating:
     % The properties used for connecting with the DAQ are obtained in this order:
-    % 1. From param/value argument pairs on construction. 
-    % 2. From the settings YAML file. 
+    % 1. From param/value argument pairs on construction.
+    % 2. From the settings YAML file.
     % 3. From the hard-coded properties in this object
     %
-    % You can mix and match. e.g. if you supply the device name as a param/value 
-    % pair but nothing else, then the rest of the settings are obtained from 
+    % You can mix and match. e.g. if you supply the device name as a param/value
+    % pair but nothing else, then the rest of the settings are obtained from
     % settings YAML (assuming it exists).
     %
     %
@@ -61,7 +61,7 @@ classdef vidriowrapper < zapit.hardware.DAQ
             % Start the AO task
             %
             % function zapit.DAQ.vidriowrapper.start
-            % 
+            %
             % Purpose
             % Start the AO task
 
@@ -77,7 +77,7 @@ classdef vidriowrapper < zapit.hardware.DAQ
             % Stop the AO task
             %
             % function zapit.DAQ.vidriowrapper.stop
-            % 
+            %
             % Purpose
             % Stop the AO task
 
@@ -115,11 +115,11 @@ classdef vidriowrapper < zapit.hardware.DAQ
 
 
         function stopAndDeleteAITask(obj)
-            % 
+            %
             % function zapit.DAQ.vidriowrapper.stopAndDeleteAITask
             %
             % Purpose
-            % Stops the AI task and then deletes it. 
+            % Stops the AI task and then deletes it.
 
             if isempty(obj.hAI) || ~isvalid(obj.hAI)
                 return
@@ -165,7 +165,7 @@ classdef vidriowrapper < zapit.hardware.DAQ
             %
             % Create a task that is unclocked AO and can be used for sample setup.
             % The connection options are set by properties in the vidriowrapper
-            % class. see: .device_ID, .AOchans, .AOrange, 
+            % class. see: .device_ID, .AOchans, .AOrange,
             %
             % Inputs
             % verbose - [optional, false by default]. Reports to screen what it is doing if true
@@ -201,13 +201,12 @@ classdef vidriowrapper < zapit.hardware.DAQ
             %
             % Purpose
             % Create a task that is clocked AO and can be used for sample setup.
-            % The connection options are set by proprties in the vidriowrapper
+            % The connection options are set by properties in the vidriowrapper
             % class. see: .device_ID, .AOchans, .AOrange, .samplesPerSecond
             %
             % Inputs (optional)
             % numSamplesPerChannel - Size of the buffer
-            % samplesPerSecond - determines output rate and default comes from YAML file. Likely
-            %                   this will be about 1E6.
+            % samplesPerSecond - determines output rate and default comes from YAML file.
             % taskName - 'clockedao' by default
             % verbose - false by default
             % hardwareTriggered - false by default. If true, task waits for trigger (PFI0 by default
@@ -244,25 +243,25 @@ classdef vidriowrapper < zapit.hardware.DAQ
             if verbose
                 fprintf('Creating clocked AO task on %s\n', obj.device_ID)
             end
-            
+
             obj.hAO = zapit.hardware.vidrio_daqmx.Task(taskName);
-            
+
             % Set output channels
             obj.hAO.createAOVoltageChan(obj.device_ID, ...
                                         obj.AOchans, ...
                                         [], ...
                                         -obj.AOrange, ...
                                         obj.AOrange);
-            
-            
+
+
             % Configure the task sample clock, the sample size and mode to be continuous and set the size of the output buffer
             obj.hAO.cfgSampClkTiming(samplesPerSecond, 'DAQmx_Val_ContSamps', numSamplesPerChannel, 'OnboardClock');
             obj.hAO.cfgOutputBuffer(numSamplesPerChannel);
-            
+
             % allow sample regeneration
             obj.hAO.set('writeRegenMode', 'DAQmx_Val_AllowRegen');
             obj.hAO.set('writeRelativeTo','DAQmx_Val_FirstSample');
-            
+
             % Configure the trigger
             if hardwareTriggered
                 obj.hAO.cfgDigEdgeStartTrig(obj.settings.NI.triggerChannel, 'DAQmx_Val_Rising');
@@ -277,12 +276,12 @@ classdef vidriowrapper < zapit.hardware.DAQ
             % function zapit.DAQ.vidriowrapper.writeAnalogData
             %
             % Purpose
-            % Write analod data to the buffer and also log in a property the
+            % Write analog data to the buffer and also log in a property the
             % data that were written.
 
             % The Vidrio DAQmx wrapper reports values out of range even
-            % when these do not exist. This happend during the rampdown.
-            % The following line is just an additional chack.
+            % when these do not exist. This happens during the rampdown.
+            % The following line is just an additional check.
             if any(abs(max(waveforms,[],1))>10)
                 fprintf(' ** There are waveform data that exceed the +/- 10V range **\n')
             end

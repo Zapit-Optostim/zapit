@@ -4,10 +4,11 @@ function calibrateSample_Callback(obj,~,~)
     % zapit.gui.main.controller.calibrateSample_Callback
     %
     % Purpose
-    % We need a transform that takes us from the camera view to stereotaxic coordinates. 
+    % We need a transform that takes us from the camera view to stereotaxic coordinates.
     % This method initiates an interactive process that achives this. It asks the user to
     % to identify two reference points on skull surface. Typically this will be
-    % bregma plus one more  point. The results are returned as two columns: first x then y coords
+    % bregma plus one more  point. The results are returned as two columns: first x then y
+    % coords.
     %
 
 
@@ -32,6 +33,11 @@ function calibrateSample_Callback(obj,~,~)
     hold(obj.hImAx,'off')
 
     obj.removeOverlays('brainOutlineCalibrated');
+
+    obj.OverlaystimsitesButton.Value=0; % Unchecks button if checked
+    obj.overlayStimSites_Callback; % Will remove any overlays present
+
+
     obj.model.refPointsSample = zeros(2); % wipe any previous data
 
     obj.nInd = 1;
@@ -41,7 +47,6 @@ function calibrateSample_Callback(obj,~,~)
 
     while obj.nInd<3
         pause(0.05)
-
     end
 
 
@@ -76,6 +81,13 @@ function calibrateSample_Callback(obj,~,~)
         obj.plotOverlayHandles.brainOutlineCalibrated = ...
            plot(calib(:,1), calib(:,2), '-g', 'linewidth', 2, 'parent', obj.hImAx);
         hold(obj.hImAx,'off')
+
+        % Overlay stim points
+        if obj.model.isReadyToStim
+            obj.OverlaystimsitesButton.Value=1; % Checks button
+            obj.overlayStimSites_Callback; % Adds points
+        end
+
     end
 
 

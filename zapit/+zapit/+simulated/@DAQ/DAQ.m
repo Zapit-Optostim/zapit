@@ -9,13 +9,13 @@ classdef DAQ < handle
 % Rob Campbell - SWC 2022
 
 
-    properties 
+    properties
 
         hAO
         hAI
 
         device_ID = 'Dev1'
-        samplesPerSecond = 10E5
+        samplesPerSecond % will be filled in with the value from the user settings file
         AOrange = 10
         AOchans = 0:3
         AIchans = 0;
@@ -65,7 +65,7 @@ classdef DAQ < handle
         function connectUnclockedAI(obj,chans)
             obj.AIchans = chans;
         end
-        
+
         function connectUnclockedAO(obj,verbose)
         end
 
@@ -91,13 +91,22 @@ classdef DAQ < handle
         end
 
         function stop(obj)
-            obj.hAO.isTaskDone = false;
+            obj.hAO.isTaskDone = true;
+            obj.doingClockedAcquisition = false;
+        end
+
+        function waitUntilAOTaskDone(obj)
+            obj.hAO.isTaskDone = true;
             obj.doingClockedAcquisition = false;
         end
 
         function isDone = isAOTaskDone(obj)
             isDone = obj.hAO.isTaskDone;
         end % isAOTaskDone
+
+        function isRunning = isFiniteSamplePlaying(obj)
+            isRunning = false;
+        end % isFiniteSamplePlaying
 
         function writeAnalogData(obj,waveforms)
             % Simulates write of analog data to the buffer

@@ -15,8 +15,6 @@ classdef waveform_tests < matlab.unittest.TestCase
         chanSamples % The pre-computed data
         testDataDir = './waveform_tests_data/';
         configFname = 'uniAndBilateral_5_conditions.yml';
-
-
     end %properties
 
 
@@ -27,7 +25,6 @@ classdef waveform_tests < matlab.unittest.TestCase
             obj.hZP =  zapit.pointer('simulated',true, ...
                             'settingsFile',fullfile(obj.testDataDir,'zapitSystemSettings.yml'));
             obj.verifyClass(obj.hZP,'zapit.pointer');
-
 
             obj.hZP.listeners.saveSettings.Enabled=0; % To ensure the settings are not changed
 
@@ -68,7 +65,11 @@ classdef waveform_tests < matlab.unittest.TestCase
              obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,2,:),obj.chanSamples(:,2,:));
         end
 
-        function checkLaserWaveformsMatch(obj)
+        function checkLaserWaveformsMatchTwoPoints(obj)
+             obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,2,:),obj.chanSamples(:,2,:));
+        end
+
+        function checkLaserWaveformsMatchOnePoint(obj)
              obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,3,:),obj.chanSamples(:,3,:));
         end
 

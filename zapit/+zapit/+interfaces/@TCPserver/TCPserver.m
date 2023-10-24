@@ -9,6 +9,7 @@ classdef TCPserver < handle
     properties (Hidden)
         parent % instance of zapit.pointer to which we attached
         listeners  % Structure that holds listeners so they can be easily cleaned up in the destructor
+        bytesInMessage = 16 % Number of bytes in incoming message
     end % properties
 
     properties
@@ -28,6 +29,14 @@ classdef TCPserver < handle
             % Inputs (optional param/val pairs)
             % 'ip' - [string] Is 'localhost' by default
             % 'port' - [numeric scalar] is 1488 by default
+            
+            % Do not proceed if Instrument Control Toolbox is not installed
+            V = ver;
+            VName = {V.Name};
+            if ~any(strcmp(VName, 'Instrument Control Toolbox'))
+                fprintf('\n** The TCP/IP server requires the Instrument Control Toolbox **\n\n')
+                return
+            end
 
             params = inputParser;
             params.CaseSensitive = false;
@@ -52,20 +61,27 @@ classdef TCPserver < handle
 
         function setupSocket(obj)
             % Set up for reading messages of 4 bytes
-            configureCallback(obj.hSocket,"byte",4,@obj.readDataFcn);
+            configureCallback(obj.hSocket, "byte", obj.bytesInMessage, @obj.readDataFcn);
         end % setupSocket
 
         function readDataFcn(obj, src, ~)
-            msg = read(src,4,"uint8");
+            % Read "bytesInMessage" bytes from the
+            msg = read(src, obj.bytesInMessage,"uint8");
+
             obj.buffer = struct('command', msg(1), ...
                                 'ArgKeys', msg(2), ...
                                 'ArgVals', msg(3), ...
-                                'ConditionNumber', msg(4));
-
+                                'ConditionNumber', msg(4), ...
+                                'stimDuration', typecast(uint8(msg(5:8)),'single'), ...
+                                'laserPower_mW', typecast(uint8(msg(9:12)),'single'), ...
+                                'startDelaySeconds', typecast(uint8(msg(13:16)),'single'));
         end % readDataFcn
 
 
         function delete(obj)
+            if isempty(obj.hSocket)
+                return
+            end
             flush(obj.hSocket)
             clear obj.hSocket
             delete(obj.hSocket)

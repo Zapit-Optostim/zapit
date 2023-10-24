@@ -5,19 +5,19 @@ function removeOverlays(obj,overlayToRemove)
     %
     % Purpose
     % The camera image could have overlaid line plot data, such as the current estimated laser
-    % position, the calibration locations for scanners or brain, etc. The handles for these are 
-    % stored in the structure obj.plotOverlayHandles, which could contain a number of different 
-    % things. % e.g. brain borders. This convenience method looks them up by name and deletes: 
+    % position, the calibration locations for scanners or brain, etc. The handles for these are
+    % stored in the structure obj.plotOverlayHandles, which could contain a number of different
+    % things. % e.g. brain borders. This convenience method looks them up by name and deletes:
     % both removing data from the plot and also the associated field from the structure.
     %
-    % The ideas behind this system is that we do not need one property per plot object, 
+    % The ideas behind this system is that we do not need one property per plot object,
     % and all plot objects are organised nicely under one property. They can easily be
-    % deleted by different methods. 
+    % deleted by different methods.
     %
     % Inputs
     % If no inputs are provided, this function deletes *all* plot handles and removes
-    % all fields from the plotOverlayHandles structure. Alternatively, if 
-    % overlayToRemove is a string then all overlays associated with that field name 
+    % all fields from the plotOverlayHandles structure. Alternatively, if
+    % overlayToRemove is a string then all overlays associated with that field name
     % are removed.
     %
     % e.g. calibrateScanners uses obj.removeOverlays('calibrateScanners') to remove all

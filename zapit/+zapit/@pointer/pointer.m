@@ -14,7 +14,6 @@ classdef pointer < handle
 
 
     properties
-
         %%
         % The following are associated with hardware components
         cam % camera
@@ -56,6 +55,8 @@ classdef pointer < handle
     properties (Hidden)
         lastXgalvoVoltage  = 0 % Cached value indicating last X scanner voltage
         lastYgalvoVoltage  = 0 % Cached value indicating last Y scanner voltage
+        lastPresentedCondition = 0  % The index of the last condition presented by sendSamples
+                                    % This is used to avoid choosing the same condition twice in a row.
         lastLaserValue = 0 % Cached value indicating what the laser was last set to
         buildFailed = true % Used during boostrap by start_zapit
         breakPointingAccuracyLoop = false; % Used so GUI can break out of a loop (like that in scanner calib) where the beam accuracy is measured
@@ -154,6 +155,7 @@ classdef pointer < handle
 
             if obj.simulated
                 obj.DAQ = zapit.simulated.DAQ;
+                obj.DAQ.samplesPerSecond = obj.settings.NI.samplesPerSecond;
                 obj.scannersCalibrated = true;
             else
                 fprintf('Connecting to DAQ\n')
@@ -187,7 +189,7 @@ classdef pointer < handle
             end
             delete(obj.cam)
             delete(obj.DAQ)
-
+            delete(obj.tcpServer)
         end % Destructor
 
     end % end of constructor/destructor block
@@ -207,6 +209,7 @@ classdef pointer < handle
             imSize = obj.cam.ROI;
             imSize = imSize(3:4);
         end % get.imsize
+
 
         function refPointsStereotaxic = get.refPointsStereotaxic(obj)
             % Return the stereoatxic reference points
@@ -335,9 +338,8 @@ classdef pointer < handle
             % function zapit.pointer.moveBeamXYinVolts(xyVolts)
             %
             % Purpose
-            % Set the two galvo control AO lines with an unlocked AO operation.
-            % This property was moved from the DAQ class to here because there
-            % are now two DAQ classes and leaving it there led to repetition.
+            % Set the two galvo control AO lines with an unlocked AO operation. The beam
+            % moves right away and as fast as possible.
             %
             % Inputs
             % beamXY - [x_voltage_value, y_voltage_value]

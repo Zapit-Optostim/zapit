@@ -4,16 +4,19 @@ function loadStimConfig_Callback(obj,src,~)
     % zapit.gui.main.controller.loadStimConfig_Callback
     %
     % Purpose
-    % Loads stim config on button press and add to the list of previously loaded files
+    % Loads stim config on button press and add to the list of previously loaded files.
+    % Note this callback is triggered by loading of recent files also.
     %
-    %
-
 
     % Stop video first as the video running seems to really slow down loading
     isCamRunning = obj.model.cam.isrunning;
     if isCamRunning
         obj.model.cam.stopVideo;
     end
+
+    % Wipe any plot details related to this config.
+    obj.OverlaystimsitesButton.Value=0; % Unchecks button if checked
+    obj.overlayStimSites_Callback; % Will remove any overlays present
 
 
     % We use this method to load from the recents menu or to interactively load or from the CLI
@@ -50,11 +53,17 @@ function loadStimConfig_Callback(obj,src,~)
 
     obj.ConfigLoadedTextLabel.Text = ['Config Loaded: ', fname,ext];
 
-    % Update the drop-down that allows us to present the stimuli
-    obj.updateTestSiteDropdown;
+    % Overlay stim points
+    if obj.model.isReadyToStim
+        obj.OverlaystimsitesButton.Value=1; % Checks button
+        obj.overlayStimSites_Callback; % Adds points
+    end
 
     if isCamRunning
         obj.model.cam.startVideo;
     end
+
+    % Update the drop-down that allows us to present the stimuli
+    obj.updateTestSiteDropdown;
 
 end % loadStimConfig_Callback

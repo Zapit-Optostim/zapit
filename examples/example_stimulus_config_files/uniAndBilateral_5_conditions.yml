@@ -9,7 +9,7 @@ stimLocations02:
   AP: [-0.08, -0.08]
   Class: stimulate
   Type: bilateral_points
-  Attributes: {laserPowerInMW: 5.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0, stimDuration_ms: 4}
+  Attributes: {laserPowerInMW: 5.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0, stimPulseDuration_ms: 4}
 stimLocations03:
   ML: 0.71
   AP: 0.8

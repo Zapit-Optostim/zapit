@@ -24,10 +24,32 @@ NOTE: the version number of the software is taken from the last version number i
 
 ## Version History
 
+
+2023/08/23 -- v0.13.1
+  * BUGFIX: Zap all coords works with fewer than three locations.
+  * BUGFIX: Gracefully handle lack of Instrument Control Toolbox. 
+  * Overlaid stim points are created as soon as a new stim config is loaded. They are
+    disabled automatically when a new sample calib is initiated and refreshed after the
+    calib is complete. 
+
+2023/08/23 -- v0.13.0
+  * MAJOR: Add ability to set a fixed stimulus duration with `sendSamples`. 
+  * MAJOR: Add a stimulus delay parameter to `sendSamples` for use with stimulus duration.
+  * MAJOR: Make it possible to set laser power at the CLI with a sendSamples param/val pair. 
+  * Update TCPserver to handle the stimulus duration, stimulus delay, and laser power arguments.
+  * Remove tests associated with the TCP/IP comms as Zapit on its own can no longer run these. 
+  * When choosing random stimuli, sendSamples will not choose the same stimulus twice. 
+  NOTE: The changes in this version breaks compatibility with the Vidrio DAQmx wrapper. 
+       We will only maintain the .NET wrapper in future will work now. This will make no
+       difference to end users.
+  * TEST FEATURE: "ephysWaveform" Attribute to stimConfig makes a smoothed waveform to help with ephys.
+      This waveform is *UNTESTED* as of now and may not get rid of photoelectric transient.
+
+
 2023/08/17 -- v0.12.1
   * Add an "external trigger" example showing how to use the .NET NI DAQmx wrapper to generate a TTL pulse from a DAQ.
-  * BugFix: BugFix to TCP/IP server code. Was parsing a cell array as a vector.
-  * BugFix: pointer.sendSamples not switching correctly between triggered and untriggered modes.
+  * BUGFIX: Fix TCP/IP server code. Was parsing a cell array as a vector.
+  * BUGFIX: pointer.sendSamples not switching correctly between triggered and untriggered modes.
 
 
 2023/08/10 -- v0.12.0
@@ -42,7 +64,7 @@ NOTE: the version number of the software is taken from the last version number i
   * zapit.interfaces.tcpServer.isClientConnected reports if a client is connected.
 
 2023/05/26 -- v0.11.1
-  * BugFix: Stop hanging on start if install does not contain a .git directory
+  * BUGFIX: Stop hanging on start if install does not contain a .git directory
 
 
 2023/05/26 -- v0.11.0
@@ -54,10 +76,10 @@ NOTE: the version number of the software is taken from the last version number i
  * MAJOR: Add `experiment.blankOnsetShift_ms` and `experiment.blankOffsetShift_ms` to allow precise
    control of when the beam is blanking to take into account scanner motion.
  * Revert stimDutyCycleHz name change.
- * BugFix: Ensure ROI is flipped when it is made.
- * BugFix: Calibration points follow ROI.
- * BugFix: add new tests and bugfixes to tests
- * BugFix: stimulus generator was producing files that do not work. 
+ * BUGFIX: Ensure ROI is flipped when it is made.
+ * BUGFIX: Calibration points follow ROI.
+ * BUGFIX: add new tests and bugfixes to tests
+ * BUGFIX: stimulus generator was producing files that do not work. 
  * Various behind the scenes improvements to how settings are handled. 
  * IMPROVEMENT: Cat & mouse runs much faster
  * IMPROVEMENT: Report positioning errors to figure title in Point Mode

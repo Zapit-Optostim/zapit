@@ -61,6 +61,7 @@ function response = processBufferMessageCallback(obj,~,~)
         arg_vals  = bitget(obj.buffer.ArgVals,1:8,"uint8");
         condNum   = obj.buffer.ConditionNumber;
 
+
         if verbose
             disp('Starting routine to call zapit.pointer.sendSamples')
         end
@@ -69,22 +70,46 @@ function response = processBufferMessageCallback(obj,~,~)
             % If true, the command contains parameter value pairs for sendSamples.
             % Build the arguments then call sendSamples with these.
             sendSamplesArgs = {};
-                for ii = 1:length(bitLocs)
-                    bit_loc = bitLocs{ii};
-                    if logical(arg_keys(bit_loc))
-                        sendSamplesArgs{end + 1} = sendSampBools(bit_loc);
-                        sendSamplesArgs{end + 1} = logical(arg_vals(bit_loc));
-                    end
+
+            for ii = 1:length(bitLocs)
+                bit_loc = bitLocs{ii};
+                if logical(arg_keys(bit_loc))
+                    sendSamplesArgs{end + 1} = sendSampBools(bit_loc);
+                    sendSamplesArgs{end + 1} = logical(arg_vals(bit_loc));
                 end
-                if logical(arg_keys(1))
-                    sendSamplesArgs{end + 1} = "conditionNum";
-                    sendSamplesArgs{end + 1} = condNum;
-                end
+            end
+
+            % Handle stimulus condition number
+            if logical(arg_keys(1))
+                sendSamplesArgs{end + 1} = "conditionNum";
+                sendSamplesArgs{end + 1} = condNum;
+            end
+
+            % Handle stimulus duration in seconds
+            if  logical(arg_keys(6))
+                sendSamplesArgs{end + 1} = "stimDurationSeconds";
+                sendSamplesArgs{end + 1} = obj.buffer.stimDuration;
+            end
+
+            % Handle laser power in mW
+            if  logical(arg_keys(7))
+                sendSamplesArgs{end + 1} = "laserPower_mw";
+                sendSamplesArgs{end + 1} = obj.buffer.laserPower_mW;
+            end
+
+            % Handle stimulus delay in seconds
+            if  logical(arg_keys(8))
+                sendSamplesArgs{end + 1} = "startDelaySeconds";
+                sendSamplesArgs{end + 1} = obj.buffer.startDelaySeconds;
+            end
+
             if verbose
                 disp('zapit.pointer.sendSamples called with input arguments')
+                disp(sendSamplesArgs)
             end
 
             [varCondNum, varLaserOn] = obj.parent.sendSamples(sendSamplesArgs{:});
+
         else
             % If false, the command contains no parameter value pairs for sendSamples
             % so we call it without any input arguments.
@@ -152,10 +177,8 @@ function response = processBufferMessageCallback(obj,~,~)
     end
 
 
-    % Generate response bytes
+    % Generate response bytes and reply to the client
     response_array = [typecast(date_float,'uint8') com_byte response];
-    % Reply to the client
     write(obj.hSocket, response_array, "uint8");
-
 
 end % processBufferMessageCallback

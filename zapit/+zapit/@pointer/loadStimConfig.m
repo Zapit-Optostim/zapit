@@ -9,6 +9,7 @@ function loadStimConfig(obj,pathToConfig)
 
 
     if ~exist(pathToConfig,'file')
+        fprintf('Can not load stim config %s\n', pathToConfig)
         return
     end
 

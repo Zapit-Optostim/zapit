@@ -5,14 +5,18 @@ Data generated as follows using the Dev branch on 4th Feb 2023
 
 ```matlab
 hZP =  zapit.pointer('simulated',true);
-hZP.stimConfig = zapit.stimConfig('uniAndBilateral_5_conditions.yml');
-hZP.stimConfig.parent = hZP;
+
+hZP.loadStimConfig('uniAndBilateral_5_conditions.yml');
+
 
 % "calibrate" it
-hZP.refPointsSample = hZP.refPointsStereotaxic;
+hZP.applyUnityStereotaxicCalib;
 
 % So now make and save the following
-chanSamples = obj.loadChanSamples;
+chanSamples = hZP.stimConfig.chanSamples;
+
+% Then save with
+save chanSamples.mat chanSamples
 
 
 

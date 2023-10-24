@@ -106,6 +106,13 @@ classdef dotNETwrapper < zapit.hardware.DAQ
         end % stop
 
 
+        function waitUntilAOTaskDone(obj)
+            % Wait until the AO task is done (Blocking)
+            %
+            % function zapit.DAQ.dotNETwrapper.waitUntilAOTaskDone
+            obj.hAO.WaitUntilDone;
+        end % waitUntilAOTaskDone
+
 
         function isDone = isAOTaskDone(obj)
             % Return true if the AO task is done
@@ -113,6 +120,18 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             % function zapit.DAQ.dotNETwrapper.isAOTaskDone
             isDone = obj.hAO.IsDone;
         end % isAOTaskDone
+
+
+        function isRunning = isFiniteSamplePlaying(obj)
+            % Return true if we are playing a finite waveform
+            %
+            % zapit.DAQ.dotNETwrapper.isFiniteSamplePlaying
+            if ~obj.hAO.IsDone && strcmp(obj.hAO.Timing.SampleQuantityMode,'FiniteSamples')
+                isRunning = true;
+            else
+                isRunning = false;
+            end
+        end % isFiniteSamplePlaying
 
 
         function stopAndDeleteAOTask(obj)
@@ -242,14 +261,17 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             %
             % Purpose
             % Create a task that is clocked AO and can be used for sample setup.
-            % The connection options are set by proprties in the dotNETwrapper
+            % The connection options are set by properties in the dotNETwrapper
             % class. see: .device_ID, .AOchans, .AOrange, .samplesPerSecond
             %
             % Inputs (optional)
+            % fixedDurationWaveform - If true, the user is planning to specify a waveform
+            %                       of a fixed duration and continuous samples is disabled.
+            %                       In this scenario, the value for numSamplesPerChannel
+            %                       is irrelevant here.
             % numSamplesPerChannel - Size of the buffer
-            % samplesPerSecond - determines output rate and default comes from YAML file. Likely
-            %                   this will be about 1E6.
-            % taskName - 'clockedao' by default
+            % samplesPerSecond - determines output rate and default comes from YAML file.
+            % taskName - 'clockedao' by default.
             % verbose - false by default
             % hardwareTriggered - false by default. If true, task waits for trigger (PFI0 by default
             %            and this line can be changed in the settings YAML)
@@ -261,6 +283,7 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             params = inputParser;
             params.CaseSensitive = false;
 
+            params.addParameter('fixedDurationWaveform', false, @(x) islogical(x) || x==0 || x==1);
             params.addParameter('numSamplesPerChannel', 1000, @(x) isnumeric(x) && isscalar(x));
             params.addParameter('samplesPerSecond', obj.samplesPerSecond, @(x) isnumeric(x) && isscalar(x));
             params.addParameter('taskName', 'clockedAO', @(x) ischar(x));
@@ -269,6 +292,7 @@ classdef dotNETwrapper < zapit.hardware.DAQ
 
             params.parse(varargin{:});
 
+            fixedDurationWaveform=params.Results.fixedDurationWaveform;
             numSamplesPerChannel=params.Results.numSamplesPerChannel;
             samplesPerSecond=params.Results.samplesPerSecond;
             taskName=params.Results.taskName;
@@ -277,10 +301,17 @@ classdef dotNETwrapper < zapit.hardware.DAQ
 
             % If we are already connected we don't proceed
             if ~isempty(obj.hAO) && isvalid(obj.hAO) && obj.hAO.AOChannels.Count>0 && ...
-                    startsWith(char(obj.hAO.AOChannels.All.VirtualName), taskName)
+                    strcmp(char(obj.hAO.AOChannels.All.VirtualName), taskName)
                 if verbose
                     fprintf('DAQ connection to task %s already made. Skipping.\n', taskName)
                 end
+
+                % If we don't need to re-connect we may still need to stop the current task.
+                % If finite samples are being presented we need to stop it before we can write more
+                if strcmp(obj.hAO.Timing.SampleQuantityMode,'FiniteSamples')
+                    obj.stop
+                end
+
                 return
             end
 
@@ -298,11 +329,18 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             obj.hAO.AOChannels.CreateVoltageChannel(channelName, taskName, ...
                             -obj.AOrange, obj.AOrange, AOVoltageUnits.Volts);
 
-            % Configure the task sample clock, the sample size and mode to be continuous and set the size of the output buffer
+            % Configure the task sample clock, the sample size and mode to be continuous
+            % and set the size of the output buffer
+            if fixedDurationWaveform
+                sampleMode = SampleQuantityMode.FiniteSamples;
+            else
+                sampleMode = SampleQuantityMode.ContinuousSamples;
+            end
+
             obj.hAO.Timing.ConfigureSampleClock('', ...
                         samplesPerSecond, ...
                         SampleClockActiveEdge.Rising, ...
-                        SampleQuantityMode.ContinuousSamples, ... % And we set this to continuous
+                        sampleMode, ...
                         numSamplesPerChannel);
 
 
@@ -332,12 +370,10 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             % function zapit.DAQ.dotNETwrapper.writeAnalogData
             %
             % Purpose
-            % Write analod data to the buffer and also log in a property the
+            % Write analog data to the buffer and also log in a property the
             % data that were written.
 
-            % The Vidrio DAQmx wrapper reports values out of range even
-            % when these do not exist. This happend during the rampdown.
-            % The following line is just an additional chack.
+            % Double-check no values are out of range
             if any(abs(max(waveforms,[],1))>10)
                 fprintf(' ** There are waveform data that exceed the +/- 10V range **\n')
             end
@@ -347,8 +383,14 @@ classdef dotNETwrapper < zapit.hardware.DAQ
                 obj.lastWaveform = waveforms;
             end
 
-            % We want to auto-start only the on-demand tasks because zapit.pointer has methods
-            % that calls DAQmx start for the clocked operations.
+            % If the task is a finite samples we must set the number of samples in the
+            % DAQ buffer.
+            if strcmp(obj.hAO.Timing.SampleQuantityMode,'FiniteSamples')
+                obj.hAO.Timing.SamplesPerChannel = length(waveforms);
+            end
+
+            % We want to auto-start only the on-demand tasks because zapit.pointer
+            % has methods that calls DAQmx start for the clocked operations.
             verbose = false; % For debugging
             if strcmp(char(obj.hAO.Timing.SampleTimingType),'OnDemand')
                 if verbose
