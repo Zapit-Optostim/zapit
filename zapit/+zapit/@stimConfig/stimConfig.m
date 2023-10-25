@@ -125,11 +125,11 @@ classdef stimConfig < handle
             % zapit.stimConfig.chanSamples
             %
             % Purpose
-            % The calibratedPoints getter returns the locations of stimulus points in sample space.
-            % The calibratedPointsInVolts converts this to volts. This method uses these voltage
-            % values to generate waveforms that can be played with a clocked NI output task in order
-            % stimulate the sample at the laser power and rep rate defined by properties of this
-            % class.
+            % The calibratedPoints getter returns the locations of stimulus points in
+            % sample space. The calibratedPointsInVolts converts this to volts. This
+            % method uses these voltage values to generate waveforms that can be played
+            % with a clocked NI output task in order stimulate the sample at the laser
+            % power and rep rate defined by properties of this class.
             %
             % Inputs
             % none
@@ -143,7 +143,8 @@ classdef stimConfig < handle
             % Pull in data from method
 
             if isempty(obj.parent)
-                fprintf('zapit.pointer not connected to zapit.stimConfig. Not making waveforms.\n')
+                fprintf(['zapit.pointer not connected to zapit.stimConfig. ', ...
+                    'Not making waveforms.\n'])
                 chanSamples = [];
                 return
             end
@@ -167,13 +168,13 @@ classdef stimConfig < handle
             blankingSamples = round( (obj.blankingTime_ms*1E-3)/sampleInterval );
 
 
-            % Fill in the matrices for the galvos
+            % STEP ONE -- Fill in the matrices for the galvos
             for ii = 1:length(calibratedPointsInVolts) % Loop over stim conditions
 
                 % Find edges of the half cycles. These are the indexes at which the beam moves
                 % or laser changes state.
-                pointsPerTrial = obj.parent.settings.experiment.maxStimPointsPerCondition;
-                %%pointsPerTrial = length(calibratedPointsInVolts{ii});
+                %% pointsPerTrial = obj.parent.settings.experiment.maxStimPointsPerCondition;
+                pointsPerTrial = length(calibratedPointsInVolts{ii});
                 edgeSamples = ceil(linspace(1, obj.numSamplesPerChannel, pointsPerTrial+1));
 
 
@@ -192,7 +193,7 @@ classdef stimConfig < handle
 
                 % Explicitly extract X and Y scanner voltages from t_volts.
                 % These are column vectors. The first column is the x scanner voltage
-                % and the second is the y scanner voltage.
+                % and the second is the y location.
                 xVolts = t_volts(:,1)';
                 yVolts = t_volts(:,2)';
 
@@ -212,25 +213,38 @@ classdef stimConfig < handle
                 % a period of 1 ms.
 
                 % This does the ramp at the start of the waveform transitions (even)
-                % and the end (odd)
-                for kk = 1:size(X,2)
-                    ST = kk;
+                oldway = true; % WHEN TRUE. WE MAKE WAVEFORMS THE OLD WAY
+                               % WHEN FALSE THE TESTS WILL FAIL, BUT DISCREPENCIES ARE TINY
+                if oldway
+                    X(1:blankingSamples,1) = linspace(xVolts(2),xVolts(1),blankingSamples);
+                    Y(1:blankingSamples,1) = linspace(yVolts(2),yVolts(1),blankingSamples);
 
+                    % and the end
+                    X(1:blankingSamples,2) = linspace(xVolts(1),xVolts(2),blankingSamples);
+                    Y(1:blankingSamples,2) = linspace(yVolts(1),yVolts(2),blankingSamples);
 
-                    if mod(kk,2) == 0
-                        X(1:blankingSamples,kk) = linspace(xVolts(ST),xVolts(2),blankingSamples);
-                        Y(1:blankingSamples,kk) = linspace(yVolts(ST),yVolts(2),blankingSamples);
-                    else
-                        X(1:blankingSamples,kk) = linspace(xVolts(2),xVolts(ST),blankingSamples);
-                        Y(1:blankingSamples,kk) = linspace(yVolts(2),yVolts(ST),blankingSamples);
-                    end
+                    % Turn the two columns into a row vector and add it into the waveforms array.
+                    % Here the first column is the X scan waveform and the second is the Y waveform.
+                    waveforms(:,1,ii) = X(:);
+                    waveforms(:,2,ii) = Y(:);
+
+                else
+                    % The following does not produce results identical to the above, but
+                    % it's very close. Within a sample.
+                    kernel = ones(blankingSamples,1)/blankingSamples;
+                    X = X(:);
+                    Xsmooth = conv(circshift(X,blankingSamples*2),kernel,'valid');
+                    Xsmooth(end:end+blankingSamples-1) = Xsmooth(end);
+                    Xsmooth = circshift(Xsmooth,blankingSamples*-1);
+                    waveforms(:,1,ii) = Xsmooth;
+
+                    Y = Y(:);
+                    Ysmooth = conv(circshift(Y,blankingSamples*2),kernel,'valid');
+                    Ysmooth(end:end+blankingSamples-1) = Ysmooth(end);
+                    Ysmooth = circshift(Ysmooth,blankingSamples*-1);
+                    waveforms(:,2,ii) = Ysmooth;
                 end
 
-
-                % Turn the two columns into a row vector and add it into the waveforms array.
-                % Here the first column is the X scan waveform and the second is the Y waveform.
-                waveforms(:,1,ii) = X(:);
-                waveforms(:,2,ii) = Y(:);
 
                 t_mW = obj.laserPowerFromTrial(ii);
                 laserControlVoltage = obj.parent.laser_mW_to_control(t_mW);
@@ -244,8 +258,6 @@ classdef stimConfig < handle
             %%
             % Handling masking for periods beam is moving and one vs two locations
 
-            % Blank the beam and masking light during periods when the beam is moving
-            blankingMask = ones(obj.numSamplesPerChannel,1);
 
 
             % These two lines define variables that allow us to tweak the onset and offset
@@ -258,11 +270,38 @@ classdef stimConfig < handle
             blankOnsetShift_samples = round((blankOnsetShift_ms*1E-3)/sampleInterval);
             blankOffsetShift_samples = round((blankOffsetShift_ms*1E-3)/sampleInterval);
 
-            for ii=1:(blankingSamples+blankOnsetShift_samples+blankOffsetShift_samples)
-                blankingMask(edgeSamples(1:end-1)+(ii-1))=0;
-            end
 
-            waveforms(:,3:4,:) = bsxfun(@times, waveforms(:,3:4,:), blankingMask);
+            % STEP TWO -- Fill in the matrices for the laser power signal
+            for ii = 1:length(calibratedPointsInVolts) % Loop over stim conditions
+
+                % TODO -- make the edge samples a getter? It appears above too
+                pointsPerTrial = length(calibratedPointsInVolts{ii});
+                edgeSamples = ceil(linspace(1, obj.numSamplesPerChannel, pointsPerTrial+1));
+
+
+                blankingMask = ones(obj.numSamplesPerChannel,1);
+                for kk=1:(blankingSamples+blankOnsetShift_samples+blankOffsetShift_samples)
+                    blankingMask(edgeSamples(1:end-1)+(kk-1))=0;
+                end
+
+                waveforms(:,3:4,ii) = waveforms(:,3:4,ii) .* blankingMask;
+
+                % If this has one stim condition we must turn off the beam
+                if size(calibratedPointsInVolts{ii},1) == 1
+                    edgesToZero = edgeSamples(2:2:end)+1;
+                    distanceBetweenEdges = median(diff(edgeSamples));
+
+                    for kk=1:length(edgesToZero)
+                        s = edgesToZero(kk);
+                        e = s+distanceBetweenEdges;
+                        if e > obj.numSamplesPerChannel
+                            e = obj.numSamplesPerChannel;
+                        end
+                        waveforms(s:e,3,ii) = 0; % The laser AO line
+                    end
+                end
+
+            end
 
 
             %%
@@ -312,6 +351,7 @@ classdef stimConfig < handle
             end % for ii=1:length(obj.stimLocations)
 
 
+
             %%
             % Handle case where we want an ephys waveform
             for ii=1:length(obj.stimLocations)
@@ -321,33 +361,6 @@ classdef stimConfig < handle
                     continue
                 end
                 waveforms(:,3,ii) = obj.filterForEphys(waveforms(:,3,ii));
-            end
-
-
-            %%
-            % HANDLE SINGLE POSITION CASE SEPARATELY (FOR NOW)
-            % Finally, we loop through and turn off laser on the even cycles when it's a
-            % single position trial. This ensures the beam flashes at the correct rep rate
-            % even though it is stationary.
-
-            % TODO -- I'm sure this can be vectorised (Or do above by making an by 2 array
-            % with second column being zeros).
-            edgesToZero = edgeSamples(2:2:end)+1;
-            distanceBetweenEdges = median(diff(edgeSamples));
-
-            for ii=1:size(waveforms,3)
-                if size(calibratedPointsInVolts{ii},1) >1
-                    continue
-                end
-
-                for kk=1:length(edgesToZero)
-                    s = edgesToZero(kk);
-                    e = s+distanceBetweenEdges;
-                    if e > size(waveforms,1)
-                        e = size(waveforms,1);
-                    end
-                    waveforms(s:e,3,ii) = 0; % The laser AO line
-                end
             end
 
 
