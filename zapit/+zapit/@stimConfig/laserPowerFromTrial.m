@@ -11,7 +11,6 @@ function [peak_mW, standardised_mW] = laserPowerFromTrial(obj, trialIndex, stand
     % and two stimuli are presented then the two numbers will match.
     % If duty cycle is shorter then power will increase linearly. e.g. if the duty cycle is
     % 0.05, so the laser is on for only one 10th of the time then the power will be 10x.
-    % see: zapit.stimConfig.correctLaserPowerForShorterDurationPulses
     %
     %
     % Inputs (required)
@@ -37,12 +36,22 @@ function [peak_mW, standardised_mW] = laserPowerFromTrial(obj, trialIndex, stand
     end
 
     % Handle situation where user has asked for a shorter stimulus pulses.
-    % TODO: These will eventually be used to present multiple stimuli in a trial
+    % TODO: This is being modified to present multiple stimuli in a trial
     % We scale the waveform amplitude:
 
     if isfield(obj.stimLocations(trialIndex).Attributes,'stimPulseDuration_ms')
         stimDuration = obj.stimLocations(trialIndex).Attributes.stimPulseDuration_ms;
-        peak_mW = obj.correctLaserPower(standardised_mW,stimDuration);
     else
-        peak_mW = standardised_mW;
+        numStimuli = length(obj.stimLocations(trialIndex).ML);
+
+        if numStimuli <= 2
+            stimDuration = obj.maxStimPulseDuration;
+        else
+            % TODO: need to set correctly! <---
+            stimDuration = obj.maxStimPulseDuration * (2/numStimuli);
+        end
+
+
     end
+
+    peak_mW = correctLaserPower(obj,standardised_mW,stimDuration);

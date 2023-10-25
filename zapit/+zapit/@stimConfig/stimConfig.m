@@ -191,8 +191,8 @@ classdef stimConfig < handle
                 % we opt for multiple points.
 
                 % Explicitly extract X and Y scanner voltages from t_volts.
-                % These are column vectors. The first column is the first location and the
-                % second column is the second location.
+                % These are column vectors. The first column is the x scanner voltage
+                % and the second is the y scanner voltage.
                 xVolts = t_volts(:,1)';
                 yVolts = t_volts(:,2)';
 
@@ -211,13 +211,21 @@ classdef stimConfig < handle
                 % therefore swing the scanners slowly from one position to the next over
                 % a period of 1 ms.
 
-                % This does the ramp at the start of the waveform: it modifies the first column
-                X(1:blankingSamples,1) = linspace(xVolts(2),xVolts(1),blankingSamples);
-                Y(1:blankingSamples,1) = linspace(yVolts(2),yVolts(1),blankingSamples);
+                % This does the ramp at the start of the waveform transitions (even)
+                % and the end (odd)
+                for kk = 1:size(X,2)
+                    ST = kk;
 
-                % This does the ramp at the middle of the waveform: it modifies the second column
-                X(1:blankingSamples,2) = linspace(xVolts(1),xVolts(2),blankingSamples);
-                Y(1:blankingSamples,2) = linspace(yVolts(1),yVolts(2),blankingSamples);
+
+                    if mod(kk,2) == 0
+                        X(1:blankingSamples,kk) = linspace(xVolts(ST),xVolts(2),blankingSamples);
+                        Y(1:blankingSamples,kk) = linspace(yVolts(ST),yVolts(2),blankingSamples);
+                    else
+                        X(1:blankingSamples,kk) = linspace(xVolts(2),xVolts(ST),blankingSamples);
+                        Y(1:blankingSamples,kk) = linspace(yVolts(2),yVolts(ST),blankingSamples);
+                    end
+                end
+
 
                 % Turn the two columns into a row vector and add it into the waveforms array.
                 % Here the first column is the X scan waveform and the second is the Y waveform.
@@ -261,11 +269,19 @@ classdef stimConfig < handle
             % Handle case where we ask for a shorter duration stimulus at higher laser power
             for ii=1:length(obj.stimLocations)
 
-                if ~isfield(obj.stimLocations(ii).Attributes,'stimPulseDuration_ms')
+                if ~isfield(obj.stimLocations(ii).Attributes,'stimPulseDuration_ms') && ...
+                     length(obj.stimLocations(ii).ML) <= 2
                     continue
                 end
 
-                stimDuration = obj.stimLocations(ii).Attributes.stimPulseDuration_ms;
+                %% TODO
+                % The following might well be wrong (or not best solution)
+                if isfield(obj.stimLocations(ii).Attributes,'stimPulseDuration_ms')
+                    stimDuration = obj.stimLocations(ii).Attributes.stimPulseDuration_ms;
+                else
+                    numStim = length(obj.stimLocations(ii).ML);
+                    stimDuration = obj.maxStimPulseDuration * (2/numStim);
+                end
 
                 if stimDuration < obj.maxStimPulseDuration
                     % Find the first sample after the beam turns on
