@@ -40,9 +40,9 @@ function plotChanSamples(obj, conditionToPlot)
     clf
     subplot(3,1,1)
     % analog volt output for 1st area to 1st scanner mirror
-    plot(timeAxisMS,xGalvo,'k-','LineWidth',1);
+    plot(timeAxisMS,xGalvo,'.k-','LineWidth',1);
     hold on
-    plot(timeAxisMS,yGalvo,'b-','LineWidth',1);
+    plot(timeAxisMS,yGalvo,'.b-','LineWidth',1);
     Y = ylim; %cache the current axis limits
 
     % Modify the digout waveform so it matches the Y axis
@@ -53,7 +53,7 @@ function plotChanSamples(obj, conditionToPlot)
     area(timeAxisMS, LaserOnOff,'FaceColor','r','EdgeColor','r', ...
         'FaceAlpha',0.1, 'EdgeAlpha',0.5,'BaseValue',Y(1))
     ylim(Y)
-
+    grid on
 
 
     title('analog output to scan mirrors (red overlay is blanking light)')
