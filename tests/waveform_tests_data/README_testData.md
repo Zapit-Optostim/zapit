@@ -4,7 +4,7 @@ Data generated as follows using the Dev branch on 4th Feb 2023
 
 
 ```matlab
-hZP =  zapit.pointer('simulated',true);
+hZP =  zapit.pointer('simulated',true,'settingsFile','zapitSystemSettings.yml');
 
 hZP.loadStimConfig('uniAndBilateral_5_conditions.yml');
 

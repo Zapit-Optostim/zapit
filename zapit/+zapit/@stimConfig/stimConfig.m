@@ -5,7 +5,9 @@ classdef stimConfig < handle
     % zapit.stimConfig
     %
     % Purpose
-    % This class handles configuration files used to determine where the laser stim locatins are.
+    % This class handles configuration files used to determine where the laser stim
+    % locations are. Methods in this class generate the waveforms used for stimulus
+    % presentation. This class loads stimulus config YML files and interprets them.
     %
     % Rob Campbell - SWC 2022
 
@@ -22,9 +24,8 @@ classdef stimConfig < handle
 
     properties (Hidden)
         parent  % the zapit.pointer to which this is attached
-        numSamplesPerChannel
+        numSamplesPerChannel % Number of samples per channel to send to the DAQ.
         atlasData    % The atlas data from the loaded .mat file. Shows top-down ARA view in stereotaxic coords
-        edgeSamples  % Samples at which galvoes start to move. (see get.chanSamples) Here for plotChanSamples
         logFileStem = 'zapit_log_' % The stem of the log file name. zapit.pointer will use this to search for the file
     end
 
@@ -136,16 +137,18 @@ classdef stimConfig < handle
             % Outputs
             % chanSamples
             %
-            % Maja Skretowska - SWC 2021
+            % Original by Maja Skretowska - SWC 2021
             % Updated by Rob Campbell - SWC 2023 to cope with new stimulus structure
 
             % Pull in data from method
 
             if isempty(obj.parent)
+                fprintf('zapit.pointer not connected to zapit.stimConfig. Not making waveforms.\n')
                 chanSamples = [];
                 return
             end
 
+            % Cache so it does not get re-generated repeatedly
             calibratedPointsInVolts = obj.calibratedPointsInVolts;
 
             obj.numSamplesPerChannel = obj.parent.DAQ.samplesPerSecond/obj.stimModulationFreqHz;
@@ -155,24 +158,24 @@ classdef stimConfig < handle
             % 2nd dim is channel, 3rd dim is conditions.
             waveforms = zeros(obj.numSamplesPerChannel,4,length(calibratedPointsInVolts));
 
-
-            % Calculate some constants that we will need in multiple places further below.
-
-            % find edges of half cycles (the indexes at which the beam moves or laser changes state)
-            pointsPerTrial = obj.parent.settings.experiment.maxStimPointsPerCondition;
-            obj.edgeSamples = ceil(linspace(1, obj.numSamplesPerChannel, pointsPerTrial+1));
-            sampleInterval = 1/obj.parent.DAQ.samplesPerSecond;
-
-
-
             % The number of samples that correspond to the blanking time. The blanking
             % time is the period during which the beam is off and the scanners slowly
-            % transition from one place to the next. Defined in ms.
+            % transition from one place to the next. This is defined in ms and will be
+            % constant within a trial regardless of how many positions are presented
+            % within a trial.
+            sampleInterval = 1/obj.parent.DAQ.samplesPerSecond;
             blankingSamples = round( (obj.blankingTime_ms*1E-3)/sampleInterval );
 
 
             % Fill in the matrices for the galvos
             for ii = 1:length(calibratedPointsInVolts) % Loop over stim conditions
+
+                % Find edges of the half cycles. These are the indexes at which the beam moves
+                % or laser changes state.
+                pointsPerTrial = obj.parent.settings.experiment.maxStimPointsPerCondition;
+                %%pointsPerTrial = length(calibratedPointsInVolts{ii});
+                edgeSamples = ceil(linspace(1, obj.numSamplesPerChannel, pointsPerTrial+1));
+
 
                 % If this position is a single point we duplicate it to spoof two points
                 if size(calibratedPointsInVolts{ii},1) == 1
@@ -248,7 +251,7 @@ classdef stimConfig < handle
             blankOffsetShift_samples = round((blankOffsetShift_ms*1E-3)/sampleInterval);
 
             for ii=1:(blankingSamples+blankOnsetShift_samples+blankOffsetShift_samples)
-                blankingMask(obj.edgeSamples(1:end-1)+(ii-1))=0;
+                blankingMask(edgeSamples(1:end-1)+(ii-1))=0;
             end
 
             waveforms(:,3:4,:) = bsxfun(@times, waveforms(:,3:4,:), blankingMask);
@@ -290,7 +293,8 @@ classdef stimConfig < handle
                     waveforms(blankTimes(1,1):blankTimes(1,2),3,ii)=0;
                     waveforms(blankTimes(2,1):blankTimes(2,2),3,ii)=0;
                 end
-            end
+            end % for ii=1:length(obj.stimLocations)
+
 
             %%
             % Handle case where we want an ephys waveform
@@ -304,17 +308,17 @@ classdef stimConfig < handle
             end
 
 
-
-
-
+            %%
+            % HANDLE SINGLE POSITION CASE SEPARATELY (FOR NOW)
             % Finally, we loop through and turn off laser on the even cycles when it's a
             % single position trial. This ensures the beam flashes at the correct rep rate
             % even though it is stationary.
 
             % TODO -- I'm sure this can be vectorised (Or do above by making an by 2 array
             % with second column being zeros).
-            edgesToZero = obj.edgeSamples(2:2:end);
-            distanceBetweenEdges = median(diff(obj.edgeSamples));
+            edgesToZero = edgeSamples(2:2:end)+1;
+            distanceBetweenEdges = median(diff(edgeSamples));
+
             for ii=1:size(waveforms,3)
                 if size(calibratedPointsInVolts{ii},1) >1
                     continue
@@ -332,7 +336,7 @@ classdef stimConfig < handle
 
 
             % Now we circularly shift the waveforms to deal with the wrapping issue.
-            % TODO: What is the reason this being done???
+            % TODO: What is the reason for doing this?
             waveforms(:,3:4,:) = circshift(waveforms(:,3:4,:),-blankOnsetShift_samples,1);
 
 

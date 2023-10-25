@@ -32,6 +32,7 @@ NOTE: the version number of the software is taken from the last version number i
     disabled automatically when a new sample calib is initiated and refreshed after the
     calib is complete. 
 
+
 2023/08/23 -- v0.13.0
   * MAJOR: Add ability to set a fixed stimulus duration with `sendSamples`. 
   * MAJOR: Add a stimulus delay parameter to `sendSamples` for use with stimulus duration.
