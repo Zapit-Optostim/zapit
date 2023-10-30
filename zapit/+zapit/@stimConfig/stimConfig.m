@@ -92,6 +92,9 @@ classdef stimConfig < handle
             % a 50% duty cycle and given frequency. This getter calculates and returns it.
             % We want the ability to present the stimuli for a shorter time but a higher power.
             % Therefore we need to know the maximum stimulus duration (a half-cycle).
+            %
+            % See the correctLaserPower method
+
             maxStimPulseDuration = (0.5/obj.stimModulationFreqHz)*1E3 - obj.blankingTime_ms;
 
         end % get.maxStimPulseDuration
@@ -171,14 +174,8 @@ classdef stimConfig < handle
             % STEP ONE -- Fill in the matrices for the galvos
             for ii = 1:length(calibratedPointsInVolts) % Loop over stim conditions
 
-                % Find edges of the half cycles. These are the indexes at which the beam moves
-                % or laser changes state.
-                %% pointsPerTrial = obj.parent.settings.experiment.maxStimPointsPerCondition;
-                pointsPerTrial = length(calibratedPointsInVolts{ii});
-                edgeSamples = ceil(linspace(1, obj.numSamplesPerChannel, pointsPerTrial+1));
-
-
                 % If this position is a single point we duplicate it to spoof two points
+                pointsPerTrial = length(calibratedPointsInVolts{ii});
                 if size(calibratedPointsInVolts{ii},1) == 1
                     t_volts = repmat(calibratedPointsInVolts{ii},pointsPerTrial,1);
                 else
@@ -194,56 +191,48 @@ classdef stimConfig < handle
                 % Explicitly extract X and Y scanner voltages from t_volts.
                 % These are column vectors. The first column is the x scanner voltage
                 % and the second is the y location.
+
                 xVolts = t_volts(:,1)';
                 yVolts = t_volts(:,2)';
 
 
+                % TODO -- update following doc because we now have multiple points.
                 % Make the full waveforms for X and Y. The logic here is that one cycle of
                 % the waveform plays out over numSamplesPerChannel samples. So we want the
-                % beam to be in each of the positions for half the time. We will define
+                % beam to be in each of the two positions for half the time. We will define
                 % this using the number points per trial to make this a bit more explicit
                 % and perhaps more future proof.
-                Y = repmat(yVolts, obj.numSamplesPerChannel/pointsPerTrial, 1);
-                X = repmat(xVolts, obj.numSamplesPerChannel/pointsPerTrial, 1);
+                Y = repmat(yVolts, ceil(obj.numSamplesPerChannel/pointsPerTrial), 1);
+                X = repmat(xVolts, ceil(obj.numSamplesPerChannel/pointsPerTrial), 1);
 
 
                 % The beam will now go to the correct locations but the scanners will
                 % generate a lot of noise because the waveforms have no shaping. We will
                 % therefore swing the scanners slowly from one position to the next over
-                % a period of 1 ms.
+                % a period of roughly 1 ms (exact number is in settings file).
 
                 % This does the ramp at the start of the waveform transitions (even)
-                oldway = true; % WHEN TRUE. WE MAKE WAVEFORMS THE OLD WAY
-                               % WHEN FALSE THE TESTS WILL FAIL, BUT DISCREPENCIES ARE TINY
-                if oldway
-                    X(1:blankingSamples,1) = linspace(xVolts(2),xVolts(1),blankingSamples);
-                    Y(1:blankingSamples,1) = linspace(yVolts(2),yVolts(1),blankingSamples);
+                oldway = false; % WHEN TRUE. WE MAKE WAVEFORMS THE OLD WAY
 
-                    % and the end
-                    X(1:blankingSamples,2) = linspace(xVolts(1),xVolts(2),blankingSamples);
-                    Y(1:blankingSamples,2) = linspace(yVolts(1),yVolts(2),blankingSamples);
-
-                    % Turn the two columns into a row vector and add it into the waveforms array.
-                    % Here the first column is the X scan waveform and the second is the Y waveform.
-                    waveforms(:,1,ii) = X(:);
-                    waveforms(:,2,ii) = Y(:);
-
-                else
-                    % The following does not produce results identical to the above, but
-                    % it's very close. Within a sample.
-                    kernel = ones(blankingSamples,1)/blankingSamples;
-                    X = X(:);
-                    Xsmooth = conv(circshift(X,blankingSamples*2),kernel,'valid');
-                    Xsmooth(end:end+blankingSamples-1) = Xsmooth(end);
-                    Xsmooth = circshift(Xsmooth,blankingSamples*-1);
-                    waveforms(:,1,ii) = Xsmooth;
-
-                    Y = Y(:);
-                    Ysmooth = conv(circshift(Y,blankingSamples*2),kernel,'valid');
-                    Ysmooth(end:end+blankingSamples-1) = Ysmooth(end);
-                    Ysmooth = circshift(Ysmooth,blankingSamples*-1);
-                    waveforms(:,2,ii) = Ysmooth;
-                end
+                % The following does not produce results identical to the above, but
+                % it's very close. Within a sample.
+                kernel = ones(blankingSamples,1)/blankingSamples;
+                X = X(:);
+                Xsmooth = conv(circshift(X,blankingSamples*2),kernel,'valid');
+                Xsmooth(end:end+blankingSamples-1) = Xsmooth(end);
+                Xsmooth = circshift(Xsmooth,blankingSamples*-1);
+                % Note that the following line (also for Y) will truncate the waveform
+                % slightly. This happens when the number of stimulus locations does not
+                % produce a whole number when divided by the number of stimuli in the
+                % buffer. See lines ~208 and 209 where X and Y are defined. This is
+                % not an easy thing to fix. If we lose a sample or two here and there
+                % from one stimulus it shouldn't matter or be noticeable.
+                waveforms(:,1,ii) = Xsmooth(1:size(waveforms,1));
+                Y = Y(:);
+                Ysmooth = conv(circshift(Y,blankingSamples*2),kernel,'valid');
+                Ysmooth(end:end+blankingSamples-1) = Ysmooth(end);
+                Ysmooth = circshift(Ysmooth,blankingSamples*-1);
+                waveforms(:,2,ii) = Ysmooth(1:size(waveforms,1));
 
 
                 t_mW = obj.laserPowerFromTrial(ii);
@@ -274,10 +263,8 @@ classdef stimConfig < handle
             % STEP TWO -- Fill in the matrices for the laser power signal
             for ii = 1:length(calibratedPointsInVolts) % Loop over stim conditions
 
-                % TODO -- make the edge samples a getter? It appears above too
                 pointsPerTrial = length(calibratedPointsInVolts{ii});
                 edgeSamples = ceil(linspace(1, obj.numSamplesPerChannel, pointsPerTrial+1));
-
 
                 blankingMask = ones(obj.numSamplesPerChannel,1);
                 for kk=1:(blankingSamples+blankOnsetShift_samples+blankOffsetShift_samples)
@@ -304,53 +291,6 @@ classdef stimConfig < handle
             end
 
 
-            %%
-            % Handle case where we ask for a shorter duration stimulus at higher laser power
-            for ii=1:length(obj.stimLocations)
-
-                if ~isfield(obj.stimLocations(ii).Attributes,'stimPulseDuration_ms') && ...
-                     length(obj.stimLocations(ii).ML) <= 2
-                    continue
-                end
-
-                %% TODO
-                % The following might well be wrong (or not best solution)
-                if isfield(obj.stimLocations(ii).Attributes,'stimPulseDuration_ms')
-                    stimDuration = obj.stimLocations(ii).Attributes.stimPulseDuration_ms;
-                else
-                    numStim = length(obj.stimLocations(ii).ML);
-                    stimDuration = obj.maxStimPulseDuration * (2/numStim);
-                end
-
-                if stimDuration < obj.maxStimPulseDuration
-                    % Find the first sample after the beam turns on
-                    digWaveform = waveforms(:,4,ii);
-
-                    fs = find(diff(digWaveform)>0)+1;
-
-                    % Find the last sample before the beam turns off
-                    fe = find(diff(digWaveform)<0);
-                    fe(end+1) = length(digWaveform);
-
-
-                    % We want the beam on for this long
-                    durationOfStimInSamples = stimDuration*1E-3/sampleInterval;
-
-                    % So we need to blank to zero the following points:
-                    if length(fe)>length(fs)
-                        fs = [1;fs];
-                    end
-
-                    blankTimes(:,1) = fs+durationOfStimInSamples;
-                    blankTimes(:,2) = fe;
-
-                    % Do it!
-                    waveforms(blankTimes(1,1):blankTimes(1,2),3,ii)=0;
-                    waveforms(blankTimes(2,1):blankTimes(2,2),3,ii)=0;
-                end
-            end % for ii=1:length(obj.stimLocations)
-
-
 
             %%
             % Handle case where we want an ephys waveform
@@ -368,7 +308,10 @@ classdef stimConfig < handle
             % TODO: What is the reason for doing this?
             waveforms(:,3:4,:) = circshift(waveforms(:,3:4,:),-blankOnsetShift_samples,1);
 
-
+            if size(waveforms,1) ~= obj.numSamplesPerChannel
+                fprintf('Expected waveform size: %d but actual is %d. BAD! REPORT THIS ERROR!', ...
+                    obj.numSamplesPerChannel, size(waveforms,1))
+            end
             % Output
             chanSamples = waveforms;
 

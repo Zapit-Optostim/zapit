@@ -1,4 +1,4 @@
-function [peak_mW, standardised_mW] = laserPowerFromTrial(obj, trialIndex, standardised_mW)
+function [peak_mW, standardised_mW, stimDuration] = laserPowerFromTrial(obj, trialIndex, standardised_mW)
     % Get laser power specified at a given trial. If necessary, scale by stim pulse duration
     %
     % function  [peak_mW, standardised_mW] = zapit.stimConfig.laserPowerFromTrial(trialIndex)
@@ -28,6 +28,7 @@ function [peak_mW, standardised_mW] = laserPowerFromTrial(obj, trialIndex, stand
     %           if the stimulus duration is shorter. This matches standardised_mW for
     %           duty cycles of 0.5.
     % standardised_mW - This is simply power value requested in the YML.
+    % stimDuration - Calculated stimulus duration.
     %
     % Rob Campbell - SWC 2023
 
@@ -47,8 +48,16 @@ function [peak_mW, standardised_mW] = laserPowerFromTrial(obj, trialIndex, stand
         if numStimuli <= 2
             stimDuration = obj.maxStimPulseDuration;
         else
-            % TODO: need to set correctly! <---
-            stimDuration = obj.maxStimPulseDuration * (2/numStimuli);
+            stimPeriod_ms = 1/obj.stimModulationFreqHz*1E3;
+
+            stimDuration = (stimPeriod_ms - obj.blankingTime_ms * numStimuli) / numStimuli;
+
+            % NOTE. The requirement for the following fudge factor was discovered by measuring
+            % the actual pulse duration using checkTimeAveragedPower in the development director.
+            % I am not aware of why it's needed. The actual duration values are 0.13 to 0.12 ms
+            % smaller consistently. It's much more than one one sample.
+            % TODO & NOTE: we still do not exactly the correct stim duration. Off by about 20 microseconds.
+            stimDuration = stimDuration - obj.blankingTime_ms/2;
         end
 
 

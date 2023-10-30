@@ -1,6 +1,7 @@
 
 
 Data generated as follows using the Dev branch on 4th Feb 2023
+First `cd` to this directory.
 
 
 ```matlab
@@ -17,6 +18,6 @@ chanSamples = hZP.stimConfig.chanSamples;
 
 % Then save with
 save chanSamples.mat chanSamples
-
+```
 
 
