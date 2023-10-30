@@ -134,6 +134,14 @@ classdef dotNETwrapper < zapit.hardware.DAQ
         end % isFiniteSamplePlaying
 
 
+        function sampleQuantityMode = returnAOSampleQuantityMode(obj)
+            % Return the sample quantity mode of the DAQ as a string
+            %
+            % function zapit.DAQ.dotNETwrapper.returnAOSampleQuantityMode
+            sampleQuantityMode = obj.hAO.Timing.SampleQuantityMode;
+        end % returnSampleQuantityMode
+
+
         function stopAndDeleteAOTask(obj)
             % Stop and then delete the AO task
             %
