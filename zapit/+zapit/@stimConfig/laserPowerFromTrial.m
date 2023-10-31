@@ -75,7 +75,7 @@ function [peak_mW, standardised_mW, stimDuration_ms] = laserPowerFromTrial(obj, 
 
     peak_mW = (modulationPeriod_ms / stimDuration_ms) * standardised_mW;
 
-    verbose = true;
+    verbose = false;
 
     if verbose
         fprintf('Peak laser power: %0.2f mW from %0.2f mW time averaged.\n', ...
