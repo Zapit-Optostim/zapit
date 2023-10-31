@@ -22,18 +22,21 @@ classdef waveform_tests < matlab.unittest.TestCase
         function buildZapit(obj)
             % Does Zapit build with dummy parameters?
             fprintf('Building Zapit API object\n')
+
+            % Load settings from the test data directory
             obj.hZP =  zapit.pointer('simulated',true, ...
                             'settingsFile',fullfile(obj.testDataDir,'zapitSystemSettings.yml'));
             obj.verifyClass(obj.hZP,'zapit.pointer');
 
             obj.hZP.listeners.saveSettings.Enabled=0; % To ensure the settings are not changed
 
-            % TODO load settings from testDataDir
+            % Load stim config from test data directory
             fname = fullfile(obj.testDataDir,obj.configFname);
             obj.hZP.loadStimConfig(fname);
 
             % "calibrate" it. No transformation will be done.
-            obj.hZP.refPointsSample = obj.hZP.refPointsStereotaxic;
+            obj.hZP.applyUnityStereotaxicCalib;
+
             % Load data that we previously generated with these conditions
             obj.chanSamples = obj.loadChanSamples;
         end
@@ -66,18 +69,22 @@ classdef waveform_tests < matlab.unittest.TestCase
         end
 
         function checkLaserWaveformsMatchTwoPoints(obj)
-             obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,2,:),obj.chanSamples(:,2,:));
+             obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,3,2),obj.chanSamples(:,3,2));
         end
 
         function checkLaserWaveformsMatchOnePoint(obj)
+             obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,3,3),obj.chanSamples(:,3,3));
+        end
+
+        function checkAllLaserWaveformsMatch(obj)
              obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,3,:),obj.chanSamples(:,3,:));
         end
 
-        function checkBlankinWaveformsMatch(obj)
+        function checkAllBlankingWaveformsMatch(obj)
              obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,4,:),obj.chanSamples(:,4,:));
         end
 
-        function checkBlankinWaveformsDoNotMatch(obj)
+        function checkBlankingWaveformsDoNotMatch(obj)
              obj.verifyNotEqual(obj.hZP.stimConfig.chanSamples(:,4,:)+0.1,obj.chanSamples(:,4,:));
         end
 

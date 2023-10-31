@@ -1,10 +1,11 @@
 
 
 Data generated as follows using the Dev branch on 4th Feb 2023
+First `cd` to this directory.
 
 
 ```matlab
-hZP =  zapit.pointer('simulated',true);
+hZP =  zapit.pointer('simulated',true,'settingsFile','zapitSystemSettings.yml');
 
 hZP.loadStimConfig('uniAndBilateral_5_conditions.yml');
 
@@ -17,6 +18,6 @@ chanSamples = hZP.stimConfig.chanSamples;
 
 % Then save with
 save chanSamples.mat chanSamples
-
+```
 
 

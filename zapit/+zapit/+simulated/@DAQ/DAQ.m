@@ -80,20 +80,24 @@ classdef DAQ < handle
         end
 
         function stopAndDeleteAITask(obj)
-        end
+        end % stopAndDeleteAITask
 
         function setLaserPowerControlVoltage(obj,laserVoltage)
             obj.lastLaserVoltage = laserVoltage;
-        end
+        end % setLaserPowerControlVoltage
 
         function start(obj)
             obj.doingClockedAcquisition = true;
-        end
+        end % start
 
         function stop(obj)
             obj.hAO.isTaskDone = true;
             obj.doingClockedAcquisition = false;
-        end
+        end % stop
+
+        function sampleQuantityMode = returnAOSampleQuantityMode(obj)
+            sampleQuantityMode = 'SIMULATED';
+        end % returnSampleQuantityMode
 
         function waitUntilAOTaskDone(obj)
             obj.hAO.isTaskDone = true;
@@ -114,7 +118,7 @@ classdef DAQ < handle
             % function zapit.simulated.DAQ.writeAnalogData
             %
             % Purpose
-            % Write analod data to the buffer and also log in a property the
+            % Write analog data to the buffer and also log in a property the
             % data that were written.
 
             obj.lastWaveform = waveforms;
