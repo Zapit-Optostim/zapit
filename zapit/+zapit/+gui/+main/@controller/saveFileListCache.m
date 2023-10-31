@@ -8,7 +8,7 @@ function saveFileListCache(obj)
     % persist across sessions.
 
     % Updating is sufficient to save it because there is a listener on the settings
-    % property in zapit.pointer that will save when it's modified. 
+    % property in zapit.pointer that will save when it's modified.
     obj.model.settings.cache.previouslyLoadedFiles = ...
             arrayfun(@(x) {fullfile(x.pathToFname, x.fname), x.timeAdded}, ...
                         obj.previouslyLoadedStimConfigs, 'UniformOutput', false);

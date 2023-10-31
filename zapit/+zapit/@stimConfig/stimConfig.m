@@ -29,10 +29,14 @@ classdef stimConfig < handle
         logFileStem = 'zapit_log_' % The stem of the log file name. zapit.pointer will use this to search for the file
     end
 
+    properties (Hidden, SetAccess=protected)
+        dutyCycle = 0.5 % With one or two stimuli, the beam will always be on half the time.
+                        % It is is with respect to this standard that we set laser powers for all other situations
+    end
+
     % read-only properties that are associated with getters
     properties(SetAccess=protected, GetAccess=public)
         chanSamples % The waveforms to be sent to the scanners
-        maxStimPulseDuration
         blankingTime_ms
     end
 
@@ -81,23 +85,6 @@ classdef stimConfig < handle
 
     % Getters and setters
     methods
-
-        function maxStimPulseDuration = get.maxStimPulseDuration(obj)
-            % Maximum possible stimulus duration given the current blanking time and refresh rate
-            %
-            % zapit.stimConfig.maxStimPulseDuration
-            %
-            % Purpose
-            % There will always be a maximum possible stimulus duration assuming two stimuli
-            % a 50% duty cycle and given frequency. This getter calculates and returns it.
-            % We want the ability to present the stimuli for a shorter time but a higher power.
-            % Therefore we need to know the maximum stimulus duration (a half-cycle).
-            %
-            % See the correctLaserPower method
-
-            maxStimPulseDuration = (0.5/obj.stimModulationFreqHz)*1E3 - obj.blankingTime_ms;
-
-        end % get.maxStimPulseDuration
 
 
         function blankingTime_ms = get.blankingTime_ms(obj)
@@ -234,13 +221,6 @@ classdef stimConfig < handle
                 Ysmooth = circshift(Ysmooth,blankingSamples*-1);
                 waveforms(:,2,ii) = Ysmooth(1:size(waveforms,1));
 
-
-                t_mW = obj.laserPowerFromTrial(ii);
-                laserControlVoltage = obj.parent.laser_mW_to_control(t_mW);
-                waveforms(:,3,ii) = ones(1,obj.numSamplesPerChannel) * laserControlVoltage;
-
-                % The masking light
-                waveforms(:,4,ii) = ones(1,obj.numSamplesPerChannel) * 5; % 5V TTL
             end % for ii
 
 
@@ -261,6 +241,8 @@ classdef stimConfig < handle
 
 
             % STEP TWO -- Fill in the matrices for the laser power signal
+            waveforms(:,3,:) = 1; % We will fill in with laser power control voltage in sendSamples
+            waveforms(:,4,:) = 5; % 5v TTL
             for ii = 1:length(calibratedPointsInVolts) % Loop over stim conditions
 
                 pointsPerTrial = length(calibratedPointsInVolts{ii});

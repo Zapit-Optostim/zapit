@@ -141,9 +141,7 @@ function varargout = sendSamples(obj, varargin)
         laserPower_mw = 0;
     elseif laserOn && isempty(laserPower_mw)
         % We use the laser power requested in the stim config file
-        % Return second arg that is the **standardized** laser power, taking into account
-        % possible shorter stimulus pulse duration.
-        [~,laserPower_mw] = obj.stimConfig.laserPowerFromTrial(conditionNumber);
+        laserPower_mw = obj.stimConfig.stimLocations(conditionNumber).Attributes.laserPowerInMW;
     end
 
 
@@ -185,15 +183,14 @@ function varargout = sendSamples(obj, varargin)
     % one cycle of the waveform back
     waveforms = obj.stimConfig.chanSamples(:,:,conditionNumber);
 
-    % If the user specified a laser power as an input argument then we must alter the
-    % power here on the third channel.
-    if ~isempty(laserPower_mw)
-        peakPower_mw = obj.stimConfig.laserPowerFromTrial(conditionNumber,laserPower_mw);
-        laserControlVoltage = obj.laser_mW_to_control(peakPower_mw);
+    % Set the voltage value in the laser waveform to yield the correct power. This will have
+    % been specified by default by the user settings file. Otherwise manually as an
+    % optional input argument.
+    peakPower_mw = obj.stimConfig.laserPowerFromTrial(conditionNumber,laserPower_mw);
+    laserControlVoltage = obj.laser_mW_to_control(peakPower_mw);
+    waveforms(waveforms(:,3)>0,3) = 1; % Just in case the voltage waveform is not ones
+    waveforms(:,3) = waveforms(:,3)*laserControlVoltage;
 
-        waveforms(waveforms(:,3)>0,3) = 1;
-        waveforms(:,3) = waveforms(:,3)*laserControlVoltage;
-    end
 
     if stimDurationSeconds > 0
         % If the user has asked for a fixed duration, we make the required waveforms by

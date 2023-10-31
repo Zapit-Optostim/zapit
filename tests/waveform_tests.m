@@ -69,18 +69,22 @@ classdef waveform_tests < matlab.unittest.TestCase
         end
 
         function checkLaserWaveformsMatchTwoPoints(obj)
-             obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,2,:),obj.chanSamples(:,2,:));
+             obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,3,2),obj.chanSamples(:,3,2));
         end
 
         function checkLaserWaveformsMatchOnePoint(obj)
+             obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,3,3),obj.chanSamples(:,3,3));
+        end
+
+        function checkAllLaserWaveformsMatch(obj)
              obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,3,:),obj.chanSamples(:,3,:));
         end
 
-        function checkBlankinWaveformsMatch(obj)
+        function checkAllBlankingWaveformsMatch(obj)
              obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,4,:),obj.chanSamples(:,4,:));
         end
 
-        function checkBlankinWaveformsDoNotMatch(obj)
+        function checkBlankingWaveformsDoNotMatch(obj)
              obj.verifyNotEqual(obj.hZP.stimConfig.chanSamples(:,4,:)+0.1,obj.chanSamples(:,4,:));
         end
 

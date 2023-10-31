@@ -27,7 +27,12 @@ function cPoints = calibratedPoints(obj)
     end
 
     for ii = 1:obj.numConditions
-        tmpMat = [obj.stimLocations(ii).ML; obj.stimLocations(ii).AP];
+        try
+            tmpMat = [obj.stimLocations(ii).ML; obj.stimLocations(ii).AP];
+        catch ME
+            fprintf('Failed to read condition %d\n', ii)
+            rethrow(ME)
+        end
         cPoints{ii} = zapit.utils.rotateAndScaleCoords(...
                     tmpMat, ...
                     obj.parent.refPointsStereotaxic, ...

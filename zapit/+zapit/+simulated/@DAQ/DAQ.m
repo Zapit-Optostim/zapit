@@ -118,7 +118,7 @@ classdef DAQ < handle
             % function zapit.simulated.DAQ.writeAnalogData
             %
             % Purpose
-            % Write analod data to the buffer and also log in a property the
+            % Write analog data to the buffer and also log in a property the
             % data that were written.
 
             obj.lastWaveform = waveforms;
