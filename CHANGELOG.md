@@ -24,6 +24,18 @@ NOTE: the version number of the software is taken from the last version number i
 
 ## Version History
 
+2023/10/20 v1.0.0
+  * BREAKING: The laser power defined in the settings file is now time-averaged power! 
+    So asking for 4 mW and one point will set the laser to 8 mW of power since the duty 
+    cycle is 50%. Previously the laser would be at 4 mW at time-averaged power would be 
+    2 mW. This did not make much sense. 
+  * MAJOR: Significantly changes to code that generates stimuli to allow for >2 points 
+    per trial.
+  * Remove stimulus pulse duration attribute of stimulus config yaml file. User can no 
+    longer specify pulses shorter than the duty cycle. Allowing this would make things
+    tricky given that we now allow >2 points per trial. 
+
+
 
 2023/08/23 -- v0.13.1
   * BUGFIX: Zap all coords works with fewer than three locations.
