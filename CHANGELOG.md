@@ -24,7 +24,12 @@ NOTE: the version number of the software is taken from the last version number i
 
 ## Version History
 
-2023/10/20 v1.0.0
+
+2023/10/31 v1.0.1
+  * Minor: improve message at CLI if beam power is clipped.  
+
+
+2023/10/31 v1.0.0
   * BREAKING: The laser power defined in the settings file is now time-averaged power! 
     So asking for 4 mW and one point will set the laser to 8 mW of power since the duty 
     cycle is 50%. Previously the laser would be at 4 mW at time-averaged power would be 
