@@ -25,6 +25,11 @@ NOTE: the version number of the software is taken from the last version number i
 ## Version History
 
 
+2023/10/31 v1.0.2
+  * Minor: Produces a CLI warning message if sendSamples is called with a non-existent 
+          condition number. 
+
+
 2023/10/31 v1.0.1
   * Minor: improve message at CLI if beam power is clipped.  
 
