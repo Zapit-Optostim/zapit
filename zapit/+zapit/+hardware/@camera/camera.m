@@ -86,7 +86,8 @@ classdef camera < handle
                 fprintf('\nConnecting to number %d\n', camToStart)
                 constructorCommand = constructorCommands{camToStart};
             else
-                fprintf('NO CAMERAS FOUND by zapit.hardware.camera\n');             
+                fprintf('NO CAMERAS FOUND by zapit.hardware.camera\n');
+                return
             end
 
 

@@ -25,11 +25,11 @@ function [xVolts, yVolts] = pixelToVolt(obj, pixelColumn, pixelRow)
     if ~isempty(obj.transform)
         [pixelColumn, pixelRow] = transformPointsInverse(obj.transform, pixelColumn, pixelRow);
     end
-    
-    
+
+
     xVolts = (pixelColumn - (obj.imSize(1)/2)) * obj.settings.scanners.voltsPerPixel;
     yVolts = (pixelRow    - (obj.imSize(2)/2)) * obj.settings.scanners.voltsPerPixel;
-    
+
     if obj.settings.scanners.invertXscanner==1
         xVolts = xVolts*-1;
     end

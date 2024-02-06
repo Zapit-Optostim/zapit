@@ -4,11 +4,11 @@ function harmonizeGUIstate(obj,~,~)
     % function zapit.pointer.harmonizeGUIstate
     %
     % Purpose
-    % Ensure that the GUI transitions smoothly regardless of what buttons the user clicks. 
+    % Ensure that the GUI transitions smoothly regardless of what buttons the user clicks.
     % For example, if a check galvo calib operation is running and the user clicks the
-    % Point Mode button, the system should transition from one operation to the other 
+    % Point Mode button, the system should transition from one operation to the other
     % with the UI elements updating accordingly. Since there are many such combinations
-    % of events, we wish to coordinate these in one place to avoid repeating code. 
+    % of events, we wish to coordinate these in one place to avoid repeating code.
 
 
     stateStructure = struct('GUIstate', 'idle', 'UIelement', []);
