@@ -196,7 +196,7 @@ function varargout = sendSamples(obj, varargin)
     laserControlVoltage = obj.laser_mW_to_control(peakPower_mw);
     waveforms(waveforms(:,3)>0,3) = 1; % Just in case the voltage waveform is not ones
     waveforms(:,3) = waveforms(:,3)*laserControlVoltage;
-    
+
 
     if stimDurationSeconds > 0
         % If the user has asked for a fixed duration, we make the required waveforms by
@@ -284,7 +284,7 @@ function varargout = sendSamples(obj, varargin)
     end
 
     if nargout>2
-        varargout{3} = obj.waveforms;
+        varargout{3} = waveforms;
     end
 
 end % sendSamples
