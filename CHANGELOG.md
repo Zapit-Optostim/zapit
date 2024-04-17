@@ -28,6 +28,7 @@ NOTE: the version number of the software is taken from the last version number i
 2023/10/31 v1.0.2
   * Minor: Produces a CLI warning message if sendSamples is called with a non-existent 
           condition number. 
+  * BUGFIX: NI DAQ no longer requires DAQ IDs (names) to start with a "D". 
 
 
 2023/10/31 v1.0.1
