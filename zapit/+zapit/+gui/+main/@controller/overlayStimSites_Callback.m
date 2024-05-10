@@ -35,8 +35,9 @@ function overlayStimSites_Callback(obj,~,~)
                 'Parent', obj.hImAx);
         hold(obj.hImAx,'off')
     else
-        % Remove the points
+        % Remove the points and any highlights
         obj.removeOverlays('stimConfigLocations');
+        obj.removeOverlays('highlightedStimConfigLocations')
     end % if
 
 end % overlayStimSites_Callback
