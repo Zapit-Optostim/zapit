@@ -53,7 +53,7 @@ function [settings,setTests] = default_settings
 
 
     %% Scanners
-    settings.scanners.voltsPerPixel = 1.5E-3;
+    settings.scanners.voltsPerPixel = 2.2E-3;
     setTests.scanners.voltsPerPixel = {@check_isnumeric, @check_isZeroOrGreaterScalar};
 
     settings.scanners.invertXscanner = 0;
