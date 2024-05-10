@@ -3,130 +3,130 @@ stimLocations01:
   AP: -3.83
   Class: stimulate
   Type: unilateral_point
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations02:
   ML: [-2.76, 0.22]
   AP: [-3.83, 2.48]
   Class: stimulate
   Type: unilateral_points
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations03:
   ML: [-2.76, 0.22, 0.68]
   AP: [-3.83, 2.48, 2.48]
   Class: stimulate
   Type: unilateral_points
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations04:
   ML: [-2.76, 0.22, 0.68, 1.15]
   AP: [-3.83, 2.48, 2.48, 2.48]
   Class: stimulate
   Type: unilateral_points
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations05:
   ML: [-2.76, 0.22, 0.68, 1.15, 0.22]
   AP: [-3.83, 2.48, 2.48, 2.48, 2.00]
   Class: stimulate
   Type: unilateral_points
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations06:
   ML: [-2.76, 0.22, 0.68, 1.15, 0.22, 0.68]
   AP: [-3.83, 2.48, 2.48, 2.48, 2.00, 2.00]
   Class: stimulate
   Type: unilateral_points
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations07:
   ML: [-2.76, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15]
   AP: [-3.83, 2.48, 2.48, 2.48, 2.00, 2.00, 2.00]
   Class: stimulate
   Type: unilateral_points
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations08:
   ML: [-2.76, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22]
   AP: [-3.83, 2.48, 2.48, 2.48, 2.00, 2.00, 2.00, 1.50]
   Class: stimulate
   Type: unilateral_points
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations09:
   ML: [-2.76, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68]
   AP: [-3.83, 2.48, 2.48, 2.48, 2.00, 2.00, 2.00, 1.50, 1.50]
   Class: stimulate
   Type: unilateral_points
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations10:
   ML: [-2.76, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15]
   AP: [-3.83, 2.48, 2.48, 2.48, 2.00, 2.00, 2.00, 1.50, 1.50, 1.50]
   Class: stimulate
   Type: unilateral_points
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations11:
   ML: [-2.76, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22]
   AP: [-3.83, 2.48, 2.48, 2.48, 2.00, 2.00, 2.00, 1.50, 1.50, 1.50, 1.00]
   Class: stimulate
   Type: unilateral_points
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations12:
   ML: [-2.76, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68]
   AP: [-3.83, 2.48, 2.48, 2.48, 2.00, 2.00, 2.00, 1.50, 1.50, 1.50, 1.00, 1.00]
   Class: stimulate
   Type: unilateral_points
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations13:
   ML: [-2.76, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15]
   AP: [-3.83, 2.48, 2.48, 2.48, 2.00, 2.00, 2.00, 1.50, 1.50, 1.50, 1.00, 1.00, 1.00]
   Class: stimulate
   Type: unilateral_points
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations14:
   ML: [-2.76, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22]
   AP: [-3.83, 2.48, 2.48, 2.48, 2.00, 2.00, 2.00, 1.50, 1.50, 1.50, 1.00, 1.00, 1.00, 3.00]
   Class: stimulate
   Type: unilateral_points
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations15:
   ML: [-2.76, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68]
   AP: [-3.83, 2.48, 2.48, 2.48, 2.00, 2.00, 2.00, 1.50, 1.50, 1.50, 1.00, 1.00, 1.00, 3.00, 3.00]
   Class: stimulate
   Type: unilateral_points
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations15:
   ML: [-2.76, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15]
   AP: [-3.83, 2.48, 2.48, 2.48, 2.00, 2.00, 2.00, 1.50, 1.50, 1.50, 1.00, 1.00, 1.00, 3.00, 3.00, 3.00]
   Class: stimulate
   Type: unilateral_points
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations16:
   ML: [-2.76, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22]
   AP: [-3.83, 2.48, 2.48, 2.48, 2.00, 2.00, 2.00, 1.50, 1.50, 1.50, 1.00, 1.00, 1.00, 3.00, 3.00, 3.00, 3.50]
   Class: stimulate
   Type: unilateral_points
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations17:
   ML: [-2.76, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68]
   AP: [-3.83, 2.48, 2.48, 2.48, 2.00, 2.00, 2.00, 1.50, 1.50, 1.50, 1.00, 1.00, 1.00, 3.00, 3.00, 3.00, 3.50, 3.50]
   Class: stimulate
   Type: unilateral_points
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations18:
   ML: [-2.76, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15]
   AP: [-3.83, 2.48, 2.48, 2.48, 2.00, 2.00, 2.00, 1.50, 1.50, 1.50, 1.00, 1.00, 1.00, 3.00, 3.00, 3.00, 3.50, 3.50, 3.50]
   Class: stimulate
   Type: unilateral_points
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations19:
   ML: [-2.76, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22]
   AP: [-3.83, 2.48, 2.48, 2.48, 2.00, 2.00, 2.00, 1.50, 1.50, 1.50, 1.00, 1.00, 1.00, 3.00, 3.00, 3.00, 3.50, 3.50, 3.50, 4.00]
   Class: stimulate
   Type: unilateral_points
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations20:
   ML: [-2.76, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68]
   AP: [-3.83, 2.48, 2.48, 2.48, 2.00, 2.00, 2.00, 1.50, 1.50, 1.50, 1.00, 1.00, 1.00, 3.00, 3.00, 3.00, 3.50, 3.50, 3.50, 4.00, 4.00]
   Class: stimulate
   Type: unilateral_points
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
 stimLocations21:
   ML: [-2.76, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15, 0.22, 0.68, 1.15]
   AP: [-3.83, 2.48, 2.48, 2.48, 2.00, 2.00, 2.00, 1.50, 1.50, 1.50, 1.00, 1.00, 1.00, 3.00, 3.00, 3.00, 3.50, 3.50, 3.50, 4.00, 4.00, 4.00]
   Class: stimulate
   Type: unilateral_points
-  Attributes: {laserPowerInMW: 2.0, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}
+  Attributes: {laserPowerInMW: 2.00, stimModulationFreqHz: 40.0, offRampDownDuration_ms: 250.0}

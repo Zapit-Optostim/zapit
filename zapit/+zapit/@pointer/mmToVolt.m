@@ -24,7 +24,7 @@ function [xVolts, yVolts] = mmToVolt(obj, pixelColumnInMM, pixelRowInMM)
         [pixelColumnInMM, pixelRowInMM] = ...
             transformPointsInverse(obj.transform, pixelColumnInMM, pixelRowInMM);
     end
-    
+
     mixPix = obj.settings.camera.micronsPerPixel;
     mmPix = mixPix * 1E-3;
 
@@ -34,7 +34,7 @@ function [xVolts, yVolts] = mmToVolt(obj, pixelColumnInMM, pixelRowInMM)
     xVolts = pixelColumnInMM * scaling;
     yVolts = pixelRowInMM * scaling;
 
-    
+
     if obj.settings.scanners.invertXscanner==1
         xVolts = xVolts*-1;
     end
