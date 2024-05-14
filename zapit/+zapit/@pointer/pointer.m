@@ -124,8 +124,9 @@ classdef pointer < handle
 
             % Log camera frames to lastAcquiredFrame and start camera
             if ~obj.simulated
-                obj.cam.vid.FramesAcquiredFcn = @obj.storeLastFrame;
-                obj.cam.vid.FramesAcquiredFcnCount=1; %Run frame acq fun every N frames
+                %% RAAC -- 14th May 2023 09:50 COMMENT OUT -- TODO
+                %obj.cam.vid.FramesAcquiredFcn = @obj.storeLastFrame;
+                %obj.cam.vid.FramesAcquiredFcnCount=1; %Run frame acq fun every N frames
             else
                obj.listeners.lastAcquiredFrame = addlistener(obj.cam, 'lastAcquiredFrame', 'PostSet', @obj.storeLastFrame);
                % Make a listener instead of the FramesAcquiredFcn

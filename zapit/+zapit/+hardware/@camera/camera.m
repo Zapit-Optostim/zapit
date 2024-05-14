@@ -96,12 +96,13 @@ classdef camera < handle
             obj.src = getselectedsource(obj.vid);
 
             % Set up the camera so that it is manually triggerable an
-            % unlimited number of times.
-            triggerconfig(obj.vid,'manual')
-            obj.vid.TriggerRepeat=inf;
+            % unlimited number of times.\
+            % TODO-- the following are commented out because not used elsewhere
+            %triggerconfig(obj.vid,'manual')
+            %obj.vid.TriggerRepeat=inf;
             obj.vid.Tag = 'zapit_vid';
-            obj.vid.FramesPerTrigger = inf;
-            obj.vid.FramesAcquiredFcnCount=1; %Run frame acq fun every frame
+            %obj.vid.FramesPerTrigger = inf;
+            %obj.vid.FramesAcquiredFcnCount=1; %Run frame acq fun every frame
 
             % set gain to maximum
             obj.src.Gain = 2; % TODO - this is hardcoded based on a Basler camera
@@ -129,7 +130,7 @@ classdef camera < handle
                     return
                 end
                 start(obj.vid)
-                trigger(obj.vid)
+                %trigger(obj.vid) %% TODO
             end
         end % startVideo
 

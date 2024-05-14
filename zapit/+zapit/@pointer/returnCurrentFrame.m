@@ -30,8 +30,8 @@ function im = returnCurrentFrame(obj,nFrames)
 
     indexToInsertFrameInto = 2;
     while indexToInsertFrameInto < nFrames
-        % If statment adds a new frame once the counter of number of frames
-        % has incrememted
+        % If statement adds a new frame once the counter of number of frames
+        % has incremented
         currentFramesAcquired = obj.cam.vid.FramesAcquired;
         if currentFramesAcquired > lastFrameAcquired
             im(:,:,indexToInsertFrameInto) = obj.lastAcquiredFrame;

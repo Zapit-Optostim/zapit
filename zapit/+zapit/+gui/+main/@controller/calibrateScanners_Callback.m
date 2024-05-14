@@ -1,11 +1,15 @@
 function calibrateScanners_Callback(obj,~,~)
-    % Initiate the proces of calibrating the scanners with the camera
+    % Initiate the process of calibrating the scanners with the camera
     %
     % zapit.gui.main.controller.calibrateScanners_Callback
     %
     % Purpose
-    % The scanners and camera must be calibrated with respect to each other. This
-    % method does this. 
+    % The scanners and camera must be calibrated with respect to each other.
+    % This allows, for example, the user to click on a point in the image and
+    % have the scanners go there. This method performs the required calibration.
+    %
+    %
+    % Rob Campbell - SWC 2023
 
     if nargin>1
         % Only set GUI state if the *user* clicked the button
@@ -53,8 +57,6 @@ function calibrateScanners_Callback(obj,~,~)
 
     %Finish off and tidy
     tidy
-
-
 
     function tidy
         obj.removeOverlays(mfilename)
