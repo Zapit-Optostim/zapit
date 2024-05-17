@@ -7,7 +7,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
     % Purpose
     % This class controls a GUI that serves as an editor and creater of stimulus configuration
     % files. This class inherits zapit.gui.stimConfigEditor.view which is what actually makes
-    % the GUI. This class controls the GUI and implements the logic that runs it. 
+    % the GUI. This class controls the GUI and implements the logic that runs it.
     %
     % The GUI itself is made in MATLAB AppDesigner and is never edited manually.
     %
@@ -41,7 +41,6 @@ classdef controller < zapit.gui.stimConfigEditor.view
         pointCommonProps = {'ob', 'MarkerSize', 14, 'LineWidth', 2};
         standardMarkerSize = 14
         enlargedMarkerSize = 20
-        isCamRunning % Used to disable camera if the main GUI is running
     end
 
 
@@ -58,7 +57,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
             % Inputs
             % hZPview - optional. As above. Provided so this GUI can add saved files to the recently opened file list.
             %
-            % 
+            %
 
 
             if nargin>0
@@ -82,8 +81,8 @@ classdef controller < zapit.gui.stimConfigEditor.view
             obj.hFig.MenuBar = 'none';
             obj.hFig.Name = 'Stim config editor';
             obj.hAx.Toolbar.Visible = 'off';
-            obj.BottomLabel.Text = ''; 
-            
+            obj.BottomLabel.Text = '';
+
             % Apply default values to UI elements from settings
             obj.LaserPowermWSpinner.Value = obj.settings.experiment.defaultLaserPowerMW;
             obj.StimFreqHzSpinner.Value = obj.settings.experiment.defaultLaserModulationFrequencyHz;
@@ -110,10 +109,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
 
             % Disable camera if called from main GUI. The GUI may perform better if that is done.
             if ~isempty(obj.mainGUI)
-                obj.isCamRunning = obj.mainGUI.model.cam.isrunning;
-                if obj.isCamRunning
-                    obj.mainGUI.model.cam.stopVideo;
-                end
+                obj.mainGUI.stopPreview
             end
 
         end %close constructor
@@ -126,8 +122,8 @@ classdef controller < zapit.gui.stimConfigEditor.view
             %
 
             % re-enable camera if needed
-            if ~isempty(obj.mainGUI) && ~isempty(obj.mainGUI.model) && obj.isCamRunning
-                obj.mainGUI.model.cam.startVideo;
+            if ~isempty(obj.mainGUI) && ~isempty(obj.mainGUI.model)
+                obj.mainGUI.startPreview
             end
             delete(obj.hFig);
         end %close destructor
@@ -183,17 +179,17 @@ classdef controller < zapit.gui.stimConfigEditor.view
             % function zapit.gui.stimConfig.controller.keyboardPress_Callback
             %
             % Purpose
-            % Runs whenever a key is pressed or released. Used to cause the symbol that 
-            % follows the mouse cursor to change size right away and not wait until it is moved. 
+            % Runs whenever a key is pressed or released. Used to cause the symbol that
+            % follows the mouse cursor to change size right away and not wait until it is moved.
 
-            if strcmp(event.Key,'ctrl') || strcmp(event.Key,'shift') 
+            if strcmp(event.Key,'ctrl') || strcmp(event.Key,'shift')
                 obj.highlightArea_Callback
             end
         end % keyboardPress_Callback
 
 
         function resetPoints_Callback(obj,~,~)
-            % Wipes all points and the file name after presenting a confirm dialog. 
+            % Wipes all points and the file name after presenting a confirm dialog.
             %
             % function zapit.gui.stimConfig.controller.resetPoints_Callback
             %
@@ -201,7 +197,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
             % Allows the user to reset the GUI: removing the clicked points and wiping the
             % file name.
             %
-            % 
+            %
 
             % TODO -- should we create a file name also to help with saving?
 
@@ -214,7 +210,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
                          'Yes', 'No', 'No');
             if isempty(response) || strcmp(response,'No')
                 return
-            end 
+            end
             arrayfun(@(x) delete(x), obj.pAddedPoints)
             obj.pAddedPoints = matlab.graphics.chart.primitive.Line.empty;
             obj.fname = '' ;
@@ -229,15 +225,12 @@ classdef controller < zapit.gui.stimConfigEditor.view
             %
             % Purpose
             % Saves the stimulus config data to a YAML file. If the GUI was launched
-            % from the main GUI, then saving a file will cause it to be added to the 
-            % recently loaded menu.  
+            % from the main GUI, then saving a file will cause it to be added to the
+            % recently loaded menu.
 
-            % For some reason we need the video stopped or this locks up everything
+            % Stop the video preview to ensure this step runs as fast as possible
             if ~isempty(obj.mainGUI)
-                isCamRunning = obj.mainGUI.model.cam.isrunning;
-                if isCamRunning
-                    obj.mainGUI.model.cam.stopVideo;
-                end
+                obj.mainGUI.stopPreview;
             end
 
             stimC = obj.returnStimConfigStructure;
@@ -261,10 +254,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
             end
 
             if ~isempty(obj.mainGUI)
-                isCamRunning = obj.mainGUI.model.cam.isrunning;
-                if isCamRunning
-                    obj.mainGUI.model.cam.startVideo;
-                end            
+                obj.mainGUI.startPreview;
             end
         end %saveConfigYAML
 
@@ -275,15 +265,12 @@ classdef controller < zapit.gui.stimConfigEditor.view
             % function zapit.gui.stimConfig.controller.loadConfigYAML
             %
             % Purpose
-            % Load a stimulus config YAML and display it. 
+            % Load a stimulus config YAML and display it.
 
 
-            % For some reason we need the video stopped or this locks up everything
+            % Stop the video preview to ensure this step runs as fast as possible
             if ~isempty(obj.mainGUI)
-                isCamRunning = obj.mainGUI.model.cam.isrunning;
-                if isCamRunning
-                    obj.mainGUI.model.cam.stopVideo;
-                end
+                obj.mainGUI.stopPreview;
             end
 
             [fname,fullPath] = uigetfile('*.yml;*.yaml');
@@ -312,10 +299,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
             obj.updateBottomLabel
 
             if ~isempty(obj.mainGUI)
-                isCamRunning = obj.mainGUI.model.cam.isrunning;
-                if isCamRunning
-                    obj.mainGUI.model.cam.startVideo;
-                end            
+                obj.mainGUI.startPreview;
             end
 
         end %loadConfigYAML
@@ -328,7 +312,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
             %
             % Purpose
             % Obtain the point nearest the cursor. From this obtain the index of the stimulus
-            % type (trial) that this is part of. 
+            % type (trial) that this is part of.
             %
 
 
