@@ -18,10 +18,10 @@ function calibrateSample_Callback(obj,~,~)
         obj.GUIstate = mfilename;
     end
 
-    isCamRunning = obj.model.cam.isrunning;
-    if isCamRunning
-        obj.model.cam.stopVideo;
-    end
+
+    % Stop preview to make things as smooth as possible
+    obj.stopPreview
+
 
     obj.model.sampleCalibrated = false;
     obj.model.refPointsSample(:) = 0;
@@ -90,10 +90,8 @@ function calibrateSample_Callback(obj,~,~)
 
     end
 
-
-    if isCamRunning
-        obj.model.cam.startVideo;
-    end
+    % re-start the camera
+    obj.startPreview
 
 end % calibrateSample_Callback
 

@@ -19,7 +19,7 @@ function im = returnCurrentFrame(obj,nFrames)
         nFrames = 1;
     end
 
-    im = obj.lastAcquiredFrame;
+    im = obj.cam.getLastFrame;
 
     if nFrames==1
         return
@@ -34,7 +34,7 @@ function im = returnCurrentFrame(obj,nFrames)
         % has incremented
         currentFramesAcquired = obj.cam.vid.FramesAcquired;
         if currentFramesAcquired > lastFrameAcquired
-            im(:,:,indexToInsertFrameInto) = obj.lastAcquiredFrame;
+            im(:,:,indexToInsertFrameInto) = obj.cam.getLastFrame;
             lastFrameAcquired = currentFramesAcquired;
             indexToInsertFrameInto = indexToInsertFrameInto +1;
         end

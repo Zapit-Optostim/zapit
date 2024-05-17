@@ -89,6 +89,8 @@ classdef controller < zapit.gui.main.view
 
             end
 
+            obj.startPreview % start the camera preview
+
             % Timer runs every 45 minutes and tests if software is up to date at 4am
             obj.updateTimer = timer('ExecutionMode','FixedRate', ...
                                     'Period', 60*45, ...

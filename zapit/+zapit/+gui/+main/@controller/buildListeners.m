@@ -33,11 +33,6 @@ function buildListeners(obj)
     obj.listeners.updateExperimentPathTextArea = ...
         addlistener(obj.model, 'experimentPath', 'PostSet', @obj.updateExperimentPathTextArea);
 
-    %% RAAC -- COMMENT OUT TODO 14th MAY
-    % Updates the GUI image with the last acquired frame from the camera
-    %obj.listeners.dispFrame = ...
-    %    addlistener(obj.model, 'lastAcquiredFrame', 'PostSet', @obj.dispFrame);
-
     % Update the GUI elements depending on whether or not the scanner calibration step has been done.
     obj.listeners.scannersCalibrateCallback = ...
         addlistener(obj.model, 'scannersCalibrated', 'PostSet', @obj.scannersCalibrateCallback);

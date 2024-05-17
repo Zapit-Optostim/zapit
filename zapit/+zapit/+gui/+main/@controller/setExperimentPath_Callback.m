@@ -16,18 +16,14 @@ function setExperimentPath_Callback(obj,~,~)
     %
     % Rob Campbell - SWC 2023
 
-    isCamRunning = obj.model.cam.isrunning;
-
-    if isCamRunning
-        obj.model.cam.stopVideo;
-    end
+    % Stop preview to make things as smooth as possible
+    obj.stopPreview
 
     selectedPath = uigetdir;
 
     obj.model.experimentPath = selectedPath;
 
-    if isCamRunning
-        obj.model.cam.startVideo;
-    end
+    % re-start the camera
+    obj.startPreview
 
 end % setExperimentPath_Callback

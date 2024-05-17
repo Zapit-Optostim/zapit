@@ -122,23 +122,14 @@ classdef pointer < handle
                 obj.cam.ROI = round(obj.settings.cache.ROI);
             end
 
-            % Log camera frames to lastAcquiredFrame and start camera
-            if ~obj.simulated
-                %% RAAC -- 14th May 2023 09:50 COMMENT OUT -- TODO
-                %obj.cam.vid.FramesAcquiredFcn = @obj.storeLastFrame;
-                %obj.cam.vid.FramesAcquiredFcnCount=1; %Run frame acq fun every N frames
-            else
+            % TODO -- the following does not do anything helpful in simulated mode.
+            %         need to sort it out to get the frames updating if needed.
+            if obj.simulated
                obj.listeners.lastAcquiredFrame = addlistener(obj.cam, 'lastAcquiredFrame', 'PostSet', @obj.storeLastFrame);
                % Make a listener instead of the FramesAcquiredFcn
                % TODO: this seems to cause Zapit to hang on many systems and we don't care about the
                % simulated camera anyway, since it doesn't do anything useful right now. So comment
                % out until/unless it is actually needed.
-               %obj.cam.startVideo; pause(0.2), obj.cam.stopVideo; pause(0.2) % TODO -- for some reason we need to call this twice for it to start working properly
-            end
-
-            % Only start video by default if we are not in simulated mode
-            if ~obj.simulated
-                obj.cam.startVideo;
             end
 
 

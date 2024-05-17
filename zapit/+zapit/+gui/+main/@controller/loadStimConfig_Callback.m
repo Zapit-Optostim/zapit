@@ -8,11 +8,9 @@ function loadStimConfig_Callback(obj,src,~)
     % Note this callback is triggered by loading of recent files also.
     %
 
-    % Stop video first as the video running seems to really slow down loading
-    isCamRunning = obj.model.cam.isrunning;
-    if isCamRunning
-        obj.model.cam.stopVideo;
-    end
+    % Stop preview to make things as smooth as possible
+    obj.stopPreview
+
 
     % Wipe any plot details related to this config.
     obj.OverlaystimsitesButton.Value=0; % Unchecks button if checked
@@ -59,9 +57,7 @@ function loadStimConfig_Callback(obj,src,~)
         obj.overlayStimSites_Callback; % Adds points
     end
 
-    if isCamRunning
-        obj.model.cam.startVideo;
-    end
+    obj.startPreview
 
     % Update the drop-down that allows us to present the stimuli
     obj.updateTestSiteDropdown;

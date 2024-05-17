@@ -8,7 +8,8 @@ function drawROI_Callback(obj,~,~)
     obj.ROIButton.Enable='off';
     obj.ResetROIButton.Enable='off'; %There is a callback on ROI size that will cause this to re-enable automatically as needed
 
-    obj.model.cam.stopVideo
+    % Stop preview to make things as smooth as possible
+    obj.stopPreview
 
     % Draw box and get coords
     imSize = obj.model.imSize;
@@ -18,7 +19,7 @@ function drawROI_Callback(obj,~,~)
     yl = obj.hImAx.YLim;
 
     borderMM = 1;
-    
+
     defaultPos = [xl(1)+borderMM, ...
                   yl(1)+borderMM, ...
                     (mixPix*imSize(1))-borderMM*2, ...
@@ -67,8 +68,8 @@ function drawROI_Callback(obj,~,~)
 
 
 
-    %  We have obtained this in local image coords so if user is drawing a ROI on a zoomed-in image we need to 
-    % add the existing offset.  
+    %  We have obtained this in local image coords so if user is drawing a ROI on a zoomed-in image we need to
+    % add the existing offset.
     try
     originalROI = obj.model.cam.ROI;
     originalROI(3:4) = 0;
@@ -86,7 +87,7 @@ function drawROI_Callback(obj,~,~)
     obj.model.settings.cache.ROI = obj.model.cam.ROI;
 
     obj.ROIButton.Enable='on';
-    obj.model.cam.startVideo
+    obj.startPreview  % re-start the camera
     obj.model.wipeScannerCalib % Because any existing scanner calib will no longer hold
 
 end % drawROI
