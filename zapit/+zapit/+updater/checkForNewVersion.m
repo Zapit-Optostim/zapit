@@ -21,6 +21,7 @@ function details = checkForNewVersion
     releases = zapit.updater.getGitHubReleaseHistory;
 
     if isempty(releases)
+        fprintf('Can not check for new version: can not get GitHub releases information\n')
         details = [];
         return
     end
