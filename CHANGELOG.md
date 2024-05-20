@@ -24,10 +24,15 @@ NOTE: the version number of the software is taken from the last version number i
 
 ## Version History
 
+2024/05/20 v1.0.3
+  * Out of bounds stimulus index causes an error. In v1.0.2 it would just carry on 
+    gracefully, which is unwise. Thanks to Peter V for pointing that out. 
+  * Remove setting "experiment.maxStimPointsPerCondition" that was not being used by anything.
+
 
 2024/05/20 v1.0.2
   * Minor: Produces a CLI warning message if sendSamples is called with a non-existent 
-          condition number. 
+          condition number. This helps particularly for diagnosing issues over TCP/IP.
   * BUGFIX: NI DAQ no longer requires DAQ IDs (names) to start with a "D". 
   * The stimulus locations selected by the dropdown menu for interactive zapping are
     now highlighted. 

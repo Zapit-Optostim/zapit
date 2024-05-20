@@ -124,9 +124,6 @@ function [settings,setTests] = default_settings
     settings.experiment.offRampDownDuration_ms = 250;
     setTests.experiment.offRampDownDuration_ms = {@check_isnumeric, @check_isscalar};
 
-    settings.experiment.maxStimPointsPerCondition = 2;
-    setTests.experiment.maxStimPointsPerCondition = {@check_isnumeric, @check_isscalar};
-
     % The following settings should provide minimum blanking time for Saturn 5 scanners
     % ThorLabs scanners are slower and will need larger numbers.
     settings.experiment.blankingTime_ms = 0.3;
