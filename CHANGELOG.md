@@ -33,6 +33,7 @@ NOTE: the version number of the software is taken from the last version number i
     now highlighted. 
   * Reduce the camera frame rate to 20 FPS to improve responsiveness and see if this helps 
     with random crashes that happen on some rigs and are associated with the camera. 
+  * If the ROI is reset and Zapit is closed, it re-opens with the reset ROI. 
 
 
 2023/10/31 v1.0.1
