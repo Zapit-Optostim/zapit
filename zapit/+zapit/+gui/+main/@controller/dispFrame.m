@@ -9,5 +9,5 @@ function dispFrame(obj,~,~)
 
 
     obj.hImLive.CData = obj.model.lastAcquiredFrame;
-
+    drawnow limitrate
 end % dispFrame

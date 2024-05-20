@@ -106,6 +106,8 @@ classdef camera < handle
             % set gain to maximum
             obj.src.Gain = 2; % TODO - this is hardcoded based on a Basler camera
 
+            obj.src.AcquisitionFrameRate=20;
+            obj.src.AcquisitionFrameRateEnable='True'
         end % close constructor
 
 
