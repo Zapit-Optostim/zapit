@@ -7,4 +7,5 @@ Please report any problems, bugs, or suggestions via the project Issue Tracker o
 This keeps everything open and available for everyone. 
 
 ## Filing Pull Requests
-If you are thinking of contributing please contact us before starting work as changes that are not well organized or break conventions will not be accepted.
+If you are thinking of contributing [please read the conventions document](https://zapit.gitbook.io/user-guide/developer-notes/conventions) and get in contact before starting work. 
+We are happy to collaborate!

@@ -5,16 +5,21 @@ function varargout = runAffineTransform(obj, targetBeamLocation, actualBeamLocat
     %
     % Purpose
     % Runs an affine transform to calibrate the scanner and camera.
-    % 
+    %
     % Inputs (optional)
-    % targetBeamLocation - 
-    % actualBeamLocation - 
-    %  If both the above are provided and not empty, the transform is done on these. 
-    %  Otherwise, the method looks in the calibrateScannersPosData property and extracts 
-    %  data from there. Both the above arguments are n by 2 matrices with one x/y 
-    % coordinate per row.
+    % targetBeamLocation -
+    % actualBeamLocation -
+    %  If both the above are provided and not empty, the transform is done on these.
+    %  Otherwise, the method looks in the calibrateScannersPosData property and extracts
+    %  data from there. Both the above arguments are n by 2 matrices with one x/y
+    %  coordinate per row.
     %
     % diagnosticPlots - false by default.
+    %
+    % Outputs
+    % optionally return the transform matrix as an output argument. This is always
+    % saved in the "transform" property
+    %
     %
     % Rob Campbell - SWC 2023
 
@@ -25,7 +30,7 @@ function varargout = runAffineTransform(obj, targetBeamLocation, actualBeamLocat
         else
             return
         end
-    end 
+    end
 
     if nargin<4
         diagnosticPlots = false;
@@ -59,7 +64,7 @@ function varargout = runAffineTransform(obj, targetBeamLocation, actualBeamLocat
 
     % runs affine transformation
     tform = fitgeotrans(targetBeamLocation,actualBeamLocation,'similarity');
-    
+
     obj.transform = tform;
 
     if nargout>0

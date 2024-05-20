@@ -467,9 +467,9 @@ classdef dotNETwrapper < zapit.hardware.DAQ
                 return
             end
 
+            C=cellfun(@(x) [x,','],C,'UniformOutput',false);
             C = strcat(C{:});
-            C = strrep(C,'D',',D');
-            C(1) = [];
+            C(end) = [];
 
             chanString = C;
         end % genChanString

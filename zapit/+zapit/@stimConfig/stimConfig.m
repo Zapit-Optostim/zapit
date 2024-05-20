@@ -220,7 +220,6 @@ classdef stimConfig < handle
                 Ysmooth(end:end+blankingSamples-1) = Ysmooth(end);
                 Ysmooth = circshift(Ysmooth,blankingSamples*-1);
                 waveforms(:,2,ii) = Ysmooth(1:size(waveforms,1));
-
             end % for ii
 
 

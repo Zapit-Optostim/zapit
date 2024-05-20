@@ -6,7 +6,7 @@ classdef camera < handle
     % image acquisition toolbox. This is necessary to provide consistent behavior across
     % different camera drivers.
     %
-    % Rob Campbell - 2018 SWC 
+    % Rob Campbell - 2018 SWC
     % Rob Campbell - 2022 SWC
 
 
@@ -86,7 +86,8 @@ classdef camera < handle
                 fprintf('\nConnecting to number %d\n', camToStart)
                 constructorCommand = constructorCommands{camToStart};
             else
-                fprintf('NO CAMERAS FOUND by zapit.hardware.camera\n');             
+                fprintf('NO CAMERAS FOUND by zapit.hardware.camera\n');
+                return
             end
 
 
@@ -94,17 +95,19 @@ classdef camera < handle
             obj.vid = eval(constructorCommand);
             obj.src = getselectedsource(obj.vid);
 
-            % Set up the camera so that it is manually triggerable an 
-            % unlimited number of times. 
+            % Set up the camera so that it is manually triggerable an
+            % unlimited number of times.
             triggerconfig(obj.vid,'manual')
             obj.vid.TriggerRepeat=inf;
             obj.vid.Tag = 'zapit_vid';
             obj.vid.FramesPerTrigger = inf;
             obj.vid.FramesAcquiredFcnCount=1; %Run frame acq fun every frame
-            
+
             % set gain to maximum
             obj.src.Gain = 2; % TODO - this is hardcoded based on a Basler camera
 
+            obj.src.AcquisitionFrameRate=20;
+            obj.src.AcquisitionFrameRateEnable='True';
         end % close constructor
 
 
@@ -153,7 +156,7 @@ classdef camera < handle
 
         function lastFrame=getLastFrame(obj)
             if isa(obj.vid,'videoinput')
-                lastFrame=squeeze(peekdata(obj.vid,1));
+                lastFrame=squeeze(getsnapshot(obj.vid));
             end
         end % getLastFrame
 
@@ -162,7 +165,7 @@ classdef camera < handle
             if isa(obj.vid,'videoinput')
                 vidRunning=isrunning(obj.vid);
             else
-                vidRunning = false;                
+                vidRunning = false;
             end
         end % isrunning
 

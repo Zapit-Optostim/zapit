@@ -11,7 +11,9 @@ function setWindowTitle(obj)
 
 
     d = zapit.updater.checkForNewVersion;
-
+    if isempty(d)
+        return
+    end
     if d.isUpToDate
         obj.hFig.Name = sprintf('Zapit v%s', d.installedVersion);
     else

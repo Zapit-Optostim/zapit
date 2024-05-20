@@ -31,6 +31,7 @@ function zapAllCoords_Callback(obj,~,~)
         waveforms(:,4) = 0;
 
         W = [];
+        % TODO-- the following uses the horrible ramps. Should just boxcar filter.
         if size(waveforms,1)>1
             % If multiple points are being stimulated
             for ii=1:size(waveforms,1)-1

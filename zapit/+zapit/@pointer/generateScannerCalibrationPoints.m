@@ -26,6 +26,8 @@ function [R,C] = generateScannerCalibrationPoints(obj, varargin)
     %
     % See also:
     % zapit.pointer.calibrateScanners
+    % zapit.pointer.measurePointingAccuracy
+    % zapit.pointer.wipeScannerCalib
     %
     %
     % Rob Campbell - SWC 2023

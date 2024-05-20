@@ -19,6 +19,9 @@ function varargout = calibrateScanners(obj)
     %
     % Also see
     % zapit.pointer.measurePointingAccuracy
+    % zapit.pointer.wipeScannerCalib
+    % zapit.pointer.generateScannerCalibrationPoints
+    %
     %
     % Maja Skretowska - SWC 2021
     % Rob Campbell - SWC 2022

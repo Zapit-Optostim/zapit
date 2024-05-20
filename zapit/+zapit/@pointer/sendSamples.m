@@ -115,6 +115,12 @@ function varargout = sendSamples(obj, varargin)
 
 
     % Choose a random condition if necessary
+    if conditionNumber > obj.stimConfig.numConditions
+        fprintf('\n ** Requested condition number %d does not exist. There are only %d conditions!\n\n', ...
+            conditionNumber, obj.stimConfig.numConditions)
+        return
+    end
+
     if isempty(conditionNumber) || conditionNumber == -1
         r = randperm(obj.stimConfig.numConditions);
         conditionNumber = r(1);
@@ -278,7 +284,7 @@ function varargout = sendSamples(obj, varargin)
     end
 
     if nargout>2
-        varargout{3} = obj.waveforms;
+        varargout{3} = waveforms;
     end
 
 end % sendSamples
