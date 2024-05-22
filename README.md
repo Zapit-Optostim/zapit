@@ -28,6 +28,9 @@ There is a [Change Log](CHANGELOG.md) if you are concerned about applying update
 
 If any of the above Toolboxes are included in your licence but not installed, you may install them using the Add On Manager.
 
+## Hardware requirements
+Windows PC with at least 16 GB of RAM.
+
 ## Contributing
 Code was written by Maja Skretowska and Rob Campbell at the Sainsbury Wellcome Centre (UCL) in 2021/2022.
 Contributions and collaborations are welcome.
