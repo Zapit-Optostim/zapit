@@ -19,7 +19,7 @@ classdef (Abstract) settingsValuesTests
     % The following methods apply checks and replace bad values with defaults.
     methods(Static)
 
-        % * How the folowing methods work
+        % * How the following methods work
         % In each case the following methods test some aspect of value in the structure "actualStruct".
         % The value itself is always addressed as "actualStruct.(sectionName).fieldName". This is done
         % in the function "zapit.settings.checkSettingsAreValid". If the value does not pass then the
@@ -43,7 +43,7 @@ classdef (Abstract) settingsValuesTests
         function [actualStruct,isValid] = check_ischar(actualStruct,defaultStruct,sectionName,fieldName)
             isValid = true;
             if ~ischar(actualStruct.(sectionName).(fieldName))
-                fprintf('-> %s.%s should be a scalar. Setting it to %s.\n', ...
+                fprintf('-> %s.%s should be a character array. Setting it to %s.\n', ...
                     sectionName,fieldName,defaultStruct.(sectionName).(fieldName))
                 actualStruct.(sectionName).(fieldName) = defaultStruct.(sectionName).(fieldName);
                 isValid = false;

@@ -5,7 +5,7 @@ function userDir = userFolder
     %
     % Purpose
     % Return path to user's home folder on Windows or Unix systems. Returns
-    % empty if it fails to find a home folder for som reason. 
+    % empty if it fails to find a home folder for some reason.
     %
     % Inputs
     % none

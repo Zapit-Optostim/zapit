@@ -188,12 +188,13 @@ function varargout = sendSamples(obj, varargin)
     % one cycle of the waveform back
     waveforms = obj.stimConfig.chanSamples(:,:,conditionNumber);
 
-    % Set the voltage value in the laser waveform to yield the correct power. This will have
-    % been specified by default by the user settings file. Otherwise manually as an
+    % Set the voltage value in the laser waveform to yield the correct power. This will
+    % have been specified by default by the user settings file. Otherwise manually as an
     % optional input argument.
     peakPower_mw = obj.stimConfig.laserPowerFromTrial(conditionNumber,laserPower_mw);
     laserControlVoltage = obj.laser_mW_to_control(peakPower_mw);
-    waveforms(waveforms(:,3)>0,3) = 1; % Just in case the voltage waveform is not ones
+    % NOTE: the following line will yield higher power for ephys waveforms, assuming power
+    % is a linear function of waveform.
     waveforms(:,3) = waveforms(:,3)*laserControlVoltage;
 
 

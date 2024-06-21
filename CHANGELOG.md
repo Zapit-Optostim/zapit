@@ -24,6 +24,12 @@ NOTE: the version number of the software is taken from the last version number i
 
 ## Version History
 
+2024/06/21 v1.0.4
+  * Ephys waveforms should now have a better shape and be produced correctly. BUT the higher
+  laser power is produced assuming the power curve is linear and does not take max control 
+  voltage into account. OK for lower powers/fewer positions with Obis for testing.
+
+
 2024/05/20 v1.0.3
   * Out of bounds stimulus index causes an error. In v1.0.2 it would just carry on 
     gracefully, which is unwise. Thanks to Peter V for pointing that out. 
