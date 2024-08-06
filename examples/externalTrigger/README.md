@@ -45,3 +45,6 @@ External triggering is needed if you wish to initiate stimuli precisely followin
 This could be a piece of experimental aparatus that indicates a change of state in the world with a TTL pulse, or it could be a control PC that initiates a TTL pulse when it starts recording data. 
 On the other hand, it would be reseaonable to simply use software tiggering if you, for example, want to present a 1 second photostimulus once every 1 minute. 
 Zapit's `sendSamples` command allows stimuli to have a precise duration regardless of the trigger source. 
+
+# Further reading
+For more information on triggering Zapit see the [Basic API Usage](https://zapit.gitbook.io/user-guide/running-experiments/matlab/basic-api-usage-in-matlab) page of the instructions. 
