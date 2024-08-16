@@ -27,6 +27,12 @@ function plotChanSamples(obj, conditionToPlot)
         return
     end
 
+    if conditionToPlot > size(chanSamples,3)
+        fprintf('trial %d exceeds max trial ID of %d\n', ...
+            conditionToPlot, size(chanSamples,3))
+        return
+    end
+
     % extract data of interest
     xGalvo =  chanSamples(:,1,conditionToPlot);
     yGalvo =  chanSamples(:,2,conditionToPlot);

@@ -55,7 +55,6 @@ function [ephysWaveform,scaleFactor] = filterForEphys(obj,inputWaveform)
             s = f(ii)+1;
             ephysWaveform(s:s+maxBlockLength-1) = wForm;
         end
-        size(ephysWaveform)
     case 'sine'
 
 
