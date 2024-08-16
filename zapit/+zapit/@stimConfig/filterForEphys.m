@@ -31,26 +31,42 @@ function [ephysWaveform,scaleFactor] = filterForEphys(obj,inputWaveform)
     % Rob Campbell - SWC 2023
 
 
+    waveformType = 'initial'; % "initial" or "sine"
 
-    % Find the length of the on and off blocks. We know the stimulus "on" times will be
-    % the longest epochs, so we use that information to find those.
-    blockLengths = diff(find(abs(diff(inputWaveform))));
-    maxBlockLength = max(blockLengths);
 
-    % The start of the stim epoch blocks
-    f=find(diff(inputWaveform)==1);
+    switch waveformType
+    case 'initial'
+        % Find the length of the on and off blocks. We know the stimulus "on" times will be
+        % the longest epochs, so we use that information to find those.
+        blockLengths = diff(find(abs(diff(inputWaveform))));
+        maxBlockLength = max(blockLengths);
 
-    % Waveform
-    wForm = sin(linspace(0,pi,maxBlockLength));
-    maxVal = 1;
-    wForm(wForm>maxVal)=maxVal;
+        % The start of the stim epoch blocks
+        f=find(diff(inputWaveform)==1);
 
-    % Populate
-    ephysWaveform = zeros(size(inputWaveform));
-    for ii=1:length(f)
-        s = f(ii)+1;
-        ephysWaveform(s:s+maxBlockLength-1) = wForm;
-    end
+        % Waveform
+        wForm = sin(linspace(0,pi,maxBlockLength));
+        maxVal = 1;
+        wForm(wForm>maxVal)=maxVal;
+
+        % Populate
+        ephysWaveform = zeros(size(inputWaveform));
+        for ii=1:length(f)
+            s = f(ii)+1;
+            ephysWaveform(s:s+maxBlockLength-1) = wForm;
+        end
+        size(ephysWaveform)
+    case 'sine'
+
+
+        % The start of the stim epoch blocks
+        nCycles = length(find(diff(inputWaveform)==1));
+        wForm = sin(linspace(pi*0.5,(2*nCycles+0.5)*pi,size(inputWaveform,1)))';
+        wForm = wForm + min(wForm);
+
+        ephysWaveform = wForm';
+    end % switch
+
 
 
 
