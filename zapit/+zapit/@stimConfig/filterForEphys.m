@@ -31,7 +31,7 @@ function [ephysWaveform,scaleFactor] = filterForEphys(obj,inputWaveform)
     % Rob Campbell - SWC 2023
 
 
-    waveformType = 'initial'; % "initial" or "sine"
+    waveformType = 'sine'; % "initial" or "sine"
 
 
     switch waveformType
@@ -61,12 +61,19 @@ function [ephysWaveform,scaleFactor] = filterForEphys(obj,inputWaveform)
         % The start of the stim epoch blocks
         nCycles = length(find(diff(inputWaveform)==1));
         if nCycles==1 % to handle one position only
+            oneCycle=true;
             nCycles=2;
+        else
+            oneCycle=false;
         end
-        wForm = sin(linspace(pi*0.5,(2*nCycles+0.5)*pi,size(inputWaveform,1)))';
-        wForm = wForm + min(wForm);
 
-        ephysWaveform = wForm';
+        wForm = sin(linspace(pi*0.5,(2*nCycles+0.5)*pi,size(inputWaveform,1)));
+        wForm = wForm + min(wForm);
+        if oneCycle
+            disp('here')
+            wForm(round(length(wForm)/2):end)=0;
+        end
+        ephysWaveform = wForm;
     end % switch
 
 
