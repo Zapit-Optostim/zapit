@@ -91,7 +91,7 @@ function [ephysWaveform,scaleFactor] = filterForEphys(obj,inputWaveform)
         fprintf('zapit.stimConfig.%s -- Warning! The areas under the original and ephys-corrected waveforms are not the same!\n', mfilename)
     end
 
-    doPlot = true;
+    doPlot = false;
     if doPlot
         plot(ephysWaveform,'-k')
         hold on
