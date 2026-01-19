@@ -154,7 +154,7 @@ classdef dotNETwrapper < zapit.hardware.DAQ
                 return
             end
 
-            obj.stop
+            obj.hAO.Stop
             obj.doingClockedAcquisition = false;
             obj.hAO.Dispose;
             delete(obj.hAO);
@@ -177,7 +177,6 @@ classdef dotNETwrapper < zapit.hardware.DAQ
         end % stopAndDeleteAITask
 
 
-            obj.stopAndDeleteAOTask
 
             if verbose
                 fprintf('Creating clocked AO task on %s\n', obj.device_ID)
@@ -232,7 +231,9 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             %
             % Purpose
             % Thin wrapper to read analog data.
+
             data = obj.hAIreader.ReadSingleSample;
+
         end % readAnalogData
 
 

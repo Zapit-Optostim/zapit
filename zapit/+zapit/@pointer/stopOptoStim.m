@@ -42,7 +42,8 @@ function stopOptoStim(obj, rampDownInMS)
     end
 
 
-    % If the user requests no ramp-down or their ramp down duration is too short then we simply stop the task
+    % If the user requests no ramp-down or their ramp down duration is too short then
+    % we simply stop the task
 
     % Otherwise we do a ramp-down
     msPerBuffer = (bufferSize/samplesPerSecond) * 1E3;
