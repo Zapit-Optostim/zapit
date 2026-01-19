@@ -177,53 +177,6 @@ classdef dotNETwrapper < zapit.hardware.DAQ
         end % stopAndDeleteAITask
 
 
-
-            if verbose
-                fprintf('Creating clocked AO task on %s\n', obj.device_ID)
-            end
-
-            obj.hAO = NationalInstruments.DAQmx.Task(taskName);
-
-            % Set output channels
-            channelName = obj.genChanString(obj.AOchans);
-
-            obj.hAO.AOChannels.CreateVoltageChannel(channelName, taskName, ...
-                            -obj.AOrange, obj.AOrange, AOVoltageUnits.Volts);
-
-            % Configure the task sample clock, the sample size and mode to be continuous
-            % and set the size of the output buffer
-            if fixedDurationWaveform
-                sampleMode = SampleQuantityMode.FiniteSamples;
-            else
-                sampleMode = SampleQuantityMode.ContinuousSamples;
-            end
-
-            obj.hAO.Timing.ConfigureSampleClock('', ...
-                        samplesPerSecond, ...
-                        SampleClockActiveEdge.Rising, ...
-                        sampleMode, ...
-                        numSamplesPerChannel);
-
-
-            % allow sample regeneration
-            obj.hAO.Stream.WriteRegenerationMode = WriteRegenerationMode.AllowRegeneration;
-
-            obj.hAO.Control(TaskAction.Verify);
-
-            obj.hAOtaskWriter = AnalogMultiChannelWriter(obj.hAO.Stream);
-            % Configure the trigger
-            if hardwareTriggered
-                if verbose
-                    fprintf('Configuring a hardware trigger on line %s\n', ...
-                        obj.settings.NI.triggerChannel)
-                end
-                obj.hAO.Triggers.StartTrigger.ConfigureDigitalEdgeTrigger(...
-                            obj.settings.NI.triggerChannel, ...
-                            DigitalEdgeStartTriggerEdge.Rising);
-            end
-
-        end % connectClockedAO
-
         function data = readAnalogData(obj)
             % Read analog data from the DAQ
             %
