@@ -56,7 +56,6 @@ classdef dotNETwrapper < zapit.hardware.DAQ
         end % Constructor
 
 
-        % TODO -- can the destructor go to the superclass?
         function delete(obj)
             % Destructor
             %
@@ -75,36 +74,36 @@ classdef dotNETwrapper < zapit.hardware.DAQ
         end % delete
 
 
-        % TODO -- these stop and start methods are not obviously related to the AO task by their name
-        function start(obj)
-            % Start the AO task
+        function startStimulation(obj)
+            % Start stimulation by starting the AO task
             %
-            % function zapit.DAQ.dotNETwrapper.start
+            % function zapit.DAQ.dotNETwrapper.startStimulation
             %
             % Purpose
-            % Start the AO task
+            % Starts the AO task. Is called by, for example, pointer.sendSamples
 
             if isempty(obj.hAO) || ~isvalid(obj.hAO)
                 return
             end
             obj.doingClockedAcquisition = true;
             obj.hAO.Start
-        end % start
+        end % startStimulation
 
 
-        function stop(obj)
-            % Stop the AO task
+        function stopStimulation(obj)
+            % Stop stimulation by stopping the AO and DO tasks
             %
-            % function zapit.DAQ.dotNETwrapper.stop
+            % function zapit.DAQ.dotNETwrapper.stopStimulation
             %
             % Purpose
-            % Stop the AO task
+            % Starts the AO task. Is called by, for example, pointer.sendSamples
 
             if isempty(obj.hAO) || ~isvalid(obj.hAO)
                 return
             end
+
             obj.hAO.Stop
-        end % stop
+        end % stopStimulation
 
 
         function waitUntilAOTaskDone(obj)
