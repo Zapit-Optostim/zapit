@@ -29,11 +29,12 @@ classdef dotNETwrapper < zapit.hardware.DAQ
     %
     % Rob Campbell - SWC 2023
 
-    properties
-        hAOtaskWriter % Class for writing data to AO lines
-        hAIreader % Class for reading from AI lines
-    end
 
+    properties
+        hAOtaskWriter  % Class for writing data to AO lines
+        hDOtaskWriter  % Class for writing data to DO lines
+        hAIreader      % Class for reading from AI lines
+    end
 
 
     methods
@@ -176,152 +177,6 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             delete(obj.hAI);
         end % stopAndDeleteAITask
 
-
-        function connectUnclockedAI(obj, chan, verbose)
-            % connectUnclockedAO(obj)
-            %
-            % Create a task that is unclocked AI and can be used for misc tasks.
-            %
-            % function zapit.DAQ.dotNETwrapper.connectUnclockedAI
-            %
-            % Inputs
-            % chan - which channel to connect. Must be supplied as an integer.
-            % verbose - [optional, false by default]. Reports to screen what it is doing if true
-
-            import NationalInstruments.DAQmx.*
-
-            if nargin<3
-                verbose = false;
-            end
-
-            obj.stopAndDeleteAITask
-
-
-            if verbose
-                fprintf('Creating unclocked AI task on %s\n', obj.device_ID)
-            end
-
-            taskName = 'unclockedai';
-            obj.hAI = NationalInstruments.DAQmx.Task(taskName);
-            chan = [obj.device_ID,'/ai',num2str(chan)];
-
-            obj.hAI.AIChannels.CreateVoltageChannel(chan, taskName, ...
-                            AITerminalConfiguration.Differential, ...
-                            -obj.AOrange, obj.AOrange, AIVoltageUnits.Volts);
-
-            obj.hAI.Control(TaskAction.Verify)
-
-            obj.hAIreader = AnalogSingleChannelReader(obj.hAI.Stream);
-
-
-
-        end % connectUnclockedAI
-
-        function connectUnclockedAO(obj, verbose)
-            % connectUnclockedAO(obj)
-            %
-            % function zapit.DAQ.dotNETwrapper.connectUnclockedAO
-            %
-            % Create a task that is unclocked AO and can be used for sample setup.
-            % The connection options are set by properties in the dotNETwrapper
-            % class. see: .device_ID, .AOchans, .AOrange,
-            %
-            % Inputs
-            % verbose - [optional, false by default]. Reports to screen what it is doing if true
-
-            import NationalInstruments.DAQmx.*
-
-            if nargin<2
-                verbose = false;
-            end
-
-            % If we are already connected we don't proceed
-            if ~isempty(obj.hAO) && isvalid(obj.hAO) && obj.hAO.AOChannels.Count>0 && ...
-                    startsWith(char(obj.hAO.AOChannels.All.VirtualName), 'unclockedao') %TODO: not the task name!
-                return
-            end
-
-            obj.stopAndDeleteAOTask
-
-            if verbose
-                fprintf('Creating unclocked AO task on %s\n', obj.device_ID)
-            end
-
-            taskName = 'unclockedao';
-            obj.hAO = NationalInstruments.DAQmx.Task(taskName);
-            channelName = obj.genChanString(obj.AOchans);
-
-            obj.hAO.AOChannels.CreateVoltageChannel(channelName, taskName, ...
-                            -obj.AOrange, obj.AOrange, AOVoltageUnits.Volts);
-
-            obj.hAO.Control(TaskAction.Verify);
-
-            obj.hAOtaskWriter = AnalogMultiChannelWriter(obj.hAO.Stream);
-
-            obj.hAO.Start;
-        end % connectUnclockedAO
-
-
-        function connectClockedAO(obj, varargin)
-            % Set up a clocked AO task
-            %
-            % function zapit.DAQ.dotNETwrapper.connectClockedAO
-            %
-            % Purpose
-            % Create a task that is clocked AO and can be used for sample setup.
-            % The connection options are set by properties in the dotNETwrapper
-            % class. see: .device_ID, .AOchans, .AOrange, .samplesPerSecond
-            %
-            % Inputs (optional)
-            % fixedDurationWaveform - If true, the user is planning to specify a waveform
-            %                       of a fixed duration and continuous samples is disabled.
-            %                       In this scenario, the value for numSamplesPerChannel
-            %                       is irrelevant here.
-            % numSamplesPerChannel - Size of the buffer
-            % samplesPerSecond - determines output rate and default comes from YAML file.
-            % taskName - 'clockedao' by default.
-            % verbose - false by default
-            % hardwareTriggered - false by default. If true, task waits for trigger (PFI0 by default
-            %            and this line can be changed in the settings YAML)
-            %
-            % The task writes to the default number of AO lines (likely all four).
-
-            import NationalInstruments.DAQmx.*
-            %Parse optional arguments
-            params = inputParser;
-            params.CaseSensitive = false;
-
-            params.addParameter('fixedDurationWaveform', false, @(x) islogical(x) || x==0 || x==1);
-            params.addParameter('numSamplesPerChannel', 1000, @(x) isnumeric(x) && isscalar(x));
-            params.addParameter('samplesPerSecond', obj.samplesPerSecond, @(x) isnumeric(x) && isscalar(x));
-            params.addParameter('taskName', 'clockedAO', @(x) ischar(x));
-            params.addParameter('verbose', false, @(x) islogical(x) || x==0 || x==1);
-            params.addParameter('hardwareTriggered', false, @(x) islogical(x) || x==0 || x==1);
-
-            params.parse(varargin{:});
-
-            fixedDurationWaveform=params.Results.fixedDurationWaveform;
-            numSamplesPerChannel=params.Results.numSamplesPerChannel;
-            samplesPerSecond=params.Results.samplesPerSecond;
-            taskName=params.Results.taskName;
-            verbose=params.Results.verbose;
-            hardwareTriggered=params.Results.hardwareTriggered;
-
-            % If we are already connected we don't proceed
-            if ~isempty(obj.hAO) && isvalid(obj.hAO) && obj.hAO.AOChannels.Count>0 && ...
-                    strcmp(char(obj.hAO.AOChannels.All.VirtualName), taskName)
-                if verbose
-                    fprintf('DAQ connection to task %s already made. Skipping.\n', taskName)
-                end
-
-                % If we don't need to re-connect we may still need to stop the current task.
-                % If finite samples are being presented we need to stop it before we can write more
-                if strcmp(obj.hAO.Timing.SampleQuantityMode,'FiniteSamples')
-                    obj.stop
-                end
-
-                return
-            end
 
             obj.stopAndDeleteAOTask
 
