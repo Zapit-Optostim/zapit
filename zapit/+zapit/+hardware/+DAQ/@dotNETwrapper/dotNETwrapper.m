@@ -68,9 +68,14 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             if isa(obj.hAI, 'NationalInstruments.DAQmx.Task')
                 obj.hAI.Dispose
             end
+            if isa(obj.hDO, 'NationalInstruments.DAQmx.Task')
+                obj.hDO.Dispose
+            end
             delete(obj.hAI)
             delete(obj.hAO)
+            delete(obj.hDO)
             delete(obj.hAOtaskWriter)
+            delete(obj.hDOtaskWriter)
         end % delete
 
 
@@ -103,6 +108,9 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             end
 
             obj.hAO.Stop
+            if ~isempty(obj.hDO) && isvalid(obj.hDO)
+                obj.hDO.Stop
+            end
         end % stopStimulation
 
 
@@ -209,7 +217,7 @@ classdef dotNETwrapper < zapit.hardware.DAQ
         end % numSamplesInBuffer
 
 
-        function chanString = genChanString(obj,chans)
+        function chanString = genChanString(obj,chans,chanType)
             % Generate a channel string for connecting to the DAQ
             %
             % function zapit.DAQ.dotNETwrapper.genChanString(chans)
@@ -220,11 +228,17 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             %
             % Inputs
             % chans - scalar or vector of channels names.
+            % chanType - optional string defining the channel type to build. 'ao' by default
             %
             % Outputs
             % chanString - a string that the .NET wrapper will accept. e.g. 'Dev1/ao1,Dev1/ao3'
+            %            Note the 'ao' here comes from the chanType input argument. 
 
-            C = arrayfun(@(x) sprintf('%s/ao%d', obj.device_ID,x), chans, ...
+            if nargin<3
+                chanType = 'ao';
+            end
+
+            C = arrayfun(@(x) sprintf('%s/%s%d', obj.device_ID,chanType,x), chans, ...
                     'UniformOutput',false);
 
             if length(C) == 1

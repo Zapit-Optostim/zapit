@@ -111,6 +111,6 @@ function drawBrainAreasOnSample(obj,areaCoords)
 
     obj.DAQ.writeAnalogData(coords)
 
-    obj.DAQ.start;
+    obj.DAQ.startStimulation;
 
 end

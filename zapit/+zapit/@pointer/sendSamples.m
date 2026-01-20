@@ -264,13 +264,12 @@ function varargout = sendSamples(obj, varargin)
                             'verbose', verbose);
 
 
-
     % Write voltage samples onto the task
     obj.DAQ.writeAnalogData(waveforms);
 
     % Start the execution of the new task. Waveforms will only play immediately if
     % we are not waiting for a hardware trigger.
-    obj.DAQ.start
+    obj.DAQ.startStimulation
 
     % The waveform starts and no blocking happens
 

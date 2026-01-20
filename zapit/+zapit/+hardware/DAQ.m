@@ -1,8 +1,9 @@
 classdef (Abstract) DAQ < handle
 
     properties
-        hAO  % A reference to an object that provides access to the DAQ's API for the AO task
-        hAI  % A reference to an object that provides access to the DAQ's API for the AI task
+        hAO  % Reference to object that provides access to the AO task
+        hAI  % Reference to object that provides access to the AI task
+        hDO  % Reference to object that provides access to the DO task
 
         % The following are default parameters for the class (see above)
         device_ID = 'Dev1'
