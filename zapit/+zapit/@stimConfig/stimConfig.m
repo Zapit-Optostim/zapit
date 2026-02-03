@@ -27,6 +27,7 @@ classdef stimConfig < handle
         numSamplesPerChannel % Number of samples per channel to send to the DAQ.
         atlasData    % The atlas data from the loaded .mat file. Shows top-down ARA view in stereotaxic coords
         logFileStem = 'zapit_log_' % The stem of the log file name. zapit.pointer will use this to search for the file
+        useClockedDO = false % If true the blanking LED signal is played out of p0.0 as well as AO3
     end
 
     properties (Hidden, SetAccess=protected)

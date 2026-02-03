@@ -96,6 +96,7 @@ function varargout = sendSamples(obj, varargin)
         laserPower_mw = [];
     end
 
+
     % If not ready to present or a finite waveform is playing we don't proceed
     if ~obj.isReadyToStim || obj.DAQ.isFiniteSamplePlaying
         fprintf('zapit.pointer.%s -- Not ready to stimulate\n', mfilename)
@@ -263,9 +264,24 @@ function varargout = sendSamples(obj, varargin)
                             'taskName', taskName, ...
                             'verbose', verbose);
 
-
-    % Write voltage samples onto the task
+    % Write voltage samples onto the AO task
     obj.DAQ.writeAnalogData(waveforms);
+
+    %If selected, write samples to the DO task
+    if obj.stimConfig.useClockedDO
+        obj.DAQ.connectClockedDO('fixedDurationWaveform', stimDurationSeconds > 0, ...
+                                'numSamplesPerChannel', size(waveforms,1), ...
+                                'taskName', [taskName,'DO'], ...
+                                'verbose', verbose);
+        obj.DAQ.writeDigitalData(waveforms(:,4)>0)
+    else
+        % Ensure the task is empty and use that as signal to the DAQ class not 
+        % to do DO
+        obj.DAQ.stopAndDeleteDOTask
+    end
+
+
+    
 
     % Start the execution of the new task. Waveforms will only play immediately if
     % we are not waiting for a hardware trigger.

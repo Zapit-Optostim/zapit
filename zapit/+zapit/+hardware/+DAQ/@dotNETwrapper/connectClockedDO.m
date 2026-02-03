@@ -17,8 +17,6 @@ function connectClockedDO(obj, varargin)
     % samplesPerSecond - determines output rate and default comes from YAML file.
     % taskName - 'clockedDO' by default.
     % verbose - false by default
-    % hardwareTriggered - false by default. If true, task waits for trigger (PFI0 by default
-    %            and this line can be changed in the settings YAML)
     %
     % The task writes to the default number of AO lines (likely all four).
 
@@ -35,7 +33,6 @@ function connectClockedDO(obj, varargin)
     params.addParameter('samplesPerSecond', obj.samplesPerSecond, @(x) isnumeric(x) && isscalar(x));
     params.addParameter('taskName', 'clockedDO', @(x) ischar(x));
     params.addParameter('verbose', false, @(x) islogical(x) || x==0 || x==1);
-    params.addParameter('hardwareTriggered', false, @(x) islogical(x) || x==0 || x==1);
 
     params.parse(varargin{:});
 
@@ -44,10 +41,9 @@ function connectClockedDO(obj, varargin)
     samplesPerSecond=params.Results.samplesPerSecond;
     taskName=params.Results.taskName;
     verbose=params.Results.verbose;
-    hardwareTriggered=params.Results.hardwareTriggered;
 
     % If we are already connected we don't proceed
-    if ~isempty(obj.hDO) && isvalid(obj.hDO))
+    if ~isempty(obj.hDO) && isvalid(obj.hDO)
         if verbose
             fprintf('DAQ connection to task %s already made. Skipping.\n', taskName)
         end
@@ -61,7 +57,8 @@ function connectClockedDO(obj, varargin)
         return
     end
 
-    obj.stopAndDeleteDOTask % NOT WRITTEN
+    % Clear any pre-existing DO tasks that may exist
+    obj.stopAndDeleteDOTask
 
     if verbose
         fprintf('Creating clocked DO task on %s\n', obj.device_ID)
@@ -71,27 +68,21 @@ function connectClockedDO(obj, varargin)
     obj.hDO = NationalInstruments.DAQmx.Task(taskName);
     
     obj.hDO.DOChannels.CreateChannel( ...
-            [obj.device_ID,'/port0']
+            [obj.device_ID,'/port0'], ...
            'do0', ...
             ChannelLineGrouping.OneChannelForAllLines);
 
 
-    % Configure the task sample clock, the sample size and mode to be continuous
-    % and set the size of the output buffer
-    if fixedDurationWaveform
-        sampleMode = SampleQuantityMode.FiniteSamples;
-    else
-        sampleMode = SampleQuantityMode.ContinuousSamples;
-    end
-
 
     % * Configure the sampling rate and buffer size of the DO task. 
     % Note that we are using the AO sample clock for the DO. 
+    % We are also hard-coding continuous samples. We will use the DO task
+    % only for scenarios where it is associated with continuous AO waveforms. 
     obj.hDO.Timing.ConfigureSampleClock( ...
         ['/', obj.device_ID, '/ao/SampleClock'], ...
         samplesPerSecond, ...
         SampleClockActiveEdge.Rising, ...
-        sampleMode, ...
+        SampleQuantityMode.ContinuousSamples, ...
         numSamplesPerChannel);
 
     % allow sample regeneration
@@ -103,9 +94,8 @@ function connectClockedDO(obj, varargin)
     obj.hDOtaskWriter = DigitalSingleChannelWriter(obj.hDO.Stream);
 
     % * Configure the DO task to start when the AO task starts
-    obj.hDO.Triggers.StartTrigger.ConfigureDigitalEdgeTrigger(...
-        ['/', obj.device_ID, '/ao/StartTrigger'], ...
-        DigitalEdgeStartTriggerEdge.Rising); 
-
+    %obj.hDO.Triggers.StartTrigger.ConfigureDigitalEdgeTrigger(...
+    %    ['/', obj.device_ID, '/ao/StartTrigger'], ...
+    %    DigitalEdgeStartTriggerEdge.Rising); 
 
 end % connectClockedAO

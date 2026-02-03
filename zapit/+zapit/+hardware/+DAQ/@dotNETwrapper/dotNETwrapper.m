@@ -87,10 +87,22 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             % Purpose
             % Starts the AO task. Is called by, for example, pointer.sendSamples
 
+
+
             if isempty(obj.hAO) || ~isvalid(obj.hAO)
                 return
             end
+
+            if isempty(obj.hDO) || ~isvalid(obj.hDO)
+                doDO = false;
+            else
+                doDO = true;
+            end
+
             obj.doingClockedAcquisition = true;
+            if doDO
+                obj.hDO.Start
+            end
             obj.hAO.Start
         end % startStimulation
 
@@ -101,13 +113,12 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             % function zapit.DAQ.dotNETwrapper.stopStimulation
             %
             % Purpose
-            % Starts the AO task. Is called by, for example, pointer.sendSamples
+            % Stops the AO task. Is called by, for example, pointer.sendSamples
 
-            if isempty(obj.hAO) || ~isvalid(obj.hAO)
-                return
+            if ~isempty(obj.hAO) && isvalid(obj.hAO)
+               obj.hAO.Stop
             end
 
-            obj.hAO.Stop
             if ~isempty(obj.hDO) && isvalid(obj.hDO)
                 obj.hDO.Stop
             end
@@ -167,6 +178,26 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             obj.hAO.Dispose;
             delete(obj.hAO);
         end % stopAndDeleteAOTask
+
+
+        function stopAndDeleteDOTask(obj)
+            % Stop and then delete the DO task
+            %
+            % function zapit.DAQ.dotNETwrapper.stopAndDeleteDOTask
+            %
+            % Purpose
+            % Stop the task and then delete it, which will run DAQmxClearTask
+
+            if isempty(obj.hDO) || ~isvalid(obj.hDO)
+                return
+            end
+
+            fprintf('Stopping and deleting the DO task\n')
+            obj.hDO.Stop
+            obj.hDO.Dispose;
+            delete(obj.hDO);
+            obj.hDO=[];
+        end % stopAndDeleteDOTask
 
 
         function stopAndDeleteAITask(obj)

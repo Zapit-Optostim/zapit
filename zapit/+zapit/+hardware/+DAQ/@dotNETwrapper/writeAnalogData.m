@@ -6,6 +6,12 @@ function writeAnalogData(obj,waveforms)
     % Purpose
     % Write analog data to the buffer and also log in a property the
     % data that were written.
+    %
+    % Inputs
+    % waveforms - columns are channels and rows are samples
+    %
+    %
+    % Rob Campbell - SWC
 
     % Double-check no values are out of range
     if any(abs(max(waveforms,[],1))>10)

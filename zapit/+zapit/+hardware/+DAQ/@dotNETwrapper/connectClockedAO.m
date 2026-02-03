@@ -53,12 +53,13 @@ function connectClockedAO(obj, varargin)
         % If we don't need to re-connect we may still need to stop the current task.
         % If finite samples are being presented we need to stop it before we can write more
         if strcmp(obj.hAO.Timing.SampleQuantityMode,'FiniteSamples')
-            obj.stop
+            obj.stopStimulation;
         end
 
         return
     end
 
+    % Clear any pre-existing AO tasks that may exist
     obj.stopAndDeleteAOTask
 
     if verbose
