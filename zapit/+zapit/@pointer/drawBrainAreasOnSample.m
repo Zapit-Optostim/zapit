@@ -105,6 +105,10 @@ function drawBrainAreasOnSample(obj,areaCoords)
     end
 
 
+    % We don't want the DO task that handles the blanking of the LED to run
+    % here. So we stop it should it be present. 
+    obj.DAQ.stopAndDeleteDOTask;
+
     obj.DAQ.connectClockedAO('numSamplesPerChannel',size(coords,1), ...
                             'samplesPerSecond',sRate, ...
                             'taskName','scannercalib')
