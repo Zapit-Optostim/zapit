@@ -43,9 +43,24 @@ function connectClockedAO(obj, varargin)
     verbose=params.Results.verbose;
     hardwareTriggered=params.Results.hardwareTriggered;
 
+    if verbose
+        if isempty(obj.hAO)
+            fprintf('hAO is empty\n')
+        else
+            fprintf('hAO is NOT empty\n')
+        end
+
+        if ~isempty(obj.hAO) && isvalid(obj.hAO)
+            fprintf('Num channels = %d\n', obj.hAO.AOChannels.Count)
+            fprintf('Requested task name: %s\n', taskName)
+            fprintf('Current task name: %s\n', char(obj.hAO.AOChannels.All.VirtualName))
+        end
+    end
+
+
     % If we are already connected we don't proceed
     if ~isempty(obj.hAO) && isvalid(obj.hAO) && obj.hAO.AOChannels.Count>0 && ...
-            strcmp(char(obj.hAO.AOChannels.All.VirtualName), taskName)
+            startsWith(char(obj.hAO.AOChannels.All.VirtualName), taskName)
         if verbose
             fprintf('DAQ connection to task %s already made. Skipping.\n', taskName)
         end
@@ -63,7 +78,7 @@ function connectClockedAO(obj, varargin)
     obj.stopAndDeleteAOTask
 
     if verbose
-        fprintf('Creating clocked AO task on %s\n', obj.device_ID)
+        fprintf('Creating clocked AO task on %s called %s\n', obj.device_ID, taskName)
     end
 
     obj.hAO = NationalInstruments.DAQmx.Task(taskName);

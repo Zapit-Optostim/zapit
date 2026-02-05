@@ -100,10 +100,13 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             end
 
             obj.doingClockedAcquisition = true;
-            if doDO
+            if doDO && obj.hDO.IsDone
                 obj.hDO.Start
             end
-            obj.hAO.Start
+
+            if obj.hAO.IsDone % Stops a start command being issued if it has already started                
+                obj.hAO.Start
+            end
         end % startStimulation
 
 

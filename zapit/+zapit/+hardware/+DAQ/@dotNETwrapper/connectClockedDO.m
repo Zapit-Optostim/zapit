@@ -42,6 +42,20 @@ function connectClockedDO(obj, varargin)
     taskName=params.Results.taskName;
     verbose=params.Results.verbose;
 
+    if verbose
+        if isempty(obj.hDO)
+            fprintf('hDO is empty\n')
+        else
+            fprintf('hDO is NOT empty\n')
+        end
+
+        if ~isempty(obj.hDO) && isvalid(obj.hDO)
+            fprintf('Requested task name: %s\n', taskName)
+        end
+    end
+
+
+
     % If we are already connected we don't proceed
     if ~isempty(obj.hDO) && isvalid(obj.hDO)
         if verbose
@@ -50,7 +64,7 @@ function connectClockedDO(obj, varargin)
 
         % If we don't need to re-connect we may still need to stop the current task.
         % If finite samples are being presented we need to stop it before we can write more
-        if strcmp(obj.hDO.Timing.SampleQuantityMode,'FiniteSamples') % UNTESTED!
+        if strcmp(obj.hDO.Timing.SampleQuantityMode,'FiniteSamples') % TODO UNTESTED!
             obj.stop
         end
 
