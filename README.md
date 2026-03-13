@@ -11,6 +11,7 @@ Zapit then registers stereotaxic coordinates into the camera space, allowing the
 A graphical tool builds experiment coordinate files using a top-down view of the Allen Atlas.
 There is a simple MATLAB API for integrating stimulation into existing behavioral code and a Python version of the API [is also provided](https://github.com/Zapit-Optostim/zapit-Python-Bridge).
 
+![](https://github.com/Zapit-Optostim/.github/blob/main/calib_workflow.png)
 
 ## Install & Usage
 See the [Installation & User Manual](https://zapit.gitbook.io/user-guide/).
