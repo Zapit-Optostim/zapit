@@ -104,7 +104,7 @@ classdef dotNETwrapper < zapit.hardware.DAQ
                 obj.hDO.Start
             end
 
-            if obj.hAO.IsDone % Stops a start command being issued if it has already started                
+            if obj.hAO.IsDone % Stops a start command being issued if it has already started
                 obj.hAO.Start
             end
         end % startStimulation
@@ -225,7 +225,7 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             % function zapit.DAQ.vidriowrapper.readAnalogData
             %
             % Purpose
-            % Thin wrapper to read analog data.
+            % Thin wrapper to read a single sample of analog data.
 
             data = obj.hAIreader.ReadSingleSample;
 
@@ -266,7 +266,7 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             %
             % Outputs
             % chanString - a string that the .NET wrapper will accept. e.g. 'Dev1/ao1,Dev1/ao3'
-            %            Note the 'ao' here comes from the chanType input argument. 
+            %            Note the 'ao' here comes from the chanType input argument.
 
             if nargin<3
                 chanType = 'ao';

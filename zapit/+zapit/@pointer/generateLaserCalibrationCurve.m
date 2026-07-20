@@ -34,6 +34,7 @@ function generateLaserCalibrationCurve(obj,minMax)
     % Rob Campbell - SWC 2022
     %
     % See also:
+    % zapit.utils.fitLaserPowerCurve
     % zapit.pointer.saveLaserFit
     % zapit.pointer.loadLaserFit
     % zapit.pointer.laser_mW_to_control
@@ -69,7 +70,9 @@ function generateLaserCalibrationCurve(obj,minMax)
         tmp = zeros(1,nValsToMeasure);
         for jj=1:nValsToMeasure
             tmp(jj) = obj.DAQ.readAnalogData();
-            pause(0.025)
+            if ~obj.simulated
+                pause(0.025)
+            end
         end
 
         sensorVals(ii) = mean(tmp);
@@ -78,43 +81,32 @@ function generateLaserCalibrationCurve(obj,minMax)
     % Tidy up
     obj.setLaserPowerControlVoltage(0)
 
-    %%
-    % Fit a third order polynomial: photodiode voltage as a function of control voltage
-    % This fit is mainly for display purposes, we don't actually use it directly.
-    % see zapit.pointer.laser_mW_to_control
 
     % If we ran simulated mode we will make up some values
     if ~obj.simulated
         sensorVals = sensorVals';
     else
-        sensorVals = (2*valsToTest + sensorVals');
+        sensorVals = (0.2*valsToTest.^2 + 2*valsToTest + sensorVals*0.21);
     end
+
 
     valsToTest = valsToTest';
 
-    laserFit.sensorOnControl = fit(valsToTest,sensorVals,'poly3');
-
-
     %%
-    % plot the data
-    zapit.utils.focusNamedFig('lasercalibrate');
-    clf
-    plot(laserFit.sensorOnControl,valsToTest,sensorVals)
-    ylim([0,max(sensorVals)*1.1])
-    grid on
-    xlabel('Laser Control Value [V]')
-    ylabel('Photodiode Signal [V]')
+    % Fit and plot the measured curve. This is done in a separate function so it can be
+    % unit tested without hardware. The returned structure is complete, so we can assign
+    % it to the laserFit property in a single line.
+    laserFit = zapit.utils.fitLaserPowerCurve(valsToTest(1:10), sensorVals);
 
-
-    %%
-    % Add the data to the laserFit property
     obj.laserFit = laserFit;
-    obj.laserFit.dateMade = now;
-    obj.laserFit.sensorValues = sensorVals;
-    obj.laserFit.controlValues = valsToTest;
 
-    % TODO -- we will save to disk right here but this should eventually be done after a
-    % confirmation. For now it's OK to do this just to get it all working
+    %%
+    % Optionally save the fit to disk. Simulated runs are non-interactive and never save.
     if ~obj.simulated
-        obj.saveLaserFit
+        reply = input('Save this laser fit? [y/N] ', 's');
+        if ~isempty(reply) && lower(reply(1))=='y'
+            obj.saveLaserFit
+        else
+            fprintf('Not saving laser fit\n')
+        end
     end

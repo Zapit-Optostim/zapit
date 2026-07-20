@@ -24,19 +24,26 @@ NOTE: the version number of the software is taken from the last version number i
 
 ## Version History
 
-2024/06/21 v1.0.4
+
+### 2025/07/20 v1.0.4
   * Ephys waveforms should now have a better shape and be produced correctly. BUT the higher
   laser power is produced assuming the power curve is linear and does not take max control 
   voltage into account. OK for lower powers/fewer positions with Obis for testing.
+  * BUGFIX: No longer spawns opens an empty figure window on startup. 
+  * Background code changes now allow the blanking signal to be optionally also played out 
+    as a clocked digital waveform on `p0.0`, in addition to AO3. This paves the way to freeing 
+    AO3 for controlling a second laser's power. Currently this feature is for development 
+    use only and must be enabled at the command line via `hZP.stimConfig.useClockedDO = true`
+    (off by default) once a stimulus config file has been loaded.
+  
 
-
-2024/05/20 v1.0.3
+### 2024/05/20 v1.0.3
   * Out of bounds stimulus index causes an error. In v1.0.2 it would just carry on 
     gracefully, which is unwise. Thanks to Peter V for pointing that out. 
   * Remove setting "experiment.maxStimPointsPerCondition" that was not being used by anything.
 
 
-2024/05/20 v1.0.2
+### 2024/05/20 v1.0.2
   * Minor: Produces a CLI warning message if sendSamples is called with a non-existent 
           condition number. This helps particularly for diagnosing issues over TCP/IP.
   * BUGFIX: NI DAQ no longer requires DAQ IDs (names) to start with a "D". 
@@ -47,11 +54,11 @@ NOTE: the version number of the software is taken from the last version number i
   * If the ROI is reset and Zapit is closed, it re-opens with the reset ROI. 
 
 
-2023/10/31 v1.0.1
+### 2023/10/31 v1.0.1
   * Minor: improve message at CLI if beam power is clipped.  
 
 
-2023/10/31 v1.0.0
+### 2023/10/31 v1.0.0
   * BREAKING: The laser power defined in the settings file is now time-averaged power! 
     So asking for 4 mW and one point will set the laser to 8 mW of power since the duty 
     cycle is 50%. Previously the laser would be at 4 mW at time-averaged power would be 
@@ -65,7 +72,7 @@ NOTE: the version number of the software is taken from the last version number i
     tricky given that we now allow >2 points per trial. 
 
 
-2023/08/23 -- v0.13.1
+### 2023/08/23 -- v0.13.1
   * BUGFIX: Zap all coords works with fewer than three locations.
   * BUGFIX: Gracefully handle lack of Instrument Control Toolbox. 
   * Overlaid stim points are created as soon as a new stim config is loaded. They are
@@ -73,7 +80,7 @@ NOTE: the version number of the software is taken from the last version number i
     calib is complete. 
 
 
-2023/08/23 -- v0.13.0
+### 2023/08/23 -- v0.13.0
   * MAJOR: Add ability to set a fixed stimulus duration with `sendSamples`. 
   * MAJOR: Add a stimulus delay parameter to `sendSamples` for use with stimulus duration.
   * MAJOR: Make it possible to set laser power at the CLI with a sendSamples param/val pair. 
@@ -87,13 +94,13 @@ NOTE: the version number of the software is taken from the last version number i
       This waveform is *UNTESTED* as of now and may not get rid of photoelectric transient.
 
 
-2023/08/17 -- v0.12.1
+### 2023/08/17 -- v0.12.1
   * Add an "external trigger" example showing how to use the .NET NI DAQmx wrapper to generate a TTL pulse from a DAQ.
   * BUGFIX: Fix TCP/IP server code. Was parsing a cell array as a vector.
   * BUGFIX: pointer.sendSamples not switching correctly between triggered and untriggered modes.
 
 
-2023/08/10 -- v0.12.0
+### 2023/08/10 -- v0.12.0
   * Get version information from CHANGELOG.md not hardcoded numbers in zapit.version
   * Move TCP/IP client out of Zapit and to standalone repo.
   * Update TCP/IP server to handle the new protocols.
@@ -104,11 +111,11 @@ NOTE: the version number of the software is taken from the last version number i
   * zapit.interfaces.getIPaddress is new function to return IP address of Zapit Windows PC.
   * zapit.interfaces.tcpServer.isClientConnected reports if a client is connected.
 
-2023/05/26 -- v0.11.1
+### 2023/05/26 -- v0.11.1
   * BUGFIX: Stop hanging on start if install does not contain a .git directory
 
 
-2023/05/26 -- v0.11.0
+### 2023/05/26 -- v0.11.0
  * MAJOR: Add a command line stim config editor for generating patterns of points like grids, squares,
    and lines.
  * MAJOR: Add a simple TCP/IP server for external control. Zapit has a new property: state, that reports
@@ -126,7 +133,7 @@ NOTE: the version number of the software is taken from the last version number i
  * IMPROVEMENT: Report positioning errors to figure title in Point Mode
 
 
-2023/02/14 -- v0.10.6
+### 2023/02/14 -- v0.10.6
  * Small bugfixes
  * Paint brain area runs more quietly and blanks the beam between areas.
  * Zap all points runs more quietly and blanks the beam between points
@@ -137,7 +144,7 @@ NOTE: the version number of the software is taken from the last version number i
  * Rename stimFreqInHz to stimDutyCycleHz in the user stimulus settings file.
 
 
-2023/02/03 -- v0.10.4
+### 2023/02/03 -- v0.10.4
  * BUGFIX: Support report could not be generated from the menu and the command itself failed.
  * More data are saved with the waveforms and this is used in the minimal example code.
  * Add a menu option for the user-guide.
@@ -145,7 +152,7 @@ NOTE: the version number of the software is taken from the last version number i
  * Improve quality of scanner calibration beam detection.
 
 
-2023/02/02 -- v0.10.3
+### 2023/02/02 -- v0.10.3
  * Bugfix: under some condition laser remained on after trial ended.
  * Add custom icon to window.
  * With no laser calibration file we employ a linear fit and ditch the error message.
@@ -154,12 +161,12 @@ NOTE: the version number of the software is taken from the last version number i
  * Fix AI code in dotNETwrapper.
 
 
-2023/02/01 -- v0.10.2
+### 2023/02/01 -- v0.10.2
  * Remove AOrange from settings
  * Bugfix: missing setting from camera
 
 
-2023/02/01 -- v0.10.0
+### 2023/02/01 -- v0.10.0
  * Wipe scanner calib if user applies a ROI or resets image zoom.
  * Do not disable plotStimCoords when sample calib not done
  * Fix bug in camera class that sometimes blocked startup of Zapit.
@@ -174,7 +181,7 @@ NOTE: the version number of the software is taken from the last version number i
 
 ### Beta Versions
 
-2023/01/29 -- v0.9.0-beta
+### 2023/01/29 -- v0.9.0-beta
  * Galvo waveforms are shaped to make them quieter: they are no almost inaudible even with the the galvo enclosure open.
  * Reset ROI disabled if field is full. Last ROI is re-applied on startup.
  * Laser rampdown time appears as a spinner in the stim config editor.
@@ -188,7 +195,7 @@ NOTE: the version number of the software is taken from the last version number i
  * Standalone start of the stim config editor with zapit.stimConfigEditor
  * Add button that plots the currently loaded stim config so the user knows which stim index is where.
 
-2023/01/19 -- v0.8.0-beta
+### 2023/01/19 -- v0.8.0-beta
  * Settings file updates with calibrate sample spinboxes
  * Switch to 1E5 samples/s and one cycle buffered. In stress test this went 1000 trials without a hitch.
  * Add settings and verify.
@@ -199,7 +206,7 @@ NOTE: the version number of the software is taken from the last version number i
 ### Alpha Versions
 
 
-2023/01/19 -- v0.8.0-beta
+### 2023/01/19 -- v0.8.0-beta
  * Settings file updates with calibrate sample spinboxes
  * Switch to 1E5 samples/s and one cycle buffered. In stress test this went 1000 trials without a hitch.
  * Add settings and verify.
@@ -207,7 +214,7 @@ NOTE: the version number of the software is taken from the last version number i
  * Minimal DAQ examples with .NET and Vidrio.
 
 
-2023/01/16 -- v0.7.0-alpha
+### 2023/01/16 -- v0.7.0-alpha
  * Substantial refactoring and renaming.
  * New format for stim config files.
  * UI elements that do not work in simulated mode are disabled.
@@ -216,7 +223,7 @@ NOTE: the version number of the software is taken from the last version number i
  * Update README
 
 
-2023/01/12 -- v0.6.0-alpha
+### 2023/01/12 -- v0.6.0-alpha
  * Move relevant methods into zapit.stimConfig
  * zapit.stimConfig.makeChanSamples is now turned into a getter of chanSamples
  * Recent files updates when files are missing. The list is cached and re-appears on reload.
@@ -224,11 +231,11 @@ NOTE: the version number of the software is taken from the last version number i
  * Make a GUI to build stim config files. This is the last version that will use the existing stim config format!
 
 
-2023/01/12 -- v0.5.1-alpha
+### 2023/01/12 -- v0.5.1-alpha
  * Add the atlas_data.mat file to the code directory.
 
 
-2023/01/12 -- v0.5.0-alpha
+### 2023/01/12 -- v0.5.0-alpha
  * Convert the working units of everything from pixels to mm.
  * Sample calibration achieved by placing and scaling/rotating a brain outline.
  * Add ability to draw brain outline on sample with the beam.
@@ -238,7 +245,7 @@ NOTE: the version number of the software is taken from the last version number i
  * Various bugfixes.
 
 
-2023/01/05 -- v0.4.0-alpha
+### 2023/01/05 -- v0.4.0-alpha
  * All UI elements in scanner calibration tab working as expected.
  * Improvements to startup and GUI.
  * Bugfixes.
@@ -247,30 +254,30 @@ NOTE: the version number of the software is taken from the last version number i
  * Begin work on sample calibration, including several demo files in the development directory. 
 
 
-2022/12/21 -- v0.3.0-alpha
+### 2022/12/21 -- v0.3.0-alpha
  * Have a working model/view/controller system. 
  * Basic GUI working.
  * Refactored everything up to the scanner calibration stage to the MVC system and GUI. 
  * The program can now be started by running `start_zapit`.
 
 
-2022/12/19 -- v0.2.0-alpha
+### 2022/12/19 -- v0.2.0-alpha
  * Add a system (partially working) for converting the control signal voltage to mW.
  * Code all now uses mW instead of a voltage value when setting laser power.
 
 
-2022/12/19 -- v0.1.3-alpha
+### 2022/12/19 -- v0.1.3-alpha
  * Major refactoring
  * The stopOptoStim method implements a rampdown
  * Fix bugs that were causing waveforms to not be what were expected
  * Laser is disabled for a fixed number of ms when location switching. Before it was 1 sample.
 
 
-2022/12/15 -- v0.1.2-alpha
+### 2022/12/15 -- v0.1.2-alpha
 Minor bug fixes
 
 
-2022/12/15 -- v0.1.1-alpha
+### 2022/12/15 -- v0.1.1-alpha
 Software is now refactored and likely working as intended bar the laser power. The laser
 power was originally being set via an Arduino and there was no facility to specify a power
 in mW. We next need to add the ability to set power in mW. The Arduino was being use to

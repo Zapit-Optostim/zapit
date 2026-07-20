@@ -124,6 +124,19 @@ classdef DAQ < handle
             obj.lastWaveform = waveforms;
         end % writeAnalogData
 
+
+        function data = readAnalogData(obj)
+            % Simulated reading of analog data from the DAQ
+            %
+            % function zapit.simulated.vidriowrapper.readAnalogData
+            %
+            % Purpose
+            % returns a random value from randn
+
+            data = randn;
+
+        end % readAnalogData
+
         function nSamples = numSamplesInBuffer(obj)
             % Return the number of samples in the buffer
             %
