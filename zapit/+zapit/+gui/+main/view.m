@@ -124,7 +124,6 @@ classdef view < matlab.apps.AppBase
             app.hImAx.Box = 'on';
             app.hImAx.Layout.Row = 1;
             app.hImAx.Layout.Column = 1;
-            colormap(app.hImAx, 'gray')
 
             % Create TabGroup
             app.TabGroup = uitabgroup(app.GridLayout);

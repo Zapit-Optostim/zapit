@@ -12,6 +12,11 @@ function prepareWindow(obj)
     % Insert and empty image into axes.
     obj.refreshImage
 
+    % Set the image colormap. This is done here rather than in App Designer because the
+    % designer emits the string form, colormap(hImAx,'gray'), which spawns a stray figure
+    % via a gcf call when expanding the name. The numeric form below avoids this.
+    colormap(obj.hImAx, gray(256))
+
 
     %Make the GUI resizable on small screens
     sSize = get(0,'ScreenSize');
