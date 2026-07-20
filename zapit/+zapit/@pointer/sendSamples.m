@@ -195,7 +195,8 @@ function varargout = sendSamples(obj, varargin)
     peakPower_mw = obj.stimConfig.laserPowerFromTrial(conditionNumber,laserPower_mw);
     laserControlVoltage = obj.laser_mW_to_control(peakPower_mw);
     % NOTE: the following line will yield higher power for ephys waveforms, assuming power
-    % is a linear function of waveform.
+    % is a linear function of waveform. This is a bit of a hack, and it would be better
+    % to actually determine peak power rather than rely on assuming linearity.
     waveforms(:,3) = waveforms(:,3)*laserControlVoltage;
 
 
