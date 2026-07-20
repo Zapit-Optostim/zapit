@@ -62,6 +62,7 @@ classdef pointer < handle
         breakPointingAccuracyLoop = false; % Used so GUI can break out of a loop (like that in scanner calib) where the beam accuracy is measured
         simulated = false % Tag to indicate whether it is in simulated mode
         listeners  % Structure that holds listeners so they can be easily cleaned up in the destructor
+        settingsFilePath % Absolute path to the settings file that was loaded. Settings are saved back here.
     end % hidden properties
 
 
@@ -102,11 +103,17 @@ classdef pointer < handle
             obj.simulated = params.Results.simulated;
 
             % By default we load the settings file in the normal location but for testing
-            % is possible to define a different one
+            % it is possible to define a different one. If a file is explicitly supplied we
+            % treat the settings as read-only: the auto-save listener below is not attached,
+            % so a test settings file is never modified.
             if isempty(params.Results.settingsFile)
                 obj.settings = zapit.settings.readSettings;
+                obj.settingsFilePath = zapit.settings.findSettingsFile;
+                settingsAreReadOnly = false;
             else
                 obj.settings = zapit.settings.readSettings(params.Results.settingsFile);
+                obj.settingsFilePath = params.Results.settingsFile;
+                settingsAreReadOnly = true;
             end
 
             % Connect to camera
@@ -150,24 +157,30 @@ classdef pointer < handle
             end
 
 
-            % Save settings if they are changed
+            % Save settings to disk when they change. When a settings file was explicitly
+            % supplied (e.g. for testing) the listener is disabled by default so the file
+            % is not modified. It can be re-enabled at the CLI if desired.
             obj.listeners.saveSettings = addlistener(obj, 'settings', 'PostSet', @obj.saveSettingsFile);
+            if settingsAreReadOnly
+                obj.listeners.saveSettings.Enabled = false;
+                fprintf(['A settings file was supplied directly. Settings auto-save is ', ...
+                    'disabled so this file will not be modified:\n  %s\n'], obj.settingsFilePath)
+            end
 
             if obj.simulated
-                obj.DAQ = zapit.simulated.DAQ;
+                obj.DAQ = zapit.simulated.DAQ(obj);
                 obj.DAQ.samplesPerSecond = obj.settings.NI.samplesPerSecond;
                 obj.scannersCalibrated = true;
             else
                 fprintf('Connecting to DAQ\n')
                 switch lower(obj.settings.NI.wrapper)
                 case 'vidrio'
-                    obj.DAQ = zapit.hardware.DAQ.vidriowrapper;
+                    obj.DAQ = zapit.hardware.DAQ.vidriowrapper(obj);
                 case 'dotnet'
-                    obj.DAQ = zapit.hardware.DAQ.dotNETwrapper;
+                    obj.DAQ = zapit.hardware.DAQ.dotNETwrapper(obj);
                 end
             end
 
-            obj.DAQ.parent = obj;
             obj.zeroScanners
             obj.loadLaserFit
             obj.buildFailed = false; % signal to start_zapit that all went well
@@ -298,10 +311,10 @@ classdef pointer < handle
             %  function zapit.pointer.saveSettingsFile(obj,~,~)
             %
             % Purpose
-            % Saves the settings to the YAML when they are changed
+            % Saves the settings to the YAML when they are changed. Settings are written
+            % back to the file they were loaded from (obj.settingsFilePath).
 
-            settingsFile = zapit.settings.findSettingsFile;
-            zapit.yaml.WriteYaml(settingsFile,obj.settings);
+            zapit.yaml.WriteYaml(obj.settingsFilePath,obj.settings);
         end % saveSettingsFile
 
 

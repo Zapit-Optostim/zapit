@@ -32,8 +32,18 @@ classdef (Abstract) DAQ < handle
 
         function obj = DAQ(varargin)
 
-            % Pull in the input arguments and set defaults
-            obj.settings = zapit.settings.readSettings;
+            % Pull in the input arguments and set defaults. Read from the settings of the
+            % zapit model class, should that exist (it is supplied as the first input
+            % argument). This avoids overwriting a test settings file. Otherwise try to
+            % read the settings independently.
+            if nargin>0 && ~isempty(varargin{1})
+                obj.parent = varargin{1};
+            end
+            if ~isempty(obj.parent)
+                obj.settings = obj.parent.settings;
+            else
+                obj.settings = zapit.settings.readSettings;
+            end
 
             % Settings are read from YAML in zapit.hardware.DAQ.DAQ
 

@@ -40,8 +40,21 @@ classdef DAQ < handle
 
 
     methods
-        function obj = DAQ()
-            obj.settings = zapit.settings.readSettings;
+        function obj = DAQ(parent)
+
+            % Reads the settings into  the simulated DAQ class, although they are not
+            % needed for anything at present. The settings are taken from the parent
+            % (zapit.pointer) if it is supplied, so that a test settings file is not
+            % overwritten. Otherwise they are read independently.
+            if nargin>0
+                obj.parent = parent;
+            end
+            if ~isempty(obj.parent)
+                obj.settings = obj.parent.settings;
+            else
+                obj.settings = zapit.settings.readSettings;
+            end
+
             obj.hAI.readAnalogData = @(x) rand(length(obj.AIchans),1); % assumes unclocked
             obj.hAO.isTaskDone = true;
             obj.hAO.taskName = '';
