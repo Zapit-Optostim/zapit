@@ -8,25 +8,25 @@ function generateLaserCalibrationCurve(obj,minMax)
     % photodiode. This curve can then be easily used to generate a value in mW once we
     % have measured the number of mW at the maximum and minimum values. The fit is used
     % by zapit.pointer.laser_mW_to_control in order to convert a desired value in mW to
-    % a control voltage that can be sent to the laser. 
+    % a control voltage that can be sent to the laser.
     %
     % Instructions
-    % * Connect AI0 to the photodiode. 
-    % * Turn on the photodiode, place it under the objective and point the beam at it. 
+    % * Connect AI0 to the photodiode.
+    % * Turn on the photodiode, place it under the objective and point the beam at it.
     % * Run this function and get a curve.
     % * Data are stored in the laserFit property
     %
     % Saturation in the curve may be due to the sensor! You may well need to put an ND
     % filter of some sort over the sensor.
     %
-    % The zapit.pointer.laserFit property is updated and, optionally, the data are 
+    % The zapit.pointer.laserFit property is updated and, optionally, the data are
     % saved to a laserFit.mat file in the user settings directory.
     %
     %
     % Inputs [optional]
-    % minMax - [minValueToTest, maxValueToTest] These are the minimum and maximum control 
-    %           values to use. By default these come from the settings file that is accesible
-    %           via zapit.pointer.settings. 
+    % minMax - [minValueToTest, maxValueToTest] These are the minimum and maximum control
+    %           values to use. By default these come from the settings file that is
+    %           accessible via zapit.pointer.settings.
     %
     % Outputs
     % none
@@ -86,7 +86,7 @@ function generateLaserCalibrationCurve(obj,minMax)
     % If we ran simulated mode we will make up some values
     if ~obj.simulated
         sensorVals = sensorVals';
-    else 
+    else
         sensorVals = (2*valsToTest + sensorVals');
     end
 
@@ -95,7 +95,7 @@ function generateLaserCalibrationCurve(obj,minMax)
     laserFit.sensorOnControl = fit(valsToTest,sensorVals,'poly3');
 
 
-    %% 
+    %%
     % plot the data
     zapit.utils.focusNamedFig('lasercalibrate');
     clf
@@ -113,8 +113,8 @@ function generateLaserCalibrationCurve(obj,minMax)
     obj.laserFit.sensorValues = sensorVals;
     obj.laserFit.controlValues = valsToTest;
 
-    % TODO -- we will save to disk right here but this should eventually be done after a confirmatio
-    % For now it's OK to do this just to get it all working
+    % TODO -- we will save to disk right here but this should eventually be done after a
+    % confirmation. For now it's OK to do this just to get it all working
     if ~obj.simulated
         obj.saveLaserFit
     end
