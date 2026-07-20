@@ -199,7 +199,7 @@ classdef stimConfig < handle
                 % a period of roughly 1 ms (exact number is in settings file).
 
                 % This does the ramp at the start of the waveform transitions (even)
-                oldway = false; % WHEN TRUE. WE MAKE WAVEFORMS THE OLD WAY
+                oldway = false; % WHEN TRUE. WE MAKE WAVEFORMS THE OLD WAY -- TODO I think we need to get rid of this
 
                 % The following does not produce results identical to the above, but
                 % it's very close. Within a sample.
@@ -211,10 +211,12 @@ classdef stimConfig < handle
                 % Note that the following line (also for Y) will truncate the waveform
                 % slightly. This happens when the number of stimulus locations does not
                 % produce a whole number when divided by the number of stimuli in the
-                % buffer. See lines ~208 and 209 where X and Y are defined. This is
-                % not an easy thing to fix. If we lose a sample or two here and there
+                % buffer. See lines ~192 and 193 where X and Y are defined. This is
+                % not an easy thing to fix. If we lose a sample or two here or there
                 % from one stimulus it shouldn't matter or be noticeable.
                 waveforms(:,1,ii) = Xsmooth(1:size(waveforms,1));
+
+
                 Y = Y(:);
                 Ysmooth = conv(circshift(Y,blankingSamples*2),kernel,'valid');
                 Ysmooth(end:end+blankingSamples-1) = Ysmooth(end);
