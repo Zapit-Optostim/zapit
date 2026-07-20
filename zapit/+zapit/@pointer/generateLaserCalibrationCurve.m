@@ -96,7 +96,7 @@ function generateLaserCalibrationCurve(obj,minMax)
     % Fit and plot the measured curve. This is done in a separate function so it can be
     % unit tested without hardware. The returned structure is complete, so we can assign
     % it to the laserFit property in a single line.
-    laserFit = zapit.utils.fitLaserPowerCurve(valsToTest(1:10), sensorVals);
+    laserFit = zapit.utils.fitLaserPowerCurve(valsToTest, sensorVals);
 
     obj.laserFit = laserFit;
 
