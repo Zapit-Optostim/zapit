@@ -30,14 +30,14 @@ NOTE: the version number of the software is taken from the last version number i
   laser power is produced assuming the power curve is linear and does not take max control 
   voltage into account. OK for lower powers/fewer positions with Obis for testing.
   * BUGFIX: No longer spawns opens an empty figure window on startup. 
+  * BUGFIX: Stim config editor is no longer unresponsive at times. [Issue 58](https://github.com/Zapit-Optostim/zapit/issues/163)
   * MAJOR: non-linear laser calibration curves now more robust and also have the option 
     of a sigmoid curve to cope with EOMs. 
   * Background code changes now allow the blanking signal to be optionally also played out 
     as a clocked digital waveform on `p0.0`, in addition to AO3. This paves the way to freeing 
     AO3 for controlling a second laser's power. Currently this feature is for development 
     use only and must be enabled at the command line via `hZP.stimConfig.useClockedDO = true`
-    (off by default) once a stimulus config file has been loaded.
-  
+    (off by default) once a stimulus config file has been loaded. See [Issue 163](https://github.com/Zapit-Optostim/zapit/issues/163)
 
 ### 2024/05/20 v1.0.3
   * Out of bounds stimulus index causes an error. In v1.0.2 it would just carry on 

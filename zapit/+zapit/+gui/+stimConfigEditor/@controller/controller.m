@@ -30,6 +30,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
         % Handles of plot objects associated with stimulation points
         pCurrentPoint % The current point that we are about to add
         pAddedPoints = matlab.graphics.chart.primitive.Line.empty % A list of all added poits
+        pAreaHighlight = matlab.graphics.primitive.Patch.empty % Patch(es) highlighting the area under the cursor
 
 
         fname % The name of the currently loaded file (if it has one)
@@ -42,6 +43,7 @@ classdef controller < zapit.gui.stimConfigEditor.view
         standardMarkerSize = 14
         enlargedMarkerSize = 20
         isCamRunning % Used to disable camera if the main GUI is running
+        lastHighlightKey = [] % Cache key: the area-highlight patch is only rebuilt when this changes
     end
 
 

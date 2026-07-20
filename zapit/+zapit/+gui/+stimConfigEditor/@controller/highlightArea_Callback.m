@@ -39,7 +39,7 @@ function highlightArea_Callback(obj,~,~)
             obj.pCurrentPoint.YData = Y;
         end
     else
-        % Change the marker so it indicates what the next symbol to be placed will be. 
+        % Change the marker so it indicates what the next symbol to be placed will be.
         % This will be either a new symbol or the current one depending on the shift key
         % press state.
         if obj.isShiftPressed
@@ -54,13 +54,11 @@ function highlightArea_Callback(obj,~,~)
         end
     end
 
-    % Find brain area index
+    % Find brain area index. This is cheap arithmetic (no graphics) so it runs every move.
     [~,indX] = min(abs(obj.atlasData.top_down_annotation.xData-X));
     [~,indY] = min(abs(obj.atlasData.top_down_annotation.yData-Y));
     t_ind = obj.atlasData.top_down_annotation.data(indY,indX);
     f = find([brain_areas.area_index]==t_ind);
-
-    delete(findall(obj.hAx,'type','patch'))
 
     if isempty(f)
         area_name = '';
@@ -69,28 +67,58 @@ function highlightArea_Callback(obj,~,~)
         obj.pAPtick.Visible = 'off';
     else
         area_name = [', ',brain_areas(f).names{1}];
-        bAreas = brain_areas(f).boundaries_stereotax;
-
-        % Select the correct side or both sides depending on radio button state
-        if obj.BilateralButton.Value == 0
-            if X<0 || length(bAreas)==1
-                bAreas = bAreas(1);
-            else
-                bAreas = bAreas(2);
-            end
-        end
-
-        % Make the one or two patches
-        patchProps = {'FaceAlpha', 0.1, 'FaceColor', 'r', 'EdgeColor', 'r', 'Parent', obj.hAx};
-        cellfun(@(x) patch(x(:,2), x(:,1), 1, patchProps{:}), bAreas);
-
-        obj.hFig.Pointer = 'arrow'; %Can change the pointer when it's in the brain if we want
         obj.pMLtick.XData = [X,X];
         obj.pAPtick.YData = [Y,Y];
         obj.pMLtick.Visible = 'on';
         obj.pAPtick.Visible = 'on';
     end
 
-    % TODO -- the following line does nothing right now
+
+    % Highlight the area under the cursor with a translucent patch. This is the expensive
+    % part: deleting and recreating patches on every mouse move floods the uifigure's
+    % renderer and causes button-down (click) events to be dropped. We therefore rebuild
+    % the patch(es) only when the highlighted area actually changes. The key captures the
+    % area, the uni/bilateral mode, and (in unilateral mode) the hemisphere, since those
+    % are what determine which patch(es) are drawn. Moving within an area costs no graphics.
+    if obj.BilateralButton.Value == 0
+        sideKey = sign(X);
+    else
+        sideKey = 0;
+    end
+    if isempty(f)
+        areaKey = 0;
+    else
+        areaKey = t_ind;
+    end
+    highlightKey = [areaKey, obj.BilateralButton.Value, sideKey];
+
+    if ~isequal(highlightKey, obj.lastHighlightKey)
+        delete(obj.pAreaHighlight)
+        obj.pAreaHighlight = matlab.graphics.primitive.Patch.empty;
+
+        if ~isempty(f)
+            bAreas = brain_areas(f).boundaries_stereotax;
+
+            % Select the correct side or both sides depending on radio button state
+            if obj.BilateralButton.Value == 0
+                if X<0 || length(bAreas)==1
+                    bAreas = bAreas(1);
+                else
+                    bAreas = bAreas(2);
+                end
+            end
+
+            % Make the one or two patches. HitTest/PickableParts are off so the highlight
+            % never intercepts a click meant for the axes.
+            patchProps = {'FaceAlpha', 0.1, 'FaceColor', 'r', 'EdgeColor', 'r', ...
+                          'Parent', obj.hAx, 'PickableParts', 'none', 'HitTest', 'off'};
+            obj.pAreaHighlight = cellfun(@(x) patch(x(:,2), x(:,1), 1, patchProps{:}), ...
+                                         bAreas);
+        end
+
+        obj.lastHighlightKey = highlightKey;
+    end
+
+
     obj.hAxTitle.String = sprintf('ML=%0.2f mm, AP=%0.2f mm%s\n', X, Y, area_name);
 end
