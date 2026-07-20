@@ -32,7 +32,7 @@ function controlVal = laser_mW_to_control(obj,mW)
     maxPower = obj.settings.laser.laserMinMax_mW(2);
     maxCV = obj.settings.laser.laserMinMaxControlVolts(2);
 
-    if isempty(obj.laserFit) || useLinear
+    if isempty(obj.laserFit)
         % The laser fit is only needed if the laser is not linear. Since so far only very cheap
         % lasers have been found to be non-linear we can not make a fuss if the fit is missing and
         % just assume it is linear.
