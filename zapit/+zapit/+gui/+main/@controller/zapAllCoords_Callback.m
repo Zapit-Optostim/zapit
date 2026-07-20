@@ -68,6 +68,10 @@ function zapAllCoords_Callback(obj,~,~)
         end
 
 
+        % We don't want the DO task that handles the blanking of the LED to run
+        % here. So we stop it should it be present. 
+        obj.model.DAQ.stopAndDeleteDOTask;
+
         waveforms = W;
 
         obj.model.moveBeamXYinVolts(waveforms(1,1:2)) % Go to first position
@@ -78,7 +82,7 @@ function zapAllCoords_Callback(obj,~,~)
 
         obj.model.DAQ.writeAnalogData(waveforms)
 
-        obj.model.DAQ.start;
+        obj.model.DAQ.startStimulation;
     else
         obj.model.DAQ.stopAndDeleteAOTask
         obj.model.setLaserInMW(0)

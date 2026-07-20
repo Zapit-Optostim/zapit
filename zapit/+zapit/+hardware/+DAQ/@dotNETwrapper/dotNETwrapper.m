@@ -29,11 +29,12 @@ classdef dotNETwrapper < zapit.hardware.DAQ
     %
     % Rob Campbell - SWC 2023
 
-    properties
-        hAOtaskWriter % Class for writing data to AO lines
-        hAIreader % Class for reading from AI lines
-    end
 
+    properties
+        hAOtaskWriter  % Class for writing data to AO lines
+        hDOtaskWriter  % Class for writing data to DO lines
+        hAIreader      % Class for reading from AI lines
+    end
 
 
     methods
@@ -55,7 +56,6 @@ classdef dotNETwrapper < zapit.hardware.DAQ
         end % Constructor
 
 
-        % TODO -- can the destructor go to the superclass?
         function delete(obj)
             % Destructor
             %
@@ -68,42 +68,64 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             if isa(obj.hAI, 'NationalInstruments.DAQmx.Task')
                 obj.hAI.Dispose
             end
+            if isa(obj.hDO, 'NationalInstruments.DAQmx.Task')
+                obj.hDO.Dispose
+            end
             delete(obj.hAI)
             delete(obj.hAO)
+            delete(obj.hDO)
             delete(obj.hAOtaskWriter)
+            delete(obj.hDOtaskWriter)
         end % delete
 
 
-        % TODO -- these stop and start methods are not obviously related to the AO task by their name
-        function start(obj)
-            % Start the AO task
+        function startStimulation(obj)
+            % Start stimulation by starting the AO task
             %
-            % function zapit.DAQ.dotNETwrapper.start
+            % function zapit.DAQ.dotNETwrapper.startStimulation
             %
             % Purpose
-            % Start the AO task
+            % Starts the AO task. Is called by, for example, pointer.sendSamples
+
+
 
             if isempty(obj.hAO) || ~isvalid(obj.hAO)
                 return
             end
+
+            if isempty(obj.hDO) || ~isvalid(obj.hDO)
+                doDO = false;
+            else
+                doDO = true;
+            end
+
             obj.doingClockedAcquisition = true;
-            obj.hAO.Start
-        end % start
+            if doDO && obj.hDO.IsDone
+                obj.hDO.Start
+            end
+
+            if obj.hAO.IsDone % Stops a start command being issued if it has already started                
+                obj.hAO.Start
+            end
+        end % startStimulation
 
 
-        function stop(obj)
-            % Stop the AO task
+        function stopStimulation(obj)
+            % Stop stimulation by stopping the AO and DO tasks
             %
-            % function zapit.DAQ.dotNETwrapper.stop
+            % function zapit.DAQ.dotNETwrapper.stopStimulation
             %
             % Purpose
-            % Stop the AO task
+            % Stops the AO task. Is called by, for example, pointer.sendSamples
 
-            if isempty(obj.hAO) || ~isvalid(obj.hAO)
-                return
+            if ~isempty(obj.hAO) && isvalid(obj.hAO)
+               obj.hAO.Stop
             end
-            obj.hAO.Stop
-        end % stop
+
+            if ~isempty(obj.hDO) && isvalid(obj.hDO)
+                obj.hDO.Stop
+            end
+        end % stopStimulation
 
 
         function waitUntilAOTaskDone(obj)
@@ -154,11 +176,31 @@ classdef dotNETwrapper < zapit.hardware.DAQ
                 return
             end
 
-            obj.stop
+            obj.hAO.Stop
             obj.doingClockedAcquisition = false;
             obj.hAO.Dispose;
             delete(obj.hAO);
         end % stopAndDeleteAOTask
+
+
+        function stopAndDeleteDOTask(obj)
+            % Stop and then delete the DO task
+            %
+            % function zapit.DAQ.dotNETwrapper.stopAndDeleteDOTask
+            %
+            % Purpose
+            % Stop the task and then delete it, which will run DAQmxClearTask
+
+            if isempty(obj.hDO) || ~isvalid(obj.hDO)
+                return
+            end
+
+            fprintf('Stopping and deleting the DO task\n')
+            obj.hDO.Stop
+            obj.hDO.Dispose;
+            delete(obj.hDO);
+            obj.hDO=[];
+        end % stopAndDeleteDOTask
 
 
         function stopAndDeleteAITask(obj)
@@ -177,243 +219,6 @@ classdef dotNETwrapper < zapit.hardware.DAQ
         end % stopAndDeleteAITask
 
 
-        function connectUnclockedAI(obj, chan, verbose)
-            % connectUnclockedAO(obj)
-            %
-            % Create a task that is unclocked AI and can be used for misc tasks.
-            %
-            % function zapit.DAQ.dotNETwrapper.connectUnclockedAI
-            %
-            % Inputs
-            % chan - which channel to connect. Must be supplied as an integer.
-            % verbose - [optional, false by default]. Reports to screen what it is doing if true
-
-            import NationalInstruments.DAQmx.*
-
-            if nargin<3
-                verbose = false;
-            end
-
-            obj.stopAndDeleteAITask
-
-
-            if verbose
-                fprintf('Creating unclocked AI task on %s\n', obj.device_ID)
-            end
-
-            taskName = 'unclockedai';
-            obj.hAI = NationalInstruments.DAQmx.Task(taskName);
-            chan = [obj.device_ID,'/ai',num2str(chan)];
-
-            obj.hAI.AIChannels.CreateVoltageChannel(chan, taskName, ...
-                            AITerminalConfiguration.Differential, ...
-                            -obj.AOrange, obj.AOrange, AIVoltageUnits.Volts);
-
-            obj.hAI.Control(TaskAction.Verify)
-
-            obj.hAIreader = AnalogSingleChannelReader(obj.hAI.Stream);
-
-
-
-        end % connectUnclockedAI
-
-        function connectUnclockedAO(obj, verbose)
-            % connectUnclockedAO(obj)
-            %
-            % function zapit.DAQ.dotNETwrapper.connectUnclockedAO
-            %
-            % Create a task that is unclocked AO and can be used for sample setup.
-            % The connection options are set by properties in the dotNETwrapper
-            % class. see: .device_ID, .AOchans, .AOrange,
-            %
-            % Inputs
-            % verbose - [optional, false by default]. Reports to screen what it is doing if true
-
-            import NationalInstruments.DAQmx.*
-
-            if nargin<2
-                verbose = false;
-            end
-
-            % If we are already connected we don't proceed
-            if ~isempty(obj.hAO) && isvalid(obj.hAO) && obj.hAO.AOChannels.Count>0 && ...
-                    startsWith(char(obj.hAO.AOChannels.All.VirtualName), 'unclockedao') %TODO: not the task name!
-                return
-            end
-
-            obj.stopAndDeleteAOTask
-
-            if verbose
-                fprintf('Creating unclocked AO task on %s\n', obj.device_ID)
-            end
-
-            taskName = 'unclockedao';
-            obj.hAO = NationalInstruments.DAQmx.Task(taskName);
-            channelName = obj.genChanString(obj.AOchans);
-
-            obj.hAO.AOChannels.CreateVoltageChannel(channelName, taskName, ...
-                            -obj.AOrange, obj.AOrange, AOVoltageUnits.Volts);
-
-            obj.hAO.Control(TaskAction.Verify);
-
-            obj.hAOtaskWriter = AnalogMultiChannelWriter(obj.hAO.Stream);
-
-            obj.hAO.Start;
-        end % connectUnclockedAO
-
-
-        function connectClockedAO(obj, varargin)
-            % Set up a clocked AO task
-            %
-            % function zapit.DAQ.dotNETwrapper.connectClockedAO
-            %
-            % Purpose
-            % Create a task that is clocked AO and can be used for sample setup.
-            % The connection options are set by properties in the dotNETwrapper
-            % class. see: .device_ID, .AOchans, .AOrange, .samplesPerSecond
-            %
-            % Inputs (optional)
-            % fixedDurationWaveform - If true, the user is planning to specify a waveform
-            %                       of a fixed duration and continuous samples is disabled.
-            %                       In this scenario, the value for numSamplesPerChannel
-            %                       is irrelevant here.
-            % numSamplesPerChannel - Size of the buffer
-            % samplesPerSecond - determines output rate and default comes from YAML file.
-            % taskName - 'clockedao' by default.
-            % verbose - false by default
-            % hardwareTriggered - false by default. If true, task waits for trigger (PFI0 by default
-            %            and this line can be changed in the settings YAML)
-            %
-            % The task writes to the default number of AO lines (likely all four).
-
-            import NationalInstruments.DAQmx.*
-            %Parse optional arguments
-            params = inputParser;
-            params.CaseSensitive = false;
-
-            params.addParameter('fixedDurationWaveform', false, @(x) islogical(x) || x==0 || x==1);
-            params.addParameter('numSamplesPerChannel', 1000, @(x) isnumeric(x) && isscalar(x));
-            params.addParameter('samplesPerSecond', obj.samplesPerSecond, @(x) isnumeric(x) && isscalar(x));
-            params.addParameter('taskName', 'clockedAO', @(x) ischar(x));
-            params.addParameter('verbose', false, @(x) islogical(x) || x==0 || x==1);
-            params.addParameter('hardwareTriggered', false, @(x) islogical(x) || x==0 || x==1);
-
-            params.parse(varargin{:});
-
-            fixedDurationWaveform=params.Results.fixedDurationWaveform;
-            numSamplesPerChannel=params.Results.numSamplesPerChannel;
-            samplesPerSecond=params.Results.samplesPerSecond;
-            taskName=params.Results.taskName;
-            verbose=params.Results.verbose;
-            hardwareTriggered=params.Results.hardwareTriggered;
-
-            % If we are already connected we don't proceed
-            if ~isempty(obj.hAO) && isvalid(obj.hAO) && obj.hAO.AOChannels.Count>0 && ...
-                    strcmp(char(obj.hAO.AOChannels.All.VirtualName), taskName)
-                if verbose
-                    fprintf('DAQ connection to task %s already made. Skipping.\n', taskName)
-                end
-
-                % If we don't need to re-connect we may still need to stop the current task.
-                % If finite samples are being presented we need to stop it before we can write more
-                if strcmp(obj.hAO.Timing.SampleQuantityMode,'FiniteSamples')
-                    obj.stop
-                end
-
-                return
-            end
-
-            obj.stopAndDeleteAOTask
-
-            if verbose
-                fprintf('Creating clocked AO task on %s\n', obj.device_ID)
-            end
-
-            obj.hAO = NationalInstruments.DAQmx.Task(taskName);
-
-            % Set output channels
-            channelName = obj.genChanString(obj.AOchans);
-
-            obj.hAO.AOChannels.CreateVoltageChannel(channelName, taskName, ...
-                            -obj.AOrange, obj.AOrange, AOVoltageUnits.Volts);
-
-            % Configure the task sample clock, the sample size and mode to be continuous
-            % and set the size of the output buffer
-            if fixedDurationWaveform
-                sampleMode = SampleQuantityMode.FiniteSamples;
-            else
-                sampleMode = SampleQuantityMode.ContinuousSamples;
-            end
-
-            obj.hAO.Timing.ConfigureSampleClock('', ...
-                        samplesPerSecond, ...
-                        SampleClockActiveEdge.Rising, ...
-                        sampleMode, ...
-                        numSamplesPerChannel);
-
-
-            % allow sample regeneration
-            obj.hAO.Stream.WriteRegenerationMode = WriteRegenerationMode.AllowRegeneration;
-
-            obj.hAO.Control(TaskAction.Verify);
-
-            obj.hAOtaskWriter = AnalogMultiChannelWriter(obj.hAO.Stream);
-            % Configure the trigger
-            if hardwareTriggered
-                if verbose
-                    fprintf('Configuring a hardware trigger on line %s\n', ...
-                        obj.settings.NI.triggerChannel)
-                end
-                obj.hAO.Triggers.StartTrigger.ConfigureDigitalEdgeTrigger(...
-                            obj.settings.NI.triggerChannel, ...
-                            DigitalEdgeStartTriggerEdge.Rising);
-            end
-
-        end % connectClockedAO
-
-
-        function writeAnalogData(obj,waveforms)
-            % Write analog data to the buffer
-            %
-            % function zapit.DAQ.dotNETwrapper.writeAnalogData
-            %
-            % Purpose
-            % Write analog data to the buffer and also log in a property the
-            % data that were written.
-
-            % Double-check no values are out of range
-            if any(abs(max(waveforms,[],1))>10)
-                fprintf(' ** There are waveform data that exceed the +/- 10V range **\n')
-            end
-
-            % If this is a long waveform we cache it
-            if size(waveforms,1)>1
-                obj.lastWaveform = waveforms;
-            end
-
-            % If the task is a finite samples we must set the number of samples in the
-            % DAQ buffer.
-            if strcmp(obj.hAO.Timing.SampleQuantityMode,'FiniteSamples')
-                obj.hAO.Timing.SamplesPerChannel = length(waveforms);
-            end
-
-            % We want to auto-start only the on-demand tasks because zapit.pointer
-            % has methods that calls DAQmx start for the clocked operations.
-            verbose = false; % For debugging
-            if strcmp(char(obj.hAO.Timing.SampleTimingType),'OnDemand')
-                if verbose
-                    fprintf('Writing to buffer: on-demand\n')
-                end
-                obj.hAOtaskWriter.WriteMultiSample(false,waveforms');
-            else
-                if verbose
-                    fprintf('Writing to buffer: clocked\n')
-                end
-                obj.hAOtaskWriter.WriteMultiSample(false,waveforms');
-            end
-        end % writeAnalogData
-
-
         function data = readAnalogData(obj)
             % Read analog data from the DAQ
             %
@@ -421,7 +226,9 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             %
             % Purpose
             % Thin wrapper to read analog data.
+
             data = obj.hAIreader.ReadSingleSample;
+
         end % readAnalogData
 
 
@@ -444,7 +251,7 @@ classdef dotNETwrapper < zapit.hardware.DAQ
         end % numSamplesInBuffer
 
 
-        function chanString = genChanString(obj,chans)
+        function chanString = genChanString(obj,chans,chanType)
             % Generate a channel string for connecting to the DAQ
             %
             % function zapit.DAQ.dotNETwrapper.genChanString(chans)
@@ -455,11 +262,17 @@ classdef dotNETwrapper < zapit.hardware.DAQ
             %
             % Inputs
             % chans - scalar or vector of channels names.
+            % chanType - optional string defining the channel type to build. 'ao' by default
             %
             % Outputs
             % chanString - a string that the .NET wrapper will accept. e.g. 'Dev1/ao1,Dev1/ao3'
+            %            Note the 'ao' here comes from the chanType input argument. 
 
-            C = arrayfun(@(x) sprintf('%s/ao%d', obj.device_ID,x), chans, ...
+            if nargin<3
+                chanType = 'ao';
+            end
+
+            C = arrayfun(@(x) sprintf('%s/%s%d', obj.device_ID,chanType,x), chans, ...
                     'UniformOutput',false);
 
             if length(C) == 1

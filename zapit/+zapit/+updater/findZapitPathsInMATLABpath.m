@@ -15,8 +15,7 @@ function zPaths = findZapitPathsInMATLABpath
     % zPaths - Cell array of strings defining the absolute paths associated with
     %         zapit in the MATLAB path. 
 
-    p = path;
-    p = strsplit(p,':')';
+    p = strsplit(fileparts(path),';');
 
     f = find( cellfun(@(x) ~isempty(strfind(x,'zapit')), p) );
 
