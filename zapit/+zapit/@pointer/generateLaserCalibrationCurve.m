@@ -103,7 +103,7 @@ function generateLaserCalibrationCurve(obj,minMax)
     %%
     % Optionally save the fit to disk. Simulated runs are non-interactive and never save.
     if ~obj.simulated
-        reply = input('Save this laser fit? [y/N] ', 's');
+        reply = input('Fit applied. Also save this laser fit to disk? [y/N] ', 's');
         if ~isempty(reply) && lower(reply(1))=='y'
             obj.saveLaserFit
         else
