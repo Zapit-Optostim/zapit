@@ -6,20 +6,20 @@ function outputSettings = readSettings(fname)
     % Purpose
     % This function parses SETTINGS/settings.yml and creates it if does not already exist.
     %
-    % If no settings have been created then a default settings file is created. The user is 
-    % prompted to edit it and nothing is returned. If a settings file is present and looks 
-    % identical to the default one, the user is prompted to edit it and nothing is returned. 
-    % Otherwise the settings file is read and returned as a structure. 
+    % If no settings have been created then a default settings file is created. The user is
+    % prompted to edit it and nothing is returned. If a settings file is present and looks
+    % identical to the default one, the user is prompted to edit it and nothing is returned.
+    % Otherwise the settings file is read and returned as a structure.
     %
     % Inputs
     % fname - [optional] If not provided, the default settings file is found and loaded. If
     %       fname is provided, this is loaded instead. A non-standard settings file is only
     %       used for running certain tests. The settings file is never modified if this
     %       this arg is defined.
-    % 
+    %
     % Outputs
     % settings - the zapit settings as a structure
-    % 
+    %
     %
     % Rob Campbell - Basel 2017
     % Rob Campbell - SWC 2022

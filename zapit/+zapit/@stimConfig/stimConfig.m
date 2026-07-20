@@ -105,6 +105,7 @@ classdef stimConfig < handle
             else
                 settings = obj.parent.settings;
             end
+
             blankingTime_ms = settings.experiment.blankingTime_ms;
 
         end % get.blankingTime_ms

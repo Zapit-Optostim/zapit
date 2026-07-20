@@ -12,7 +12,7 @@ calibrateScanners: {areaThreshold: 800.0, calibration_power_mW: 2.0, beam_calib_
   bufferMM: 3.0, pointSpacingInMM: 3.0}
 calibrateSample: {refAP: 3.0}
 experiment: {defaultLaserModulationFrequencyHz: 40.0, defaultLaserPowerMW: 5.0, offRampDownDuration_ms: 250.0,
-  maxStimPointsPerCondition: 2.0, blankingTime_ms: 0.3, blankOnsetShift_ms: -0.12,
+  blankingTime_ms: 0.3, blankOnsetShift_ms: -0.12,
   blankOffsetShift_ms: 0.25}
 tcpServer: {IP: 172.24.243.49, port: 1488.0, enable: false}
 cache:

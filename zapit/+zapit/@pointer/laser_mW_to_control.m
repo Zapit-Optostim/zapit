@@ -49,7 +49,7 @@ function controlVal = laser_mW_to_control(obj,mW)
         % TODO -- for now let us just assume that it starts at zero
         mWvals = mWvals * maxPower;
 
-        % Make a plolynomial fit of the sensory values convert to mW as a function of the laser control value
+        % Make a plolynomial fit of the sensor values convert to mW as a function of the laser control value
         % The is the correct way of doing the fit but it won't directly give us the answer we want, as we wish
         % to know the control value that produces a given mW value.
         laserFit_ControlToMW = fit(obj.laserFit.controlValues,mWvals,'poly3');
