@@ -58,25 +58,17 @@ function mouseClick_Callback(obj,~,~)
 
         elseif obj.isShiftPressed && obj.BilateralButton.Value == 0
             % Then we append a point
-            maxPointsPerCondition = obj.settings.experiment.maxStimPointsPerCondition;
 
-            if length(obj.pAddedPoints(end).XData) < maxPointsPerCondition
-                obj.pAddedPoints(end).XData(end+1) = obj.pCurrentPoint.XData;
-                obj.pAddedPoints(end).YData(end+1) = obj.pCurrentPoint.YData;
+            obj.pAddedPoints(end).XData(end+1) = obj.pCurrentPoint.XData;
+            obj.pAddedPoints(end).YData(end+1) = obj.pCurrentPoint.YData;
 
-                % Note if this was a bilateral or a unilateral condition and singular or plural number
+            % Note if this was a bilateral or a unilateral condition and singular or plural number
 
-                typeString = [uniBi,'_point'];
-                if length(obj.pAddedPoints(end).XData)>1
-                    typeString = [typeString,'s'];
-                end
-                obj.pAddedPoints(end).UserData = struct('type',typeString);
-
-            else
-                % Otherwise two many point for this condition
-                fprintf('Maximum number of allowed points per stimulus condition is %d.\n', ...
-                        maxPointsPerCondition)
-            end % if length
+            typeString = [uniBi,'_point'];
+            if length(obj.pAddedPoints(end).XData)>1
+                typeString = [typeString,'s'];
+            end
+            obj.pAddedPoints(end).UserData = struct('type',typeString);
 
         end % if  ~obj.isShiftPressed
 
