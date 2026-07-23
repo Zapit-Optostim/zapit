@@ -42,7 +42,7 @@ classdef dotNETwrapper < zapit.hardware.DAQ
         function obj = dotNETwrapper(varargin)
             % Constructor
             %
-            % function zapit.DAQ.dotNETwrapper.dotNETwrapper
+            % function zapit.DAQ.dotNETwrapper.dotNETwrapper(parent, varargin)
             %
             % Purpose
             % The main purpose of the constructor is to set up default parameters.

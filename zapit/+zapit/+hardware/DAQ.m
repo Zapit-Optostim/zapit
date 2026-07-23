@@ -30,15 +30,16 @@ classdef (Abstract) DAQ < handle
 
     methods
 
-        function obj = DAQ(varargin)
+        function obj = DAQ(parent,varargin)
 
             % Pull in the input arguments and set defaults. Read from the settings of the
             % zapit model class, should that exist (it is supplied as the first input
             % argument). This avoids overwriting a test settings file. Otherwise try to
             % read the settings independently.
-            if nargin>0 && ~isempty(varargin{1})
-                obj.parent = varargin{1};
+            if nargin>0 && ~isempty(parent)
+                obj.parent = parent;
             end
+
             if ~isempty(obj.parent)
                 obj.settings = obj.parent.settings;
             else

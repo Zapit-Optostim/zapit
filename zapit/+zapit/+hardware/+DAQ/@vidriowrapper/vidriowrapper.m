@@ -35,7 +35,7 @@ classdef vidriowrapper < zapit.hardware.DAQ
         function obj = vidriowrapper(varargin)
             % Constructor
             %
-            % function zapit.DAQ.vidriowrapper.vidriowrapper
+            % function zapit.DAQ.vidriowrapper.vidriowrapper(parent, varargin)
             %
             % Purpose
             % The main purpose of the constructor is to set up default parameters.
