@@ -88,13 +88,17 @@ function varargout = getLaserPosAccuracy(obj, XYdata, backgroundImage, verbose)
         return
     end
 
-    % Store a small image centered around the detected laser spot position.
+    % Store a small image centered around the detected laser spot position. The
+    % crop range is clamped to the image bounds so that a spot detected near an
+    % edge does not produce out-of-range indices (which would otherwise abort the
+    % whole calibration loop rather than just skipping this one point).
     imSizeMicrons=750;
     imSizePixels = round(imSizeMicrons/obj.settings.camera.micronsPerPixel);
     imSizePixels_half = round(imSizePixels/2);
     c = round(BWc.Centroid); % location of the laser spot centre
-    out.laserSpotIm = meanInputImage(c(2)-imSizePixels_half : c(2)+imSizePixels_half, ...
-                     c(1)-imSizePixels_half : c(1)+imSizePixels_half );
+    cropRows = max(1,c(2)-imSizePixels_half) : min(size(meanInputImage,1), c(2)+imSizePixels_half);
+    cropCols = max(1,c(1)-imSizePixels_half) : min(size(meanInputImage,2), c(1)+imSizePixels_half);
+    out.laserSpotIm = meanInputImage(cropRows, cropCols);
 
     % Get the intensity profile of the laser
     %% report to screen or return as a structure
