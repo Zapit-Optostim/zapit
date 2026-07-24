@@ -155,7 +155,7 @@ function response = processBufferMessageCallback(obj,~,~)
                 switch cur_state
                     case "idle"
                         response(1) = 0;
-                    case "active"
+                    case "stim"
                         response(1) = 1;
                     case "rampdown"
                         response(1) = 2;

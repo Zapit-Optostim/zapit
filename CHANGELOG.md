@@ -26,6 +26,8 @@ NOTE: the version number of the software is taken from the last version number i
 
 
 ### 2025/07/20 v1.0.4
+Many bug fixes to coincide with release of Zapit on eLife. 
+
   * Ephys waveforms should now have a better shape and be produced correctly. BUT the higher
   laser power is produced assuming the power curve is linear and does not take max control 
   voltage into account. OK for lower powers/fewer positions with Obis for testing.
@@ -46,6 +48,10 @@ Bugfixes
   duration. Note that rampdown will be slightly longer than expected in these cases. 
 * Fix corner case that could cause incorrect Task type to be used. 
 * Warn if stim cycle is over >0.5 Hz off the intended rate. 
+* Update checker now works correctly (was calling the wrong method);
+* TCP client correctly reads when Zapit is stimulating
+
+
 
 ### 2024/05/20 v1.0.3
   * Out of bounds stimulus index causes an error. In v1.0.2 it would just carry on 

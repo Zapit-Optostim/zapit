@@ -290,6 +290,11 @@ function varargout = sendSamples(obj, varargin)
     % we are not waiting for a hardware trigger.
     obj.DAQ.startStimulation
 
+    % We are now either actively stimulating or queued waiting for a hardware trigger.
+    % Either way the documented state is 'stim' (see zapit.pointer.state). stopOptoStim
+    % returns this to 'idle' (via 'rampdown').
+    obj.state = 'stim';
+
     % The waveform starts and no blocking happens
 
     %%
