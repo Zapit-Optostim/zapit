@@ -29,8 +29,6 @@ NOTE: the version number of the software is taken from the last version number i
   * Ephys waveforms should now have a better shape and be produced correctly. BUT the higher
   laser power is produced assuming the power curve is linear and does not take max control 
   voltage into account. OK for lower powers/fewer positions with Obis for testing.
-  * BUGFIX: No longer spawns opens an empty figure window on startup. 
-  * BUGFIX: Stim config editor is no longer unresponsive at times. [Issue 58](https://github.com/Zapit-Optostim/zapit/issues/163)
   * MAJOR: non-linear laser calibration curves now more robust and also have the option 
     of a sigmoid curve to cope with EOMs. 
   * Background code changes now allow the blanking signal to be optionally also played out 
@@ -41,11 +39,13 @@ NOTE: the version number of the software is taken from the last version number i
 
 
 Bugfixes
+* BUGFIX: No longer spawns opens an empty figure window on startup. 
+* BUGFIX: Stim config editor is no longer unresponsive at times. [Issue 58](https://github.com/Zapit-Optostim/zapit/issues/163)
 * Laser turns off correctly where `obj.stimConfig.offRampDownDuration_ms < 1`
 * Ramp-down now works when ramp down duration is not an integer multiple of the waveform
   duration. Note that rampdown will be slightly longer than expected in these cases. 
 * Fix corner case that could cause incorrect Task type to be used. 
-
+* Warn if stim cycle is over >0.5 Hz off the intended rate. 
 
 ### 2024/05/20 v1.0.3
   * Out of bounds stimulus index causes an error. In v1.0.2 it would just carry on 

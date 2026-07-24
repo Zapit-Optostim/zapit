@@ -7,12 +7,13 @@ function connectClockedDO(obj, varargin)
     % Create clocked DO task that will deliver digital waveforms for things like
     % the LED masking light. The clocked DO task will be syncronised to the AO 
     % waveform so connectClockedAO will need to have been run first. 
+    % NOTE -- this is a beta feature. 24/07/2026
     %
     % Inputs (optional)
     % fixedDurationWaveform - If true, the user is planning to specify a waveform
     %                       of a fixed duration and continuous samples is disabled.
     %                       In this scenario, the value for numSamplesPerChannel
-    %                       is irrelevant here.
+    %                       is irrelevant here. **CURRENTLY UNUSED** 
     % numSamplesPerChannel - Size of the buffer
     % samplesPerSecond - determines output rate and default comes from YAML file.
     % taskName - 'clockedDO' by default.
@@ -65,7 +66,7 @@ function connectClockedDO(obj, varargin)
         % If we don't need to re-connect we may still need to stop the current task.
         % If finite samples are being presented we need to stop it before we can write more
         if strcmp(obj.hDO.Timing.SampleQuantityMode,'FiniteSamples') % TODO UNTESTED!
-            obj.stop
+            obj.stopStimulation
         end
 
         return

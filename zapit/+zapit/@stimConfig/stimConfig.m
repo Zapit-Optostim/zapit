@@ -144,7 +144,24 @@ classdef stimConfig < handle
             % Cache so it does not get re-generated repeatedly
             calibratedPointsInVolts = obj.calibratedPointsInVolts;
 
-            obj.numSamplesPerChannel = obj.parent.DAQ.samplesPerSecond/obj.stimModulationFreqHz;
+            % The number of samples per channel must be a whole number. It only comes
+            % out whole when the sample rate divides exactly by the stim modulation
+            % frequency, so we round it. The rounding means the stimulus runs at a
+            % slightly different modulation frequency than requested. This discrepancy
+            % is usually tiny (< 0.1 Hz) and nobody cares. We only warn if it is large
+            % enough to matter (see threshold below).
+            obj.numSamplesPerChannel = round(obj.parent.DAQ.samplesPerSecond/obj.stimModulationFreqHz);
+            actualFreqHz = obj.parent.DAQ.samplesPerSecond/obj.numSamplesPerChannel;
+            freqErrorHz = abs(actualFreqHz - obj.stimModulationFreqHz);
+            if freqErrorHz > 0.5
+                fprintf(['\n ** WARNING: requested stim modulation frequency of %g Hz cannot be ', ...
+                    'produced exactly at the\n', ...
+                    ' ** current sample rate (%g). The stimulus will actually run at %.2f Hz.\n', ...
+                    ' ** Consider adjusting the stim modulation frequency (or the sample ', ...
+                    'rate)\n', ...
+                    ' ** so the sample rate divides more evenly by the modulation frequency.\n\n'], ...
+                    obj.stimModulationFreqHz, obj.parent.DAQ.samplesPerSecond, actualFreqHz)
+            end
 
             % Make up samples for scanner channels (of course calibratedPointsInVolts is
             % already in volt format) pre-allocate the waveforms array: 1st dim is samples,
