@@ -48,7 +48,7 @@ function [settings,setTests] = default_settings
     settings.NI.triggerChannel = 'PFI0';
     setTests.NI.triggerChannel = {@check_ischar};
 
-    settings.NI.wrapper = 'dotnet'; % 'vidrio' or 'dotnet'
+    settings.NI.wrapper = 'dotnet'; % Only 'dotnet' is supported (the old 'vidrio' wrapper was removed)
     setTests.NI.wrapper = {@check_ischar};
 
 

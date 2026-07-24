@@ -173,12 +173,14 @@ classdef pointer < handle
                 obj.scannersCalibrated = true;
             else
                 fprintf('Connecting to DAQ\n')
-                switch lower(obj.settings.NI.wrapper)
-                case 'vidrio'
-                    obj.DAQ = zapit.hardware.DAQ.vidriowrapper(obj);
-                case 'dotnet'
-                    obj.DAQ = zapit.hardware.DAQ.dotNETwrapper(obj);
+                % Only the dotNET wrapper is supported. The old vidrio wrapper has been
+                % removed. Warn (rather than fail) if a legacy settings file still asks
+                % for it, and fall back to dotNET.
+                if ~strcmpi(obj.settings.NI.wrapper, 'dotnet')
+                    fprintf(['** settings.NI.wrapper is "%s" but only "dotnet" is supported. ', ...
+                        'Using the dotNET wrapper.\n'], obj.settings.NI.wrapper)
                 end
+                obj.DAQ = zapit.hardware.DAQ.dotNETwrapper(obj);
             end
 
             obj.zeroScanners
