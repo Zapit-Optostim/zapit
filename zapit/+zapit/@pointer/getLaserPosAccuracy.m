@@ -33,20 +33,26 @@ function varargout = getLaserPosAccuracy(obj, XYdata, backgroundImage, verbose)
     nFrames = 1;
     tFrames = obj.returnCurrentFrame(nFrames);
 
-    if isempty(backgroundImage)
+    % Remember whether the caller supplied a background before we replace an empty
+    % one with zeros. The two cases use different thresholds (see below).
+    noBackgroundSupplied = isempty(backgroundImage);
+    if noBackgroundSupplied
         backgroundImage = zeros(size(tFrames,[1,2]), class(tFrames));
     end
 
     % Store for later
     meanInputImage = mean(tFrames,3);
 
-    % Binarize
+    % Binarize. We threshold the background-subtracted frame (not the raw frame) so
+    % that static bright features removed by the subtraction do not get picked up as
+    % the laser spot. When a real background was supplied we can use a stricter
+    % threshold; with no background (zeros) we use a lower one.
     for ii = 1:nFrames
         tFrame = tFrames(:,:,ii) - backgroundImage;
-        if isempty(backgroundImage)
-            tFrames(:,:,ii) = tFrames(:,:,ii) > (max(tFrame(:))*0.5) ;
+        if noBackgroundSupplied
+            tFrames(:,:,ii) = tFrame > (max(tFrame(:))*0.5) ;
         else
-            tFrames(:,:,ii) = tFrames(:,:,ii) > (max(tFrame(:))*0.9) ;
+            tFrames(:,:,ii) = tFrame > (max(tFrame(:))*0.9) ;
         end
     end
 

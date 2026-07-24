@@ -38,6 +38,7 @@ Many bug fixes to coincide with release of Zapit on eLife.
     AO3 for controlling a second laser's power. Currently this feature is for development 
     use only and must be enabled at the command line via `hZP.stimConfig.useClockedDO = true`
     (off by default) once a stimulus config file has been loaded. See [Issue 163](https://github.com/Zapit-Optostim/zapit/issues/163)
+  * Subtract background image when running getLaserPosAccuracy. This uses a different threshold.  
 
 
 Bugfixes
