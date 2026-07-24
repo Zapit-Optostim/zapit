@@ -18,7 +18,7 @@ function generateSupportReport(reportFname)
     %Generate default save location
     [~,userPath]=system('echo %USERPROFILE%');
     userDesktopDir = fullfile(userPath(1:end-1),'Desktop');
-    defaultFname = ['Zapit_Report_',  datestr(now,'dd-mm-yyyy_HH-MM'),'.zip'];
+    defaultFname = ['Zapit_Report_',  char(datetime('now','Format','dd-MM-yyyy_HH-mm')),'.zip'];
 
     if nargin < 2 || isempty(reportFname)
         [reportFname,pathname] = uiputfile('.zip','Choose path to save report', fullfile(userDesktopDir,defaultFname));

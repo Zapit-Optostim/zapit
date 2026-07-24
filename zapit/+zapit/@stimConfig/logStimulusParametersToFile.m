@@ -35,7 +35,7 @@ function varargout = logStimulusParametersToFile(obj, filePath)
         data.(fieldName) = obj.stimLocations(ii);
     end
 
-    fname = sprintf('%s%s.yml', obj.logFileStem, datestr(now,'yyyy_mm_dd__HH-MM'));
+    fname = sprintf('%s%s.yml', obj.logFileStem, char(datetime('now','Format','yyyy_MM_dd__HH-mm')));
     zapit.yaml.WriteYaml(fullfile(filePath,fname), data);
 
     if nargout>0

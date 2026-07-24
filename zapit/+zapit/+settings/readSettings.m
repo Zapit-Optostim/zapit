@@ -182,7 +182,7 @@ function outputSettings = readSettings(fname)
     if ~allValid || addedDefaultValue
        % Copy file
        backupFname = fullfile(backupSettingsDir, ...
-            [datestr(now, 'yyyy_mm_dd__HH_MM_SS_'),zapit.settings.returnZapitSettingsFileName]);
+            [char(datetime('now','Format','yyyy_MM_dd__HH_mm_ss_')),zapit.settings.returnZapitSettingsFileName]);
        fprintf('Making backup of settings file at %s\n', backupFname)
        copyfile(settingsFile,backupFname)
 

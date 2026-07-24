@@ -23,7 +23,7 @@ function hZP = getObject(quiet)
 
     varClasses = {W.class};
 
-    ind=strmatch('zapit.pointer',varClasses);
+    ind=find(strcmp('zapit.pointer',varClasses));
 
     if isempty(ind)
         if ~quiet
