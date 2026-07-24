@@ -29,34 +29,34 @@ NOTE: the version number of the software is taken from the last version number i
 Many bug fixes to coincide with release of Zapit on eLife. 
 
   * Ephys waveforms should now have a better shape and be produced correctly. BUT the higher
-  laser power is produced assuming the power curve is linear and does not take max control 
-  voltage into account. OK for lower powers/fewer positions with Obis for testing.
-  * MAJOR: non-linear laser calibration curves now more robust and also have the option 
+    laser power is produced assuming the power curve is linear and does not take max control 
+    voltage into account. OK for lower powers/fewer positions with Obis for testing.
+  * Non-linear laser calibration curves now more robust and also have the option 
     of a sigmoid curve to cope with EOMs. 
+  * MAJOR: Cleaner structure for the stimulus config. Remove redundant places where the 
+    same information as stored but information only read from one of these. Stim config
+    editor does not wipe cases where user has implemented different, say, power values for
+    each trial. They are maintained as they should be. 
   * Background code changes now allow the blanking signal to be optionally also played out 
     as a clocked digital waveform on `p0.0`, in addition to AO3. This paves the way to freeing 
     AO3 for controlling a second laser's power. Currently this feature is for development 
     use only and must be enabled at the command line via `hZP.stimConfig.useClockedDO = true`
     (off by default) once a stimulus config file has been loaded. See [Issue 163](https://github.com/Zapit-Optostim/zapit/issues/163)
   * Subtract background image when running getLaserPosAccuracy. This uses a different threshold.  
-  * Switch camera reads to peekdata, which should be smoother. 
-  * Cleaner structure for the stimulus config. Remove redundant places where the same information
-    was stored but information only read from one of these.
-
-
-Bugfixes
-* BUGFIX: No longer spawns opens an empty figure window on startup. 
-* BUGFIX: Stim config editor is no longer unresponsive at times. [Issue 58](https://github.com/Zapit-Optostim/zapit/issues/163)
-* Laser turns off correctly where `obj.stimConfig.offRampDownDuration_ms < 1`
-* Ramp-down now works when ramp down duration is not an integer multiple of the waveform
-  duration. Note that rampdown will be slightly longer than expected in these cases. 
-* Fix corner case that could cause incorrect Task type to be used. 
-* Warn if stim cycle is over >0.5 Hz off the intended rate. 
-* Update checker now works correctly (was calling the wrong method);
-* TCP client correctly reads when Zapit is stimulating.
-* Fix to linear laser power conversion equation: it was only right for lasers that go down to zero. 
-* Masking light could turn off at start rather than end of rampdown. 
-* Stimulus config GUI maker was unable to re-save loaded stim configs. 
+  * Switch camera reads to peekdata, which should be smoother and was probably the origin of [Issue 126](https://github.com/Zapit-Optostim/zapit/issues/126).
+  * BUGFIX: No longer spawns opens an empty figure window on startup. 
+  * BUGFIX: Stim config editor is no longer unresponsive at times. [Issue 58](https://github.com/Zapit-Optostim/zapit/issues/163)
+  * BUGFIX: Laser turns off correctly where `obj.stimConfig.offRampDownDuration_ms < 1`
+  * BUGFIX: Ramp-down now works when ramp down duration is not an integer multiple of the 
+    waveform duration. Note that rampdown will be slightly longer than expected in these cases. 
+  * BUGFIX: Fix corner case that could cause incorrect Task type to be used. 
+  * BUGFIX: Warn if stim cycle is over >0.5 Hz off the intended rate. 
+  * BUGFIX: Update checker now works correctly (was calling the wrong method).
+  * BUGFIX: TCP client correctly reads when Zapit is stimulating.
+  * BUGFIX:  Fix to linear laser power conversion equation: it was only right for lasers 
+    that go down to zero. 
+  * BUGFIX: Masking light could turn off at start rather than end of rampdown. 
+  * BUGFIX:  Stimulus config GUI maker was unable to re-save loaded stim configs. 
 
 
 ### 2024/05/20 v1.0.3

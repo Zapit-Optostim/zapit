@@ -53,8 +53,12 @@ function mouseClick_Callback(obj,~,~)
                                             'Color', obj.currentColor, ...
                                             'Parent', obj.hAx);
 
+            % Store the type and the per-condition attributes from the current controls.
+            % These travel with the point and are written out by returnStimConfigStructure.
             typeString = [uniBi,'_point'];
-            obj.pAddedPoints(end).UserData = struct('type',typeString);
+            obj.pAddedPoints(end).UserData = struct('type', typeString, ...
+                'laserPowerInMW', obj.LaserPowermWSpinner.Value, ...
+                'offRampDownDuration_ms', obj.RampdownmsSpinner.Value);
 
         elseif obj.isShiftPressed && obj.BilateralButton.Value == 0
             % Then we append a point
@@ -68,7 +72,11 @@ function mouseClick_Callback(obj,~,~)
             if length(obj.pAddedPoints(end).XData)>1
                 typeString = [typeString,'s'];
             end
-            obj.pAddedPoints(end).UserData = struct('type',typeString);
+            % Appending a coordinate to an existing condition: keep its attributes, update
+            % only the type (it may have become plural).
+            ud = obj.pAddedPoints(end).UserData;
+            ud.type = typeString;
+            obj.pAddedPoints(end).UserData = ud;
 
         end % if  ~obj.isShiftPressed
 

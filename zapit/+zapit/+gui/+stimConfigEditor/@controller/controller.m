@@ -307,33 +307,50 @@ classdef controller < zapit.gui.stimConfigEditor.view
                                             'Marker', obj.currentSymbol, ...
                                             'Color', obj.currentColor, ...
                                             'Parent', obj.hAx);
-                % Restore the point type into UserData, exactly as mouseClick_Callback does
-                % for interactively created points. Without this, saving a loaded config
-                % fails in returnStimConfigStructure when it reads UserData.type.
-                obj.pAddedPoints(ii).UserData = struct('type', stimC.stimLocations(ii).Type);
+                % Store the point type AND its per-condition attributes in UserData. This is
+                % what makes a load -> save round-trip preserve per-condition values:
+                % returnStimConfigStructure writes these back point by point.
+                obj.pAddedPoints(ii).UserData = struct( ...
+                    'type', stimC.stimLocations(ii).Type, ...
+                    'laserPowerInMW', stimC.stimLocations(ii).Attributes.laserPowerInMW, ...
+                    'offRampDownDuration_ms', stimC.stimLocations(ii).Attributes.offRampDownDuration_ms);
             end
             hold(obj.hAx,'off')
 
-            % Restore the GUI controls from the loaded config. Without this the spinners
-            % keep whatever they were showing and saveConfigYAML would overwrite the
-            % file's values with them (e.g. wiping a loaded 2 mW back to the default).
-            % stimModulationFreqHz is a single global value. laserPowerInMW and
+            % Restore the GUI controls from the loaded config. stimModulationFreqHz is a
+            % single global value, so its control is always active. laserPowerInMW and
             % offRampDownDuration_ms are per-condition, but the editor has only one control
-            % for each: we show condition 1's value and warn if conditions differ, since
-            % the editor cannot represent per-condition differences and will flatten them
-            % to the shown value on save (known limitation).
+            % for each. We show the first condition's value; if the conditions differ we
+            % DISABLE that control (a single spinner cannot represent per-condition values)
+            % and warn. The differing values are not lost: they are stored per point above
+            % and written back on save. New conditions added while a control is disabled use
+            % the (frozen) value shown in that control.
             obj.StimFreqHzSpinner.Value = stimC.stimModulationFreqHz;
             obj.LaserPowermWSpinner.Value = stimC.stimLocations(1).Attributes.laserPowerInMW;
             obj.RampdownmsSpinner.Value = stimC.stimLocations(1).Attributes.offRampDownDuration_ms;
 
             laserPowers = arrayfun(@(x) x.Attributes.laserPowerInMW, stimC.stimLocations);
             rampDowns   = arrayfun(@(x) x.Attributes.offRampDownDuration_ms, stimC.stimLocations);
-            if numel(unique(laserPowers)) > 1 || numel(unique(rampDowns)) > 1
-                fprintf(['\n ** Warning: %s has per-condition laser power and/or ramp-down ', ...
-                    'values that differ between conditions.\n    The editor has a single ', ...
-                    'control for each, so saving will set ALL conditions to the values now ', ...
-                    'shown (from the first condition).\n    Edit the YAML by hand if you need ', ...
-                    'different values per condition.\n\n'], fname)
+            laserVaries = numel(unique(laserPowers)) > 1;
+            rampVaries  = numel(unique(rampDowns)) > 1;
+
+            % Enable=logical maps to on/off. Disabled when the loaded values differ.
+            obj.LaserPowermWSpinner.Enable = ~laserVaries;
+            obj.RampdownmsSpinner.Enable = ~rampVaries;
+
+            if laserVaries || rampVaries
+                msg = 'This config has values that differ between conditions:';
+                if laserVaries
+                    msg = [msg, newline, '  - laser power'];
+                end
+                if rampVaries
+                    msg = [msg, newline, '  - ramp-down duration'];
+                end
+                msg = [msg, newline, newline, ...
+                    ['Those controls are disabled because the editor has only one control ', ...
+                    'for each. Existing conditions keep their own values when you save. Any ', ...
+                    'new conditions you add will use the value shown (the first condition''s).']];
+                warndlg(msg, 'Per-condition values')
             end
 
             obj.fname = fname;
