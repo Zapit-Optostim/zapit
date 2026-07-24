@@ -96,7 +96,7 @@ function varargout = calibrateScanners(obj)
     obj.scannersCalibrated = true; % TODO -- Assumes that calibration was a success
 
     if nargout>0
-        varargout{1} = OUT;
+        varargout{1} = obj.calibrateScannersPosData;
     end
 
     function tidyUp
