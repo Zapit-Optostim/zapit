@@ -44,6 +44,7 @@ Bugfixes
 * Laser turns off correctly where `obj.stimConfig.offRampDownDuration_ms < 1`
 * Ramp-down now works when ramp down duration is not an integer multiple of the waveform
   duration. Note that rampdown will be slightly longer than expected in these cases. 
+* Fix corner case that could cause incorrect Task type to be used. 
 
 
 ### 2024/05/20 v1.0.3

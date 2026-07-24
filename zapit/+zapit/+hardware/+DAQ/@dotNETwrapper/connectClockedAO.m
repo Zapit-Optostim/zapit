@@ -58,9 +58,13 @@ function connectClockedAO(obj, varargin)
     end
 
 
-    % If we are already connected we don't proceed
+    % If we are already connected we don't proceed. The channel virtual name is the
+    % task name followed by the channel index digit(s), e.g. 'sendSamplesHtrig0'. We
+    % require a digit immediately after the task name so that a shorter task name is not
+    % matched as a prefix of a longer one (e.g. 'sendSamplesHtrig' must NOT match the
+    % task 'sendSamplesHtrigFixedDur', which would reuse a finite task as a continuous one).
     if ~isempty(obj.hAO) && isvalid(obj.hAO) && obj.hAO.AOChannels.Count>0 && ...
-            startsWith(char(obj.hAO.AOChannels.All.VirtualName), taskName)
+            ~isempty(regexp(char(obj.hAO.AOChannels.All.VirtualName), ['^',taskName,'\d'], 'once'))
         if verbose
             fprintf('DAQ connection to task %s already made. Skipping.\n', taskName)
         end
