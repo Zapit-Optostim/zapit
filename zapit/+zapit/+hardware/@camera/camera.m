@@ -72,7 +72,7 @@ classdef camera < handle
                 end
                 IN='';
                 fprintf('\n')
-                while isempty(IN) | IN<0 | IN>length(constructorCommands)
+                while isempty(IN) || IN<1 || IN>length(constructorCommands)
                     IN = input('Enter device number and press return: ','s');
                     IN = str2num(IN);
                 end

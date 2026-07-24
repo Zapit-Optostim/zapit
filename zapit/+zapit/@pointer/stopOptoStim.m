@@ -116,7 +116,7 @@ function stopOptoStim(obj, rampDownInMS)
         % Disable the masking light when we are on the last cycle.
         % Unless this is done here there is a tendency for the masking
         % light to remain on at the end.
-        if n <= length(ampSequence)
+        if ii == ind(end)
             t(:,4) = 0;
         end
 

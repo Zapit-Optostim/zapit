@@ -103,12 +103,12 @@ function outputSettings = readSettings(fname)
     % Two
     % Some fields have changed names over time. Should the user have an old value we want to
     % rename it to the new field name. If we do this here, then the redundant field will just
-    % vanish in the next step. First column is new field name and second is old.
+    % vanish in the next step. First column is OLD field name and second is the NEW name.
     namesToReplace = {...
                 {'experiment','defaultLaserFrequencyHz'}, {'experiment','defaultLaserModulationFrequencyHz'}; ...
     };
 
-    for ii=1:size(namesToReplace)
+    for ii=1:size(namesToReplace,1)
         oldName = namesToReplace{ii,1};
         newName = namesToReplace{ii,2};
 
