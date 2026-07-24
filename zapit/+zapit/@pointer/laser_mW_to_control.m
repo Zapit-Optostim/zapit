@@ -31,6 +31,7 @@ function controlVal = laser_mW_to_control(obj,mW)
     % Make local copies of setting needed in multiple places below
     minPower = obj.settings.laser.laserMinMax_mW(1);
     maxPower = obj.settings.laser.laserMinMax_mW(2);
+    minCV = obj.settings.laser.laserMinMaxControlVolts(1);
     maxCV = obj.settings.laser.laserMinMaxControlVolts(2);
 
     if isempty(obj.laserFit)
@@ -38,7 +39,8 @@ function controlVal = laser_mW_to_control(obj,mW)
         % lasers have been found to be non-linear we can not make a fuss if the fit is missing and
         % just assume it is linear.
 
-        controlVal = (mW/maxPower) * maxCV - minPower ;
+        controlVal = minCV + (mW - minPower) / (maxPower - minPower) * (maxCV - minCV);
+
     else
         % The user has a measured calibration curve. The photodiode is uncalibrated, so the
         % fitted (denoised) sensor values are in arbitrary units. We anchor them to real mW

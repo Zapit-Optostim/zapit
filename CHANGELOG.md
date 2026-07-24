@@ -50,7 +50,8 @@ Bugfixes
 * Fix corner case that could cause incorrect Task type to be used. 
 * Warn if stim cycle is over >0.5 Hz off the intended rate. 
 * Update checker now works correctly (was calling the wrong method);
-* TCP client correctly reads when Zapit is stimulating
+* TCP client correctly reads when Zapit is stimulating.
+* Fix to linear laser power conversion equation: it was only right for lasers that go down to zero. 
 
 
 
