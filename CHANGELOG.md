@@ -40,6 +40,8 @@ Many bug fixes to coincide with release of Zapit on eLife.
     (off by default) once a stimulus config file has been loaded. See [Issue 163](https://github.com/Zapit-Optostim/zapit/issues/163)
   * Subtract background image when running getLaserPosAccuracy. This uses a different threshold.  
   * Switch camera reads to peekdata, which should be smoother. 
+  * Cleaner structure for the stimulus config. Remove redundant places where the same information
+    was stored but information only read from one of these.
 
 
 Bugfixes
@@ -53,7 +55,8 @@ Bugfixes
 * Update checker now works correctly (was calling the wrong method);
 * TCP client correctly reads when Zapit is stimulating.
 * Fix to linear laser power conversion equation: it was only right for lasers that go down to zero. 
-
+* Masking light could turn off at start rather than end of rampdown. 
+* Stimulus config GUI maker was unable to re-save loaded stim configs. 
 
 
 ### 2024/05/20 v1.0.3

@@ -6,9 +6,12 @@ function writeConfig(obj,fname)
     % Purpose
     % Write properties into a stim config YAML file that can be re-read.
 
-    data.laserPowerInMW = obj.laserPowerInMW;
+    % stimModulationFreqHz is global to the whole config so it is written once at the
+    % top level. laserPowerInMW and offRampDownDuration_ms are per-condition and live
+    % inside each condition's Attributes (written with the stimLocations below); they are
+    % NOT written at the top level because loadConfig reads them per-condition and a
+    % top-level copy would be dead, misleading data.
     data.stimModulationFreqHz = obj.stimModulationFreqHz;
-    data.offRampDownDuration_ms = obj.offRampDownDuration_ms;
 
     for ii = 1:obj.numConditions
         fieldName = sprintf('stimLocations%02d',ii);

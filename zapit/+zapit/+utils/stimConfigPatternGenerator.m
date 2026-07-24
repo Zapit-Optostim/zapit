@@ -145,7 +145,6 @@ function stimConfigPatternGenerator(fname,coords,varargin)
 
     % Convert the point matrix into a structure that we can save to disk as a YAML
     pointAttributes.laserPowerInMW = laserPower;
-    pointAttributes.stimModulationFreqHz = tSettings.experiment.defaultLaserModulationFrequencyHz;
     pointAttributes.offRampDownDuration_ms = tSettings.experiment.offRampDownDuration_ms;
 
 
@@ -175,6 +174,10 @@ function stimConfigPatternGenerator(fname,coords,varargin)
         % the moment we make them all the same.
         stimC.(fieldName).Attributes = pointAttributes;
     end
+
+    % stimModulationFreqHz is global to the whole config, so it is a single top-level
+    % field rather than a per-condition attribute.
+    stimC.stimModulationFreqHz = tSettings.experiment.defaultLaserModulationFrequencyHz;
 
     % Write to disk
     if overwriteFile && exist(fname,'file')

@@ -307,8 +307,34 @@ classdef controller < zapit.gui.stimConfigEditor.view
                                             'Marker', obj.currentSymbol, ...
                                             'Color', obj.currentColor, ...
                                             'Parent', obj.hAx);
+                % Restore the point type into UserData, exactly as mouseClick_Callback does
+                % for interactively created points. Without this, saving a loaded config
+                % fails in returnStimConfigStructure when it reads UserData.type.
+                obj.pAddedPoints(ii).UserData = struct('type', stimC.stimLocations(ii).Type);
             end
             hold(obj.hAx,'off')
+
+            % Restore the GUI controls from the loaded config. Without this the spinners
+            % keep whatever they were showing and saveConfigYAML would overwrite the
+            % file's values with them (e.g. wiping a loaded 2 mW back to the default).
+            % stimModulationFreqHz is a single global value. laserPowerInMW and
+            % offRampDownDuration_ms are per-condition, but the editor has only one control
+            % for each: we show condition 1's value and warn if conditions differ, since
+            % the editor cannot represent per-condition differences and will flatten them
+            % to the shown value on save (known limitation).
+            obj.StimFreqHzSpinner.Value = stimC.stimModulationFreqHz;
+            obj.LaserPowermWSpinner.Value = stimC.stimLocations(1).Attributes.laserPowerInMW;
+            obj.RampdownmsSpinner.Value = stimC.stimLocations(1).Attributes.offRampDownDuration_ms;
+
+            laserPowers = arrayfun(@(x) x.Attributes.laserPowerInMW, stimC.stimLocations);
+            rampDowns   = arrayfun(@(x) x.Attributes.offRampDownDuration_ms, stimC.stimLocations);
+            if numel(unique(laserPowers)) > 1 || numel(unique(rampDowns)) > 1
+                fprintf(['\n ** Warning: %s has per-condition laser power and/or ramp-down ', ...
+                    'values that differ between conditions.\n    The editor has a single ', ...
+                    'control for each, so saving will set ALL conditions to the values now ', ...
+                    'shown (from the first condition).\n    Edit the YAML by hand if you need ', ...
+                    'different values per condition.\n\n'], fname)
+            end
 
             obj.fname = fname;
             obj.updateBottomLabel

@@ -20,7 +20,6 @@ function stimC = returnStimConfigStructure(obj)
     %  https://github.com/Zapit-Optostim/zapit/issues/9
 
     pointAttributes.laserPowerInMW = obj.LaserPowermWSpinner.Value;
-    pointAttributes.stimModulationFreqHz = obj.StimFreqHzSpinner.Value;
     pointAttributes.offRampDownDuration_ms = obj.RampdownmsSpinner.Value;
 
     for ii=1:length(obj.pAddedPoints)
@@ -36,5 +35,9 @@ function stimC = returnStimConfigStructure(obj)
 
 
     end
+
+    % stimModulationFreqHz is global to the whole config, so it is a single top-level
+    % field rather than a per-condition attribute.
+    stimC.stimModulationFreqHz = obj.StimFreqHzSpinner.Value;
 
 end % returnStimConfigStructure

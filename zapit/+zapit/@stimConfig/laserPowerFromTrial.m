@@ -46,7 +46,7 @@ function [peak_mW, standardised_mW, stimDuration_ms] = laserPowerFromTrial(obj, 
     % TODO: This is being modified to present multiple stimuli in a trial
     % We scale the waveform amplitude:
 
-    modulationPeriod = 1/obj.stimLocations(trialIndex).Attributes.stimModulationFreqHz;
+    modulationPeriod = 1/obj.stimModulationFreqHz; % single top-level setting for the config
     modulationPeriod_ms = modulationPeriod * 1E3;
 
 
