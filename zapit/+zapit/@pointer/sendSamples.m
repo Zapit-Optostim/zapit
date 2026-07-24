@@ -115,10 +115,18 @@ function varargout = sendSamples(obj, varargin)
     end
 
 
-    % Choose a random condition if necessary
-    if conditionNumber > obj.stimConfig.numConditions
-        error('\n ** Requested condition number %d does not exist. There are only %d conditions!\n\n', ...
-            conditionNumber, obj.stimConfig.numConditions)
+    % Validate a specifically requested condition number. Empty or -1 mean "choose a
+    % random condition" (handled just below), so we only validate concrete requests
+    % here. A value that is not a positive integer within range would otherwise fail
+    % later with a cryptic indexing error into stimLocations (and the TCP bridge can
+    % forward arbitrary client bytes into this argument).
+    if ~isempty(conditionNumber) && conditionNumber ~= -1
+        if mod(conditionNumber,1) ~= 0 || conditionNumber < 1 || ...
+                conditionNumber > obj.stimConfig.numConditions
+            error(['\n ** Requested condition number %g is not valid. ', ...
+                'There are %d conditions (1 to %d).\n\n'], ...
+                conditionNumber, obj.stimConfig.numConditions, obj.stimConfig.numConditions)
+        end
     end
 
     if isempty(conditionNumber) || conditionNumber == -1

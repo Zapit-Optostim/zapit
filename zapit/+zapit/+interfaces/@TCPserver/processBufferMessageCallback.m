@@ -24,6 +24,14 @@ function response = processBufferMessageCallback(obj,~,~)
 
     % Define the default response bytes. If nothing modifies the response output variable,
     % the "error" state of 255 in each byte is returned.
+    %
+    % PROTOCOL LIMIT: because 255 is the error sentinel and these are uint8 bytes, any
+    % response that carries a count or index (condition number in byte 1, number of
+    % conditions for command 4) can represent at most 254. A stimulus config with 255+
+    % conditions would saturate/collide with the error value. This is far above any
+    % realistic condition count so it is not guarded here, but it is a hard limit of the
+    % byte protocol and must be kept in sync with the client. See the protocol spec at
+    % https://github.com/Zapit-Optostim/zapit-tcp-bridge
     response = uint8(repmat(255,1,6));
 
 
