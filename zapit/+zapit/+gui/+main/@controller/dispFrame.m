@@ -7,7 +7,11 @@ function dispFrame(obj,~,~)
     % This callback listens to the lastAcuireFrame property on the model
     % and runs whenever it is modified.
 
+    if isempty(obj.hImLive) || ~isvalid(obj.hImLive)
+        return
+    end
 
     obj.hImLive.CData = obj.model.lastAcquiredFrame;
     drawnow limitrate
+
 end % dispFrame

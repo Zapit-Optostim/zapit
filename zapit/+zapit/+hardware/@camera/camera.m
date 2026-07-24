@@ -106,7 +106,7 @@ classdef camera < handle
             % set gain to maximum
             obj.src.Gain = 2; % TODO - this is hardcoded based on a Basler camera
 
-            obj.src.AcquisitionFrameRate=20;
+            obj.src.AcquisitionFrameRate=25;
             obj.src.AcquisitionFrameRateEnable='True';
         end % close constructor
 
@@ -155,9 +155,14 @@ classdef camera < handle
 
 
         function lastFrame=getLastFrame(obj)
+
             if isa(obj.vid,'videoinput')
-                lastFrame=squeeze(getsnapshot(obj.vid));
-            end
+                if obj.vid.FramesAvailable < 1
+                    lastFrame = [];
+                    return
+                end
+                lastFrame = peekdata(obj.vid,1);
+            end % if
         end % getLastFrame
 
 

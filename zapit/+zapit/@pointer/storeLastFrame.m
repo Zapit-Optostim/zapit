@@ -14,6 +14,11 @@ function storeLastFrame(obj,~,~)
 
 
     tmp = obj.cam.getLastFrame;
+
+    if isempty(tmp)
+        return
+    end
+
     if obj.settings.camera.flipImageUD == 1
         tmp = flipud(tmp);
     end
@@ -24,4 +29,5 @@ function storeLastFrame(obj,~,~)
 
     obj.lastAcquiredFrame = tmp;
     obj.cam.flushdata
+
 end % storeLastFrame
