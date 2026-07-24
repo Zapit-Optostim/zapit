@@ -212,10 +212,12 @@ function varargout = sendSamples(obj, varargin)
         % Now we add a rampdown
         if obj.stimConfig.offRampDownDuration_ms < 1
             % Just turn off laser (col 3) and masking LED (col 4) on last sample
-            tmp_waveforms(3:4,:)=0;
+            tmp_waveforms(end,3:4)=0;
         else
             % Make a temporary rampdown matrix
             numCyclesInRampDown = (obj.stimConfig.offRampDownDuration_ms*1E-3) / oneCyclePeriod;
+            numCyclesInRampDown = ceil(numCyclesInRampDown);
+            
             rampdownWaveform = repmat(waveforms,[numCyclesInRampDown,1]);
 
             % rampdown the laser line

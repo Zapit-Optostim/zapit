@@ -39,6 +39,13 @@ NOTE: the version number of the software is taken from the last version number i
     use only and must be enabled at the command line via `hZP.stimConfig.useClockedDO = true`
     (off by default) once a stimulus config file has been loaded. See [Issue 163](https://github.com/Zapit-Optostim/zapit/issues/163)
 
+
+Bugfixes
+* Laser turns off correctly where `obj.stimConfig.offRampDownDuration_ms < 1`
+* Ramp-down now works when ramp down duration is not an integer multiple of the waveform
+  duration. Note that rampdown will be slightly longer than expected in these cases. 
+
+
 ### 2024/05/20 v1.0.3
   * Out of bounds stimulus index causes an error. In v1.0.2 it would just carry on 
     gracefully, which is unwise. Thanks to Peter V for pointing that out. 
