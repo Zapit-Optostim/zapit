@@ -143,19 +143,3 @@ function varargout = start_zapit(varargin)
         varargout{2} = hZPview;
     end
 
-%-------------------------------------------------------------------------------------------------------------------------
-function safe = isSafeToMake_hZP
-    % Return true if it's safe to copy the created BT object to a variable called "hZP" in
-    % the base workspace. Return false if not safe because the variable already exists.
-
-    W=evalin('base','whos');
-
-    if strmatch('hZP',{W.name})
-        fprintf('Zapit seems to have already started. If this is an error, remove the variable called "hZP" in the base workspace.\n')
-        fprintf('Then run "%s" again.\n',mfilename)
-        safe=false;
-    else
-        safe=true;
-    end
-
-

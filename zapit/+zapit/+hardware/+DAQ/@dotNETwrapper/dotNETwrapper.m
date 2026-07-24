@@ -246,7 +246,7 @@ classdef dotNETwrapper < zapit.hardware.DAQ
                 %TODO - This is indirect. I can not as yet find which property in the
                 % class contains the buffer size. The approach here won't produce errors,
                 % I don't think, so let's stay with this for now.
-                nSamples = length(obj.lastWaveform);
+                nSamples = size(obj.lastWaveform,1);
             end
         end % numSamplesInBuffer
 

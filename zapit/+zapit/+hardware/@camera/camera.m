@@ -138,7 +138,7 @@ classdef camera < handle
 
         function stopVideo(obj)
             if isa(obj.vid,'videoinput')
-                if ~obj.isrunning % Do not try to stop if we already running
+                if ~obj.isrunning % Do not try to stop if we are not running
                     return
                 end
                 stop(obj.vid)

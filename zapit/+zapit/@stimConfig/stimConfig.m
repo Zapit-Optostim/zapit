@@ -217,8 +217,6 @@ classdef stimConfig < handle
                 % therefore swing the scanners slowly from one position to the next over
                 % a period of roughly 1 ms (exact number is in settings file).
 
-                % This does the ramp at the start of the waveform transitions (even)
-                oldway = false; % WHEN TRUE. WE MAKE WAVEFORMS THE OLD WAY -- TODO I think we need to get rid of this
 
                 % The following does not produce results identical to the above, but
                 % it's very close. Within a sample.

@@ -205,7 +205,7 @@ function varargout = sendSamples(obj, varargin)
         % expanding the above.
 
         % 1. Repeat it to make the duration we need
-        oneCyclePeriod = length(waveforms)/obj.DAQ.samplesPerSecond;
+        oneCyclePeriod = size(waveforms,1)/obj.DAQ.samplesPerSecond;
         numCyclesNeeded = round(stimDurationSeconds/oneCyclePeriod);
         tmp_waveforms = repmat(waveforms, [numCyclesNeeded,1]);
 
@@ -222,7 +222,7 @@ function varargout = sendSamples(obj, varargin)
 
             % rampdown the laser line
             rampdownWaveform(:,3) = rampdownWaveform(:,3) .*  ...
-                                linspace(1,0,length(rampdownWaveform))';
+                                linspace(1,0,size(rampdownWaveform,1))';
 
             % Then shut off masking LED
             rampdownWaveform(end,4) = 0;

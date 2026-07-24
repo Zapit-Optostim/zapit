@@ -26,7 +26,7 @@ function writeAnalogData(obj,waveforms)
     % If the task is a finite samples we must set the number of samples in the
     % DAQ buffer.
     if strcmp(obj.hAO.Timing.SampleQuantityMode,'FiniteSamples')
-        obj.hAO.Timing.SamplesPerChannel = length(waveforms);
+        obj.hAO.Timing.SamplesPerChannel = size(waveforms,1);
     end
 
     % We want to auto-start only the on-demand tasks because zapit.pointer

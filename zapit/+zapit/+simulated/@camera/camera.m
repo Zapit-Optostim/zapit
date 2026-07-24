@@ -138,7 +138,7 @@ classdef camera < handle
 
         function resetROI(obj,~,~)
             obj.stopVideo
-            obj.ROI = [0,0,obj.vid.VideoResolution];
+            obj.ROI = [1,1,obj.vid.VideoResolution];
             obj.startVideo
         end % resetROI
 
