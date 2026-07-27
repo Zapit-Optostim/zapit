@@ -32,12 +32,13 @@ function [out,im] = measurePointingAccuracy(obj,pointsToTest)
 
     obj.setLaserInMW(obj.settings.calibrateScanners.calibration_power_mW)
 
-    % Get the current frame with laser off (optional but not a user setting so hard-code here)
+    % Get a background frame by averaging a few frames (optional but not a user setting
+    % so hard-code here). Average to a single 2-D frame, matching calibrateScanners.
     doBackgroundFrame = true;
     if doBackgroundFrame
         backgroundFrame = obj.returnCurrentFrame(5);
+        backgroundFrame = cast(mean(backgroundFrame,3), class(backgroundFrame));
     else
-        backgroundFrame = cast(mean(backgroundFrame,3),class(backgroundFrame));
         backgroundFrame = [];
     end
 
