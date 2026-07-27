@@ -15,7 +15,7 @@ function outputSettings = readSettings(fname)
     % fname - [optional] If not provided, the default settings file is found and loaded. If
     %       fname is provided, this is loaded instead. A non-standard settings file is only
     %       used for running certain tests. The settings file is never modified if this
-    %       this arg is defined.
+    %       this argument is defined.
     %
     % Outputs
     % settings - the zapit settings as a structure

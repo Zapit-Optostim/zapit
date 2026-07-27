@@ -18,7 +18,7 @@ function stimConfigPatternGenerator(fname,coords,varargin)
     %
     % Input (optional param/val pairs)
     % 'pattern' - Which pattern to make. Options: 'grid' (default), 'cross', 'MLline', 'APline'
-    % 'patternSize' - Scalar defnining how large the pattern should be in mm. 2 mm by default.
+    % 'patternSize' - Scalar defining how large the pattern should be in mm. 2 mm by default.
     %               If 'pattern' is 'grid or 'cross' then patternSize can optionally be a vector of
     %               length 2. In this case the first number is size along ML and the second size
     %               along AP.
@@ -40,7 +40,7 @@ function stimConfigPatternGenerator(fname,coords,varargin)
     % All the following examples make files in the current MATLAB directory
     %
     % Example 1
-    % Make a cross centred at bregma that extends 5 by 5 mm with 5 points along each axis:
+    % Make a cross centered at bregma that extends 5 by 5 mm with 5 points along each axis:
     % zapit.utils.stimConfigPatternGenerator('myCrosses',[0,0], 'pattern', 'cross', ...
     %                                        'patternSize', 4, 'numPoints', 5)
     % Now add a smaller cross near left V1

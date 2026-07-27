@@ -21,7 +21,7 @@ function loadStimConfig_Callback(obj,src,~)
 
     % We use this method to load from the recents menu or to interactively load or from the CLI
     if ischar(src)
-        % User supplied a path (unlikely as is not documeneted)
+        % User supplied a path (unlikely as is not documented)
         [fpath,pointsFile,ext] = fileparts(src);
         pointsFile = [pointsFile,ext];
     elseif ~isempty(src.UserData) % It came from the recents menu
@@ -40,6 +40,7 @@ function loadStimConfig_Callback(obj,src,~)
 
     pathToConfig = fullfile(fpath,pointsFile);
     if ~exist(pathToConfig,'file')
+        obj.model.cam.startVideo;
         return
     end
 

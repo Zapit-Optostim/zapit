@@ -14,8 +14,7 @@ The project largely adheres to [semantic versioning](http://semver.org) guidelin
 ### NOTE ON CONVENTIONS IN THIS FILE
 The function zapit.updater.getVersionFromChangeLog extracts the software version number
 from this file. For this to work the version must be written out in this format:
-YEAR/MONTH/DAY -- vMAJOR.MINOR.PATCH
-For example, the following are valid
+YEAR/MONTH/DAY -- vMAJOR.MINOR.PATCH.
 
 
 ### Upgrade Notifications
@@ -42,8 +41,10 @@ Many bug fixes to coincide with release of Zapit on eLife.
     AO3 for controlling a second laser's power. Currently this feature is for development 
     use only and must be enabled at the command line via `hZP.stimConfig.useClockedDO = true`
     (off by default) once a stimulus config file has been loaded. See [Issue 163](https://github.com/Zapit-Optostim/zapit/issues/163)
-  * Subtract background image when running getLaserPosAccuracy. This uses a different threshold.  
   * Switch camera reads to peekdata, which should be smoother and was probably the origin of [Issue 126](https://github.com/Zapit-Optostim/zapit/issues/126).
+  * BUGFIX: Correctly subtract background image when running getLaserPosAccuracy. 
+    This uses a different threshold. Also correct bug that was failing to feed that image to
+    this function. 
   * BUGFIX: No longer spawns opens an empty figure window on startup. 
   * BUGFIX: Stim config editor is no longer unresponsive at times. [Issue 58](https://github.com/Zapit-Optostim/zapit/issues/163)
   * BUGFIX: Laser turns off correctly where `obj.stimConfig.offRampDownDuration_ms < 1`
