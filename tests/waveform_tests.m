@@ -15,6 +15,7 @@ classdef waveform_tests < matlab.unittest.TestCase
         chanSamples % The pre-computed data
         testDataDir = './waveform_tests_data/';
         configFname = 'uniAndBilateral_5_conditions.yml';
+        sigFigs = 4; % some tests allow tolerance for this many decimal places
     end %properties
 
 
@@ -60,12 +61,15 @@ classdef waveform_tests < matlab.unittest.TestCase
             obj.verifyEqual(size(obj.hZP.stimConfig.chanSamples), size(obj.chanSamples));
         end
 
+
         function checkXWaveformsMatch(obj)
-             obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,1,:),obj.chanSamples(:,1,:));
+             obj.verifyEqual(round(obj.hZP.stimConfig.chanSamples(:,1,:), obj.sigFigs), ...
+                    round(obj.chanSamples(:,1,:), obj.sigFigs));
         end
 
         function checkYWaveformsMatch(obj)
-             obj.verifyEqual(obj.hZP.stimConfig.chanSamples(:,2,:),obj.chanSamples(:,2,:));
+             obj.verifyEqual(round(obj.hZP.stimConfig.chanSamples(:,2,:), obj.sigFigs), ...
+                round(obj.chanSamples(:,2,:), obj.sigFigs));
         end
 
         function checkLaserWaveformsMatchTwoPoints(obj)
