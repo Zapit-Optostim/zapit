@@ -16,4 +16,9 @@ function loadStimConfig(obj,pathToConfig)
     obj.stimConfig = zapit.stimConfig(pathToConfig);
     obj.stimConfig.parent = obj;
 
+    % Check whether any condition asks for more laser power than the hardware can deliver.
+    % This populates stimConfig.conditionsExceedingLaserPower and reports to the CLI. It must
+    % run after the parent is attached, since the peak-power calculation needs the settings.
+    obj.stimConfig.checkLaserPower;
+
 end % loadStimConfig

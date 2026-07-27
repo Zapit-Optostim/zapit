@@ -42,6 +42,8 @@ Many bug fixes to coincide with release of Zapit on eLife.
     use only and must be enabled at the command line via `hZP.stimConfig.useClockedDO = true`
     (off by default) once a stimulus config file has been loaded. See [Issue 163](https://github.com/Zapit-Optostim/zapit/issues/163)
   * Switch camera reads to peekdata, which should be smoother and was probably the origin of [Issue 126](https://github.com/Zapit-Optostim/zapit/issues/126).
+  * User is warned if the hardware lacks sufficient laser power to service any of their 
+    stimulus conditions.
   * BUGFIX: Correctly subtract background image when running getLaserPosAccuracy. 
     This uses a different threshold. Also correct bug that was failing to feed that image to
     this function. 

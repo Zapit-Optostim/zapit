@@ -22,6 +22,14 @@ classdef stimConfig < handle
 
     end % properties
 
+    properties (SetObservable=true)
+        % Empty if every stimulus condition's peak laser power is deliverable. Otherwise a
+        % row vector of the indices of conditions whose required peak power exceeds the
+        % laser maximum. Populated by zapit.stimConfig.checkLaserPower, which is run when a
+        % config is loaded (see zapit.pointer.loadStimConfig).
+        conditionsExceedingLaserPower = []
+    end % observable properties
+
     properties (Hidden)
         parent  % the zapit.pointer to which this is attached
         numSamplesPerChannel % Number of samples per channel to send to the DAQ.

@@ -67,4 +67,17 @@ function loadStimConfig_Callback(obj,src,~)
     % Update the drop-down that allows us to present the stimuli
     obj.updateTestSiteDropdown;
 
+    % Warn if any conditions request more laser power than the hardware can deliver. The
+    % model (zapit.pointer.loadStimConfig) has already computed this and reported it to the
+    % CLI; here we surface it as a dialog for GUI users.
+    badConditions = obj.model.stimConfig.conditionsExceedingLaserPower;
+    if ~isempty(badConditions)
+        msg = sprintf(['%d stimulus condition(s) request more laser power than your laser ', ...
+            'can deliver and so will be capped during presentation (delivered power lower ', ...
+            'than requested).\n\nAffected conditions: %s\n\nSee the console for the ', ...
+            'required power of each.'], ...
+            length(badConditions), mat2str(badConditions));
+        warndlg(msg, 'Laser power exceeded')
+    end
+
 end % loadStimConfig_Callback
