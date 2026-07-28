@@ -24,6 +24,14 @@ function calibrateScanners_Callback(obj,~,~)
 
     end
 
+    % Remove any listener left over from a previous run before doing anything else.
+    % Normally "tidy" has already done this, but if an earlier run threw before reaching it
+    % the old listener would survive: it stays attached to calibrateScannersPosData for the
+    % life of the model, holds a closure over obj, and fires on every subsequent calibration
+    % against overlay handles that have since been deleted. This must happen before the
+    % figure prep below, since that is the part most likely to throw.
+    clearUpdatePlotListener
+
     % Prep figure window
     obj.removeOverlays % removes all overlays
     hold(obj.hImAx,'on')
@@ -56,9 +64,17 @@ function calibrateScanners_Callback(obj,~,~)
 
 
 
+    function clearUpdatePlotListener
+        % Delete the calibration plot-update listener, if there is one, and drop the handle
+        if ~isempty(obj.updatePlotListener) && isvalid(obj.updatePlotListener)
+            delete(obj.updatePlotListener)
+        end
+        obj.updatePlotListener = [];
+    end
+
     function tidy
         obj.removeOverlays(mfilename)
-        delete(obj.updatePlotListener)
+        clearUpdatePlotListener
         % Return power to orginal value
         obj.setCalibLaserSwitch('Off');
         obj.RunScannerCalibrationButton.Value = 0;
