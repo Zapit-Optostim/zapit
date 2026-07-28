@@ -44,14 +44,16 @@ function success = loadStimConfig(obj,pathToConfig)
         return
     end
 
-    % Passed validation: commit it
-    obj.stimConfig = tmpConfig;
-
     % Check whether any condition asks for more laser power than the hardware can deliver.
     % Unlike the presentability check this does not block loading (the stimulus still plays,
-    % just capped) — it populates stimConfig.conditionsExceedingLaserPower and reports to the
-    % CLI. It must run after the parent is attached, since it needs the settings.
-    obj.stimConfig.checkLaserPower;
+    % just capped) — it populates conditionsExceedingLaserPower and reports to the CLI. We run
+    % it on the temporary object BEFORE committing, so that the property is already populated
+    % when assigning to obj.stimConfig fires the GUI's PostSet listener (see
+    % zapit.gui.main.controller.stimConfigLoaded_Callback).
+    tmpConfig.checkLaserPower;
+
+    % Passed validation: commit it. This assignment is what notifies the GUI (observable).
+    obj.stimConfig = tmpConfig;
 
     success = true;
 

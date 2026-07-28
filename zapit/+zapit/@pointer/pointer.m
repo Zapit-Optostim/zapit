@@ -22,7 +22,7 @@ classdef pointer < handle
         %%
         % The following properties relate to settings or other similar state parameters
         % Properties related to where we stimulate
-        stimConfig % Object of class zapit.stimConfig. This contains the locations to stimulate
+        % (stimConfig is observable and lives in the SetObservable block below)
         laserFit  % laserfits. See generateLaserCalibrationCurve
         transform % The transform describing the relationship between scanners and camera
 
@@ -48,6 +48,10 @@ classdef pointer < handle
 
         % State of the software - TODO -- doc
         state = 'idle'; % idle, rampdown, stim (queued or actually stimulating)
+
+        stimConfig % Object of class zapit.stimConfig. This contains the locations to stimulate.
+                   % Observable so the GUI updates whenever a config is (re)loaded, whether
+                   % that happens via the GUI or at the CLI (zapit.pointer.loadStimConfig).
 
     end % observable properties
 

@@ -49,4 +49,10 @@ function buildListeners(obj)
     obj.listeners.updatePreviouslyLoadedStimConfigList = ...
         addlistener(obj, 'previouslyLoadedStimConfigs', 'PostSet', @obj.updatePreviouslyLoadedStimConfigList_Callback);
 
+    % Update the GUI (config text, stim-site overlay, test-site drop-down) whenever the
+    % loaded stim config changes -- whether that happens via the GUI or at the CLI. This is
+    % what makes a CLI "hZP.loadStimConfig(...)" update the GUI (issue #132).
+    obj.listeners.stimConfigLoaded = ...
+        addlistener(obj.model, 'stimConfig', 'PostSet', @obj.stimConfigLoaded_Callback);
+
 end % buildListeners

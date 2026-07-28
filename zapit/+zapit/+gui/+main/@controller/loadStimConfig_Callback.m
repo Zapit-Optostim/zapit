@@ -14,10 +14,10 @@ function loadStimConfig_Callback(obj,src,~)
         obj.model.cam.stopVideo;
     end
 
-    % Wipe any plot details related to this config.
-    obj.OverlaystimsitesButton.Value=0; % Unchecks button if checked
-    obj.overlayStimSites_Callback; % Will remove any overlays present
-
+    % NOTE: the "Config Loaded" text, the stim-site overlay, the test-site drop-down and the
+    % laser-power warning are all handled by stimConfigLoaded_Callback, which fires from a
+    % listener on the model's stimConfig property. That means they update for CLI loads too
+    % (issue #132), so we do not do them here.
 
     % We use this method to load from the recents menu or to interactively load or from the CLI
     if ischar(src)
@@ -62,36 +62,12 @@ function loadStimConfig_Callback(obj,src,~)
 
     obj.addStimConfigToRecents(pointsFile,fpath); % Add to the list of recently loaded files
 
-
-    % Update text indicating which config file has been loaded
-    [~,fname,ext] = fileparts(obj.model.stimConfig.configFileName);
-
-    obj.ConfigLoadedTextLabel.Text = ['Config Loaded: ', fname,ext];
-
-    % Overlay stim points
-    if obj.model.isReadyToStim
-        obj.OverlaystimsitesButton.Value=1; % Checks button
-        obj.overlayStimSites_Callback; % Adds points
-    end
+    % The GUI (text label, overlay, drop-down, laser-power dialog) has already updated via
+    % the stimConfig listener (stimConfigLoaded_Callback), which fired inside
+    % obj.model.loadStimConfig above.
 
     if isCamRunning
         obj.model.cam.startVideo;
-    end
-
-    % Update the drop-down that allows us to present the stimuli
-    obj.updateTestSiteDropdown;
-
-    % Warn if any conditions request more laser power than the hardware can deliver. The
-    % model (zapit.pointer.loadStimConfig) has already computed this and reported it to the
-    % CLI; here we surface it as a dialog for GUI users.
-    badConditions = obj.model.stimConfig.conditionsExceedingLaserPower;
-    if ~isempty(badConditions)
-        msg = sprintf(['%d stimulus condition(s) request more laser power than your laser ', ...
-            'can deliver and so will be capped during presentation (delivered power lower ', ...
-            'than requested).\n\nAffected conditions: %s\n\nSee the console for the ', ...
-            'required power of each.'], ...
-            length(badConditions), mat2str(badConditions));
-        warndlg(msg, 'Laser power exceeded')
     end
 
 end % loadStimConfig_Callback

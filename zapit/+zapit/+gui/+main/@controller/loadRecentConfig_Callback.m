@@ -9,6 +9,10 @@ function loadRecentConfig_Callback(obj)
     %
 
     pathToConfig = obj.LoadRecentDropDown.Value.fullPath{1};
-    obj.model.stimConfig = zapit.stimConfig(pathToConfig);
+
+    % Route through the model's loader so the parent is attached, the presentability and
+    % laser-power checks run, and the GUI updates via the stimConfig listener. (Setting
+    % obj.model.stimConfig directly here would skip all of that.)
+    obj.model.loadStimConfig(pathToConfig);
 
 end % loadRecentConfig_Callback
