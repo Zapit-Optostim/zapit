@@ -141,10 +141,18 @@ function outputSettings = readSettings(fname)
             continue
         end
 
-        if ~isequal( fields(DEFAULT_SETTINGS.(f0{ii})),  fields(settingsFromYML.(f0{ii})) )
+        if ~isempty( setxor(fields(DEFAULT_SETTINGS.(f0{ii})), fields(settingsFromYML.(f0{ii}))) )
             % If the two have different fields then we need to replace the user settings
             % file on disk. This catches the case where the user has an old setting in
             % their user settings file and we want to remove it by re-saving the file.
+            % It also catches a field that is missing from the user's file.
+            %
+            % setxor (the symmetric difference) is used rather than isequal because we care
+            % only about *which* fields are present, not the order they appear in. fields()
+            % returns names in the order they were created, which for the user's settings is
+            % the order they happen to sit in the YAML. Comparing with isequal would then
+            % flag a perfectly valid file as invalid purely because its fields are in a
+            % different order to default_settings.m.
             allValid = false;
         end
         for jj = 1:length(f1)
