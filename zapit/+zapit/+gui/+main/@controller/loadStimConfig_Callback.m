@@ -47,16 +47,19 @@ function loadStimConfig_Callback(obj,src,~)
     fprintf('Loading %s\n', pathToConfig)
     success = obj.model.loadStimConfig(pathToConfig);
 
-    % The model refuses configs that contain a condition which can not be presented. In that
-    % case any previously loaded config is left in place; we tell the user and stop here
-    % without touching the recents list or the "Config Loaded" label.
+    % The model refuses configs whose condition keys are malformed (duplicate or
+    % non-sequential) or that contain a condition which can not be presented. In either case
+    % any previously loaded config is left in place; we tell the user and stop here without
+    % touching the recents list or the "Config Loaded" label.
     if ~success
         if isCamRunning
             obj.model.cam.startVideo;
         end
-        errordlg(sprintf(['Config "%s" was not loaded: one or more conditions can not be ', ...
-            'presented with the current blanking and modulation settings. See the console ', ...
-            'for which conditions and how to fix them.'], pointsFile), 'Config not loaded')
+        errordlg(sprintf(['Config "%s" was not loaded. Either its stimLocations are ', ...
+            'numbered incorrectly (duplicate or missing numbers) or one or more conditions ', ...
+            'can not be presented with the current blanking and modulation settings.\n\n', ...
+            'See the console for the specific problem and how to fix it.'], pointsFile), ...
+            'Config not loaded')
         return
     end
 

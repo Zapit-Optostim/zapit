@@ -49,6 +49,7 @@ Many bug fixes to coincide with release of Zapit on eLife.
     the laser is on. Then the file is not loaded at al and a warning is produced. In practice
     this means a limit of about 55 data points per condition. So that's a lot and we will
     probably run out of laser power first. 
+  * Malformed stimulus config files with duplicate or missing configs are not loaded. 
   * Stimulus configs loaded via the API now update the GUI. 
   * BUGFIX: Scanner calibration points are now centered. Previously they were offset. 
   * BUGFIX: Correctly subtract background image when running getLaserPosAccuracy. 

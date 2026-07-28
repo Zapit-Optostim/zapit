@@ -124,6 +124,66 @@ classdef stimConfig_tests < matlab.unittest.TestCase
             obj.verifyEqual(fname, 'power_ok'); % previous config preserved
         end
 
+
+        % - - - - Malformed stimLocations key checks - - - -
+
+        function wellFormedKeysGiveNoReport(obj)
+            % A correctly numbered config produces no complaint
+            msg = zapit.stimConfig.returnMalformedKeyReport( ...
+                        fullfile(obj.testDataDir,'power_ok.yml'));
+            obj.verifyEmpty(msg);
+        end
+
+        function duplicateKeysDetected(obj)
+            % Duplicate stimLocations keys are reported
+            msg = zapit.stimConfig.returnMalformedKeyReport( ...
+                        fullfile(obj.testDataDir,'duplicate_keys.yml'));
+            obj.verifyNotEmpty(msg);
+            obj.verifyTrue(contains(lower(msg),'duplicate'));
+        end
+
+        function gapInKeysDetected(obj)
+            % A gap in the stimLocations numbering is reported
+            msg = zapit.stimConfig.returnMalformedKeyReport( ...
+                        fullfile(obj.testDataDir,'gap_in_keys.yml'));
+            obj.verifyNotEmpty(msg);
+            obj.verifyTrue(contains(lower(msg),'sequential'));
+        end
+
+        function duplicateKeyConfigIsRefused(obj)
+            % A config with duplicate keys is not loaded and the previous config is preserved
+            obj.hZP.loadStimConfig(fullfile(obj.testDataDir,'power_ok.yml'));
+
+            success = obj.hZP.loadStimConfig(fullfile(obj.testDataDir,'duplicate_keys.yml'));
+            obj.verifyFalse(success);
+
+            [~,fname] = fileparts(obj.hZP.stimConfig.configFileName);
+            obj.verifyEqual(fname, 'power_ok');
+        end
+
+        function gappedKeyConfigIsRefused(obj)
+            % A config with a gap in its keys is not loaded and the previous is preserved
+            obj.hZP.loadStimConfig(fullfile(obj.testDataDir,'power_ok.yml'));
+
+            success = obj.hZP.loadStimConfig(fullfile(obj.testDataDir,'gap_in_keys.yml'));
+            obj.verifyFalse(success);
+
+            [~,fname] = fileparts(obj.hZP.stimConfig.configFileName);
+            obj.verifyEqual(fname, 'power_ok');
+        end
+
+        function shippedExampleConfigsHaveValidKeys(obj)
+            % Every example config that ships with Zapit must have well-formed keys
+            exDir = fullfile(zapit.updater.getInstallPath, 'examples', ...
+                             'example_stimulus_config_files');
+            d = dir(fullfile(exDir,'*.yml'));
+            for ii = 1:length(d)
+                thisFile = fullfile(d(ii).folder, d(ii).name);
+                msg = zapit.stimConfig.returnMalformedKeyReport(thisFile);
+                obj.verifyEmpty(msg, sprintf('%s has malformed keys: %s', d(ii).name, msg));
+            end
+        end
+
     end % methods (Test)
 
 end % classdef stimConfig_tests

@@ -7,11 +7,14 @@ function success = loadStimConfig(obj,pathToConfig)
     % Load a stim config file and attach it as a zapit.stimConfig
     % to zapit.pointer.stimConfig and set up the parent property.
     %
-    % A config that contains a condition which can not be physically presented (the beam
-    % blanking leaves no time to illuminate a point; see returnUnpresentableConditions) is
-    % refused entirely: we do not load it and we leave any previously-loaded config in
-    % place. This is deliberate — silently dropping or truncating the offending condition
-    % would change the experiment without the user realising.
+    % A config is refused entirely (not loaded, and any previously-loaded config left in
+    % place) if either:
+    %  * its stimLocations keys are duplicated or non-sequential, which would silently drop
+    %    conditions (see zapit.stimConfig.returnMalformedKeyReport); or
+    %  * it contains a condition that can not be physically presented, because the beam
+    %    blanking leaves no time to illuminate a point (see returnUnpresentableConditions).
+    % This is deliberate: silently dropping or truncating conditions would change the
+    % experiment without the user realising.
     %
     % Outputs
     % success - true if the config was loaded, false if it was refused or not found. The
@@ -22,6 +25,17 @@ function success = loadStimConfig(obj,pathToConfig)
 
     if ~exist(pathToConfig,'file')
         fprintf('Can not load stim config %s\n', pathToConfig)
+        return
+    end
+
+    % Refuse to load if the condition keys are malformed. This is checked on the raw file
+    % before parsing, because duplicate keys can not be detected once the YAML has been read
+    % into a struct (the duplicate field is already gone).
+    keyProblemMsg = zapit.stimConfig.returnMalformedKeyReport(pathToConfig);
+    if ~isempty(keyProblemMsg)
+        fprintf(['\n ** Can not load %s\n', ...
+            ' ** %s\n', ...
+            ' ** The stim config has NOT been loaded.\n\n'], pathToConfig, keyProblemMsg)
         return
     end
 
