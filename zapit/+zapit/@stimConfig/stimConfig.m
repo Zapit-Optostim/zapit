@@ -159,6 +159,20 @@ classdef stimConfig < handle
             % is usually tiny (< 0.1 Hz) and nobody cares. We only warn if it is large
             % enough to matter (see threshold below).
             obj.numSamplesPerChannel = round(obj.parent.DAQ.samplesPerSecond/obj.stimModulationFreqHz);
+
+            % loadStimConfig refuses to load a config with an un-presentable condition, but
+            % the blanking settings can change after loading. Guard here so we error loudly
+            % rather than silently truncating the blanking (or growing the mask and crashing
+            % with an opaque size error).
+            unpresentable = obj.returnUnpresentableConditions;
+            if ~isempty(unpresentable)
+                error('zapit:stimConfig:unpresentableCondition', ...
+                    ['Condition(s) %s can not be presented with the current blanking ', ...
+                    'settings and modulation frequency. Reduce the points per condition, ', ...
+                    'shorten the blanking time, or lower the stim modulation frequency.'], ...
+                    mat2str(unpresentable))
+            end
+
             actualFreqHz = obj.parent.DAQ.samplesPerSecond/obj.numSamplesPerChannel;
             freqErrorHz = abs(actualFreqHz - obj.stimModulationFreqHz);
             if freqErrorHz > 0.5

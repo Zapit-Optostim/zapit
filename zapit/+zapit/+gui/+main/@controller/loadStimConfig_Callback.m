@@ -45,7 +45,21 @@ function loadStimConfig_Callback(obj,src,~)
     end
 
     fprintf('Loading %s\n', pathToConfig)
-    obj.model.loadStimConfig(pathToConfig);
+    success = obj.model.loadStimConfig(pathToConfig);
+
+    % The model refuses configs that contain a condition which can not be presented. In that
+    % case any previously loaded config is left in place; we tell the user and stop here
+    % without touching the recents list or the "Config Loaded" label.
+    if ~success
+        if isCamRunning
+            obj.model.cam.startVideo;
+        end
+        errordlg(sprintf(['Config "%s" was not loaded: one or more conditions can not be ', ...
+            'presented with the current blanking and modulation settings. See the console ', ...
+            'for which conditions and how to fix them.'], pointsFile), 'Config not loaded')
+        return
+    end
+
     obj.addStimConfigToRecents(pointsFile,fpath); % Add to the list of recently loaded files
 
 

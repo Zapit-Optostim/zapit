@@ -1,0 +1,13 @@
+stimLocations01:
+  ML: [-2.0, 0.0]
+  AP: [-1.0, 1.0]
+  Class: stimulate
+  Type: unilateral_points
+  Attributes: {laserPowerInMW: 5.0, offRampDownDuration_ms: 250.0}
+stimLocations02:
+  ML: [-2.0, 0.0, 2.0]
+  AP: [-1.0, 1.0, 2.0]
+  Class: stimulate
+  Type: unilateral_points
+  Attributes: {laserPowerInMW: 5.0, offRampDownDuration_ms: 250.0}
+stimModulationFreqHz: 1000.0

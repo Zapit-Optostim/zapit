@@ -44,6 +44,11 @@ Many bug fixes to coincide with release of Zapit on eLife.
   * Switch camera reads to peekdata, which should be smoother and was probably the origin of [Issue 126](https://github.com/Zapit-Optostim/zapit/issues/126).
   * User is warned if the hardware lacks sufficient laser power to service any of their 
     stimulus conditions.
+  * If a config file contains one or more configs with too many points: the total
+    blanking time needed will result in stim locations with less than two samples over which
+    the laser is on. Then the file is not loaded at al and a warning is produced. In practice
+    this means a limit of about 55 data points per condition. So that's a lot and we will
+    probably run out of laser power first. 
   * BUGFIX: Correctly subtract background image when running getLaserPosAccuracy. 
     This uses a different threshold. Also correct bug that was failing to feed that image to
     this function. 

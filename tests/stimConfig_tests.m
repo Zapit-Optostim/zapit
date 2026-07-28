@@ -73,6 +73,57 @@ classdef stimConfig_tests < matlab.unittest.TestCase
             delete(sc)
         end
 
+
+        % - - - - Presentability (blanking vs points) checks - - - -
+
+        function presentableConfigLoads(obj)
+            % A config all of whose conditions can be presented loads successfully
+            success = obj.hZP.loadStimConfig(fullfile(obj.testDataDir,'power_ok.yml'));
+            obj.verifyTrue(success);
+            obj.verifyEmpty(obj.hZP.stimConfig.returnUnpresentableConditions);
+        end
+
+        function unpresentableConfigIsRefused(obj)
+            % A config containing an un-presentable condition is refused, and the previously
+            % loaded config is preserved untouched.
+            obj.hZP.loadStimConfig(fullfile(obj.testDataDir,'power_ok.yml'));
+            priorNumConditions = obj.hZP.stimConfig.numConditions;
+
+            success = obj.hZP.loadStimConfig(fullfile(obj.testDataDir,'unpresentable.yml'));
+            obj.verifyFalse(success);
+
+            % Previous config must still be loaded and unchanged
+            obj.verifyEqual(obj.hZP.stimConfig.numConditions, priorNumConditions);
+            [~,fname] = fileparts(obj.hZP.stimConfig.configFileName);
+            obj.verifyEqual(fname, 'power_ok');
+        end
+
+        function unpresentableConditionsIdentified(obj)
+            % Pure check of the method: at 1000 Hz the 3-point condition (index 2) can not be
+            % presented but the 2-point condition (index 1) can.
+            sc = zapit.stimConfig(fullfile(obj.testDataDir,'unpresentable.yml'));
+            sc.parent = obj.hZP;
+            obj.verifyEqual(sc.returnUnpresentableConditions, 2);
+            delete(sc)
+        end
+
+        function tooManyPointsRefusedAtRealisticFreq(obj)
+            % Realistic 40 Hz config: condition 1 has an acceptable number of points (4),
+            % condition 2 has too many (60; the limit is ~55 at these settings). The offending
+            % condition is identified and the whole config is refused, preserving the prior one.
+            obj.hZP.loadStimConfig(fullfile(obj.testDataDir,'power_ok.yml'));
+
+            sc = zapit.stimConfig(fullfile(obj.testDataDir,'too_many_points_40Hz.yml'));
+            sc.parent = obj.hZP;
+            obj.verifyEqual(sc.returnUnpresentableConditions, 2);
+            delete(sc)
+
+            success = obj.hZP.loadStimConfig(fullfile(obj.testDataDir,'too_many_points_40Hz.yml'));
+            obj.verifyFalse(success);
+            [~,fname] = fileparts(obj.hZP.stimConfig.configFileName);
+            obj.verifyEqual(fname, 'power_ok'); % previous config preserved
+        end
+
     end % methods (Test)
 
 end % classdef stimConfig_tests
