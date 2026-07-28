@@ -3,12 +3,18 @@ classdef DAQ_build_tests < matlab.unittest.TestCase
 
     properties
         DAQ = [];
+        isPC
     end %properties
 
 
     methods(TestClassSetup)
         function buildDAQ(obj)
-            obj.DAQ = zapit.hardware.DAQ.dotNETwrapper;
+            obj.isPC = ispc;
+            if obj.isPC
+                obj.DAQ = zapit.hardware.DAQ.dotNETwrapper;
+            else
+                fprintf('Not running on windows, skipping test\n')
+            end
         end
     end
 
@@ -25,6 +31,9 @@ classdef DAQ_build_tests < matlab.unittest.TestCase
     methods (Test)
 
         function chanStringWith_Dev1(obj)
+            if ~obj.isPC
+                return
+            end
             %Check that the dummy laser turn on/off methods toggle the isLaserOn property
             obj.DAQ.device_ID = 'Dev3';
             chanString = obj.DAQ.genChanString(0:3);
@@ -32,6 +41,9 @@ classdef DAQ_build_tests < matlab.unittest.TestCase
         end
 
         function chanStringWith_ZAPTEST(obj)
+            if ~obj.isPC
+                return
+            end
             %Check that the dummy laser turn on/off methods toggle the isLaserOn property
             obj.DAQ.device_ID = 'ZAPTEST';
             chanString = obj.DAQ.genChanString(0:3);
