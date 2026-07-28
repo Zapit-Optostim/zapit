@@ -55,9 +55,6 @@ classdef (Abstract) DAQ < handle
             if isfield(obj.settings.NI,'samplesPerSecond')
                 obj.samplesPerSecond = obj.settings.NI.samplesPerSecond;
             end
-            if isfield(obj.settings.NI,'AOrange')
-                obj.AOrange = obj.settings.NI.AOrange;
-            end
             if isfield(obj.settings.NI,'triggerChannel')
                 obj.triggerChannel = obj.settings.NI.triggerChannel;
             end
