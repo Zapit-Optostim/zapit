@@ -59,6 +59,19 @@ function [R,C] = generateScannerCalibrationPoints(obj, varargin)
     pixel_colsMM = (-imSizeRangeMM(1)+bufferMM) : pointSpacingInMM : (imSizeRangeMM(1)-bufferMM);
     pixel_rowsMM = (-imSizeRangeMM(2)+bufferMM) : pointSpacingInMM : (imSizeRangeMM(2)-bufferMM);
 
+    % The colon operator stops at the last point that does not exceed the upper limit, so
+    % unless the span is an exact multiple of pointSpacingInMM the grid is left-heavy: the
+    % low-side border is exactly bufferMM but the high-side border is bufferMM plus the
+    % leftover remainder. Centre the grid by shifting it half the leftover, so both borders
+    % are equal (issue #31). Guard against an empty range (e.g. a buffer larger than the
+    % half-FOV), which would otherwise error on the (end) index.
+    if ~isempty(pixel_colsMM)
+        pixel_colsMM = pixel_colsMM + ((imSizeRangeMM(1)-bufferMM) - pixel_colsMM(end))/2;
+    end
+    if ~isempty(pixel_rowsMM)
+        pixel_rowsMM = pixel_rowsMM + ((imSizeRangeMM(2)-bufferMM) - pixel_rowsMM(end))/2;
+    end
+
     % The user has almost certainly applied a ROI and so we must add the offset assoicated with that.
     origImCentreInPixels = obj.cam.vid.VideoResolution/2;
     currentImCentre =  (obj.cam.ROI(3:4)/2) + obj.cam.ROI(1:2);
