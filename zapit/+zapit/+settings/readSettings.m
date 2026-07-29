@@ -1,4 +1,4 @@
-function outputSettings = readSettings(fname)
+function [outputSettings,allValid] = readSettings(fname)
     % Read Zapit settings YAML file and return as a structure
     %
     % function settings = zapit.settings.readSettings()
@@ -19,6 +19,12 @@ function outputSettings = readSettings(fname)
     %
     % Outputs
     % settings - the zapit settings as a structure
+    % allValid - [optional] true if the settings file was already fully up to date and
+    %       valid. False if anything had to be corrected: an unknown (old) field was
+    %       dropped, a missing field was filled from the defaults, or a value failed
+    %       validation and was replaced. When allValid is false and we are reading the
+    %       user's real settings file, that file is backed up and re-written. Note that
+    %       the *order* fields appear in does not affect this: only which fields exist.
     %
     %
     % Rob Campbell - Basel 2017
@@ -40,6 +46,7 @@ function outputSettings = readSettings(fname)
 
     if ~exist(settingsFile,'file')
         fprintf('Can not find settings file %s\n', settingsFile)
+        allValid = false; % Nothing was read, so we can not call the settings valid
         return
     end
 
@@ -171,7 +178,9 @@ function outputSettings = readSettings(fname)
     [outputSettings,allValidCheck] = zapit.settings.checkSettingsAreValid(outputSettings); % see private directory
 
     % Because settings will return as valid even if an old setting exists.
-    allValid = allValid * allValidCheck;
+    % Use && rather than * so that allValid stays a logical: it is returned to the caller
+    % and a double 0/1 would not satisfy verifyTrue/verifyFalse in the tests.
+    allValid = allValid && allValidCheck;
 
     if ~allValid
         fprintf('\n ********************************************************************\n')

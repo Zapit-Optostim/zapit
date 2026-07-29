@@ -5,8 +5,8 @@ function [settings,allValid] = checkSettingsAreValid(settings)
     %
     % Purpose
     % Attempt to stop weird errors that could be caused by the user entering a weird setting.
-    % This function *also* converts some values from cells to vectors, as reading from the 
-    % YAML creates unwanted cell arrays. Consequently, this function must be run after data 
+    % This function *also* converts some values from cells to vectors, as reading from the
+    % YAML creates unwanted cell arrays. Consequently, this function must be run after data
     % are read in. It is called by zapit.settings.readSettings.
     %
     % Inputs
@@ -35,7 +35,8 @@ function [settings,allValid] = checkSettingsAreValid(settings)
         f1 = fields(DEFAULT_SETTINGS.(f0{ii}));
 
         for jj = 1:length(f1)
-            if ~isfield(SETTINGS_TESTS, f0{ii})
+            % Check for the individual setting, not the section (which was checked above)
+            if ~isfield(SETTINGS_TESTS.(f0{ii}), f1{jj})
                 fprintf('No tests for setting "%s.%s"\n', f0{ii},f1{jj})
                 continue
             end
@@ -56,4 +57,4 @@ function [settings,allValid] = checkSettingsAreValid(settings)
         end
     end
 
-end 
+end
