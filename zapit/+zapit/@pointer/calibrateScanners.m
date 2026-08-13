@@ -26,7 +26,9 @@ function varargout = calibrateScanners(obj)
     % Maja Skretowska - SWC 2021
     % Rob Campbell - SWC 2022
 
+    % Set laser to zero in prep for the background frame
     obj.setLaserInMW(0)
+    pause(0.1)
 
     % lower camera illumination for increased precision in detecting beam location
 
@@ -35,14 +37,11 @@ function varargout = calibrateScanners(obj)
     obj.wipeScannerCalib
     [R,C] = obj.generateScannerCalibrationPoints; % Output in mm
 
-    % NOTE: see also zapit.pointer.measurePointingAccuracy which does a similar thing and maybe we should
-    % use that instead of repeating code here?
+    % NOTE: see also zapit.pointer.measurePointingAccuracy which does a similar thing
+    % and maybe we should use that instead of repeating code here?
 
     obj.moveBeamXYinMM([C(1),R(1)]); % Move to first position
 
-    pause(0.05)
-
-    obj.setLaserInMW(obj.settings.calibrateScanners.calibration_power_mW)
 
     % Get the current frame with laser off (optional but not a user setting so hard-code here)
     doBackgroundFrame = true;
@@ -52,6 +51,12 @@ function varargout = calibrateScanners(obj)
     else
         backgroundFrame = [];
     end
+
+
+    % Set laser to the calibration power
+    obj.setLaserInMW(obj.settings.calibrateScanners.calibration_power_mW)
+    pause(0.1)
+
 
     ind=1;
     obj.breakPointingAccuracyLoop = false; % If an external entity (like the GUI) sets this to
