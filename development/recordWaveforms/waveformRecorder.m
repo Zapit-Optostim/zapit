@@ -1,11 +1,13 @@
 function waveformRecorder(devID,fname)
-    % A simple example showing how to acqurire waveforms with hardware-timed continuous analog input using using DAQmx via .NET
+    % A simple example showing how to acquire waveforms with hardware-timed continuous 
+    % analog input using using DAQmx via .NET
     %
     % function waveformRecorder(devID)
     %
     %
     % Inputs
     %   devID - [optional] 'Dev1' by default
+    %
     %
     % Rob Campbell - SWC, 2023
 

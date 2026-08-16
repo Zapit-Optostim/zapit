@@ -11,6 +11,7 @@ Zapit then registers stereotaxic coordinates into the camera space, allowing the
 A graphical tool builds experiment coordinate files using a top-down view of the Allen Atlas.
 There is a simple MATLAB API for integrating stimulation into existing behavioral code and a Python version of the API [is also provided](https://github.com/Zapit-Optostim/zapit-Python-Bridge).
 
+![](https://github.com/Zapit-Optostim/.github/blob/main/calib_workflow.png)
 
 ## Install & Usage
 See the [Installation & User Manual](https://zapit.gitbook.io/user-guide/).
@@ -27,6 +28,9 @@ There is a [Change Log](CHANGELOG.md) if you are concerned about applying update
 * Currently only Basler cameras are supported but in principle others can be incorporated. File an Issue if you need this. 
 
 If any of the above Toolboxes are included in your licence but not installed, you may install them using the Add On Manager.
+
+## Hardware requirements
+Windows PC with at least 16 GB of RAM.
 
 ## Contributing
 Code was written by Maja Skretowska and Rob Campbell at the Sainsbury Wellcome Centre (UCL) in 2021/2022.

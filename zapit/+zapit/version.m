@@ -13,7 +13,7 @@ function varargout = version
 %
 % Patch number will not always be updated. e.g. in the case of minor
 % documentation commits and so forth. This information is extracted from CHANGELOG.md
-% file automatically. You do not need to edit this file.
+% file automatically. *You do not need to edit this file.*
 %
 %
 % Inputs
@@ -29,6 +29,7 @@ function varargout = version
 
 
 out = zapit.updater.getVersionFromChangeLog;
+
 
 out.version.string = sprintf('%d.%d.%d%s', ...
                 out.version.MAJOR, ...
