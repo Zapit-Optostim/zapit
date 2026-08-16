@@ -24,7 +24,7 @@ NOTE: the version number of the software is taken from the last version number i
 ## Version History
 
 
-### 2025/07/20 v1.0.4
+### 2026/08/16 v1.0.4
 Many bug fixes to coincide with release of Zapit on eLife. 
 
   * Ephys waveforms should now have a better shape and be produced correctly. BUT the higher
@@ -51,10 +51,12 @@ Many bug fixes to coincide with release of Zapit on eLife.
     probably run out of laser power first. 
   * Malformed stimulus config files with duplicate or missing configs are not loaded. 
   * Stimulus configs loaded via the API now update the GUI. 
+  * Unit tests overhauled and updated. 
   * BUGFIX: Scanner calibration points are now centered. Previously they were offset. 
   * BUGFIX: Correctly subtract background image when running getLaserPosAccuracy. 
     This uses a different threshold. Also correct bug that was failing to feed that image to
-    this function. 
+    this function. Also correct bug that was causing laser to be on when background frame 
+    was recorded. 
   * BUGFIX: No longer spawns opens an empty figure window on startup. 
   * BUGFIX: Stim config editor is no longer unresponsive at times. [Issue 58](https://github.com/Zapit-Optostim/zapit/issues/163)
   * BUGFIX: Laser turns off correctly where `obj.stimConfig.offRampDownDuration_ms < 1`
