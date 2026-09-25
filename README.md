@@ -14,7 +14,7 @@ There is a simple MATLAB API for integrating stimulation into existing behaviora
 ![](https://github.com/Zapit-Optostim/.github/blob/main/calib_workflow.png)
 
 ## Install & Usage
-See the [Installation & User Manual](https://zapit.gitbook.io/user-guide/).
+See the [Installation & User Manual](https://zapit.swcmicroscopy.com).
 Please see the [list of known obvious bugs and issues](https://github.com/Zapit-Optostim/zapit/issues?q=is%3Aissue+is%3Aopen+label%3A%22Known+obvious+issue%22).
 There is a [Change Log](CHANGELOG.md) if you are concerned about applying updates.
 
